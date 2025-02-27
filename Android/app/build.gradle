@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
+apply from: 'resource.gradle'
 
 if (project.getProperty("CN_AG_APP_ID").toString().isEmpty() &&
         project.getProperty("GLOBAL_AG_APP_ID").toString().isEmpty()) {

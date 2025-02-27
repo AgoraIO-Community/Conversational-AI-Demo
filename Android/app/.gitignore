@@ -6,3 +6,4 @@ libudrm3.so
 /release/
 **/assets/**/*.zip
 dev_env_config.json
+src/main/assets/
