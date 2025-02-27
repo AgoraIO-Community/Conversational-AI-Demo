@@ -39,7 +39,7 @@
     <string name="cov_info_more">More Actions</string>
     <string name="cov_info_uploader">Quick Report</string>
 
-    <string name="cov_setting_title">Settings</string>
+    <string name="cov_setting_title">Agent Settings</string>
     <string name="cov_setting_title_connected">(连接中不可修改)</string>
     <string name="cov_setting_agent">AGENT</string>
     <string name="cov_setting_preset">Preset</string>

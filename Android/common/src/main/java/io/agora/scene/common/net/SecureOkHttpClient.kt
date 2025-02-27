@@ -1,5 +1,7 @@
 package io.agora.scene.common.net
 
+import io.agora.scene.common.net.interceptor.AuthorizationInterceptor
+import io.agora.scene.common.net.interceptor.HttpLogger
 import okhttp3.OkHttpClient
 import java.security.KeyStore
 import javax.net.ssl.TrustManagerFactory
@@ -40,5 +42,7 @@ object SecureOkHttpClient {
                 HttpsURLConnection.getDefaultHostnameVerifier().verify(hostname, session)
             }
             .protocols(listOf(okhttp3.Protocol.HTTP_2, okhttp3.Protocol.HTTP_1_1))
+            .addInterceptor(HttpLogger())
+            .addInterceptor(AuthorizationInterceptor())
     }
 } 

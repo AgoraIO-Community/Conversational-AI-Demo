@@ -1,4 +1,4 @@
-package io.agora.scene.common.net
+package io.agora.scene.common.net.interceptor
 
 import android.util.Log
 import io.agora.scene.common.BuildConfig

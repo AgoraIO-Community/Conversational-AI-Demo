@@ -24,8 +24,6 @@ object TokenGenerator {
 
     private val okHttpClient by lazy {
         SecureOkHttpClient.create()
-            .addInterceptor(HttpLogger())
-            .addInterceptor(AuthorizationInterceptor())
             .build()
     }
 

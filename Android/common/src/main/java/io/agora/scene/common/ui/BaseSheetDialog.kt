@@ -59,7 +59,7 @@ abstract class BaseSheetDialog<B : ViewBinding?> : BottomSheetDialogFragment() {
     /**
      * Determines the immersive mode type to use
      */
-    open fun immersiveMode(): ImmersiveMode = ImmersiveMode.FULLY_IMMERSIVE
+    open fun immersiveMode(): ImmersiveMode = ImmersiveMode.SEMI_IMMERSIVE
 
     /**
      * Determines the status bar icons/text color

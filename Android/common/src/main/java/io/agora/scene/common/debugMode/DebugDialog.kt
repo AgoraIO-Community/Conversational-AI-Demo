@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -112,7 +113,6 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                 }
             }
 
-
             btnCopy.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     onDebugDialogCallback?.onClickCopy()
@@ -129,6 +129,11 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                     onClickMaskView()
                 }
             })
+
+            etGraphId.setText(DebugConfigSettings.graphId)
+            etGraphId.doAfterTextChanged {
+                DebugConfigSettings.updateGraphId(it.toString())
+            }
 
             updateEnvConfig()
         }

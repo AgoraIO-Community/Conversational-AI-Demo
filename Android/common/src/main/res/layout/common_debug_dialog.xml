@@ -77,11 +77,46 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_switch_env"
+        android:id="@+id/layout_graph_id"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/layout_rtc_version">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_graph_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="graph id"
+            android:textColor="@color/ai_icontext1"
+            android:textSize="16sp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_graph_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/ai_icontext4"
+            android:textSize="14sp"
+            tools:text=""
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_graph_id" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_switch_env"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/layout_graph_id">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_server_env"
@@ -103,24 +138,24 @@
             android:layout_marginStart="16dp"
             android:textColor="@color/ai_icontext4"
             android:textSize="14sp"
-            app:layout_constraintWidth_percent="0.8"
-            tools:text="大方的不是减肥还继续的付出过 v 还比较看了看巨化股份橙 V 伙伴们，。持续不那么，"
+            tools:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_server_env" />
 
-        <TextView
-            android:id="@+id/tv_server_env_name"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textDirection="ltr"
-            android:drawablePadding="4dp"
-            android:drawableEnd="@drawable/icon_dropleft"
-            android:textColor="@color/ai_icontext4"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_server_env_name"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textDirection="ltr"-->
+<!--            android:drawablePadding="4dp"-->
+<!--            android:layout_marginEnd="12dp"-->
+<!--            android:drawableEnd="@drawable/icon_dropleft"-->
+<!--            android:textColor="@color/ai_icontext4"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

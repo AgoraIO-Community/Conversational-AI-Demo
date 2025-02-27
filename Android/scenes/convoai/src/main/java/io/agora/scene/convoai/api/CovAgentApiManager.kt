@@ -4,11 +4,8 @@ import android.util.Log
 import com.google.gson.JsonObject
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.constant.ServerConfig
-import io.agora.scene.common.net.AuthorizationInterceptor
-import io.agora.scene.common.net.HttpLogger
 import io.agora.scene.common.net.SecureOkHttpClient
 import io.agora.scene.common.util.GsonTools
-import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +19,6 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import kotlin.time.Duration.Companion.seconds
 
 object CovAgentApiManager {
 
@@ -33,13 +29,7 @@ object CovAgentApiManager {
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private val okHttpClient by lazy {
-        SecureOkHttpClient.create(
-            readTimeout = 120.seconds,
-            writeTimeout = 120.seconds,
-            connectTimeout = 120.seconds
-        )
-            .addInterceptor(HttpLogger())
-            .addInterceptor(AuthorizationInterceptor())
+        SecureOkHttpClient.create()
             .build()
     }
 

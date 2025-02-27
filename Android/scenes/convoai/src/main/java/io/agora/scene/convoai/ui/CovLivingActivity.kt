@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.webkit.CookieManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +17,6 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngineEx
 import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.constant.AgentScenes
-import io.agora.scene.common.constant.EnvConfig
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.debugMode.DebugButton
@@ -120,9 +118,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 settingDialog?.updateConnectStatus(value)
                 when (connectionState) {
                     AgentConnectionState.CONNECTED -> {
-                        waitingAgentJob?.cancel()
-                        waitingAgentJob = null
-
+                        innerCancelJob()
                         pingJob = coroutineScope.launch {
                             while (isActive) {
                                 val presetName = CovAgentManager.getPreset()?.name ?: return@launch
@@ -134,19 +130,13 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
                     AgentConnectionState.IDLE -> {
                         // cancel ping
-                        pingJob?.cancel()
-                        pingJob = null
-                        waitingAgentJob?.cancel()
-                        waitingAgentJob = null
+                        innerCancelJob()
                         mCovBallAnim?.updateAgentState(AgentState.STATIC)
                     }
 
                     AgentConnectionState.ERROR -> {
                         // cancel ping
-                        pingJob?.cancel()
-                        pingJob = null
-                        waitingAgentJob?.cancel()
-                        waitingAgentJob = null
+                        innerCancelJob()
                         mCovBallAnim?.updateAgentState(AgentState.STATIC)
                     }
 
@@ -155,10 +145,18 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     }
 
                     AgentConnectionState.CONNECTING -> {
+                        innerCancelJob()
                     }
                 }
             }
         }
+
+    private fun innerCancelJob(){
+        pingJob?.cancel()
+        pingJob = null
+        waitingAgentJob?.cancel()
+        waitingAgentJob = null
+    }
 
     // Add a flag to indicate whether the call was ended by the user
     private var isUserEndCall = false
@@ -204,7 +202,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             mBinding?.messageListViewV2
         ))
         ApiManager.setOnUnauthorizedCallback {
-            // TODO: 登录过期
             ToastUtil.show(getString(io.agora.scene.common.R.string.common_login_expired))
             stopAgentAndLeaveChannel()
             SSOUserManager.logout()
@@ -278,6 +275,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             asrLanguage = CovAgentManager.language?.language_code,
             enableAiVad = CovAgentManager.enableAiVad,
             enableBHVS = CovAgentManager.enableBHVS,
+            graphId = DebugConfigSettings.graphId.takeIf { it.isNotEmpty() },
             parameters = JSONObject().apply {
                 put("transcript", JSONObject().apply {
                     put("enable", true)
@@ -573,16 +571,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
 
-//            override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
-//                logScope.launch {
-//                    if (isSelfSubRender) {
-//                        selfRenderController.onStreamMessage(uid, streamId, data)
-//                    } else {
-//                        subRenderController.onStreamMessage(uid, streamId, data)
-//                    }
-//                }
-//            }
-
             override fun onNetworkQuality(uid: Int, txQuality: Int, rxQuality: Int) {
                 if (uid == 0) {
                     runOnUiThread {
@@ -618,7 +606,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
 
                 if (remainingTime <= 0) {
-                    // 倒计时结束，退出房间
                     onClickEndCall()
                     showRoomEndDialog()
                 }
@@ -725,7 +712,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     messageListViewV2.visibility = View.VISIBLE
                 }
                 clBottomLogged.btnCc.setColorFilter(
-                    getColor(io.agora.scene.common.R.color.ai_brand_main6),
+                    getColor(io.agora.scene.common.R.color.ai_brand_lightbrand6),
                     PorterDuff.Mode.SRC_IN
                 )
             } else {
@@ -773,27 +760,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         }
     }
 
-    private val onPresetCallback = object : CovSettingsDialog.Callback {
-        override fun onPreset(preset: CovAgentPreset) {
-            mBinding?.apply {
-//                if (preset.isIndependent()) {
-//                    btnCc.isEnabled = false
-//                    btnCc.setBackgroundColor(
-//                        ResourcesCompat.getColor(
-//                            resources,
-//                            io.agora.scene.common.R.color.ai_disable, null
-//                        )
-//                    )
-//                    btnCc.setColorFilter(getColor(io.agora.scene.common.R.color.ai_disable1), PorterDuff.Mode.SRC_IN)
-//                } else {
-//                    btnCc.isEnabled = true
-//                    btnCc.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-//                    btnCc.setColorFilter(getColor(io.agora.scene.common.R.color.ai_icontext1), PorterDuff.Mode.SRC_IN)
-//                }
-            }
-        }
-    }
-
     private fun setupView() {
         activityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -805,7 +771,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                         mLoginViewModel.getUserInfoByToken(token)
                     } else {
                         showLoginLoading(false)
-                        ToastUtil.show("Login error")
                     }
                 }else{
                     showLoginLoading(false)
@@ -936,8 +901,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private fun showSettingDialog() {
         settingDialog = CovSettingsDialog.newInstance {
             settingDialog = null
-        }.apply {
-            onCallBack = onPresetCallback
         }
         settingDialog?.updateConnectStatus(connectionState)
         settingDialog?.show(supportFragmentManager, "AgentSettingsSheetDialog")

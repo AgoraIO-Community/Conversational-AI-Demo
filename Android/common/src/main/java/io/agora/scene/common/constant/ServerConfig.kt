@@ -16,14 +16,6 @@ data class EnvConfig(
 
 object ServerConfig {
 
-    const val IS_DEBUG = "is_debug"
-
-//    var isDebug: Boolean = LocalStorageUtil.getBoolean(IS_DEBUG, false)
-//        set(newValue) {
-//            field = newValue
-//            LocalStorageUtil.putBoolean(IS_DEBUG, newValue)
-//        }
-
     @JvmStatic
     val termsOfServicesUrl: String
         get() {

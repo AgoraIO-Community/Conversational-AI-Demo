@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.GestureDetector
+import android.view.MotionEvent
 import io.agora.scene.common.ui.BaseDialogFragment
 import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.util.LogUploader
@@ -22,6 +24,7 @@ import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.rtc.CovRtcManager
+import kotlin.math.abs
 
 class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     private var onDismissCallback: (() -> Unit)? = null
@@ -37,6 +40,8 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     }
 
     private var connectionState: AgentConnectionState = AgentConnectionState.IDLE
+
+    private lateinit var gestureDetector: GestureDetector
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
@@ -64,7 +69,26 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        uploadAnimation = AnimationUtils.loadAnimation(context, R.anim.cov_rotate_loading)
+        context?.let { cxt->
+            uploadAnimation = AnimationUtils.loadAnimation(cxt, R.anim.cov_rotate_loading)
+
+            gestureDetector = GestureDetector(cxt, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                    if (e1 == null) return false
+
+                    if (e2.x - e1.x < -100 && abs(velocityX) > 100) {
+                        dismiss()
+                        return true
+                    }
+                    return false
+                }
+            })
+        }
+
+        view.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            false
+        }
         
         mBinding?.apply {
             mtvAgentId.setOnLongClickListener {
@@ -168,16 +192,18 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     }
 
     private fun updateUploadingStatus(isUploading: Boolean) {
-        context ?: return
+        val cxt = context ?: return
         mBinding?.apply {
             if (isUploading) {
                 tvUploader.startAnimation(uploadAnimation)
-                tvUploader.setColorFilter(requireContext().getColor(io.agora.scene.common.R.color.ai_icontext3), PorterDuff.Mode.SRC_IN)
+                tvUploader.setColorFilter(cxt.getColor(io.agora.scene.common.R.color.ai_icontext3), PorterDuff.Mode.SRC_IN)
                 tvUploader.isEnabled = false
+                mtvUploader.setTextColor(cxt.getColor(io.agora.scene.common.R.color.ai_icontext3))
             } else {
                 tvUploader.clearAnimation()
-                tvUploader.setColorFilter(requireContext().getColor(io.agora.scene.common.R.color.ai_icontext1), PorterDuff.Mode.SRC_IN)
+                tvUploader.setColorFilter(cxt.getColor(io.agora.scene.common.R.color.ai_icontext1), PorterDuff.Mode.SRC_IN)
                 tvUploader.isEnabled = true
+                mtvUploader.setTextColor(cxt.getColor(io.agora.scene.common.R.color.ai_icontext1))
             }
         }
     }
@@ -196,10 +222,4 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     override fun onHandleOnBackPressed() {
 //        super.onHandleOnBackPressed()
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-//        binding = null
-    }
-
 }

@@ -52,4 +52,8 @@ data class CovAgentPreset(
 data class CovAgentLanguage(
     val language_code: String,
     val language_name: String
-)
+) {
+    fun englishEnvironment(): Boolean {
+        return language_code == "en-US"
+    }
+}
