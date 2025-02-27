@@ -25,24 +25,24 @@ android.nonTransitiveRClass=true
 USE_LOCAL_SDK=true
 
 #----------- AppKey --------------
-GLOBAL_TOOLBOX_SERVER_HOST=
-GLOBAL_AG_APP_ID=
-GLOBAL_AG_APP_CERTIFICATE=
+GLOBAL_TOOLBOX_SERVER_HOST=https://toolbox-global-staging.la3d.agoralab.co
+GLOBAL_AG_APP_ID=a6e0c4a31097404b9ccc8acfc5208cc7
+GLOBAL_AG_APP_CERTIFICATE=fdeafb68bcb9404b93ef2d7ec797379e
 
-CN_TOOLBOX_SERVER_HOST=
-CN_AG_APP_ID=
-CN_AG_APP_CERTIFICATE=
+CN_TOOLBOX_SERVER_HOST=https://toolbox-staging.sh3t.agoralab.co
+CN_AG_APP_ID=a6e0c4a31097404b9ccc8acfc5208cc7
+CN_AG_APP_CERTIFICATE=fdeafb68bcb9404b93ef2d7ec797379e
 
 #----------- Basic Auth ---------------
-BASIC_AUTH_KEY=
-BASIC_AUTH_SECRET=
+BASIC_AUTH_KEY=e34bf4490f85469ab7716e0ef8f6e79e
+BASIC_AUTH_SECRET=ebcdf6bf27ac488583fdb201043ebfa0
 
 #----------- LLM -----------
-LLM_URL=
-LLM_API_KEY=
+LLM_URL=https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+LLM_API_KEY=sk-58c927f17177420f8bd49de265780375
 LLM_SYSTEM_MESSAGES=
-LLM_MODEL=
+LLM_MODEL=qwen-max
 
 #----------- TTS -----------
-TTS_VENDOR=
-TTS_PARAMS=
+TTS_VENDOR=bytedance
+TTS_PARAMS={"token"="XXcROE9T_kwrJCYE79yvXbrVSJH2bsln","app_id"="7068521034","cluster"="volcano_tts","voice_type"="BV700_streaming","speed_ratio"=1.0,"volume_ratio"=1.0,"pitch_ratio"=1.0,"emotion"="happy","rate"=24000}

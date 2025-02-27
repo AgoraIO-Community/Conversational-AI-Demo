@@ -261,14 +261,23 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private fun getAgentParams(): AgentRequestParams {
         return AgentRequestParams(
+            appId = ServerConfig.rtcAppId,
+            appCert = if (ServerConfig.rtcAppCert == "") null else ServerConfig.rtcAppCert,
+            basicAuthKey = if (BuildConfig.BASIC_AUTH_KEY == "") null else BuildConfig.BASIC_AUTH_KEY,
+            basicAuthSecret = if (BuildConfig.BASIC_AUTH_SECRET == "") null else BuildConfig.BASIC_AUTH_SECRET,
+            presetName = CovAgentManager.getPreset()?.name,
             channelName = CovAgentManager.channelName,
             remoteRtcUid = CovAgentManager.uid.toString(),
             agentRtcUid = CovAgentManager.agentUID.toString(),
-            audioScenario = Constants.AUDIO_SCENARIO_AI_SERVER,
+            llmUrl = if (BuildConfig.LLM_URL == "") null else BuildConfig.LLM_URL,
+            llmApiKey = if (BuildConfig.LLM_API_KEY == "") null else BuildConfig.LLM_API_KEY,
+            llmPrompt = if (BuildConfig.LLM_SYSTEM_MESSAGES == "") null else BuildConfig.LLM_SYSTEM_MESSAGES,
+            llmModel = if (BuildConfig.LLM_MODEL == "") null else BuildConfig.LLM_MODEL,
+            ttsVendor = if (BuildConfig.TTS_VENDOR == "") null else BuildConfig.TTS_VENDOR,
+            ttsParams = if (BuildConfig.TTS_PARAMS == "") null else JSONObject(BuildConfig.TTS_PARAMS),
+            asrLanguage = CovAgentManager.language?.language_code,
             enableAiVad = CovAgentManager.enableAiVad,
             enableBHVS = CovAgentManager.enableBHVS,
-            presetName = CovAgentManager.getPreset()?.name,
-            asrLanguage = CovAgentManager.language?.language_code,
             parameters = JSONObject().apply {
                 put("transcript", JSONObject().apply {
                     put("enable", true)
@@ -366,7 +375,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private suspend fun fetchPresetsAsync(): Boolean = suspendCoroutine { cont ->
         CovAgentApiManager.fetchPresets { err, presets ->
-            if (err == null && presets.isNotEmpty()) {
+            if (err == null) {
                 CovAgentManager.setPresetList(presets)
                 cont.resume(true)
             } else {

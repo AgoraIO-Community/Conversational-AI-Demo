@@ -57,29 +57,50 @@ object CovAgentApiManager {
         val requestURL = "${ServerConfig.toolBoxUrl}/$SERVICE_VERSION/convoai/start"
         val postBody = JSONObject()
         try {
-            postBody.put("app_id", ServerConfig.rtcAppId)
+            postBody.put("app_id", params.appId)
+            params.appCert?.let { postBody.put("app_cert", it) }
+            params.basicAuthKey?.let { postBody.put("basic_auth_username", it) }
+            params.basicAuthSecret?.let { postBody.put("basic_auth_password", it) }
+            params.presetName?.let { postBody.put("preset_name", it) }
+            params.graphId?.let { postBody.put("graph_id", it) }
             postBody.put("channel_name", params.channelName)
             postBody.put("agent_rtc_uid", params.agentRtcUid)
             postBody.put("remote_rtc_uid", params.remoteRtcUid)
-            params.rtcCodec?.let { postBody.put("rtc_codec", it) }
-            params.audioScenario?.let { postBody.put("audio_scenario", it) }
+            params.idleTimeout?.let { postBody.put("idle_timeout", it) }
 
+            // --------------- LLM Config ---------------
             val customLlm = JSONObject()
-            params.greeting?.let { customLlm.put("greeting", it) }
-            params.prompt?.let { customLlm.put("prompt", it) }
-            params.maxHistory?.let { customLlm.put("max_history", it) }
+            params.llmUrl?.let { customLlm.put("url", it) }
+            params.llmApiKey?.let { customLlm.put("api_key", it) }
+            params.llmPrompt?.let { customLlm.put("prompt", it) }
+            params.llmModel?.let { customLlm.put("model", it) }
+            params.llmGreetingMessage?.let { customLlm.put("greeting_message", it) }
+            params.llmStyle?.let { customLlm.put("style", it) }
+            params.llmMaxHistory?.let { customLlm.put("max_history", it) }
             if (customLlm.length() > 0) {
                 postBody.put("custom_llm", customLlm)
             }
 
+            // --------------- TTS Config ---------------
+            val tts = JSONObject()
+            params.ttsVendor?.let { tts.put("vendor", it) }
+            params.ttsParams?.let { tts.put("params", it) }
+            params.ttsAdjustVolume?.let { tts.put("adjust_volume", it) }
+            if (tts.length() > 0) {
+                postBody.put("tts", tts)
+            }
+
+            // --------------- ASR Config ---------------
             val asr = JSONObject()
             params.asrLanguage?.let { asr.put("language", it) }
+            params.asrVendor?.let { asr.put("vendor", it) }
             if (asr.length() > 0) {
                 postBody.put("asr", asr)
             }
 
+            // --------------- VAD Config ---------------
             val vad = JSONObject()
-            params.vadInterruptThreshold?.let { vad.put("interrupt_threshold", it) }
+            params.vadInterruptDurationMs?.let { vad.put("interrupt_duration_ms", it) }
             params.vadPrefixPaddingMs?.let { vad.put("prefix_padding_ms", it) }
             params.vadSilenceDurationMs?.let { vad.put("silence_duration_ms", it) }
             params.vadThreshold?.let { vad.put("threshold", it) }
@@ -87,21 +108,13 @@ object CovAgentApiManager {
                 postBody.put("vad", vad)
             }
 
-            params.bsVoiceThreshold?.let { postBody.put("bs_voice_threshold", it) }
-            params.idleTimeout?.let { postBody.put("idle_timeout", it) }
-            params.presetName?.let { postBody.put("preset_name", it) }
-
+            // --------------- Advance Config ---------------
             val advancedFeatures = JSONObject()
             params.enableAiVad?.let { advancedFeatures.put("enable_aivad", it) }
             params.enableBHVS?.let { advancedFeatures.put("enable_bhvs", it) }
             postBody.put("advanced_features", advancedFeatures)
 
-            val tts = JSONObject()
-            params.ttsVoiceId?.let { tts.put("voice_id", it) }
-            if (tts.length() > 0) {
-                postBody.put("tts", tts)
-            }
-            params.graphId?.let { postBody.put("graph_id", it) }
+            // --------------- Other Params ---------------
             params.parameters?.let { postBody.put("parameters", it) }
         } catch (e: JSONException) {
             CovLogger.e(TAG, "postBody error ${e.message}")
