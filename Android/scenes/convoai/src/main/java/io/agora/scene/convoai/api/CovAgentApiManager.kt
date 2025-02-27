@@ -2,6 +2,7 @@ package io.agora.scene.convoai.api
 
 import android.util.Log
 import com.google.gson.JsonObject
+import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.net.SecureOkHttpClient
@@ -261,6 +262,8 @@ object CovAgentApiManager {
             postBody.put("channel_name", channelName)
             preset?.let { postBody.put("preset_name", it) }
             postBody.put("agent_id", agentId)
+            BuildConfig.BASIC_AUTH_KEY.takeIf { it.isNotEmpty() }?.let { postBody.put("basic_auth_username", it) }
+            BuildConfig.BASIC_AUTH_SECRET.takeIf { it.isNotEmpty() }?.let { postBody.put("basic_auth_password", it) }
         } catch (e: JSONException) {
             CovLogger.e(TAG, "postBody error ${e.message}")
         }
