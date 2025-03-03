@@ -15,7 +15,7 @@ protocol RTCManagerProtocol {
     ///   - channelName: The name of the channel to join
     ///   - uid: The user ID for the local user
     /// - Returns: 0 if the join request was sent successfully, < 0 on failure
-    func joinChannel(token: String, channelName: String, uid: String) -> Int32
+    func joinChannel(token: String, channelName: String, uid: String, scenario: AgoraAudioScenario) -> Int32
     
     // Set audio routing and parameters
     func setAudioConfig(config: AgoraAudioOutputRouting)
@@ -72,13 +72,13 @@ class RTCManager: NSObject {
 }
 
 extension RTCManager: RTCManagerProtocol {
-    func joinChannel(token: String, channelName: String, uid: String) -> Int32 {
+    func joinChannel(token: String, channelName: String, uid: String, scenario: AgoraAudioScenario = .aiClient) -> Int32 {
         // enable predump
         rtcEngine.setParameters("{\"che.audio.enable.predump\":{\"enable\":\"true\",\"duration\":\"60\"}}")
         setAudioConfig(config: audioRouting)
         channelId = channelName
         
-        rtcEngine.setAudioScenario(.aiClient)
+        rtcEngine.setAudioScenario(scenario)
         rtcEngine.enableAudioVolumeIndication(100, smooth: 3, reportVad: false)
         rtcEngine.setPlaybackAudioFrameBeforeMixingParametersWithSampleRate(44100, channel: 1)
         
