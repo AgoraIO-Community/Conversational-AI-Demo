@@ -1,6 +1,5 @@
 # 🌟 Agora Conversational AI Engine Demo Application
 
-*Other languages: [中文](README.cn.md)*
 
 The Agora Conversational AI Engine redefines human-computer interaction interfaces, breaking through traditional text interactions to achieve highly realistic, natural, and smooth real-time voice conversations, allowing AI to truly "speak". It is suitable for innovative scenarios such as:
 
@@ -35,9 +34,7 @@ nvm use 22
 sudo apt install git-all
 
 # Fedora/RHEL/CentOS
-
 sudo dnf install git-all
-
 ```
 
 ### ⚙️ Running the Project
