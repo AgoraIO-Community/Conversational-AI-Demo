@@ -21,9 +21,11 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### ⚙️ 1.2 Running the Sample
 
-1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
-2. Please contact Agora technical support to grant conversational AI permission to your APPID. Only after granting permission can you properly experience the demo features.
-3. Open the `Android` project and fill in properties got above to the root [**gradle.properties**](../../gradle.properties) file.
+1. Follow [Get started with Agora](https://docs-preview.agora.io/en/conversational-ai/get-started/manage-agora-account) to get the **App ID** and **App Certificate** and enable the **Conversational AI** service.
+2. Follow [Generate Customer ID and Customer Secret](https://docs.agora.io/en/conversational-ai/rest-api/restful-authentication#generate-customer-id-and-customer-secret) to get the **Basic Auth Key** and **Basic Auth Secret**.
+3. Get LLM configuration information from LLM vendor.
+4. Get TTS configuration information from TTS vendor.
+5. Open the `Android` project and fill in properties got above to the root [**gradle.properties**](../../gradle.properties) file.
 
 ```
 #----------- AppId --------------
@@ -36,9 +38,9 @@ BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 
 #----------- LLM -----------
 LLM_URL=<LLM Vendor API BASE URL>
-LLM_API_KEY=<LLM Vendor API KEY>
-LLM_SYSTEM_MESSAGES=<LLM Prompt>
-LLM_MODEL=<LLM Model>
+LLM_API_KEY=<LLM Vendor API KEY>(optional)
+LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
+LLM_MODEL=<LLM Model>(optional)
 
 #----------- TTS -----------
 TTS_VENDOR=<TTS Vendor>
@@ -62,7 +64,7 @@ TTS_PARAMS=<TTS Parameters>
 
 ## 📚 3. Related Resources
 
-- Check our [Conversational AI Engine Document]() to learn more about Conversational AI Engine
+- Check our [Conversational AI Engine Document](https://docs.agora.io/en/conversational-ai/overview/product-overview) to learn more about Conversational AI Engine
 - Visit [Agora SDK Samples](https://github.com/AgoraIO) for more tutorials
 - Explore repositories managed by developer communities at [Agora Community](https://github.com/AgoraIO-Community)
 - If you encounter issues during integration, feel free to ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
