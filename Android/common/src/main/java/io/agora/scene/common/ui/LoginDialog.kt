@@ -58,7 +58,6 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
                 }
             }
             setupRichTextTerms(tvTermsRichText)
-            tvLoginForChatTips.isVisible = ServerConfig.isMainlandVersion
         }
     }
     

@@ -15,7 +15,6 @@ object DebugConfigSettings {
 
     private const val DEV_CONFIG_FILE = "dev_env_config.json"
     private var instance: DevEnvConfig? = null
-    private var isMainLand: Boolean = true
 
     var graphId: String = ""
         private set
@@ -46,9 +45,8 @@ object DebugConfigSettings {
     }
 
     @JvmStatic
-    fun init(context: Context, isMainLand: Boolean) {
+    fun init(context: Context) {
         if (instance != null) return
-        this.isMainLand = isMainLand
         try {
             val jsonString = context.assets.open(DEV_CONFIG_FILE).bufferedReader().use(BufferedReader::readText)
             instance = Gson().fromJson(jsonString, DevEnvConfig::class.java)
@@ -59,7 +57,7 @@ object DebugConfigSettings {
 
     @JvmStatic
     fun getServerConfig(): List<EnvConfig> {
-        val envConfigList = if (isMainLand) instance?.china else instance?.global
+        val envConfigList = instance?.global
         return envConfigList ?: emptyList()
     }
 

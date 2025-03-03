@@ -53,10 +53,14 @@ object CovRtcManager {
         return mediaPlayer!!
     }
 
-    fun joinChannel(rtcToken: String, channelName: String, uid: Int) {
-        CovLogger.d(TAG, "onClickStartAgent channelName: $channelName, localUid: $uid")
+    fun joinChannel(rtcToken: String, channelName: String, uid: Int, isIndependent: Boolean = false) {
+        CovLogger.d(TAG, "onClickStartAgent channelName: $channelName, localUid: $uid, isIndependent: $isIndependent")
         //set audio scenario 10，open AI-QoS
-        rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_AI_CLIENT)
+        if (isIndependent) {
+            rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
+        } else {
+            rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_AI_CLIENT)
+        }
         // audio predump default enable
         rtcEngine?.setParameters("{\"che.audio.enable.predump\":{\"enable\":\"true\",\"duration\":\"60\"}}")
         setAudioConfig(mAudioRouting)

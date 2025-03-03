@@ -43,21 +43,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_title_connected_tips"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginStart="5dp"
-                android:text="@string/cov_setting_title_connected"
-                android:textColor="@color/ai_icontext3"
-                android:textSize="12sp"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:layout_constraintStart_toEndOf="@+id/tv_title"
-                app:layout_constraintTop_toTopOf="@+id/tv_title"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_title"/>
-
             <ImageButton
                 android:id="@+id/btn_close"
                 android:layout_width="24dp"

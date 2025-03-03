@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import io.agora.scene.common.constant.ServerConfig
 import java.util.Locale
 
 /**
@@ -141,8 +140,7 @@ class LocaleManager private constructor(private val application: Application) {
      */
     private fun getLocaleFromPreferences(context: Context): Locale {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val lang = prefs.getString(KEY_LANGUAGE, null) ?: 
-            if (ServerConfig.isMainlandVersion) "zh" else "en"
+        val lang = prefs.getString(KEY_LANGUAGE, null) ?: "en"
         return Locale(lang)
     }
     

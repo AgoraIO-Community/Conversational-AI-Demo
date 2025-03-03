@@ -9,12 +9,9 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
-import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.R
-import io.agora.scene.common.constant.ServerConfig
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
-import kotlin.math.sin
 
 class TypewriterTextView @JvmOverloads constructor(
     context: Context,
@@ -26,7 +23,7 @@ class TypewriterTextView @JvmOverloads constructor(
     private var text2 = context.getString(R.string.common_login_typing_text2)
     private val cursor = "●"
 
-    private val charsPerSecond: Float get() = if (ServerConfig.isMainlandVersion) 12f else 22f
+    private val charsPerSecond: Float get() = 22f
 
     private val pauseTime1 = TimeUnit.MILLISECONDS.toMillis(500)
     private val pauseTime2 = TimeUnit.SECONDS.toMillis(3)

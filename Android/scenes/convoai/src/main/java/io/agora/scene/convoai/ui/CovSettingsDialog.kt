@@ -109,16 +109,12 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
                 cbAiVad.isChecked = false
                 cbAiVad.isEnabled = false
             } else {
-                if (ServerConfig.isMainlandVersion){
+                if (CovAgentManager.language?.englishEnvironment() == true) {
                     cbAiVad.isEnabled = isIdle
-                }else{
-                    if (CovAgentManager.language?.englishEnvironment() == true) {
-                        cbAiVad.isEnabled = isIdle
-                    } else {
-                        CovAgentManager.enableAiVad = false
-                        cbAiVad.isChecked = false
-                        cbAiVad.isEnabled = false
-                    }
+                } else {
+                    CovAgentManager.enableAiVad = false
+                    cbAiVad.isChecked = false
+                    cbAiVad.isEnabled = false
                 }
             }
         }
@@ -148,7 +144,6 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
                 clPreset.isEnabled = true
                 clLanguage.isEnabled = true
                 cbAiVad.isEnabled = true
-                tvTitleConnectedTips.isVisible = false
             }
         } else {
             binding?.apply {
@@ -165,7 +160,6 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
                 clPreset.isEnabled = false
                 clLanguage.isEnabled = false
                 cbAiVad.isEnabled = false
-                tvTitleConnectedTips.isVisible = ServerConfig.isMainlandVersion
             }
         }
     }
@@ -188,10 +182,10 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
             // Ensure maxHeight is at least one item height
             val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
             val finalHeight = (itemHeight * presets.size).coerceIn(itemHeight, finalMaxHeight)
-            
+
             params.height = finalHeight
             cvOptions.layoutParams = params
-            
+
             // Enable scrolling if needed
 //            val contentHeight = itemHeight * presets.size
 //            if (contentHeight > finalHeight) {
@@ -233,10 +227,10 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
             // Ensure maxHeight is at least one item height
             val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
             val finalHeight = (itemHeight * languages.size).coerceIn(itemHeight, finalMaxHeight)
-            
+
             params.height = finalHeight
             cvOptions.layoutParams = params
-            
+
             // Enable scrolling if needed
 //            val contentHeight = itemHeight * languages.size
 //            if (contentHeight > finalHeight) {

@@ -36,7 +36,6 @@ class AgentApp : Application() {
     private fun fetchAppData() {
         DataProviderLoader.getDataProvider()?.let {
             ServerConfig.initBuildConfig(
-                isMainland = it.isMainland(),
                 appBuildNo = it.appBuildNo(),
                 envName = it.envName(),
                 toolboxHost = it.toolboxHost(),
@@ -57,7 +56,7 @@ class AgentApp : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
-        DebugConfigSettings.init(this, ServerConfig.isMainlandVersion)
+        DebugConfigSettings.init(this)
         AgoraLogger.initXLog(this)
         initMMKV()
 
