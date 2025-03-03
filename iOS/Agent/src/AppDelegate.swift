@@ -16,17 +16,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        AppContext.shared.appId = KeyCenter.APP_ID
-        AppContext.shared.certificate = KeyCenter.CERTIFICATE ?? ""
+        AppContext.shared.appId = KeyCenter.AG_APP_ID
+        AppContext.shared.certificate = KeyCenter.AG_APP_CERTIFICATE
         AppContext.shared.basicAuthKey = KeyCenter.BASIC_AUTH_KEY
         AppContext.shared.basicAuthSecret = KeyCenter.BASIC_AUTH_SECRET
         AppContext.shared.llmUrl = KeyCenter.LLM_URL
-        AppContext.shared.llmApiKey = KeyCenter.LLM_API_KEY ?? ""
-        AppContext.shared.llmSystemMessages = KeyCenter.LLM_SYSTEM_MESSAGES ?? ""
-        AppContext.shared.llmModel = KeyCenter.LLM_MODEL ?? ""
+        AppContext.shared.llmApiKey = KeyCenter.LLM_API_KEY
+        AppContext.shared.llmSystemMessages = KeyCenter.LLM_SYSTEM_MESSAGES
+        AppContext.shared.llmModel = KeyCenter.LLM_MODEL
         AppContext.shared.ttsVendor = KeyCenter.TTS_VENDOR
         AppContext.shared.ttsParams = KeyCenter.TTS_PARAMS
-        AppContext.shared.baseServerUrl = KeyCenter.BaseHostUrl
+        AppContext.shared.baseServerUrl = KeyCenter.TOOLBOX_SERVER_HOST
         
         if AppContext.shared.appId.isEmpty {
             AppContext.shared.loadInnerEnvironment()
