@@ -52,7 +52,7 @@
 
 #### 1.2.6 配置项目
 
-- 打开 `iOS` 项目，在 [**KeyCenter.swift**](../KeyCenter.swift) 文件中填写上述获取的配置信息：
+- 打开 `iOS` 项目，在 [**KeyCenter.swift**](../../Agent/KeyCenter.swift) 文件中填写上述获取的配置信息：
 
 ``` Swift
     #----------- AppId --------------

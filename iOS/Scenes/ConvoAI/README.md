@@ -19,7 +19,7 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 2. Follow [Generate Customer ID and Customer Secret](https://docs.agora.io/en/conversational-ai/rest-api/restful-authentication#generate-customer-id-and-customer-secret) to get the **Basic Auth Key** and **Basic Auth Secret**.
 3. Get LLM configuration information from LLM vendor.
 4. Get TTS configuration information from TTS vendor.
-5. Open the `iOS` project and fill in the configuration information obtained above in the [**KeyCenter.swift**](../KeyCenter.swift) file:
+5. Open the `iOS` project and fill in the configuration information obtained above in the [**KeyCenter.swift**](../../Agent/KeyCenter.swift) file:
 
 ```Swift
     #----------- AppId --------------
