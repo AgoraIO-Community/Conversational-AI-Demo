@@ -1,7 +1,5 @@
 # 🌟 Conversational AI Demo 🌟
 
-*English | [中文](README.zh.md)*
-
 ## 🔮 Overview
 
 The Conversational AI Engine redefines the human-machine interaction interface, breaking through traditional text-based interactions to achieve highly realistic and naturally flowing real-time voice conversations, enabling AI to truly "speak." It is suitable for innovative scenarios such as:
