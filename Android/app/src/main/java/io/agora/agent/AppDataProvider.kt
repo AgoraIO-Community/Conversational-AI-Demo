@@ -15,10 +15,6 @@ class AppDataProvider : DataProvider {
         return BuildConfig.TOOLBOX_SERVER_HOST
     }
 
-    override fun isMainland(): Boolean {
-        return BuildConfig.IS_MAINLAND
-    }
-
     override fun appBuildNo(): String {
         return BuildConfig.BUILD_TIMESTAMP
     }

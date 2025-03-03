@@ -332,7 +332,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
 
-            CovRtcManager.joinChannel(rtcToken ?: "", CovAgentManager.channelName, CovAgentManager.uid)
+            val isIndependent = CovAgentManager.getPreset()?.isIndependent() == true
+            CovRtcManager.joinChannel(rtcToken ?: "", CovAgentManager.channelName, CovAgentManager.uid, isIndependent)
             val startRet = startAgentAsync()
 
             withContext(Dispatchers.Main) {

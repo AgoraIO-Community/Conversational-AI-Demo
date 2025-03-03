@@ -1,7 +1,5 @@
 # 🌟 Conversational AI Demo
 
-*__Other Languages:__  [__简体中文__](README.zh.md)*
-
 The Conversational AI Engine redefines the human-machine interaction interface, breaking through traditional text-based interactions to achieve highly realistic and naturally flowing real-time voice conversations, enabling AI to truly "speak." It is suitable for innovative scenarios such as intelligent assistants, emotional companionship, oral language practice, intelligent customer service, smart hardware, and immersive game NPCs.
 
 ## 🚀 1. Quick Start
@@ -22,8 +20,8 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ```
 #----------- AppId --------------
-CN_AG_APP_ID=<Agora App ID>
-CN_AG_APP_CERTIFICATE=<Agora App Certificate>
+AG_APP_ID=<Agora App ID>
+AG_APP_CERTIFICATE=<Agora App Certificate>
 
 #----------- Basic Auth ---------------
 BASIC_AUTH_KEY=<Agora RESTful API KEY>

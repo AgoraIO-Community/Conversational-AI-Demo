@@ -63,6 +63,7 @@
             android:textColor="@color/ai_icontext1"
             android:lineSpacingExtra="5dp"
             android:textSize="20sp"
+            android:visibility="gone"
             android:textStyle="bold" />
     </LinearLayout>
 
