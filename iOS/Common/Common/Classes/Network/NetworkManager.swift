@@ -36,7 +36,6 @@ public class NetworkManager:NSObject {
     }
 
     public static let shared = NetworkManager()
-    private let baseServerUrl: String = AppContext.shared.baseServerUrl
     
     private func basicAuth(key: String, password: String) -> String {
         let loginString = String(format: "%@:%@", key, password)
@@ -66,7 +65,7 @@ public class NetworkManager:NSObject {
                       "ts": 0,
                       "types": types.map({NSNumber(value: $0.rawValue)}),
                       "uid": uid] as [String: Any]
-        let url = "\(baseServerUrl)/v2/convoai/token/generate"
+        let url = "\(AppContext.shared.baseServerUrl)/v2/convoai/token/generate"
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params) { response in
             let data = response["data"] as? [String: String]
