@@ -48,17 +48,17 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### ⚙️ 2. Source Code Sitemap
 
-| Path                                                                                                                           | Description                                     |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
-| [AgentManager.swift](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Manager/AgentManager.swift)                                         | Conversational AI API implementation and models |
-| [RTCManager.swift](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Manager/RTCManager.swift)                                             | RTC related implementations                     |
-| [AgentPreferenceManager.swift](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Manager/AgentPreferenceManager.swift)                     | Agent state management                          |
-| [Main/](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Main)                                                                            | UI components and activities                    |
-| [Main/Chat](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Main/Chat)                                                                   | Chat view and controllers                       |
-| [AgentInformationViewController.swift](Scenes/VoiceAgent/VoiceAgent/Classes/Main/Setting/VC/AgentInformationViewController.swift) | Information dialog showing agent status         |
-| [AgentSettingViewController.swift](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Main/Setting/VC/AgentSettingViewController.swift)     | Settings dialog for agent configuration         |
-| [Utils/](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Utils)                                                                          | Utility classes and helper functions            |
-| [ConversationSubtitleController.swift](iOS/Scenes/VoiceAgent/VoiceAgent/Classes/Utils/ConversationSubtitleController.swift)       | Subtitle rendering component                    |
+| Path                                                                                                          | Description                                     |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| [AgentManager.swift](ConvoAI/Classes/Manager/AgentManager.swift)                                              | Conversational AI API implementation and models |
+| [RTCManager.swift](ConvoAI/Classes/Manager/RTCManager.swift)                                                  | RTC related implementations                     |
+| [AgentPreferenceManager.swift](ConvoAI/Classes/Manager/AgentPreferenceManager.swift)                          | Agent state management                          |
+| [Main/](ConvoAI/Classes/Main)                                                                                 | UI components and activities                    |
+| [Main/Chat](ConvoAI/Classes/Main/Chat)                                                                        | Chat view and controllers                       |
+| [AgentInformationViewController.swift](ConvoAI/Classes/Main/Setting/VC/AgentInformationViewController.swift)  | Information dialog showing agent status         |
+| [AgentSettingViewController.swift](ConvoAI/Classes/Main/Setting/VC/AgentSettingViewController.swift)          | Settings dialog for agent configuration         |
+| [Utils/](ConvoAI/Classes/Utils)                                                                               | Utility classes and helper functions            |
+| [ConversationSubtitleController.swift](ConvoAI/Classes/Utils/ConversationSubtitleController.swift)            | Subtitle rendering component                    |
 
 ## 📚 3. Related Resources
 
