@@ -18,7 +18,7 @@ class LogManager {
     try {
       const timestamp = new Date().toISOString();
       const logMessage = args.map(arg => (typeof arg === 'string' ? arg : JSON.stringify(arg))).join(' ');
-      console[level](logMessage);
+      // console[level](logMessage);
       const fullLogMessage = `${timestamp} ${logMessage}\n`;
       const logSize = this.textEncoder.encode(fullLogMessage).length;
       const logEntry: LogEntry = {
