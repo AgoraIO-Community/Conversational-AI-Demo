@@ -34,9 +34,7 @@ nvm use 22
 sudo apt install git-all
 
 # Fedora/RHEL/CentOS
-
 sudo dnf install git-all
-
 ```
 
 ### ⚙️ Running the Project
