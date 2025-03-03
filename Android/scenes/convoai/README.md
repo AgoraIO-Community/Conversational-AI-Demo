@@ -57,10 +57,9 @@ TTS_PARAMS=<TTS Parameters>
 | [subRender/](src/main/java/io/agora/scene/convoai/subRender/v2)                     | Subtitle rendering component.                    |
 | [rtc/](src/main/java/io/agora/scene/convoai/rtc)                                    | RTC related implementations.                     |
 | [ui/](src/main/java/io/agora/scene/convoai/ui)                                      | UI components and activities.                    |
-| [utils/](src/main/java/io/agora/scene/convoai/utils)                                | Utility classes and helper functions.            |
-| [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/CovLivingActivity.kt)   | Main activity for AI conversation.               |
-| [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
-| [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
+| [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/ui/CovLivingActivity.kt)   | Main activity for AI conversation.               |
+| [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
+| [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
 
 ## 📚 3. Related Resources
 
