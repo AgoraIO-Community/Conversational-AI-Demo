@@ -20,7 +20,7 @@ The Conversational AI Engine redefines the human-machine interaction interface, 
 |  Platform  |                 Example                 |
 | :--------: | :-------------------------------------: |
 | 📱 Android | [ConvoAI(Android)](Android/scenes/convoai) |
-|   📱 iOS   |   [ConvoAI(iOS)](iOS/Scenes/VoiceAgent)   |
+|   📱 iOS   |   [ConvoAI(iOS)](iOS/Scenes/ConvoAI)   |
 |   🌐 Web   |   [ConvoAI(Web)](Web/Scenes/VoiceAgent)   |
 
 ---
