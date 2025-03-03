@@ -51,16 +51,16 @@ TTS_PARAMS=<TTS Parameters>
 
 | Path                                                                                                    | Description                                      |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [api/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/api)                                    | Conversational AI API implementation and models. |
-| [animation/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/animation)                        | Animation effects for agent interaction.         |
-| [constant/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/constant)                          | Constants and enums definition.                  |
-| [subRender/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/subRender/v2)                     | Subtitle rendering component.                    |
-| [rtc/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/rtc)                                    | RTC related implementations.                     |
-| [ui/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/ui)                                      | UI components and activities.                    |
-| [utils/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/utils)                                | Utility classes and helper functions.            |
-| [CovLivingActivity.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovLivingActivity.kt)   | Main activity for AI conversation.               |
-| [CovSettingsDialog.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
-| [CovAgentInfoDialog.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
+| [api/](src/main/java/io/agora/scene/convoai/api)                                    | Conversational AI API implementation and models. |
+| [animation/](src/main/java/io/agora/scene/convoai/animation)                        | Animation effects for agent interaction.         |
+| [constant/](src/main/java/io/agora/scene/convoai/constant)                          | Constants and enums definition.                  |
+| [subRender/](src/main/java/io/agora/scene/convoai/subRender/v2)                     | Subtitle rendering component.                    |
+| [rtc/](src/main/java/io/agora/scene/convoai/rtc)                                    | RTC related implementations.                     |
+| [ui/](src/main/java/io/agora/scene/convoai/ui)                                      | UI components and activities.                    |
+| [utils/](src/main/java/io/agora/scene/convoai/utils)                                | Utility classes and helper functions.            |
+| [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/CovLivingActivity.kt)   | Main activity for AI conversation.               |
+| [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
+| [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
 
 ## 📚 3. Related Resources
 
