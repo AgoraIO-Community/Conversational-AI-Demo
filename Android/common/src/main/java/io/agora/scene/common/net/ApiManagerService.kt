@@ -12,15 +12,15 @@ import okhttp3.RequestBody
 interface ApiManagerService {
 
     companion object{
-        const val requestUploadLog = "/v1/convoai/upload/log"
-        const val ssoUserInfo = "/v1/convoai/sso/userInfo"
+        const val requestUploadLog = "v1/convoai/upload/log"
+        const val ssoUserInfo = "v1/convoai/sso/userInfo"
     }
 
     @GET(ssoUserInfo)
     suspend fun ssoUserInfo(@Header("Authorization") token: String): BaseResponse<SSOUserInfo>
 
     @Multipart
-    @POST("/v1/convoai/upload/log")
+    @POST("v1/convoai/upload/log")
     suspend fun requestUploadLog(
         @Header("Authorization") token: String,
         @Part("content") content: RequestBody,

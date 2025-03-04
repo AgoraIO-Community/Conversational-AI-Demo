@@ -22,9 +22,7 @@ object LogUploader {
 
     private const val TAG = "LogUploader"
 
-    private val apiService by lazy {
-        ApiManager.getService(ApiManagerService::class.java)
-    }
+    private fun getApiService() = ApiManager.getService(ApiManagerService::class.java)
 
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -153,7 +151,7 @@ object LogUploader {
             val token = "Bearer ${SSOUserManager.getToken()}"
             requestNoData(
                 block = {
-                    apiService.requestUploadLog(token, contentBody, filePart)
+                    getApiService().requestUploadLog(token, contentBody, filePart)
                 },
                 onSuccess = onSuccess,
                 onError = onError
