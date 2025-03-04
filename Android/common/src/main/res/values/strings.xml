@@ -35,6 +35,7 @@
     <string name="common_upload_time_success">We\'ve received your report. Thanks for helping us improve!</string>
     <string name="common_upload_time_failed">Opps! Something went wrong. Please try reporting again.</string>
     <string name="common_login_expired">Your session has expired. Please log in again.</string>
-    <string name="common_login_typing_text1">Have you ever questioned the nature of your reality?</string>
+    <string name="common_login_typing_text1">Greetings, Human</string>
     <string name="common_login_typing_text2">Hey, I\'m Conversational AI Engine.</string>
+    <string name="common_login_typing_text3">Have you ever questioned the nature of your reality?</string>
 </resources>

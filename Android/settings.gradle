@@ -27,7 +27,7 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/apache-snapshots' }
     }
 }
-rootProject.name = "Agent"
+rootProject.name = "Agora Convo AI"
 include ':app'
 include ':common'
 include ':scenes:convoai'

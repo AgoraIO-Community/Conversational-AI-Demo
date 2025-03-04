@@ -2,11 +2,11 @@
 
 ## 🔮 Overview
 
-The Conversational AI Engine redefines the human-machine interaction interface, breaking through traditional text-based interactions to achieve highly realistic and naturally flowing real-time voice conversations, enabling AI to truly "speak." It is suitable for innovative scenarios such as:
+The Conversational AI Engine redefines the human-AI interaction interface, breaking through traditional text-based interactions to achieve highly realistic and naturally flowing real-time voice conversations, enabling AI to truly "speak." It is suitable for innovative scenarios such as:
 
 - 🤖 Intelligent assistants
 - 💞 Emotional companionship
-- 🗣️ Oral language practice
+- 🗣️ Language Tutor
 - 🎧 Intelligent customer service
 - 📱 Smart hardware
 - 🎮 Immersive game NPCs
@@ -16,10 +16,10 @@ The Conversational AI Engine redefines the human-machine interaction interface, 
 ## 🚀 Quick Start
 
 |  Platform  |                 Example                 |
-| :--------: | :-------------------------------------: |
-| 📱 Android | [ConvoAI(Android)](Android/scenes/convoai) |
-|   📱 iOS   |   [ConvoAI(iOS)](iOS/Scenes/ConvoAI)   |
-|   🌐 Web   |   [ConvoAI(Web)](Web/Scenes/VoiceAgent)   |
+| -------- | ------------------------------------- |
+| 📱 Android | [Android Demo](Android/scenes/convoai) |
+|   📱 iOS   |   [iOS Demo](iOS/Scenes/ConvoAI)   |
+|   🌐 Web   |   [Web Demo](Web/Scenes/VoiceAgent)   |
 
 ---
 
@@ -27,7 +27,7 @@ The Conversational AI Engine redefines the human-machine interaction interface, 
 
 If you encounter integration difficulties:
 
-- 💬 Get help from intelligent customer service or contact sales personnel at [Agora Support](https://agora-ticket.agora.io/)
+- 💬 If you have any problems or suggestions regarding the sample projects, we welcome you to file an issue.
 
 ---
 

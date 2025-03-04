@@ -19,19 +19,21 @@ class TypewriterTextView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    private var text1 = context.getString(R.string.common_login_typing_text1)
-    private var text2 = context.getString(R.string.common_login_typing_text2)
+    private var texts = listOf(
+        context.getString(R.string.common_login_typing_text1),
+        context.getString(R.string.common_login_typing_text2),
+        context.getString(R.string.common_login_typing_text3)
+    )
     private val cursor = "●"
 
     private val charsPerSecond: Float get() = 22f
 
-    private val pauseTime1 = TimeUnit.MILLISECONDS.toMillis(500)
-    private val pauseTime2 = TimeUnit.SECONDS.toMillis(3)
+    private val pauseLongTime = TimeUnit.SECONDS.toMillis(3)
+    private val pauseShortTime = TimeUnit.MILLISECONDS.toMillis(500)
 
-    private val typeTime1: Long get() = (text1.length / charsPerSecond * 1000).toLong().coerceAtLeast(1000)
-    private val typeTime2: Long get() = (text2.length / charsPerSecond * 1000).toLong().coerceAtLeast(1000)
-    private val deleteTime1: Long get() = typeTime1 / 2
-    private val deleteTime2: Long get() = typeTime2 / 2
+    private var typeTimes = mutableListOf<Long>()
+    private var deleteTimes = mutableListOf<Long>()
+    private var timePoints = mutableListOf<Long>()
 
     private var startTime: Long = 0
     private var isAnimating = false
@@ -39,9 +41,7 @@ class TypewriterTextView @JvmOverloads constructor(
 
     private val gradientColors = mutableListOf<Int>()
 
-    private val totalTime: Long
-        get() = typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 +
-                typeTime2 + pauseTime2 + deleteTime2 + pauseTime1
+    private var totalTime: Long = 0
 
     private val updateRunnable = object : Runnable {
         override fun run() {
@@ -49,14 +49,6 @@ class TypewriterTextView @JvmOverloads constructor(
             handler.postDelayed(this, 16)
         }
     }
-
-    private var timePoint1: Long = 0
-    private var timePoint2: Long = 0
-    private var timePoint3: Long = 0
-    private var timePoint4: Long = 0
-    private var timePoint5: Long = 0
-    private var timePoint6: Long = 0
-    private var timePoint7: Long = 0
 
     init {
         gravity = android.view.Gravity.CENTER
@@ -70,19 +62,19 @@ class TypewriterTextView @JvmOverloads constructor(
                 Color.parseColor("#446CFF")
             )
         )
+        calculateTimings()
     }
 
-    fun setTypeText(text1: String, text2: String) {
-        this.text1 = text1
-        this.text2 = text2
-        calculateTimePoints()
+    fun setTypeTexts(vararg newTexts: String) {
+        if (newTexts.isEmpty()) return
+        texts = newTexts.toList()
+        calculateTimings()
     }
 
     fun startAnimation() {
         if (isAnimating) return
         isAnimating = true
         startTime = System.currentTimeMillis()
-        calculateTimePoints()
         handler.post(updateRunnable)
     }
 
@@ -92,12 +84,37 @@ class TypewriterTextView @JvmOverloads constructor(
     }
 
     private fun isInCursorPhase(cycleTime: Long): Boolean {
-        return cycleTime < timePoint1 ||
-                (cycleTime >= timePoint1 && cycleTime < timePoint2) ||
-                (cycleTime >= timePoint2 && cycleTime < timePoint3) ||
-                (cycleTime >= timePoint4 && cycleTime < timePoint5) ||
-                (cycleTime >= timePoint5 && cycleTime < timePoint6) ||
-                (cycleTime >= timePoint6 && cycleTime < timePoint7)
+        // The cursor should be displayed during typing and deletion phases, but hidden during pause and short interval phases
+        val textCount = texts.size
+        for (i in 0 until textCount) {
+            // Calculate time point indices for current text
+            val baseIndex = i * 3
+            val typeStartTime = if (i == 0) 0 else timePoints[(i-1) * 3 + 2] + pauseShortTime
+            val typeEndTime = timePoints[baseIndex]         // Time point when typing ends
+            val pauseEndTime = timePoints[baseIndex + 1]    // Time point when pause ends (after 3 seconds)
+            val deleteEndTime = timePoints[baseIndex + 2]   // Time point when deletion ends
+            
+            // Show cursor during typing phase
+            if (cycleTime in typeStartTime until typeEndTime && cycleTime != typeEndTime - 1) {
+                return true
+            }
+            
+            // Hide cursor during pause phase (showing full text for 3 seconds)
+            if (cycleTime in typeEndTime until pauseEndTime) {
+                return false
+            }
+            
+            // Show cursor during deletion phase
+            if (cycleTime in pauseEndTime until deleteEndTime) {
+                return true
+            }
+            
+            // Hide cursor during short interval phase
+            if (cycleTime in deleteEndTime until (deleteEndTime + pauseShortTime)) {
+                return false
+            }
+        }
+        return false
     }
 
     private fun update() {
@@ -105,56 +122,50 @@ class TypewriterTextView @JvmOverloads constructor(
         val cycleTime = currentTime % totalTime
 
         var visibleText = ""
+        val textCount = texts.size
 
-        when {
-            cycleTime < timePoint1 -> {
-                val progress = cycleTime.toFloat() / timePoint1.toFloat()
-                val charCount = (text1.length * progress).toInt()
-                visibleText = text1.take(charCount)
+        for (i in 0 until textCount) {
+            val text = texts[i]
+            // Calculate time point indices for current text
+            val baseIndex = i * 3
+            val typeStartTime = if (i == 0) 0 else timePoints[(i-1) * 3 + 2] + pauseShortTime
+            val typeEndTime = timePoints[baseIndex]          // Time point when typing ends
+            val pauseEndTime = timePoints[baseIndex + 1]     // Time point when pause ends (after 3 seconds)
+            val deleteEndTime = timePoints[baseIndex + 2]    // Time point when deletion ends
+            
+            // Short pause phase - showing blank after deletion completes
+            if (cycleTime in deleteEndTime until (deleteEndTime + pauseShortTime)) {
+                if (i == textCount - 1) { // Last text
+                    visibleText = ""
+                    break
+                }
+                continue; // Continue loop to check next text
             }
-
-            cycleTime < timePoint2 -> {
-                visibleText = text1
+            
+            // Typing phase - display text character by character
+            if (cycleTime in typeStartTime until typeEndTime) {
+                val progress = (cycleTime - typeStartTime).toFloat() / typeTimes[i].toFloat()
+                val charCount = (text.length * progress).toInt()
+                visibleText = text.take(charCount)
+                break
             }
-
-            cycleTime < timePoint3 -> {
-                val elapsed = cycleTime - timePoint2
-                val progress = elapsed.toFloat() / deleteTime1.toFloat()
-                val charCount = text1.length - (text1.length * progress).toInt()
-                visibleText = text1.take(max(0, charCount))
+            // Pause phase - display full text for 3 seconds
+            else if (cycleTime in typeEndTime until pauseEndTime) {
+                visibleText = text
+                break
             }
-
-            cycleTime < timePoint4 -> {
-                visibleText = ""
-            }
-
-            cycleTime < timePoint5 -> {
-                val elapsed = cycleTime - timePoint4
-                val progress = elapsed.toFloat() / typeTime2.toFloat()
-                val charCount = (text2.length * progress).toInt()
-                visibleText = text2.take(charCount)
-            }
-
-            cycleTime < timePoint6 -> {
-                visibleText = text2
-            }
-
-            cycleTime < timePoint7 -> {
-                val elapsed = cycleTime - timePoint6
-                val progress = elapsed.toFloat() / deleteTime2.toFloat()
-                val charCount = text2.length - (text2.length * progress).toInt()
-                visibleText = text2.take(max(0, charCount))
-            }
-
-            else -> {
-                visibleText = ""
+            // Deletion phase - remove text character by character
+            else if (cycleTime in pauseEndTime until deleteEndTime) {
+                val elapsed = cycleTime - pauseEndTime
+                val progress = elapsed.toFloat() / deleteTimes[i].toFloat()
+                val charCount = text.length - (text.length * progress).toInt()
+                visibleText = text.take(max(0, charCount))
+                break
             }
         }
 
-        val shouldShowCursor = isInCursorPhase(cycleTime) &&
-                !(cycleTime >= timePoint1 && cycleTime < timePoint2) &&
-                !(cycleTime >= timePoint5 && cycleTime < timePoint6)
-
+        // Determine whether to show cursor based on current phase
+        val shouldShowCursor = isInCursorPhase(cycleTime)
         if (shouldShowCursor) {
             visibleText += cursor
         }
@@ -224,18 +235,49 @@ class TypewriterTextView @JvmOverloads constructor(
         stopAnimation()
     }
 
-    private fun calculateTimePoints() {
-        timePoint1 = typeTime1
-        timePoint2 = timePoint1 + pauseTime2
-        timePoint3 = timePoint2 + deleteTime1
-        timePoint4 = timePoint3 + pauseTime1
-        timePoint5 = timePoint4 + typeTime2
-        timePoint6 = timePoint5 + pauseTime2
-        timePoint7 = timePoint6 + deleteTime2
+    private fun calculateTimings() {
+        typeTimes.clear()
+        deleteTimes.clear()
+        timePoints.clear()
+        
+        // Calculate typing and deletion time for each text
+        texts.forEach { text ->
+            val typeTime = (text.length / charsPerSecond * 1000).toLong().coerceAtLeast(1000)
+            val deleteTime = typeTime / 2
+            
+            typeTimes.add(typeTime)
+            deleteTimes.add(deleteTime)
+        }
+        
+        // Calculate time points
+        var currentTime: Long = 0
+        texts.indices.forEach { i ->
+            // Time point when typing ends
+            currentTime += typeTimes[i]
+            timePoints.add(currentTime)
+            
+            // Time point when pause ends (using pauseLongTime = 3 seconds)
+            currentTime += pauseLongTime
+            timePoints.add(currentTime)
+            
+            // Time point when deletion ends
+            currentTime += deleteTimes[i]
+            timePoints.add(currentTime)
+            
+            // Add short interval before starting next text
+            currentTime += pauseShortTime
+        }
+        
+        totalTime = currentTime
     }
 
     fun setGradientColors(colors: List<Int>) {
         this.gradientColors.clear()
         this.gradientColors.addAll(colors)
+    }
+    
+    // Method kept for backward compatibility
+    fun setTypeText(text1: String, text2: String, text3: String) {
+        setTypeTexts(text1, text2, text3)
     }
 } 

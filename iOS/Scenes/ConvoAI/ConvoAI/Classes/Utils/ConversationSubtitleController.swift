@@ -87,9 +87,9 @@ private struct WordBuffer {
 /// - Auto: auto detect mode
 /// - Text: Full text subtitles are rendered
 /// - Word: Word-by-word subtitles are rendered
-enum SubtitleRenderMode {
-    case words
-    case text
+@objc public enum SubtitleRenderMode: Int {
+    case words = 0
+    case text = 1
 }
 /// Represents the current status of a subtitle
 ///
@@ -110,21 +110,28 @@ private typealias TurnState = SubtitleStatus
 ///   - userId: User identifier associated with this subtitle
 ///   - text: The actual subtitle text content
 ///   - status: Current status of the subtitle
-struct SubtitleMessage {
+@objc public class SubtitleMessage: NSObject {
     let turnId: Int
     let userId: UInt
     let text: String
     var status: SubtitleStatus
+    
+    init(turnId: Int, userId: UInt, text: String, status: SubtitleStatus) {
+        self.turnId = turnId
+        self.userId = userId
+        self.text = text
+        self.status = status
+    }
 }
 /// Interface for receiving subtitle update events
 /// Implemented by UI components that need to display subtitles
-protocol ConversationSubtitleDelegate: AnyObject {
+@objc public protocol ConversationSubtitleDelegate: AnyObject {
     /// Called when a subtitle is updated and needs to be displayed
     ///
     /// - Parameter subtitle: The updated subtitle message
-    func onSubtitleUpdated(subtitle: SubtitleMessage)
+    @objc func onSubtitleUpdated(subtitle: SubtitleMessage)
     
-    func onDebugLog(_ txt: String)
+    @objc optional func onDebugLog(_ txt: String)
 }
 /// Configuration class for subtitle rendering
 ///
@@ -132,10 +139,16 @@ protocol ConversationSubtitleDelegate: AnyObject {
 ///   - rtcEngine: The RTC engine instance used for real-time communication
 ///   - renderMode: The mode of subtitle rendering (Auto, Text, or Word)
 ///   - callback: Callback interface for subtitle updates
-struct SubtitleRenderConfig {
+@objc public class SubtitleRenderConfig: NSObject {
     let rtcEngine: AgoraRtcEngineKit
     let renderMode: SubtitleRenderMode
     let delegate: ConversationSubtitleDelegate?
+    
+    @objc public init(rtcEngine: AgoraRtcEngineKit, renderMode: SubtitleRenderMode, delegate: ConversationSubtitleDelegate?) {
+        self.rtcEngine = rtcEngine
+        self.renderMode = renderMode
+        self.delegate = delegate
+    }
 }
 
 // MARK: - CovSubRenderController
@@ -143,7 +156,7 @@ struct SubtitleRenderConfig {
 /// Subtitle Rendering Controller
 /// Manages the processing and rendering of subtitles in conversation
 ///
-class ConversationSubtitleController: NSObject {
+@objc public class ConversationSubtitleController: NSObject {
     
     public static let localUserId: UInt = 0
     public static let remoteUserId: UInt = 99
@@ -171,7 +184,7 @@ class ConversationSubtitleController: NSObject {
     private var renderConfig: SubtitleRenderConfig? = nil
     
     private func addLog(_ txt: String) {
-        delegate?.onDebugLog(txt)
+        delegate?.onDebugLog?(txt)
     }
     
     private let queue = DispatchQueue(label: "com.voiceagent.messagequeue", attributes: .concurrent)
@@ -371,7 +384,7 @@ class ConversationSubtitleController: NSObject {
                     continue
                 }
                 // if last turn is interrupte by this buffer
-                if var lastMessage = lastMessage,
+                if let lastMessage = lastMessage,
                    lastMessage.status == .inprogress,
                    buffer.turnId > lastMessage.turnId  {
                     // interrupte last turn
@@ -444,14 +457,14 @@ extension ConversationSubtitleController: AgoraAudioFrameDelegate {
 // MARK: - CovSubRenderControllerProtocol
 extension ConversationSubtitleController {
     
-    func setupWithConfig(_ config: SubtitleRenderConfig) {
+    @objc public func setupWithConfig(_ config: SubtitleRenderConfig) {
         renderConfig = config
         self.delegate = config.delegate
         config.rtcEngine.setAudioFrameDelegate(self)
         config.rtcEngine.addDelegate(self)
     }
         
-    func reset() {
+    @objc public func reset() {
         timer?.invalidate()
         timer = nil
         renderMode = nil

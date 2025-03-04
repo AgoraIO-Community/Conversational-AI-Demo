@@ -1,11 +1,11 @@
-# 🌟 Agora Conversational AI Engine Demo Application
+# 🌟 Conversational AI Demo
 
 
-The Agora Conversational AI Engine redefines human-computer interaction interfaces, breaking through traditional text interactions to achieve highly realistic, natural, and smooth real-time voice conversations, allowing AI to truly "speak". It is suitable for innovative scenarios such as:
+The Agora Conversational AI Engine redefines human-AI interaction interfaces, breaking through traditional text interactions to achieve highly realistic, natural, and smooth real-time voice conversations, allowing AI to truly "speak". It is suitable for innovative scenarios such as:
 
 - 🤖 Intelligent Assistants
 - 💞 Emotional Companionship
-- 🗣️ Oral Practice
+- 🗣️ Language Tutor
 - 🎧 Intelligent Customer Service
 - 📱 Smart Hardware
 - 🎮 Immersive Game NPCs
@@ -118,10 +118,7 @@ bun dev
 
 ## 💡 Feedback
 
-If you encounter any issues during integration or have suggestions for improvement:
-
-- 🤖 Get help from intelligent customer service or contact technical support through [Agora Support](https://ticket.agora.io/form?type_id=&sdk_product=&sdk_platform=&sdk_version=&current=0&project_id=&call_id=&channel_name=)
-- ✉️ Send an email to [support@agora.io](mailto:support@agora.io) for professional support
+- 🤖 If you have any problems or suggestions regarding the sample projects, we welcome you to file an issue.
 
 ## 📜 License
 
