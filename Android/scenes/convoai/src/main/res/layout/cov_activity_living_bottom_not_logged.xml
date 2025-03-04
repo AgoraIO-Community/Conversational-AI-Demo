@@ -24,7 +24,7 @@
         android:lineSpacingExtra="2dp"
         android:lineSpacingMultiplier="1.1"
         android:textColor="@color/ai_icontext1"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

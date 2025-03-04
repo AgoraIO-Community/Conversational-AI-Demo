@@ -81,6 +81,8 @@
         android:textStyle="bold"
         app:backgroundTint="@color/ai_icontext1"
         app:cornerRadius="12dp"
+        android:gravity="center"
+        android:paddingHorizontal="0dp"
         app:layout_constraintBottom_toTopOf="@+id/tvCheckTips"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="6dp"
@@ -128,6 +130,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/common_acceept"
+            android:breakStrategy="high_quality"
+            android:hyphenationFrequency="none"
+            android:justificationMode="inter_word"
             android:textColor="@color/ai_icontext1"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp"/>
