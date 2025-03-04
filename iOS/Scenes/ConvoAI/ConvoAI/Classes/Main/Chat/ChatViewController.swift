@@ -839,7 +839,7 @@ extension ChatViewController: AnimateViewDelegate {
 
 extension ChatViewController: ConversationSubtitleDelegate {
     
-    func onSubtitleUpdated(subtitle: SubtitleMessage) {
+    public func onSubtitleUpdated(subtitle: SubtitleMessage) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             let owner: MessageOwner = (subtitle.userId == ConversationSubtitleController.localUserId) ? .me : .agent
@@ -852,7 +852,7 @@ extension ChatViewController: ConversationSubtitleDelegate {
         }
     }
     
-    func onDebugLog(_ txt: String) {
+    public func onDebugLog(_ txt: String) {
         addLog(txt)
     }
 }
