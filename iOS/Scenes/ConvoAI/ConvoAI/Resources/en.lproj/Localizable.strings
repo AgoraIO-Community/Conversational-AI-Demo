@@ -21,6 +21,7 @@
 "join.start.tips" = "Session Limit: %d minutes.";
 "join.timeout.tips" = "Timeout. Please try again.";
 
+"conversation.ai.hello" = "Greetings, Human";
 "conversation.ai.welcome.title" = "Hey, I'm Conversational AI Engine.";
 "conversation.ai.welcome.description" = "Have you ever questioned the nature of your reality?";
 "conversation.ai.app.name" = "Conversational AI Engine";

@@ -20,6 +20,7 @@
 "join.start.tips" = "每次对话限时%d分钟";
 "join.timeout.tips" = "智能体加入超时，请稍后重试。";
 
+"conversation.ai.hello" = "你好，人类";
 "conversation.ai.welcome.title" = "你好，欢迎体验声网对话式 AI 引擎";
 "conversation.ai.welcome.description" = "秒应智答，零滞畅聊";
 "conversation.ai.app.name" = "对话式 AI 引擎体验";
