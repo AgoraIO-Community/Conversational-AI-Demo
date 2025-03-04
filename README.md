@@ -27,8 +27,7 @@ The Conversational AI Engine redefines the human-machine interaction interface, 
 
 If you encounter integration difficulties:
 
-- 💬 **Option 1**: Get help from intelligent customer service or contact sales personnel at [Agora Support](https://agora-ticket.agora.io/)
-- ✉️ **Option 2**: Send an email to [support@agora.io](mailto:support@agora.io) for inquiries
+- 💬 Get help from intelligent customer service or contact sales personnel at [Agora Support](https://agora-ticket.agora.io/)
 
 ---
 
