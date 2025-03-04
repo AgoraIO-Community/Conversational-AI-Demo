@@ -382,6 +382,7 @@ public class ChatViewController: UIViewController {
         stopAgentRequest()
         leaveChannel()
         stopCovSubRenderController()
+        setupMuteState(state: false)
         animateView.updateAgentState(.idle)
         messageView.clearMessages()
         messageView.isHidden = true
