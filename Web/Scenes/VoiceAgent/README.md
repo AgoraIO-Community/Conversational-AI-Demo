@@ -1,11 +1,11 @@
 # 🌟 Agora Conversational AI Engine Demo Application
 
 
-The Agora Conversational AI Engine redefines human-computer interaction interfaces, breaking through traditional text interactions to achieve highly realistic, natural, and smooth real-time voice conversations, allowing AI to truly "speak". It is suitable for innovative scenarios such as:
+The Agora Conversational AI Engine redefines human-AI interaction interfaces, breaking through traditional text interactions to achieve highly realistic, natural, and smooth real-time voice conversations, allowing AI to truly "speak". It is suitable for innovative scenarios such as:
 
 - 🤖 Intelligent Assistants
 - 💞 Emotional Companionship
-- 🗣️ Oral Practice
+- 🗣️ Language Tutor
 - 🎧 Intelligent Customer Service
 - 📱 Smart Hardware
 - 🎮 Immersive Game NPCs
