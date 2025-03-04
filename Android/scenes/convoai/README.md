@@ -21,9 +21,11 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### ⚙️ 1.2 Running the Sample
 
-1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
-2. Please contact Agora technical support to grant conversational AI permission to your APPID. Only after granting permission can you properly experience the demo features.
-3. Open the `Android` project and fill in properties got above to the root [**gradle.properties**](../../gradle.properties) file.
+1. Follow [Get started with Agora](https://docs-preview.agora.io/en/conversational-ai/get-started/manage-agora-account) to get the **App ID** and **App Certificate** and enable the **Conversational AI** service.
+2. Follow [Generate Customer ID and Customer Secret](https://docs.agora.io/en/conversational-ai/rest-api/restful-authentication#generate-customer-id-and-customer-secret) to get the **Basic Auth Key** and **Basic Auth Secret**.
+3. Get LLM configuration information from LLM vendor.
+4. Get TTS configuration information from TTS vendor.
+5. Open the `Android` project and fill in properties got above to the root [**gradle.properties**](../../gradle.properties) file.
 
 ```
 #----------- AppId --------------
@@ -36,9 +38,9 @@ BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 
 #----------- LLM -----------
 LLM_URL=<LLM Vendor API BASE URL>
-LLM_API_KEY=<LLM Vendor API KEY>
-LLM_SYSTEM_MESSAGES=<LLM Prompt>
-LLM_MODEL=<LLM Model>
+LLM_API_KEY=<LLM Vendor API KEY>(optional)
+LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
+LLM_MODEL=<LLM Model>(optional)
 
 #----------- TTS -----------
 TTS_VENDOR=<TTS Vendor>
@@ -49,20 +51,19 @@ TTS_PARAMS=<TTS Parameters>
 
 | Path                                                                                                    | Description                                      |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [api/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/api)                                    | Conversational AI API implementation and models. |
-| [animation/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/animation)                        | Animation effects for agent interaction.         |
-| [constant/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/constant)                          | Constants and enums definition.                  |
-| [subRender/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/subRender/v2)                     | Subtitle rendering component.                    |
-| [rtc/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/rtc)                                    | RTC related implementations.                     |
-| [ui/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/ui)                                      | UI components and activities.                    |
-| [utils/](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/utils)                                | Utility classes and helper functions.            |
-| [CovLivingActivity.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovLivingActivity.kt)   | Main activity for AI conversation.               |
-| [CovSettingsDialog.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
-| [CovAgentInfoDialog.kt](Android/scenes/convoai/src/main/java/io/agora/scene/convoai/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
+| [api/](src/main/java/io/agora/scene/convoai/api)                                    | Conversational AI API implementation and models. |
+| [animation/](src/main/java/io/agora/scene/convoai/animation)                        | Animation effects for agent interaction.         |
+| [constant/](src/main/java/io/agora/scene/convoai/constant)                          | Constants and enums definition.                  |
+| [subRender/](src/main/java/io/agora/scene/convoai/subRender/v2)                     | Subtitle rendering component.                    |
+| [rtc/](src/main/java/io/agora/scene/convoai/rtc)                                    | RTC related implementations.                     |
+| [ui/](src/main/java/io/agora/scene/convoai/ui)                                      | UI components and activities.                    |
+| [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/ui/CovLivingActivity.kt)   | Main activity for AI conversation.               |
+| [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
+| [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
 
 ## 📚 3. Related Resources
 
-- Check our [Conversational AI Engine Document]() to learn more about Conversational AI Engine
+- Check our [Conversational AI Engine Document](https://docs.agora.io/en/conversational-ai/overview/product-overview) to learn more about Conversational AI Engine
 - Visit [Agora SDK Samples](https://github.com/AgoraIO) for more tutorials
 - Explore repositories managed by developer communities at [Agora Community](https://github.com/AgoraIO-Community)
 - If you encounter issues during integration, feel free to ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
