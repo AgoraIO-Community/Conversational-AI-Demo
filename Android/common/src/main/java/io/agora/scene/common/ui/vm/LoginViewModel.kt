@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.agora.scene.common.R
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.net.ApiManager
 import io.agora.scene.common.net.ApiManagerService
@@ -19,9 +20,7 @@ class LoginViewModel : ViewModel() {
        private const val TAG = "LoginViewModel"
     }
 
-    private val apiService by lazy {
-        ApiManager.getService(ApiManagerService::class.java)
-    }
+    private fun getApiService() = ApiManager.getService(ApiManagerService::class.java)
 
     private val _userInfoLiveData: MutableLiveData<SSOUserInfo?> = MutableLiveData()
     val userInfoLiveData: LiveData<SSOUserInfo?> get() = _userInfoLiveData
@@ -29,7 +28,7 @@ class LoginViewModel : ViewModel() {
     fun getUserInfoByToken(token: String) {
         viewModelScope.launch {
             runCatching {
-                apiService.ssoUserInfo("Bearer $token")
+                getApiService().ssoUserInfo("Bearer $token")
             }.onSuccess { result ->
                 if (result.isSuccess && result.data != null) {
                     SSOUserManager.saveUser(result.data!!)
@@ -37,12 +36,12 @@ class LoginViewModel : ViewModel() {
                 } else {
                     SSOUserManager.logout()
                     _userInfoLiveData.postValue(null)
-                    ToastUtil.show("Login expired")
+                    ToastUtil.show(R.string.common_login_expired)
                 }
             }.onFailure { e ->
                 SSOUserManager.logout()
                 _userInfoLiveData.postValue(null)
-                ToastUtil.show("Login expired")
+                ToastUtil.show(R.string.common_login_expired)
             }
         }
     }

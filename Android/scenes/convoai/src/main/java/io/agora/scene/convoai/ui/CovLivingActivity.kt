@@ -1000,13 +1000,12 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         updateLoginStatus(tempToken.isNotEmpty())
         mLoginViewModel.userInfoLiveData.observe(this) { userInfo ->
             if (userInfo != null) {
-                mLoginDialog?.dismiss()
-                mLoginDialog = null
                 showLoginLoading(false)
                 updateLoginStatus(true)
                 getPresetTokenConfig()
             } else {
                 showLoginLoading(false)
+                updateLoginStatus(false)
             }
         }
     }
