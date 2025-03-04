@@ -9,12 +9,14 @@ import UIKit
 import Common
 
 class TypewriterLabel: UILabel {
-    private var text1 = ResourceManager.L10n.Conversation.appHello
-    private var text2 = ResourceManager.L10n.Conversation.appWelcomeTitle
-    private var text3 = ResourceManager.L10n.Conversation.appWelcomeDescription
+    private let texts = [
+        ResourceManager.L10n.Conversation.appHello,
+        ResourceManager.L10n.Conversation.appWelcomeTitle,
+        ResourceManager.L10n.Conversation.appWelcomeDescription
+    ]
     private let cursor = "●"
     
-    private let speed: Double = 12
+    private let speed: Double = 22
     private let pauseTime1: Double = 0.5
     private let pauseTime2: Double = 1.5
     private let blinkSpeed: Double = 1
@@ -22,16 +24,18 @@ class TypewriterLabel: UILabel {
     private var displayLink: CADisplayLink?
     private var startTime: CFTimeInterval = 0
     
-    private var typeTime1: Double { Double(text1.count) / speed }
-    private var typeTime2: Double { Double(text2.count) / speed }
-    private var typeTime3: Double { Double(text3.count) / speed }
-    private var deleteTime1: Double { Double(text1.count) / speed }
-    private var deleteTime2: Double { Double(text2.count) / speed }
-    private var deleteTime3: Double { Double(text3.count) / speed }
+    private var typeTimes: [Double] { texts.map { Double($0.count) / speed } }
+    private var deleteTimes: [Double] { texts.map { Double($0.count) / speed } }
+    
     private var totalTime: Double {
-        typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 +
-        typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 +
-        typeTime3 + pauseTime2 + deleteTime3 + pauseTime1
+        var time: Double = 0
+        for i in 0..<texts.count {
+            time += typeTimes[i] + pauseTime2 + deleteTimes[i]
+            if i < texts.count - 1 {
+                time += pauseTime1
+            }
+        }
+        return time
     }
     
     private var gradientColors: [UIColor] = [
@@ -86,58 +90,51 @@ class TypewriterLabel: UILabel {
         let currentTime = CACurrentMediaTime() - startTime
         let cycleTime = currentTime.truncatingRemainder(dividingBy: totalTime)
         
+        var currentPosition = 0.0
         var visibleText = ""
+        var isTyping = false
         
-        if cycleTime < typeTime1 {
-            let charCount = Int(cycleTime * speed)
-            visibleText = String(text1.prefix(charCount))
-        }
-        else if cycleTime < typeTime1 + pauseTime2 {
-            visibleText = text1
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 {
-            let charCount = text1.count - Int((cycleTime - typeTime1 - pauseTime2) * speed)
-            visibleText = String(text1.prefix(max(0, charCount)))
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 {
-            visibleText = ""
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 {
-            let charCount = Int((cycleTime - typeTime1 - pauseTime2 - deleteTime1 - pauseTime1) * speed)
-            visibleText = String(text2.prefix(charCount))
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 {
-            visibleText = text2
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 {
-            let charCount = text2.count - Int((cycleTime - typeTime1 - pauseTime2 - deleteTime1 - pauseTime1 - typeTime2 - pauseTime2) * speed)
-            visibleText = String(text2.prefix(max(0, charCount)))
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 {
-            visibleText = ""
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 {
-            let charCount = Int((cycleTime - typeTime1 - pauseTime2 - deleteTime1 - pauseTime1 - typeTime2 - pauseTime2 - deleteTime2 - pauseTime1) * speed)
-            visibleText = String(text3.prefix(charCount))
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 + pauseTime2 {
-            visibleText = text3
-        }
-        else if cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 + pauseTime2 + deleteTime3 {
-            let charCount = text3.count - Int((cycleTime - typeTime1 - pauseTime2 - deleteTime1 - pauseTime1 - typeTime2 - pauseTime2 - deleteTime2 - pauseTime1 - typeTime3 - pauseTime2) * speed)
-            visibleText = String(text3.prefix(max(0, charCount)))
-        }
-        
-        if cycleTime < typeTime1 ||
-            (cycleTime >= typeTime1 && cycleTime < typeTime1 + pauseTime2) ||
-            (cycleTime >= typeTime1 + pauseTime2 && cycleTime < typeTime1 + pauseTime2 + deleteTime1) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 && cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 && cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 && cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 && cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 && cycleTime < typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 + pauseTime2) ||
-            (cycleTime >= typeTime1 + pauseTime2 + deleteTime1 + pauseTime1 + typeTime2 + pauseTime2 + deleteTime2 + pauseTime1 + typeTime3 + pauseTime2 && cycleTime < totalTime) {
+        for i in 0..<texts.count {
+            let typeTime = typeTimes[i]
+            let deleteTime = deleteTimes[i]
             
+            if cycleTime < currentPosition + typeTime {
+                // Typing phase
+                let charCount = Int((cycleTime - currentPosition) * speed)
+                visibleText = String(texts[i].prefix(charCount))
+                isTyping = true
+                break
+            }
+            currentPosition += typeTime
+            
+            if cycleTime < currentPosition + pauseTime2 {
+                // Pause phase with full text
+                visibleText = texts[i]
+                isTyping = true
+                break
+            }
+            currentPosition += pauseTime2
+            
+            if cycleTime < currentPosition + deleteTime {
+                // Deleting phase
+                let charCount = texts[i].count - Int((cycleTime - currentPosition) * speed)
+                visibleText = String(texts[i].prefix(max(0, charCount)))
+                isTyping = true
+                break
+            }
+            currentPosition += deleteTime
+            
+            if i < texts.count - 1 {
+                if cycleTime < currentPosition + pauseTime1 {
+                    // Empty pause phase
+                    visibleText = ""
+                    break
+                }
+                currentPosition += pauseTime1
+            }
+        }
+        
+        if isTyping {
             let isVisible = sin(currentTime * .pi * 2 * blinkSpeed) >= 0
             if isVisible {
                 visibleText += cursor
