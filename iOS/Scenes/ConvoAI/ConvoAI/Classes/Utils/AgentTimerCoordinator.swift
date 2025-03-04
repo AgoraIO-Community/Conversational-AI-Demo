@@ -48,7 +48,6 @@ class AgentTimerCoordinator: NSObject {
     private func initDurationLimitTimer() {
         guard let manager = AppContext.preferenceManager(),
               let preset = manager.preference.preset else {
-            self.delegate?.agentUseLimitedTimerStarted(duration: useDuration)
             return
         }
         
