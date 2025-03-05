@@ -47,8 +47,9 @@ TTS_VENDOR=<TTS Vendor>
 TTS_PARAMS=<TTS Parameters>
 ```
 
-### 🗂️ 2. Source Code Sitemap
+## 🗂️ 2. Source Code Sitemap
 
+### 2.1 Basic Sitemap
 | Path                                                                                                    | Description                                      |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | [api/](src/main/java/io/agora/scene/convoai/api)                                    | Conversational AI API implementation and models. |
@@ -60,6 +61,12 @@ TTS_PARAMS=<TTS Parameters>
 | [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/ui/CovLivingActivity.kt)   | Main activity for AI conversation.               |
 | [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
 | [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
+
+### 2.2 Real-time Subtitles
+When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
+- To implement this feature, you need to use the [Open Source Subtitle Processing Module](src/main/java/io/agora/scene/convoai/subRender/v2)
+- ⚠️ The Open Source subtitle processing module is developed in Kotlin. If your project is a pure Java project, you can refer to Google's official documentation [Add Kotlin to an existing app](https://developer.android.com/kotlin/add-kotlin) to integrate the corresponding files into your project
+
 
 ## 📚 3. Related Resources
 

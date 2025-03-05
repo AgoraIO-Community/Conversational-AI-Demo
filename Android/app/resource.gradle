@@ -3,7 +3,7 @@ apply plugin: 'de.undercouch.download'
 task downloadConvoAIResources {
     def destFile = new File(buildDir, 'Convo_AI_Demo_Resource.zip')
     download {
-        src 'https://accktvpic.oss-cn-beijing.aliyuncs.com/ConvoAI/Resource/Convo_AI_Demo_v1.0.0_Resource.zip'
+        src 'https://download.agora.io/demo/release/Convo_AI_Demo_v1.0.0_Resource.zip'
         dest destFile
         overwrite false
     }
