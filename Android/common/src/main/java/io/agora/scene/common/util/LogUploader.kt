@@ -162,7 +162,6 @@ object LogUploader {
         }
     }
 
-    // 处理有返回数据的 API 请求
     fun <T : Any> requestWithData(
         block: suspend () -> BaseResponse<T>,
         onSuccess: (T) -> Unit,
@@ -193,7 +192,6 @@ object LogUploader {
         }
     }
 
-    // 处理无返回数据的 API 请求
     fun requestNoData(
         block: suspend () -> BaseResponse<Unit>,
         onSuccess: () -> Unit,
