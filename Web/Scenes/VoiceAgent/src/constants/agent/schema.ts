@@ -198,10 +198,10 @@ export const agentPresetSchema = z.object({
 export const agentPresetFallbackData = {
   index: -1,
   name: EAgentPresetMode.CUSTOM,
-  display_name: isCN ? '自定义' : 'Custom',
+  display_name: isCN ? 'Custom' : 'Custom',
   preset_type: 'custom',
   default_language_code: isCN ? EDefaultLanguage.ZH_CN : EDefaultLanguage.EN_US,
-  default_language_name: isCN ? '中文' : 'English',
+  default_language_name: isCN ? 'Chinese' : 'English',
   support_languages: [
     {
       language_code: EDefaultLanguage.EN_US,
@@ -209,7 +209,7 @@ export const agentPresetFallbackData = {
     },
     {
       language_code: EDefaultLanguage.ZH_CN,
-      language_name: '中文',
+      language_name: 'Chinese',
     },
   ],
 }
