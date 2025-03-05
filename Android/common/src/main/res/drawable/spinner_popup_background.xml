@@ -1,5 +1,4 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 背景色 -->
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#1D1D1D" />
@@ -10,14 +9,12 @@
         </shape>
     </item>
 
-    <!-- 顶部横线 -->
     <item android:top="0dp" android:height="2dp">
         <shape android:shape="rectangle">
             <solid android:color="#00C2FF" />
         </shape>
     </item>
 
-    <!-- 边框 -->
     <item>
         <shape android:shape="rectangle">
             <stroke

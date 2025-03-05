@@ -41,5 +41,5 @@
         android:background="@drawable/message_mine_item_border"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
-        tools:text="内容" />
+        tools:text="Content" />
 </LinearLayout>

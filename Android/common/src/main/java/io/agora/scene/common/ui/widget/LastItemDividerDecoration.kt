@@ -13,7 +13,7 @@ class LastItemDividerDecoration(
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val position = parent.getChildAdapterPosition(view)
-        if (position != parent.adapter?.itemCount?.minus(1)) { // 不是最后一个item
+        if (position != parent.adapter?.itemCount?.minus(1)) {
             outRect.bottom = dividerHeight
         }
     }
@@ -23,7 +23,7 @@ class LastItemDividerDecoration(
         val right = parent.width - parent.paddingRight
 
         val childCount = parent.childCount
-        for (i in 0 until childCount - 1) { // 不绘制最后一个item的分割线
+        for (i in 0 until childCount - 1) {
             val child = parent.getChildAt(i)
             val params = child.layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
