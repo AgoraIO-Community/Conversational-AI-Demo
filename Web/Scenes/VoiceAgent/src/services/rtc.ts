@@ -48,13 +48,8 @@ export class RtcService extends EventService<IRtcEvents> {
     super()
     this._joined = false
     this.localTracks = {}
-    // todo: tmp add dev param
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(AgoraRTC as any).setParameter('ENABLE_AUDIO_PTS_METADATA', true)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(AgoraRTC as any).setParameter('GATEWAY_ADDRESS', [
-      { ip: '120.195.180.30', port: 18000 },
-    ])
     AgoraRTC.enableLogUpload();
     this.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
     this.agoraRTC = AgoraRTC
