@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   const url = `${agentServer}${REMOTE_SSO_LOGIN}`
 
-  // 校验参数
+  // validate params
   const queryParams = querySchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams)
   )
