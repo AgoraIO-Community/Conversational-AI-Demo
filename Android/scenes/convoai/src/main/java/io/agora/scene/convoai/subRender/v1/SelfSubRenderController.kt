@@ -25,7 +25,7 @@ class SelfSubRenderController(
 
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private var mMessageParser = MessageParser()
-    private var enable = false
+    private var enable = true
 
     init {
         config.rtcEngine.addHandler(this)

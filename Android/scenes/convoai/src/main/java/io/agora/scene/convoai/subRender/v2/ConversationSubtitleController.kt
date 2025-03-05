@@ -166,7 +166,7 @@ class ConversationSubtitleController(
     private val agentTurnQueue = ConcurrentLinkedQueue<TurnMessageInfo>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var tickerJob: Job? = null
-    private var enable = false
+    private var enable = true
 
     init {
         config.rtcEngine.addHandler(this)
