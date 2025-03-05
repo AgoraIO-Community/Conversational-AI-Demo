@@ -46,11 +46,13 @@ This section mainly describes how to quickly run the Conversational AI Demo.
     static let TTS_PARAMS: [String : Any] = <TTS Parameters>
 ```
 
-### ⚙️ 2. Source Code Sitemap
+## 🗂️ 2. Source Code Sitemap
+
+### ⚙️ 2.1 Basic Sitemap
 
 | Path                                                                                                          | Description                                     |
 | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| [AgentManager.swift](ConvoAI/Classes/Manager/AgentManager.swift)                                              | Conversational AI API implementation and models |
+| [AgentManager.swift](ConvoAI/Classes/Manager/AgentManager.swift)                                              | Conversational AI API implementation            |
 | [RTCManager.swift](ConvoAI/Classes/Manager/RTCManager.swift)                                                  | RTC related implementations                     |
 | [AgentPreferenceManager.swift](ConvoAI/Classes/Manager/AgentPreferenceManager.swift)                          | Agent state management                          |
 | [Main/](ConvoAI/Classes/Main)                                                                                 | UI components and view cotrollers               |
@@ -58,7 +60,14 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 | [AgentInformationViewController.swift](ConvoAI/Classes/Main/Setting/VC/AgentInformationViewController.swift)  | Information dialog showing agent status         |
 | [AgentSettingViewController.swift](ConvoAI/Classes/Main/Setting/VC/AgentSettingViewController.swift)          | Settings dialog for agent configuration         |
 | [Utils/](ConvoAI/Classes/Utils)                                                                               | Utility classes and helper functions            |
-| [ConversationSubtitleController.swift](ConvoAI/Classes/Utils/ConversationSubtitleController.swift)            | Subtitle rendering component                    |
+| [SubRender/](ConvoAI/Classes/Utils/SubRender)                                                                 | Subtitle rendering component                    |
+
+### 2.2 Real-time Subtitles
+
+When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
+- To implement this feature, you need to use the [Open Source Subtitle Processing Module](ConvoAI/Classes/Utils/SubRender)
+- ⚠️ The Open Source subtitle processing module is developed in Swift. If your project is a pure OC project, you can refer to Apple's official documentation [Importing Swift into Objective-C](https://developer.apple.com/documentation/swift/importing-swift-into-objective-c) to integrate the corresponding files into your project
+
 
 ## 📚 3. Related Resources
 
