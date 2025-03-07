@@ -156,7 +156,7 @@ class AgentManager: AgentAPI {
             }
 
             if !AppContext.shared.llmSystemMessages.isEmpty {
-                llmConfig["system_messages"] = AppContext.shared.llmSystemMessages
+                llmConfig["prompt"] = AppContext.shared.llmSystemMessages
             }
 
             if !AppContext.shared.llmModel.isEmpty {
