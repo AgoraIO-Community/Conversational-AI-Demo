@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "agora-ai-scenarios",
+    "sourceDir": "test_convoai",
     "docker": "hub.agoralab.co/server/aes_build_android:latest",
     "non-publish": [
         "command": "./cicd/build_scripts/build_android.sh",
