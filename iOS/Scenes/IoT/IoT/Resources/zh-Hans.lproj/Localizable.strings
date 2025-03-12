@@ -1,0 +1,94 @@
+"error.network" = "请求失败：";
+"error.room.error" = "房间已经不存在了。请发起一个新的会话。";
+"error.join.error" = "智能体加入失败，请稍后重试。";
+"error.join.error.resource.limit" = "当前预设资源超限，请稍后再试";
+"error.network.disconnect" = "网络异常，请检查网络设置";
+"error.microphone.permission.alert.title" = "没有麦克风权限";
+"error.microphone.permission.alert.description" = "请在设置中打开麦克风权限";
+"error.permission.alert.cancel" = "取消";
+"error.permission.alert.confirm" = "设置";
+
+"iot.info.title" = "对话式 AI 设备";
+"iot.info.device" = "%@个设备";
+"iot.common.submit" = "确认";
+"iot.common.cancel" = "取消";
+"iot.common.alert.confim" = "我知道了";
+
+"iot.permission.title" = "开启权限和开关";
+"iot.permission.description" = "需要开启以下权限和开关，用于添加附近设备";
+"iot.permission.go_button" = "去开启";
+"iot.permission.item.bluetooth" = "蓝牙";
+"iot.permission.item.location" = "位置信息";
+"iot.permission.item.wifi" = "2.4G Wi-Fi";
+"iot.permission.bluetooth.enable" = "启用蓝牙";
+"iot.permission.bluetooth.unauthorized" = "蓝牙权限被拒绝";
+"iot.permission.location.unauthorized" = "位置权限被拒绝";
+"iot.permission.button.next" = "下一步";
+
+"iot.device.add.title" = "添加设备中";
+"iot.device.add.progress" = "添加设备中...";
+"iot.device.add.success.title" = "添加成功";
+"iot.device.add.success.description" = "注意：设备添加信息将在本地保存，重新安装app后需要重新添加设备。";
+
+"iot.device.scanning.title" = "正在扫描...";
+"iot.device.scanning.description" = "请确保智能设备已打开配网开关，且位于手机附近";
+
+"iot.device.empty.welcome" = "欢迎";
+"iot.device.empty.description" = "让我们现在添加设备吧";
+"iot.device.empty.add_button" = "添加设备";
+
+"iot.device.setup.instruction" = "按住配网按钮 3秒 进入配网状态";
+"iot.device.setup.instruction.sub" = "3秒";
+"iot.device.setup.permission_description" = "配对过程中会请求下列权限和开关";
+"iot.device.setup.complete" = "已完成上述操作";
+
+"iot.device.default_preset" = "默认预设";
+
+"iot.device.step1.title" = "连接电源";
+"iot.device.step1.description" = "将设备连接到电源并打开";
+"iot.device.step2.title" = "等待启动";
+"iot.device.step2.description" = "设备指示灯将亮起，等待其完成启动";
+"iot.device.step3.title" = "网络连接";
+"iot.device.step3.description" = "确保您的手机已连接到Wi-Fi网络";
+
+"iot.device.search.failed.title" = "搜索失败";
+"iot.device.search.failed.description" = "请检查设备是否处于待配网状态";
+"iot.device.search.failed.retry" = "重新扫描";
+"iot.device.search.failed.tip" = "请确保智能设备已打开配网开关，且位于手机附近";
+
+"iot.error.alert.title" = "无法连接到智能设备！";
+"iot.error.alert.subtitle" = "请按照以下步骤检查：";
+"iot.error.check.wifi" = "检查Wi-Fi密码是否正确";
+"iot.error.check.pairing" = "检查设备是否处于待配网状态";
+"iot.error.check.router" = "检查设备是否靠近路由器";
+
+"iot.device.rename.title" = "修改名称";
+"iot.device.rename.success" = "设备名称已更新";
+"iot.device.rename.placeholder" = "请输入名字";
+"iot.device.rename.tips" = "限10个字符，且不能为空";
+
+"iot.device.settings.title" = "设置";
+"iot.device.settings.preset" = "预设人设";
+"iot.device.settings.language" = "语言";
+"iot.device.settings.language.title" = "选择语言";
+"iot.device.settings.advanced" = "高级设置";
+"iot.device.settings.interrupt" = "启用 优雅打断";
+"iot.device.settings.reconnect" = "重新配网";
+"iot.device.settings.delete" = "删除设备";
+"iot.device.settings.delete.title" = "您是否要删除%@？";
+"iot.device.settings.delete.description" = "删除后，将不能更改它的对话设定。是否继续删除？";
+"iot.device.settings.delete.confirm" = "删除";
+"iot.device.settings.save.title" = "您是否要保存当前更改？";
+"iot.device.settings.save.description" = "确认更改后，会在智能设备下次联网时修改配置。";
+"iot.device.settings.save.confirm" = "确认更改";
+"iot.device.settings.save.discard" = "放弃更改";
+
+"iot.device.search.title" = "扫描附近设备";
+
+"iot.wifi.settings.title" = "选择2.4GHz Wi-Fi网络";
+"iot.wifi.settings.subtitle" = "输入Wi-Fi密码";
+"iot.wifi.settings.tip" = "提示：不支持5G Wi-Fi";
+"iot.wifi.settings.error" = "请输入 2.4G 无线网络";
+"iot.wifi.settings.password.placeholder" = "密码";
+"iot.wifi.settings.switch" = "更换";
+"iot.wifi.settings.next" = "下一步";

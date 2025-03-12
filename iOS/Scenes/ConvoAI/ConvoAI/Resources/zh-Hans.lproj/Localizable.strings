@@ -103,3 +103,6 @@
 "devmode.close" = "关闭开发者模式";
 "devmode.graph" = "graph id";
 "devmode.server" = "服务器";
+
+"iot.info.title" = "对话式 AI 设备";
+"iot.info.device" = "%@个设备";

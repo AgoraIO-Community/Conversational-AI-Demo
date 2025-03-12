@@ -153,6 +153,11 @@ extension ResourceManager {
             public static let close = ResourceManager.localizedString("devmode.close")
             public static let server = ResourceManager.localizedString("devmode.server")
         }
+        
+        public enum Iot {
+            public static let title = ResourceManager.localizedString("iot.info.title")
+            public static let device = ResourceManager.localizedString("iot.info.device")
+        }
     }
 }
 
