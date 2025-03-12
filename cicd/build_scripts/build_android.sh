@@ -124,30 +124,7 @@ if [[ "${dev_env_config_url}" != *"https://"* ]]; then
   echo "Added https prefix to config file URL: ${dev_env_config_url}"
 fi
 
-# try downloading with additional headers and without following redirects
-curl --fail \
-     --show-error \
-     -H "X-JFrog-Art-Api:${JFROG_API_KEY}" \
-     -H "Accept: application/json" \
-     -H "Content-Type: application/json" \
-     --max-redirs 0 \
-     -o app/src/main/assets/dev_env_config.json \
-     "${dev_env_config_url}"
-
-# check if download was successful
-if [ $? -ne 0 ] || [ ! -s app/src/main/assets/dev_env_config.json ]; then
-    echo "Error: Failed to download config file"
-    [ -f app/src/main/assets/dev_env_config.json ] && cat app/src/main/assets/dev_env_config.json
-    exit 1
-fi
-
-# verify the downloaded file is JSON
-if ! grep -q '^{' app/src/main/assets/dev_env_config.json; then
-    echo "Error: Downloaded file is not JSON"
-    cat app/src/main/assets/dev_env_config.json
-    exit 1
-fi
-
+curl -L -v -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o app/src/main/assets/dev_env_config.json "${dev_env_config_url}" || exit 1
 echo "Environment config file download completed, saved to app/src/main/assets/dev_env_config.json"
 
 # download native sdk if need
