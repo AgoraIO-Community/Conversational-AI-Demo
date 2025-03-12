@@ -59,4 +59,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.apk || true"
 }
 
-pipelineLoad(this, "AES", "build", "android", "aes_android")
+pipelineLoad(this, "AgoraAIScenarios", "build", "android", "apiexample_linux")
