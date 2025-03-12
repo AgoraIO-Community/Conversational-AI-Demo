@@ -88,8 +88,8 @@ cd Android
 
 # config android environment
 source ~/.bashrc
+export ANDROID_HOME=/usr/lib/android_sdk
 ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
-echo ANDROID_HOME: $ANDROID_HOME
 
 ## use open jdk 17
 SYSTEM=$(uname -s)
@@ -103,6 +103,9 @@ export JAVA_HOME=/tmp/jdk-17.0.2
 export PATH=$JAVA_HOME/bin:$PATH
 java --version
 fi
+
+sed -ie "s#google()#maven { url \"https\://maven.aliyun.com/repository/public\" }\n        google()#g" settings.gradle
+sed -ie "s#https://services.gradle.org/distributions#https://mirrors.cloud.tencent.com/gradle#g" gradle/wrapper/gradle-wrapper.properties
 
 # 确认环境变量是否已正确加载
 echo "检查关键环境变量:"
