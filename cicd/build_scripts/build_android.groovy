@@ -9,11 +9,11 @@ compileConfig = [
     "sourceDir": "agora-ai-scenarios",
     "docker": "hub.agoralab.co/server/aes_build_android:latest",
     "non-publish": [
-        "command": "cicd/build_scripts/build_android.sh",
+        "command": "./cicd/build_scripts/build_android.sh",
         "extraArgs": "",
     ],
     "publish": [
-        "command": "cicd/build_scripts/build_android.sh",
+        "command": "./cicd/build_scripts/build_android.sh",
         "extraArgs": "",
     ]
 ]
