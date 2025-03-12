@@ -48,10 +48,12 @@ import io.agora.scene.convoai.animation.CovBallAnim
 import io.agora.scene.convoai.animation.CovBallAnimCallback
 import io.agora.scene.convoai.api.AgentRequestParams
 import io.agora.scene.convoai.api.CovAgentApiManager
-import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
+import io.agora.scene.convoai.iot.api.CovIotApiManager
+import io.agora.scene.convoai.iot.manager.CovIotPresetManager
+import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.subRender.v1.SelfRenderConfig
 import io.agora.scene.convoai.subRender.v1.SelfSubRenderController
@@ -382,6 +384,17 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         CovAgentApiManager.fetchPresets { err, presets ->
             if (err == null) {
                 CovAgentManager.setPresetList(presets)
+                cont.resume(true)
+            } else {
+                cont.resume(false)
+            }
+        }
+    }
+
+    private suspend fun fetchIotPresetsAsync(): Boolean = suspendCoroutine { cont ->
+        CovIotApiManager.fetchPresets { err, presets ->
+            if (err == null) {
+                CovIotPresetManager.setPresetList(presets)
                 cont.resume(true)
             } else {
                 cont.resume(false)
@@ -835,13 +848,19 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
             clTop.btnInfo.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
-                    infoDialog = CovAgentInfoDialog.newInstance({
-                        infoDialog = null
-                    }) {
-                        showLogoutConfirmDialog {
-                            infoDialog?.dismiss()
+                    infoDialog = CovAgentInfoDialog.newInstance(
+                        {
+                            infoDialog = null
+                        },
+                        {
+                            showLogoutConfirmDialog {
+                                infoDialog?.dismiss()
+                            }
+                        },
+                        {
+                            CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
                         }
-                    }
+                    )
                     infoDialog?.updateConnectStatus(connectionState)
                     infoDialog?.show(supportFragmentManager, "InfoDialog")
                 }
@@ -1012,7 +1031,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         coroutineScope.launch {
             val deferreds = listOf(
                 async { updateTokenAsync() },
-                async { fetchPresetsAsync() }
+                async { fetchPresetsAsync() },
+                async { fetchIotPresetsAsync() }
             )
             deferreds.awaitAll()
         }

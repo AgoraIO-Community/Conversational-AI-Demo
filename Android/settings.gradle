@@ -21,3 +21,5 @@ rootProject.name = "Agora Convo AI"
 include ':app'
 include ':common'
 include ':scenes:convoai'
+include ':scenes:convoai:bleLib'
+include ':scenes:convoai:bleUI'
