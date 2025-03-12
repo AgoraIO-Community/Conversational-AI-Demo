@@ -79,6 +79,7 @@ echo build_time: $build_time
 echo release_version: $release_version
 echo short_version: $short_version
 echo sdk_url: $sdk_url
+echo toolbox_url: $toolbox_url
 echo pwd: `pwd`
 
 
@@ -129,8 +130,26 @@ if [[ ! -z ${sdk_url} && "${sdk_url}" != 'none' ]]; then
 fi
 
 # config app global properties
-sed -ie "s#$(sed -n '/AG_APP_ID/p' gradle.properties)#AG_APP_ID=${APP_ID}#g" gradle.properties
-sed -ie "s#$(sed -n '/AG_APP_CERTIFICATE/p' gradle.properties)#AG_APP_CERTIFICATE=${AG_APP_CERTIFICATE}#g" gradle.properties
+# 根据toolbox_url包含的关键字选择对应的APP_ID
+if [[ "${toolbox_url}" != *"https://"* ]]; then
+  # 如果URL不包含https://前缀，添加它
+  toolbox_url="https://${toolbox_url}"
+  echo "已添加https前缀: ${toolbox_url}"
+fi
+
+if [[ "${toolbox_url}" == *"dev"* ]]; then
+  echo "使用开发环境APP_ID (dev)"
+  APP_ID_VAR=${APP_ID_DEV}
+elif [[ "${toolbox_url}" == *"staging"* ]]; then
+  echo "使用预发布环境APP_ID (staging)"
+  APP_ID_VAR=${APP_ID_STAGING}
+else
+  echo "使用生产环境APP_ID (prod)"
+  APP_ID_VAR=${APP_ID_PROD}
+fi
+
+sed -ie "s#$(sed -n '/AG_APP_ID/p' gradle.properties)#AG_APP_ID=${APP_ID_VAR}#g" gradle.properties
+sed -ie "s#$(sed -n '/TOOLBOX_SERVER_HOST/p' gradle.properties)#TOOLBOX_SERVER_HOST=${toolbox_url}#g" gradle.properties
 cat gradle.properties
 
 # Compile apk
