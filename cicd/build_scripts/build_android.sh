@@ -80,16 +80,11 @@ echo release_version: $release_version
 echo short_version: $short_version
 echo sdk_url: $sdk_url
 echo toolbox_url: $toolbox_url
+echo dev_env_config_url: $dev_env_config_url
 echo pwd: `pwd`
-
 
 # enter android project direction
 cd Android
-
-# config android environment
-source ~/.bashrc
-export ANDROID_HOME=/usr/lib/android_sdk
-ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
 
 ## use open jdk 17
 SYSTEM=$(uname -s)
@@ -107,16 +102,35 @@ fi
 sed -ie "s#google()#maven { url \"https\://maven.aliyun.com/repository/public\" }\n        google()#g" settings.gradle
 sed -ie "s#https://services.gradle.org/distributions#https://mirrors.cloud.tencent.com/gradle#g" gradle/wrapper/gradle-wrapper.properties
 
-# 确认环境变量是否已正确加载
-echo "检查关键环境变量:"
+# verify environment variables are loaded correctly
+echo "Checking key environment variables:"
 echo "ANDROID_HOME: $ANDROID_HOME"
 echo "JAVA_HOME: $JAVA_HOME"
 java --version
 
+# config android environment
+source ~/.bashrc
+export ANDROID_HOME=/usr/lib/android_sdk
+ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
+
+# download environment configuration file
+echo "Start downloading environment config file..."
+mkdir -p app/src/main/assets
+
+# ensure dev_env_config_url contains https:// prefix
+if [[ "${dev_env_config_url}" != *"https://"* ]]; then
+  # if URL doesn't contain https:// prefix, add it
+  dev_env_config_url="https://${dev_env_config_url}"
+  echo "Added https prefix to config file URL: ${dev_env_config_url}"
+fi
+
+curl -L -v -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o app/src/main/assets/dev_env_config.json "${dev_env_config_url}" || exit 1
+echo "Environment config file download completed, saved to app/src/main/assets/dev_env_config.json"
+
 # download native sdk if need
 if [[ ! -z ${sdk_url} && "${sdk_url}" != 'none' ]]; then
     zip_name=${sdk_url##*/}
-    echo "开始下载SDK..."
+    echo "Start downloading SDK..."
     curl -L -v -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -O $sdk_url || exit 1
     7za x ./$zip_name -y
 
@@ -134,21 +148,21 @@ if [[ ! -z ${sdk_url} && "${sdk_url}" != 'none' ]]; then
 fi
 
 # config app global properties
-# 根据toolbox_url包含的关键字选择对应的APP_ID
+# select corresponding APP_ID based on toolbox_url keywords
 if [[ "${toolbox_url}" != *"https://"* ]]; then
-  # 如果URL不包含https://前缀，添加它
+  # if URL doesn't contain https:// prefix, add it
   toolbox_url="https://${toolbox_url}"
-  echo "已添加https前缀: ${toolbox_url}"
+  echo "Added https prefix: ${toolbox_url}"
 fi
 
 if [[ "${toolbox_url}" == *"dev"* ]]; then
-  echo "使用开发环境APP_ID (dev)"
+  echo "Using development environment APP_ID (dev)"
   APP_ID_VAR=${APP_ID_DEV}
 elif [[ "${toolbox_url}" == *"staging"* ]]; then
-  echo "使用预发布环境APP_ID (staging)"
+  echo "Using staging environment APP_ID (staging)"
   APP_ID_VAR=${APP_ID_STAGING}
 else
-  echo "使用生产环境APP_ID (prod)"
+  echo "Using production environment APP_ID (prod)"
   APP_ID_VAR=${APP_ID_PROD}
 fi
 
