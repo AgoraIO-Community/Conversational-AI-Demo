@@ -45,7 +45,7 @@ def doPublish(buildVariables) {
         [
           "type": "ARTIFACTORY",
           "archivePattern": "*.apk",
-          "serverPath": "AES/${shortVersion}/${buildVariables.buildDate}/${env.platform}",
+          "serverPath": "AgoraAIScenarios/${shortVersion}/${buildVariables.buildDate}/${env.platform}",
           "serverRepo": "ACCS_repo"
         ]
     ]
