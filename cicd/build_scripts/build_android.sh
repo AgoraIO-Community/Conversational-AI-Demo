@@ -87,8 +87,9 @@ echo pwd: `pwd`
 cd Android
 
 # config android environment
-source ~/.bash_profile
+source ~/.bashrc
 ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
+echo ANDROID_HOME: $ANDROID_HOME
 
 ## use open jdk 17
 SYSTEM=$(uname -s)
