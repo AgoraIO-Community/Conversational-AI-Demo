@@ -17,9 +17,6 @@ target 'Agent-global' do
 
   # Agents
   pod 'ConvoAI', :path => 'Scenes/ConvoAI'
-  
-  pod 'Kingfisher'
-
 end
 
 post_install do |installer|
