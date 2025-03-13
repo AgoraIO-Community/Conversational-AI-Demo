@@ -7,11 +7,6 @@
 
 import Foundation
 
-@objc public enum AppArea: Int {
-    case global = 0
-    case mainland = 1
-}
-
 @objc public class AppContext: NSObject {
     @objc public static let shared: AppContext = .init()
     
