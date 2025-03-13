@@ -17,7 +17,7 @@ class SearchingView: UIView {
     
     private var timer: Timer?
     private var timeInteval = 0
-    private let count = 30
+    private let count = 20
     
     private lazy var searchAnimateView:RippleAnimationView = {
         let diameter = self.bounds.width

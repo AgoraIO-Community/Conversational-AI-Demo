@@ -35,6 +35,15 @@ class DeviceAddingViewController: BaseViewController {
         return view
     }()
     
+    private lazy var statusLabel: UILabel = {
+        let label = UILabel()
+        label.text = ResourceManager.L10n.Iot.deviceAddProgress
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = UIColor.themColor(named: "ai_icontext1")
+        label.textAlignment = .center
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -58,7 +67,7 @@ class DeviceAddingViewController: BaseViewController {
     private func setupView() {
         navigationTitle = ResourceManager.L10n.Iot.deviceAddTitle
         view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        [circleBackgroundView, iconImageView].forEach { view.addSubview($0) }
+        [circleBackgroundView, iconImageView, statusLabel].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -72,6 +81,11 @@ class DeviceAddingViewController: BaseViewController {
             make.center.equalTo(circleBackgroundView)
             make.width.equalTo(119)
             make.height.equalTo(168)
+        }
+        
+        statusLabel.snp.makeConstraints { make in
+            make.top.equalTo(circleBackgroundView.snp.bottom).offset(56)
+            make.centerX.equalToSuperview()
         }
     }
     
@@ -126,7 +140,7 @@ class DeviceAddingViewController: BaseViewController {
     
     private func prepareToAddDevice() {
         addLog("[Call] prepareToAddDevice")
-        SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Iot.deviceAddProgress)
+        statusLabel.text = ResourceManager.L10n.Iot.deviceAddProgress
         bluetoothManager.getDeviceId {[weak self] deviceId in
             guard let self = self else { return }
             self.addLog("device id: \(deviceId ?? "")")
@@ -219,29 +233,36 @@ class DeviceAddingViewController: BaseViewController {
                 
                 try await updateSettings(deviceId: deviceId, presetName: preset.preset_name, asrLanguage: defaultLanguage.code)
                 addLog("ssid: \(wifiName), pwd: \(password)")
-                bluetoothManager.sendWifiInfo(BLENetworkConfigInfo(
-                    ssid: wifiName,
-                    password: password,
-                    url: AppContext.shared.baseServerUrl,
-                    authToken: tokenModel.auth_token
-                ))
-                
                 await MainActor.run {
-                    AppContext.iotDeviceManager()?.addDevice(device: LocalDevice(
-                        name: deviceName,
-                        deviceId: deviceId,
-                        rssi: wifiName,
-                        currentPreset: preset,
-                        currentLanguage: defaultLanguage,
-                        aiVad: false
+                    statusLabel.text = ResourceManager.L10n.Iot.deviceSendingData
+                    bluetoothManager.sendWifiInfo(BLENetworkConfigInfo(
+                        ssid: wifiName,
+                        password: password,
+                        url: AppContext.shared.baseServerUrl,
+                        authToken: tokenModel.auth_token
                     ))
-                    showSuccessAlert()
                 }
             } catch {
                 addLog("add device error: \(error)")
                 showErrorAlert()
             }
         }
+    }
+    
+    private func addDeviceSuccess() {
+        guard let preset = AppContext.iotPresetsManager()?.allPresets()?.first,
+              let defaultLanguage = preset.support_languages.first(where: { $0.isDefault }) else {
+            return
+        }
+        AppContext.iotDeviceManager()?.addDevice(device: LocalDevice(
+            name: deviceName,
+            deviceId: deviceId,
+            rssi: wifiName,
+            currentPreset: preset,
+            currentLanguage: defaultLanguage,
+            aiVad: false
+        ))
+        showSuccessAlert()
     }
 }
 
@@ -253,5 +274,16 @@ extension DeviceAddingViewController: BLEManagerDelegate {
     func bleManagerOnDevicConfigError(manager: AIBLEManager, error: Error) {
         addLog("[Call] bleManagerOnDevicConfigError: \(error)")
         showErrorAlert()
+    }
+    
+    func bleManagerOnDevicConfigStateChanged(manager: AIBLEManager, oldState: AIBLEManager.DeviceConfigState, newState: AIBLEManager.DeviceConfigState) {
+        addLog("[Call] bleManagerOnDevicConfigStateChanged")
+        switch newState {
+        case .wifiConfigurationDone:
+            addLog("wifiConfigurationDone")
+            addDeviceSuccess()
+        default:
+            addLog("other state : \(newState)")
+        }
     }
 }

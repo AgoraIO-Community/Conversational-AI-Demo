@@ -27,6 +27,7 @@
 
 "iot.device.add.title" = "添加设备中";
 "iot.device.add.progress" = "添加设备中...";
+"iot.device.add.send.data" = "正在发送数据";
 "iot.device.add.success.title" = "添加成功";
 "iot.device.add.success.description" = "注意：设备添加信息将在本地保存，重新安装app后需要重新添加设备。";
 
@@ -56,6 +57,7 @@
 "iot.device.search.failed.description" = "请检查设备是否处于待配网状态";
 "iot.device.search.failed.retry" = "重新扫描";
 "iot.device.search.failed.tip" = "请确保智能设备已打开配网开关，且位于手机附近";
+"iot.device.search.failed.swipe.tip" = "左右滑动查看更多";
 
 "iot.error.alert.title" = "无法连接到智能设备！";
 "iot.error.alert.subtitle" = "请按照以下步骤检查：";
@@ -74,6 +76,7 @@
 "iot.device.settings.language.title" = "选择语言";
 "iot.device.settings.advanced" = "高级设置";
 "iot.device.settings.interrupt" = "启用 优雅打断";
+"iot.device.settings.interrupt.match" = "优雅打断";
 "iot.device.settings.reconnect" = "重新配网";
 "iot.device.settings.delete" = "删除设备";
 "iot.device.settings.delete.title" = "您是否要删除%@？";

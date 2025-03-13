@@ -229,9 +229,10 @@ class IOTWifiSettingViewController: BaseViewController {
     }
     
     private func updateNextButtonState() {
-        let isValidWifi = !is5GWifi(ssid: wifiNameField.text ?? "")
-        let hasPassword = !(passwordField.text?.isEmpty ?? true)
-        nextButton.isEnabled = isValidWifi && hasPassword
+        // let isValidWifi = !is5GWifi(ssid: wifiNameField.text ?? "")
+        let password = passwordField.text ?? ""
+        let hasValidPassword = password.count >= 8
+        nextButton.isEnabled = hasValidPassword
         
         // Update button opacity based on enabled state
         nextButton.alpha = nextButton.isEnabled ? 1.0 : 0.5

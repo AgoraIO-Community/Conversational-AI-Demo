@@ -25,7 +25,7 @@ class IOTErrorAlertViewController: UIViewController {
     
     private lazy var containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_fill2")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         return view
@@ -89,6 +89,15 @@ class IOTErrorAlertViewController: UIViewController {
         return pageControl
     }()
     
+    private lazy var swipeHintLabel: UILabel = {
+        let label = UILabel()
+        label.text = ResourceManager.L10n.Iot.deviceSearchFailedSwipeTip
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = UIColor.themColor(named: "ai_icontext2")
+        label.textAlignment = .center
+        return label
+    }()
+    
     private lazy var retryButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(ResourceManager.L10n.Iot.deviceSearchFailedRetry, for: .normal)
@@ -132,7 +141,7 @@ class IOTErrorAlertViewController: UIViewController {
         containerView.backgroundColor = UIColor.themColor(named: "ai_fill1")
         
         view.addSubview(containerView)
-        [closeButton, titleLabel, subtitleLabel, scrollView, pageControl, retryButton].forEach {
+        [closeButton, titleLabel, subtitleLabel, scrollView, pageControl, swipeHintLabel, retryButton].forEach {
             containerView.addSubview($0)
         }
     }
@@ -165,8 +174,13 @@ class IOTErrorAlertViewController: UIViewController {
             make.height.equalTo(scrollView.snp.width).multipliedBy(203.0/315.0)
         }
         
+        swipeHintLabel.snp.makeConstraints { make in
+            make.top.equalTo(scrollView.snp.bottom).offset(24)
+            make.centerX.equalToSuperview()
+        }
+        
         pageControl.snp.makeConstraints { make in
-            make.top.equalTo(scrollView.snp.bottom).offset(16)
+            make.top.equalTo(swipeHintLabel.snp.bottom).offset(1)
             make.centerX.equalToSuperview()
         }
         

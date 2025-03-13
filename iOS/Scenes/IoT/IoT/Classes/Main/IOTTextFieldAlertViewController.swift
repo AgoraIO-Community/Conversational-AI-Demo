@@ -8,6 +8,81 @@
 import Foundation
 import Common
 
+// Custom TextField with custom clear button
+class CustomTextField: UITextField {
+    
+    var customClearButton: UIButton!
+    var onClearButtonTapped: (() -> Void)?
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if customClearButton == nil {
+            setupCustomClearButton()
+        }
+        
+        // Position the clear button with 12pt margin from right edge
+        if let clearButton = customClearButton {
+            clearButton.frame = CGRect(
+                x: bounds.width - clearButton.frame.width - 12,
+                y: (bounds.height - clearButton.frame.height) / 2,
+                width: clearButton.frame.width,
+                height: clearButton.frame.height
+            )
+        }
+    }
+    
+    private func setupCustomClearButton() {
+        customClearButton = UIButton(type: .custom)
+        customClearButton.setImage(UIImage.ag_named("ic_iot_close_icon"), for: .normal)
+        customClearButton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        customClearButton.contentMode = .scaleAspectFit
+        customClearButton.addTarget(self, action: #selector(clearButtonTapped), for: .touchUpInside)
+        customClearButton.isHidden = true
+        addSubview(customClearButton)
+        
+        // Add target to update clear button visibility
+        addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        addTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
+        addTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
+    }
+    
+    @objc private func textFieldDidChange() {
+        updateClearButtonVisibility()
+    }
+    
+    @objc private func textFieldDidBeginEditing() {
+        updateClearButtonVisibility()
+    }
+    
+    @objc private func textFieldDidEndEditing() {
+        customClearButton.isHidden = true
+    }
+    
+    private func updateClearButtonVisibility() {
+        let hasText = !(text?.isEmpty ?? true)
+        customClearButton.isHidden = !hasText
+    }
+    
+    @objc private func clearButtonTapped() {
+        text = ""
+        onClearButtonTapped?()
+        sendActions(for: .editingChanged)
+    }
+    
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.insetBy(dx: 16, dy: 0).inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 32))
+    }
+    
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.insetBy(dx: 16, dy: 0).inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 32))
+    }
+    
+    override func clearButtonRect(forBounds bounds: CGRect) -> CGRect {
+        return .zero // Hide the default clear button
+    }
+}
+
 class IOTTextFieldAlertViewController: UIViewController {
     
     // MARK: - Properties
@@ -34,7 +109,6 @@ class IOTTextFieldAlertViewController: UIViewController {
     
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = UIColor.themColor(named: "ai_fill1")
         button.layer.cornerRadius = 15
         button.setImage(UIImage.ag_named("ic_iot_close_icon"), for: .normal)
         button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
@@ -49,20 +123,20 @@ class IOTTextFieldAlertViewController: UIViewController {
         return label
     }()
     
-    private lazy var textField: UITextField = {
-        let textField = UITextField()
+    private lazy var textField: CustomTextField = {
+        let textField = CustomTextField()
         textField.backgroundColor = UIColor.themColor(named: "ai_input")
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.themColor(named: "ai_line2").cgColor
         textField.textColor = UIColor.themColor(named: "ai_icontext1")
         textField.font = .systemFont(ofSize: 13)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
-        textField.leftViewMode = .always
-        textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done
         textField.delegate = self
         textField.placeholder = ResourceManager.L10n.Iot.deviceRenamePlaceholder
+        textField.onClearButtonTapped = { [weak self] in
+            self?.updateConfirmButtonState(text: "")
+        }
         return textField
     }()
     
@@ -245,3 +319,5 @@ extension IOTTextFieldAlertViewController {
         viewController.present(alertVC, animated: true)
     }
 }
+
+

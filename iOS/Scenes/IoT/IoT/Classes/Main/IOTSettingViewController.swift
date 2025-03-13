@@ -133,8 +133,10 @@ class IOTSettingViewController: UIViewController {
         )
         
         if text.count >= 4 {
-            let range = NSRange(location: text.count - 4, length: 4)
-            attributedString.addAttributes(highlightAttributes, range: range)
+            if let range = text.range(of: ResourceManager.L10n.Iot.deviceSettingsInterruptMatchWord) {
+                let nsRange = NSRange(range, in: text)
+                attributedString.addAttributes(highlightAttributes, range: nsRange)
+            }
         }
         
         cell.titleLabel.attributedText = attributedString

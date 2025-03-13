@@ -40,6 +40,8 @@ extension ResourceManager {
             // Device Adding Process
             public static let deviceAddTitle = ResourceManager.localizedString("iot.device.add.title")
             public static let deviceAddProgress = ResourceManager.localizedString("iot.device.add.progress")
+            public static let deviceSendingData = ResourceManager.localizedString("iot.device.add.progress")
+
             public static let deviceAddSuccessTitle = ResourceManager.localizedString("iot.device.add.success.title")
             public static let deviceAddSuccessDescription = ResourceManager.localizedString("iot.device.add.success.description")
             
@@ -84,7 +86,8 @@ extension ResourceManager {
             public static let deviceSearchFailedDescription = ResourceManager.localizedString("iot.device.search.failed.description")
             public static let deviceSearchFailedRetry = ResourceManager.localizedString("iot.device.search.failed.retry")
             public static let deviceSearchFailedTip = ResourceManager.localizedString("iot.device.search.failed.tip")
-            
+            public static let deviceSearchFailedSwipeTip = ResourceManager.localizedString("iot.device.search.failed.swipe.tip")
+
             // Error Alert
             public static let errorAlertTitle = ResourceManager.localizedString("iot.error.alert.title")
             public static let errorAlertSubtitle = ResourceManager.localizedString("iot.error.alert.subtitle")
@@ -100,6 +103,8 @@ extension ResourceManager {
             
             public static let deviceSettingsAdvanced = ResourceManager.localizedString("iot.device.settings.advanced")
             public static let deviceSettingsInterrupt = ResourceManager.localizedString("iot.device.settings.interrupt")
+            public static let deviceSettingsInterruptMatchWord = ResourceManager.localizedString("iot.device.settings.interrupt.match")
+
             public static let deviceSettingsReconnect = ResourceManager.localizedString("iot.device.settings.reconnect")
             public static let deviceSettingsDelete = ResourceManager.localizedString("iot.device.settings.delete")
             public static let deviceSettingsDeleteTitle = ResourceManager.localizedString("iot.device.settings.delete.title")

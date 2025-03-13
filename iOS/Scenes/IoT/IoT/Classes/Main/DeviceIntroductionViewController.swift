@@ -47,7 +47,7 @@ class DeviceIntroductionViewController: BaseViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.isPagingEnabled = true
+        collectionView.isScrollEnabled = false // Disable scrolling since we only show one image
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.35, alpha: 1.0)
         collectionView.layer.cornerRadius = 20
@@ -55,20 +55,12 @@ class DeviceIntroductionViewController: BaseViewController {
         return collectionView
     }()
     
-    private lazy var pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.pageIndicatorTintColor = UIColor.themColor(named: "ai_line2")
-        pageControl.currentPageIndicatorTintColor = UIColor.themColor(named: "ai_brand_main6")
-        pageControl.numberOfPages = steps.count
-        pageControl.currentPage = 0
-        return pageControl
-    }()
-    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textColor = UIColor.themColor(named: "ai_icontext1")
         label.textAlignment = .center
+        label.numberOfLines = 0
         
         let fullText = ResourceManager.L10n.Iot.deviceSetupInstruction
         let attributedString = NSMutableAttributedString(string: fullText)
@@ -178,17 +170,8 @@ class DeviceIntroductionViewController: BaseViewController {
             image: UIImage.ag_named("ic_iot_intro_1"),
             title: ResourceManager.L10n.Iot.deviceStep1Title,
             description: ResourceManager.L10n.Iot.deviceStep1Description
-        ),
-        IntroductionStep(
-            image: UIImage.ag_named("ic_iot_intro_2"),
-            title: ResourceManager.L10n.Iot.deviceStep2Title,
-            description: ResourceManager.L10n.Iot.deviceStep2Description
-        ),
-        IntroductionStep(
-            image: UIImage.ag_named("ic_iot_intro_3"),
-            title: ResourceManager.L10n.Iot.deviceStep3Title,
-            description: ResourceManager.L10n.Iot.deviceStep3Description
         )
+        // Remove other steps since we only need one image
     ]
     
     // Add CLLocationManager property at class level
@@ -364,7 +347,6 @@ extension DeviceIntroductionViewController {
         scrollView.addSubview(contentView)
         
         contentView.addSubview(carouselCollectionView)
-        contentView.addSubview(pageControl)
         contentView.addSubview(titleLabel)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(permissionsStackView)
@@ -393,14 +375,8 @@ extension DeviceIntroductionViewController {
             make.height.equalTo(190)
         }
         
-        pageControl.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(carouselCollectionView.snp.bottom).offset(-12)
-            make.height.equalTo(20)
-        }
-        
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(pageControl.snp.bottom).offset(40)
+            make.top.equalTo(carouselCollectionView.snp.bottom).offset(40)
             make.centerX.equalToSuperview()
             make.left.right.equalToSuperview().inset(30)
         }
@@ -510,14 +486,6 @@ extension DeviceIntroductionViewController: UICollectionViewDelegate, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CarouselCell", for: indexPath) as! IntroductionCarouselCell
         cell.configure(with: steps[indexPath.item].image)
         return cell
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == carouselCollectionView {
-            let pageWidth = scrollView.bounds.width
-            let currentPage = Int((scrollView.contentOffset.x + pageWidth / 2) / pageWidth)
-            pageControl.currentPage = currentPage
-        }
     }
 }
 
