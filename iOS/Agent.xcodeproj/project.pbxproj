@@ -442,6 +442,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "The app needs to use Bluetooth to connect to smart home devices.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "The app needs to use Bluetooth to connect to smart home devices.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";
@@ -491,6 +492,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "The app needs to use Bluetooth to connect to smart home devices.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "The app needs to use Bluetooth to connect to smart home devices.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The app needs to use location to access Wi-Fi for connecting to smart home devices.";

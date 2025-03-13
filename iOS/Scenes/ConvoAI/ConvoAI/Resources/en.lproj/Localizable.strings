@@ -109,5 +109,5 @@
 "devmode.graph" = "graph id";
 "devmode.server" = "Server";
 
-"iot.info.title" = "Dialogue-based AI Device";
+"iot.info.title" = "Conversational AI Device";
 "iot.info.device" = "%@ Devices";
