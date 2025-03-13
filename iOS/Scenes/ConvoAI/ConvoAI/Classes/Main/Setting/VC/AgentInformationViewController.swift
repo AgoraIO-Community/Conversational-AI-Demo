@@ -163,7 +163,7 @@ class AgentInformationViewController: UIViewController {
         let card = IotDeviceCardView()
         card.configure(title: ResourceManager.L10n.Iot.title, subtitle: String(format: ResourceManager.L10n.Iot.device, "\(IoTEntrance.deviceCount())"))
         card.settingsIcon = UIImage.ag_named("ic_iot_add")
-        card.backgroundImage = UIImage.ag_named("ic_iot_card_bg_green")
+        card.backgroundImage = UIImage.ag_named("ic_agent_card_bg_green")
         card.settingsButtonBackgroundColor = UIColor.themColor(named: "ai_brand_white8")
         card.titleColor = UIColor.themColor(named: "ai_brand_black10")
         card.subtitleColor = UIColor.themColor(named: "ai_brand_black10")

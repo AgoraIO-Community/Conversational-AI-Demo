@@ -126,7 +126,7 @@ class IotDeviceCardView: UIView {
         titleButton.snp.makeConstraints { make in
             make.top.equalTo(16)
             make.left.equalTo(16)
-            make.right.lessThanOrEqualTo(-50)
+            make.right.lessThanOrEqualTo(-20)
         }
         
         editButton.snp.makeConstraints { make in
