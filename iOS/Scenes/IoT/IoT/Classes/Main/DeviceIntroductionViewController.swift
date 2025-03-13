@@ -327,7 +327,7 @@ class DeviceIntroductionViewController: BaseViewController {
 
 extension DeviceIntroductionViewController {
     private func setupViews() {
-        navigationTitle = ResourceManager.L10n.Iot.deviceSetupInstruction
+        navigationTitle = ResourceManager.L10n.Iot.deviceSetupInstructionTitle
         view.backgroundColor = .black
         naviBar.backgroundColor = .black
         

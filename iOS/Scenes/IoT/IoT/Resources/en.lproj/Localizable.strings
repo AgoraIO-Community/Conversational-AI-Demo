@@ -39,6 +39,7 @@
 "iot.device.empty.description" = "Let's Add a Device Now";
 "iot.device.empty.add_button" = "Add Device";
 
+"iot.device.setup.instruction.title" = "Preparation";
 "iot.device.setup.instruction" = "Hold the Network Setup Button for 3s to Enter Pairing Mode";
 "iot.device.setup.instruction.sub" = "3s";
 "iot.device.setup.permission_description" = "The Following Permissions and Switches Will Be Requested During Pairing";

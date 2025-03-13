@@ -53,6 +53,7 @@ extension ResourceManager {
             public static let deviceEmptyAddButton = ResourceManager.localizedString("iot.device.empty.add_button")
             
             // Device Setup
+            public static let deviceSetupInstructionTitle = ResourceManager.localizedString("iot.device.setup.instruction.title")
             public static let deviceSetupInstruction = ResourceManager.localizedString("iot.device.setup.instruction")
             public static let deviceSetupInstructionSub = ResourceManager.localizedString("iot.device.setup.instruction.sub")
             public static let deviceSetupPermissionDescription = ResourceManager.localizedString("iot.device.setup.permission_description")

@@ -37,6 +37,7 @@
 "iot.device.empty.description" = "让我们现在添加设备吧";
 "iot.device.empty.add_button" = "添加设备";
 
+"iot.device.setup.instruction.title" = "准备工作";
 "iot.device.setup.instruction" = "按住配网按钮 3秒 进入配网状态";
 "iot.device.setup.instruction.sub" = "3秒";
 "iot.device.setup.permission_description" = "配对过程中会请求下列权限和开关";
