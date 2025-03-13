@@ -70,13 +70,13 @@
         android:id="@+id/tv_limit_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="40dp"
         android:text="@string/cov_iot_devices_setting_name_limit"
-        android:textColor="#FF5252"
+        android:textColor="@color/ai_red6"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fl_input" />
+        app:layout_constraintTop_toBottomOf="@+id/fl_input"
+        app:layout_constraintBottom_toTopOf="@+id/btn_confirm"/>
 
     <Button
         android:id="@+id/btn_confirm"

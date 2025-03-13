@@ -122,6 +122,8 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
     private fun startConnect() {
         val device = this.device ?: return
         updateConnectState(ConnectState.CONNECTING)
+        simulateConnectProcess()
+        return
 
         viewModelScope.launch {
             try {
@@ -162,7 +164,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                                         // 5. update settings success, then configure WiFi network
                                         viewModelScope.launch {
                                             try {
-                                                // simulateConnectProcess()
+                                                //simulateConnectProcess()
                                                 CovLogger.d(TAG, "distributionNetwork")
                                                  val ret = bleManager.distributionNetwork(
                                                      device = device.device,

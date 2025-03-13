@@ -203,13 +203,11 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
         CovScanBleDeviceManager.clearDevices()
         
         // Start Bluetooth scanning
-        mBinding?.root?.postDelayed({
-            bleManager.startScan(null)
-        }, 3000)
+        bleManager.startScan(null)
         
         // Start 30-second countdown
         countDownTimer?.cancel()
-        countDownTimer = object : CountDownTimer(30000, 1000) {
+        countDownTimer = object : CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = millisUntilFinished / 1000
                 mBinding?.tvCountdown?.text = "${seconds}s"

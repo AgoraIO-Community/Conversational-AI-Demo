@@ -114,6 +114,7 @@
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:background="@drawable/cov_permission_btn_bg"
+                        android:paddingHorizontal="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -173,6 +174,7 @@
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:background="@drawable/cov_permission_btn_bg"
+                        android:paddingHorizontal="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -232,6 +234,7 @@
                         android:textColor="@color/ai_brand_main6"
                         android:textSize="14sp"
                         android:textStyle="bold"
+                        android:paddingHorizontal="10dp"
                         android:background="@drawable/cov_permission_btn_bg"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -249,7 +252,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@color/ai_brand_main6"
+                app:cardBackgroundColor="@color/ai_green6"
                 app:layout_constraintTop_toBottomOf="@id/cv_bluetooth_switch"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -289,10 +292,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:text="@string/cov_iot_permission_open"
-                        android:textColor="@color/ai_brand_main6"
+                        android:textColor="@color/ai_green6"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:background="@drawable/cov_permission_btn_bg"
+                        android:paddingHorizontal="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

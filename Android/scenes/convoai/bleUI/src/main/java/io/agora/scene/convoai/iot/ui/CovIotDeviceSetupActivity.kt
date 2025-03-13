@@ -203,8 +203,7 @@ class CovIotDeviceSetupActivity : BaseActivity<CovActivityIotDeviceSetupBinding>
         // Initialize device image data
         deviceImages.clear()
         deviceImages.add(DeviceImage(R.drawable.cov_iot_prepare_pic_1, "Front view of device"))
-        deviceImages.add(DeviceImage(R.drawable.cov_iot_prepare_pic_1, "Back view of device"))
-        
+
         deviceImageAdapter = CovIotSetupImageAdapter(deviceImages)
         
         mBinding?.apply {

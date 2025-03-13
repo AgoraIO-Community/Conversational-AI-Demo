@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
-import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.widget.FrameLayout
 import io.agora.scene.convoai.iot.R
 import io.agora.scene.convoai.iot.databinding.CovEditNameDialogBinding
 
@@ -29,31 +27,31 @@ class CovEditNameDialog(
 
         window?.apply {
             setGravity(Gravity.BOTTOM)
-            
+
             val leftRightMargin = context.resources.getDimensionPixelSize(R.dimen.dp_20)
             val bottomMargin = context.resources.getDimensionPixelSize(R.dimen.dp_17)
-            
+
             val displayMetrics = context.resources.displayMetrics
             val screenWidth = displayMetrics.widthPixels
-            
+
             val params = attributes
             params.width = screenWidth - 2 * leftRightMargin
             params.y = bottomMargin
             attributes = params
-            
+
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            
+
             setBackgroundDrawableResource(android.R.color.transparent)
         }
 
         setupUI()
-        
+
         setupListeners()
     }
 
     private fun setupUI() {
         binding.etName.setText(initialName)
-        
+
         val maxLength = 10
         val selectionPosition = minOf(initialName.length, maxLength)
         binding.etName.setSelection(selectionPosition)
@@ -86,16 +84,22 @@ class CovEditNameDialog(
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 val isEmpty = text.trim().isEmpty()
-                
+
                 binding.ivClear.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
-                
+
                 binding.tvLimitTip.text = if (isEmpty) {
+                    binding.btnConfirm.alpha = 0.5F
+                    binding.btnConfirm.isEnabled = false
                     context.getString(R.string.cov_iot_devices_setting_name_limit)
                 } else {
-                    context.getString(R.string.cov_iot_devices_setting_name_limit)
+                    binding.btnConfirm.alpha = 1.0F
+                    binding.btnConfirm.isEnabled = true
+                    null
                 }
             }
         })
+
+        binding.tvLimitTip.text = null
     }
 
     companion object {

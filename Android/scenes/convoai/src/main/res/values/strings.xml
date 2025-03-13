@@ -71,7 +71,7 @@
     <string name="cov_exit">Exit</string>
 
     <!-- IOT  -->
-    <string name="cov_iot_title">Dialogue-based AI Device</string>
+    <string name="cov_iot_title">Conversational AI Device</string>
     <string name="cov_iot_devices_num">%d Devices</string>
-    <string name="cov_my_device">我的设备</string>
+    <string name="cov_my_device">Conversational AI Device</string>
 </resources>
