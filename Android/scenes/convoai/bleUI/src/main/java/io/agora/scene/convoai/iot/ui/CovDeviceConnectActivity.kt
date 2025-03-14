@@ -89,6 +89,11 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
     }
 
     override fun onDestroy() {
+        try {
+            bleManager.disconnect()
+        } catch (e: Exception) {
+            CovLogger.d(TAG, "disconnect")
+        }
         coroutineScope.cancel()
         super.onDestroy()
     }

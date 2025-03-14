@@ -175,21 +175,19 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
             }
 
             override fun onDeviceFound(device: BleDevice) {
-                // Add discovered device to device manager
-                CovScanBleDeviceManager.addDevice(device)
-                
-                runOnUiThread {
-                    // Check if the device already exists in the list
-                    if (deviceList.none { it.address == device.address } && device.name.isNotEmpty()) {
-                        deviceList.add(device)
-                        deviceAdapter.notifyDataSetChanged()
-                        
-                        // After finding a device, hide the scanning view but keep the ripple animation
-                        if (deviceList.size == 1) { // When first device is found
-                            mBinding?.clScanning?.visibility = View.GONE
-                            mBinding?.clScanResult?.visibility = View.VISIBLE
-                            // Keep ripple animation visible
-                            mBinding?.rippleAnimationView?.alpha = 0.5F
+                if (device.name.startsWith("X1")) {
+                    CovScanBleDeviceManager.addDevice(device)
+                    
+                    runOnUiThread {
+                        if (deviceList.none { it.address == device.address } && device.name.isNotEmpty()) {
+                            deviceList.add(device)
+                            deviceAdapter.notifyDataSetChanged()
+                            
+                            if (deviceList.size == 1) {
+                                mBinding?.clScanning?.visibility = View.GONE
+                                mBinding?.clScanResult?.visibility = View.VISIBLE
+                                mBinding?.rippleAnimationView?.alpha = 0.5F
+                            }
                         }
                     }
                 }
@@ -355,7 +353,7 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
             }
         }
         
-        bleManager.startScan(listOf(ScanFilter.Builder().setDeviceName("X1").build()))
+        bleManager.startScan(null)
     }
 
     private fun stopScanIotDevice() {

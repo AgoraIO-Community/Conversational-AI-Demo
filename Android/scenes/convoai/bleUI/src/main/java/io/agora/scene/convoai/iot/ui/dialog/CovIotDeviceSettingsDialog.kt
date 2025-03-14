@@ -151,7 +151,7 @@ class CovIotDeviceSettingsDialog : BaseSheetDialog<CovIotDeviceSettingsDialogBin
 
                                     mLoadingDialog?.show()
                                     CovIotApiManager.updateSettings(
-                                        deviceId = newDevice.name,
+                                        deviceId = newDevice.id,
                                         presetName = newDevice.currentPreset,
                                         asrLanguage = newDevice.currentLanguage,
                                         enableAiVad = newDevice.enableAIVAD
