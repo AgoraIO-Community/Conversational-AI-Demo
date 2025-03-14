@@ -37,6 +37,14 @@ class IotDeviceCardView: UIView {
         return label
     }()
     
+    private lazy var snLabel: UILabel = {
+        let label = UILabel()
+        label.text = "SN"
+        label.font = .boldSystemFont(ofSize: 16)
+        label.textColor = UIColor.themColor(named: "ai_brand_black6")
+        return label
+    }()
+    
     private lazy var settingsButton: UIButton = {
         let button = UIButton(type: .custom)
         button.layer.cornerRadius = 25
@@ -94,6 +102,7 @@ class IotDeviceCardView: UIView {
     var subtitleColor: UIColor? {
         didSet {
             subtitleLabel.textColor = subtitleColor
+            snLabel.textColor = subtitleColor
         }
     }
     
@@ -116,6 +125,7 @@ class IotDeviceCardView: UIView {
         addSubview(backgroundImageView)
         addSubview(titleButton)
         addSubview(editButton)
+        addSubview(snLabel)
         addSubview(subtitleLabel)
         addSubview(settingsButton)
         
@@ -135,9 +145,14 @@ class IotDeviceCardView: UIView {
             make.size.equalTo(CGSize(width: 24, height: 24))
         }
         
-        subtitleLabel.snp.makeConstraints { make in
+        snLabel.snp.makeConstraints { make in
             make.top.equalTo(titleButton.snp.bottom).offset(8)
             make.left.equalTo(titleButton)
+        }
+        
+        subtitleLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(snLabel)
+            make.left.equalTo(snLabel.snp.right).offset(5)
         }
         
         settingsButton.snp.makeConstraints { make in
