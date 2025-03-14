@@ -63,7 +63,7 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                     layoutCopyUserQuestion.isVisible = false
                 }
 
-                AgentScenes.ConvoAi -> {
+                AgentScenes.ConvoAi, AgentScenes.ConvoAiIot -> {
                     layoutSwitchEnv.isVisible = true
                     layoutConvoaiHost.isVisible = true
                     layoutAudioDump.isVisible = true

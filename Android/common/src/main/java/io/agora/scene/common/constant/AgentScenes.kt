@@ -10,4 +10,5 @@ enum class AgentScenes constructor(val value: Int) {
     Common(100),
     ConvoAi(101),
     DigitalHuman(102),
+    ConvoAiIot(103)
 }

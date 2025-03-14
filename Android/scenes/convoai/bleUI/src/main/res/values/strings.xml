@@ -1,0 +1,91 @@
+<resources>
+    <!-- IOT  -->
+    <string name="cov_iot_title">Conversational AI Device</string>
+    <string name="cov_iot_devices_num">%d Devices</string>
+    <string name="cov_iot_devices_welcome">Welcome</string>
+    <string name="cov_iot_devices_add_device_tip">Let\'s add a device now</string>
+    <string name="cov_iot_devices_add_device">Add Device</string>
+    <string name="cov_iot_devices_prepare">Preparation</string>
+    <string name="cov_iot_devices_prepare_tip_1">Hold the network setup button for 3s to enter pairing mode</string>
+    <string name="cov_iot_devices_prepare_tip_2">These permissions and switches will be requested during pairing</string>
+    <string name="cov_iot_devices_prepare_location">Location</string>
+    <string name="cov_iot_devices_prepare_bluetooth">Bluetooth</string>
+    <string name="cov_iot_devices_prepare_wifi">2.4G Wi-Fi</string>
+    <string name="cov_iot_devices_prepare_ready">Completed the above operations</string>
+    <string name="cov_iot_devices_prepare_next">Next</string>
+    <string name="cov_iot_devices_SN">SN</string>
+
+    <string name="cov_iot_devices_scan">Scan Nearby Devices</string>
+    <string name="cov_iot_devices_scanning">Scanning…</string>
+    <string name="cov_iot_devices_scan_tips">Make sure the smart device\'s network setup switch is on, and it\'s near your phone</string>
+    <string name="cov_iot_devices_scan_failed">Search Failed</string>
+    <string name="cov_iot_devices_scan_failed_tips">Check if the device is in setup pending state</string>
+    <string name="cov_iot_devices_scan_failed_tips_2">Make sure the smart device\'s network setup switch is on and it\'s near your phone</string>
+    <string name="cov_iot_devices_scan_again">Rescan</string>
+
+    <string name="cov_iot_wifi_title_part1">Select&#160;</string>
+    <string name="cov_iot_wifi_title_part2">2.4GHz</string>
+    <string name="cov_iot_wifi_title_part3">&#160;Wi-Fi Network</string>
+    <string name="cov_iot_wifi_title_2">Enter Wi-Fi Password</string>
+    <string name="cov_iot_wifi_title_tips">Note: 5G Wi-Fi Not Supported</string>
+    <string name="cov_iot_wifi_password">Password</string>
+    <string name="cov_iot_wifi_change">Switch</string>
+    <string name="cov_iot_wifi_warning">Please enter 2.4G Wi-Fi network</string>
+
+    <string name="cov_iot_permission_title">Enable Permissions &amp; Switches</string>
+    <string name="cov_iot_permission_tip">Enable the Following to Add Nearby Devices</string>
+    <string name="cov_iot_permission_device">Nearby device service not authorized</string>
+    <string name="cov_iot_permission_bluetooth">Turn On Phone Bluetooth</string>
+    <string name="cov_iot_permission_location_check">Location Service Not Authorized</string>
+    <string name="cov_iot_permission_wifi">Turn on Wi-Fi switch</string>
+    <string name="cov_iot_permission_open">Go to Enable</string>
+
+    <string name="cov_iot_devices_connect">Adding Device</string>
+    <string name="cov_iot_devices_connecting">Adding Device…</string>
+    <string name="cov_iot_devices_connect_send_data">Sending Data</string>
+    <string name="cov_iot_devices_connect_send_success">Password Sent Successfully</string>
+    <string name="cov_iot_devices_connect_connect_success">Device Added Successfully</string>
+    <string name="cov_iot_devices_connect_connect_success_tips">Note: Device addition info is saved locally. Re-add devices after reinstalling the app.</string>
+    <string name="cov_iot_devices_connect_connect_success_know">Got It</string>
+    <string name="cov_iot_devices_connect_connect_failed">Can\'t Connect to the Smart Device!</string>
+    <string name="cov_iot_devices_connect_connect_failed_check">Check the Following Steps:</string>
+    <string name="cov_iot_devices_connect_connect_failed_check_wifi">Check Wi-Fi Password</string>
+    <string name="cov_iot_devices_connect_connect_failed_check_device">Check If Device Is in Setup Pending State</string>
+    <string name="cov_iot_devices_connect_connect_failed_check_net">Check If Device Is Close to Router</string>
+    <string name="cov_iot_devices_connect_connect_failed_check_slide">Swipe Left &amp; Right for More</string>
+
+    <string name="cov_iot_devices_setting">Settings</string>
+    <string name="cov_iot_devices_setting_name_limit">Max 10 Characters, Can\'t Be Empty</string>
+    <string name="cov_iot_devices_setting_preset">Preset Character</string>
+    <string name="cov_iot_devices_setting_preset_1_title">Story Mode</string>
+    <string name="cov_iot_devices_setting_preset_1_content">Customized for Kids Aged 2–12, Telling Wonderful Stories Vividly</string>
+    <string name="cov_iot_devices_setting_preset_2_title">Tree Hole Mode</string>
+    <string name="cov_iot_devices_setting_preset_2_content">Warmly Listen to You, Offer Positive Emotional Value</string>
+    <string name="cov_iot_devices_reconnect">Re-set Network</string>
+    <string name="cov_iot_devices_delete">Delete Device</string>
+    <string name="cov_iot_devices_setting_confirm_title">Save Current Changes?</string>
+    <string name="cov_iot_devices_setting_confirm_content">Config will be updated when the smart device connects next time after confirming changes.</string>
+    <string name="cov_iot_devices_setting_cancel">Discard</string>
+    <string name="cov_iot_devices_setting_confirm">Confirm</string>
+
+    <string name="cov_iot_devices_setting_delete">Delete "%s"?</string>
+    <string name="cov_iot_devices_setting_delete_content">Can\'t changes its conversation settings after deletion. Delete anyway?</string>
+    <string name="cov_iot_devices_setting_delete_confirm">Delete</string>
+    <string name="cov_iot_devices_setting_delete_toast">Smart device deleted</string>
+    <string name="cov_iot_devices_setting_rename_toast">Nickname changed successfully</string>
+    <string name="cov_iot_devices_setting_modify_success_toast">Smart device settings changed successfully</string>
+    <string name="cov_iot_devices_setting_modify_failed_toast">Failed to change smart device settings, please try again</string>
+    <string name="cov_iot_devices_setting_modify_name">Rename Device</string>
+    <string name="cov_iot_devices_setting_input_name">Enter a name</string>
+    <string name="cov_iot_devices_setting_modify_name_confirm">Confirm</string>
+    <string name="cov_iot_devices_setting_modify_name_cancel">Cancel</string>
+
+    <string name="cov_iot_setting_ai_vad_high">Intelligent Interruption Handling</string>
+    <string name="cov_setting_language">Language</string>
+    <string name="cov_setting_advanced_settings">Advanced Settings</string>
+    <string name="cov_detail_net_state_error">Network error. Please check your network settings.</string>
+
+
+
+
+</resources>

@@ -25,16 +25,22 @@ import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.rtc.CovRtcManager
 import kotlin.math.abs
+import io.agora.scene.convoai.iot.manager.CovIotDeviceManager
 
 class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
     private var onDismissCallback: (() -> Unit)? = null
     private var onLogout: (() -> Unit)? = null
-
+    private var onIotDeviceClick: (() -> Unit)? = null
     companion object {
-        fun newInstance(onDismissCallback: () -> Unit, onLogout: () -> Unit): CovAgentInfoDialog {
+        fun newInstance(
+            onDismissCallback: () -> Unit, 
+            onLogout: () -> Unit,
+            onIotDeviceClick: () -> Unit
+        ): CovAgentInfoDialog {
             return CovAgentInfoDialog().apply {
                 this.onDismissCallback = onDismissCallback
                 this.onLogout = onLogout
+                this.onIotDeviceClick = onIotDeviceClick
             }
         }
     }
@@ -124,12 +130,21 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
                     }, 2000L)
                 }
             })
+            flDeviceContent.setOnClickListener {
+                onIotDeviceClick?.invoke()
+            }
             layoutLogout.setOnClickListener {
                 onLogout?.invoke()
             }
             updateView()
+            updateDeviceCount()
             updateUploadingStatus(disable = connectionState != AgentConnectionState.CONNECTED)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateDeviceCount()
     }
 
     fun updateConnectStatus(connectionState: AgentConnectionState) {
@@ -225,5 +240,10 @@ class CovAgentInfoDialog : BaseDialogFragment<CovInfoDialogBinding>() {
 
     override fun onHandleOnBackPressed() {
 //        super.onHandleOnBackPressed()
+    }
+
+    private fun updateDeviceCount() {
+        val count = CovIotDeviceManager.getInstance(requireContext()).getDeviceCount()
+        mBinding?.tvDeviceCount?.text = getString(R.string.cov_iot_devices_num, count)
     }
 }

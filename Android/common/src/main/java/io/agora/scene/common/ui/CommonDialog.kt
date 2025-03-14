@@ -16,6 +16,7 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
     private var negativeText: String? = null
     private var showNegative: Boolean = true
     private var showImage: Boolean = true
+    private var imageRes: Int? = null
     private var onPositiveClick: (() -> Unit)? = null
     private var onNegativeClick: (() -> Unit)? = null
 
@@ -25,7 +26,7 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         mBinding?.apply {
             // Set dialog width to 80% of screen width
             root.layoutParams = FrameLayout.LayoutParams(
@@ -40,13 +41,15 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
             btnNegative.text = negativeText
             btnNegative.isVisible = showNegative
             ivImage.isVisible = showImage
-
+            imageRes?.let {
+                ivImage.setBackgroundResource(it)
+            }
             // Click listeners
             btnPositive.setOnClickListener {
                 onPositiveClick?.invoke()
                 dismiss()
             }
-            
+
             btnNegative.setOnClickListener {
                 onNegativeClick?.invoke()
                 dismiss()
@@ -61,6 +64,7 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
         private var negativeText: String? = null
         private var showNegative: Boolean = true
         private var showImage: Boolean = true
+        private var imageRes: Int? = null
         private var cancelable: Boolean = true
         private var onPositiveClick: (() -> Unit)? = null
         private var onNegativeClick: (() -> Unit)? = null
@@ -76,6 +80,7 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
             this.onNegativeClick = onClick
             this.showNegative = true
         }
+        fun setImage(resId: Int) = apply { this.imageRes = resId }
         fun hideNegativeButton() = apply { this.showNegative = false }
 
         fun hideTopImage() = apply { this.showImage = false }
@@ -92,6 +97,7 @@ class CommonDialog : BaseDialogFragment<CommonDialogLayoutBinding>() {
                 this@apply.onPositiveClick = this@Builder.onPositiveClick
                 this@apply.onNegativeClick = this@Builder.onNegativeClick
                 this@apply.showImage = this@Builder.showImage
+                this@apply.imageRes = this@Builder.imageRes
                 this@apply.isCancelable = this@Builder.cancelable
             }
         }

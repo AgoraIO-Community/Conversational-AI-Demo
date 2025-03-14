@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_dialog_bg"
+    android:layout_gravity="bottom"
+    tools:theme="@style/Theme.AppCompat">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_title"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/grabber"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="24dp"
+                android:gravity="center"
+                android:text="@string/cov_iot_devices_setting"
+                android:textColor="@color/ai_icontext1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/cov_iot_round_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_title"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+                app:tint="@null" />
+
+            <!-- 预设人设部分 -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_preset_section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/cov_iot_devices_setting_preset"
+                android:textColor="@color/ai_icontext4"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_preset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/settings_item_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_preset_section" />
+
+            <LinearLayout
+                android:id="@+id/ll_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/settings_item_bg"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_preset">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_language"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/cov_setting_language"
+                        android:textColor="@color/ai_icontext1"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_language_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        android:src="@drawable/icon_dropleft"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/ai_icontext2" />
+
+                    <TextView
+                        android:id="@+id/tv_language_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ai_icontext1"
+                        android:textSize="14sp"
+                        android:textDirection="ltr"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_language_arrow"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="English" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <!-- 高级设置部分 -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_advanced_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/cov_setting_advanced_settings"
+                android:textColor="@color/ai_icontext4"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_language" />
+
+            <LinearLayout
+                android:id="@+id/ll_advanced"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/settings_item_bg"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_advanced_settings">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_ai_vad"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_ai_vad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/cov_iot_setting_ai_vad_high"
+                        android:textColor="@color/ai_brand_lightbrand6"
+                        android:textSize="14sp"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/cb_ai_vad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:button="@drawable/cb_def_selector"
+                        android:checked="true"
+                        app:buttonTint="@null"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <!-- operation button section -->
+            <Button
+                android:id="@+id/btn_reset"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/settings_item_bg"
+                android:text="@string/cov_iot_devices_reconnect"
+                android:textColor="@color/ai_icontext1"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                app:backgroundTint="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_advanced" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/cov_iot_delete_item_bg"
+                android:text="@string/cov_iot_devices_delete"
+                android:textColor="@color/ai_brand_white10"
+                android:textSize="14sp"
+                android:textAllCaps="false"
+                app:backgroundTint="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_reset" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/v_options_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        tools:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_options"
+            android:layout_width="218dp"
+            android:layout_height="150dp"
+            android:backgroundTint="@color/ai_block3"
+            app:cardCornerRadius="12dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rc_options"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+</FrameLayout> 
