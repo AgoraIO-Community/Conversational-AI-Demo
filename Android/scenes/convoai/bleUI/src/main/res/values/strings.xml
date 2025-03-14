@@ -6,12 +6,12 @@
     <string name="cov_iot_devices_add_device_tip">Let\'s add a device now</string>
     <string name="cov_iot_devices_add_device">Add Device</string>
     <string name="cov_iot_devices_prepare">Preparation</string>
-    <string name="cov_iot_devices_prepare_tip_1">Hold the network setup button for 3s to enter pairing mode</string>
+    <string name="cov_iot_devices_prepare_tip_1">Hold the network setup button for 3 seconds to enter network mode</string>
     <string name="cov_iot_devices_prepare_tip_2">These permissions and switches will be requested during pairing</string>
     <string name="cov_iot_devices_prepare_location">Location</string>
     <string name="cov_iot_devices_prepare_bluetooth">Bluetooth</string>
     <string name="cov_iot_devices_prepare_wifi">2.4G Wi-Fi</string>
-    <string name="cov_iot_devices_prepare_ready">Completed the above operations</string>
+    <string name="cov_iot_devices_prepare_ready">Completed the above actions</string>
     <string name="cov_iot_devices_prepare_next">Next</string>
     <string name="cov_iot_devices_SN">SN</string>
 
@@ -27,7 +27,7 @@
     <string name="cov_iot_wifi_title_part2">2.4GHz</string>
     <string name="cov_iot_wifi_title_part3">&#160;Wi-Fi Network</string>
     <string name="cov_iot_wifi_title_2">Enter Wi-Fi Password</string>
-    <string name="cov_iot_wifi_title_tips">Note: 5G Wi-Fi Not Supported</string>
+    <string name="cov_iot_wifi_title_tips">Note: 5G Wi-Fi not supported</string>
     <string name="cov_iot_wifi_password">Password</string>
     <string name="cov_iot_wifi_change">Switch</string>
     <string name="cov_iot_wifi_warning">Please enter 2.4G Wi-Fi network</string>

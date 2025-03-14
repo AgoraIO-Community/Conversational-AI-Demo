@@ -1,18 +1,24 @@
 package io.agora.scene.convoai.iot.ui
 
+import android.Manifest
+import android.bluetooth.le.ScanFilter
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.util.dp
 import io.agora.scene.common.util.getStatusBarHeight
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.iot.CovLogger
 import io.agora.scene.convoai.iot.databinding.CovActivityDeviceScanBinding
 import io.agora.scene.convoai.iot.adapter.CovIotDeviceScanListAdapter
@@ -78,6 +84,11 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
     }
 
     override fun onDestroy() {
+        try {
+            stopScanIotDevice()
+        } catch (e: Exception) {
+            CovLogger.e(TAG, "ble device stop scan error: $e")
+        }
         countDownTimer?.cancel()
         coroutineScope.cancel()
         super.onDestroy()
@@ -133,7 +144,11 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
                 // Network not connected, show prompt dialog
                 showNetworkSettingsDialog()
             } else {
-                // Network connected, only pass device ID
+                try {
+                    stopScanIotDevice()
+                } catch (e: Exception) {
+                    CovLogger.e(TAG, "ble device stop scan error: $e")
+                }
                 CovWifiSelectActivity.startActivity(this, device.address)
             }
         }
@@ -148,10 +163,10 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
         BleLogger.init(object : BleLogCallback {
             override fun onLog(level: BleLogLevel, tag: String, message: String) {
                 when (level) {
-                    BleLogLevel.DEBUG -> Log.d(tag, message)
-                    BleLogLevel.INFO -> Log.i(tag, message)
-                    BleLogLevel.WARN -> Log.w(tag, message)
-                    BleLogLevel.ERROR -> Log.e(tag, message)
+                    BleLogLevel.DEBUG -> CovLogger.d("[BLELIB]$tag", message)
+                    BleLogLevel.INFO -> CovLogger.i("[BLELIB]$tag", message)
+                    BleLogLevel.WARN -> CovLogger.w("[BLELIB]$tag", message)
+                    BleLogLevel.ERROR -> CovLogger.e("[BLELIB]$tag", message)
                 }
             }
         })
@@ -201,32 +216,43 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
         
         // Clear devices in device manager
         CovScanBleDeviceManager.clearDevices()
-        
-        // Start Bluetooth scanning
-        bleManager.startScan(null)
-        
-        // Start 30-second countdown
-        countDownTimer?.cancel()
-        countDownTimer = object : CountDownTimer(20000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val seconds = millisUntilFinished / 1000
-                mBinding?.tvCountdown?.text = "${seconds}s"
-            }
 
-            override fun onFinish() {
-                // Stop scanning
-                bleManager.stopScan()
-                
-                // Determine scan success based on deviceList size
-                if (deviceList.isEmpty()) {
-                    // No devices found, show failure state
-                    updateScanState(ScanState.FAILED)
-                } else {
-                    // Devices found, show device list
-                    updateScanState(ScanState.SUCCESS)
+        try {
+            startScanIotDevice()
+
+            // Start 30-second countdown
+            countDownTimer?.cancel()
+            countDownTimer = object : CountDownTimer(20000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val seconds = millisUntilFinished / 1000
+                    mBinding?.tvCountdown?.text = "${seconds}s"
                 }
-            }
-        }.start()
+
+                override fun onFinish() {
+                    try {
+                        // Stop scanning
+                        stopScanIotDevice()
+
+                        // Determine scan success based on deviceList size
+                        if (deviceList.isEmpty()) {
+                            // No devices found, show failure state
+                            updateScanState(ScanState.FAILED)
+                        } else {
+                            // Devices found, show device list
+                            updateScanState(ScanState.SUCCESS)
+                        }
+                    } catch (e: Exception) {
+                        CovLogger.e(TAG, "ble device stop scan error: $e")
+                        updateScanState(ScanState.FAILED)
+                        return
+                    }
+                }
+            }.start()
+        } catch (e: Exception) {
+            CovLogger.e(TAG, "ble device scan error: $e")
+            ToastUtil.show("blue tooth is not available, please check your bluetooth status", Toast.LENGTH_LONG)
+            finish()
+        }
     }
     
     // Update scan state UI
@@ -298,5 +324,42 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
                 show(supportFragmentManager, "permission_dialog")
             }
         }
+    }
+
+    private fun startScanIotDevice() {
+        // Start Bluetooth scanning
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            CovLogger.e(TAG, "ble device scan error: no permission")
+            ToastUtil.show("blue tooth is not available, please check your bluetooth status", Toast.LENGTH_LONG)
+            finish()
+        }
+        bleManager.startScan(null)
+        //bleManager.startScan(listOf(ScanFilter.Builder().setDeviceName("X1").build()))
+    }
+
+    private fun stopScanIotDevice() {
+        // Start Bluetooth scanning
+        if (ActivityCompat.checkSelfPermission(
+                this@CovDeviceScanActivity,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                this@CovDeviceScanActivity,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            CovLogger.e(TAG, "ble device scan error: no permission")
+            updateScanState(ScanState.FAILED)
+            return
+        }
+        bleManager.stopScan()
     }
 } 
