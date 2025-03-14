@@ -15,7 +15,7 @@ data class BleConfig(
 ) {
     companion object {
         /** Default scan timeout of 10 seconds */
-        const val DEFAULT_SCAN_TIMEOUT = 10000L
+        const val DEFAULT_SCAN_TIMEOUT = 30000L
 
         /** Default connection timeout of 5 seconds */
         const val DEFAULT_CONNECT_TIMEOUT = 10000L

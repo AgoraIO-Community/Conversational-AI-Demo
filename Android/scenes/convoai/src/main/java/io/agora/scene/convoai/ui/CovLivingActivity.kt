@@ -858,7 +858,18 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                             }
                         },
                         {
-                            CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
+                            if (CovIotPresetManager.getPresetList().isNullOrEmpty()) {
+                                coroutineScope.launch {
+                                    val success = fetchIotPresetsAsync()
+                                    if (success) {
+                                        CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
+                                    } else {
+                                        ToastUtil.show(getString(io.agora.scene.convoai.iot.R.string.cov_detail_net_state_error))
+                                    }
+                                }
+                            } else {
+                                CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
+                            }
                         }
                     )
                     infoDialog?.updateConnectStatus(connectionState)

@@ -1,6 +1,8 @@
 package io.agora.scene.convoai.iot.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +24,9 @@ import io.agora.scene.convoai.iot.R
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
-import io.agora.scene.common.BuildConfig
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.iot.api.CovIotApiManager
 import io.agora.scene.convoai.iot.manager.CovIotPresetManager
 import io.agora.scene.convoai.iot.manager.CovScanBleDeviceManager
@@ -85,6 +89,11 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
     }
 
     override fun onDestroy() {
+        try {
+            bleManager.disconnect()
+        } catch (e: Exception) {
+            CovLogger.d(TAG, "disconnect")
+        }
         coroutineScope.cancel()
         super.onDestroy()
     }
@@ -122,11 +131,40 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
     private fun startConnect() {
         val device = this.device ?: return
         updateConnectState(ConnectState.CONNECTING)
-        simulateConnectProcess()
-        return
 
         viewModelScope.launch {
             try {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    // Android 12 and above use BLUETOOTH_SCAN permission
+                    if (ActivityCompat.checkSelfPermission(
+                            this@CovDeviceConnectActivity,
+                            Manifest.permission.BLUETOOTH_SCAN
+                        ) != PackageManager.PERMISSION_GRANTED) {
+                        CovLogger.e(TAG, "ble device scan error: no permission")
+                        ToastUtil.show("blue tooth is not available, please check your bluetooth permission", Toast.LENGTH_LONG)
+                        runOnUiThread {
+                            updateConnectState(ConnectState.FAILED)
+                        }
+                        return@launch
+                    }
+                } else {
+                    // Android 11 and below use BLUETOOTH and BLUETOOTH_ADMIN permissions
+                    if (ActivityCompat.checkSelfPermission(
+                        this@CovDeviceConnectActivity,
+                        Manifest.permission.BLUETOOTH
+                    ) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(
+                        this@CovDeviceConnectActivity,
+                        Manifest.permission.BLUETOOTH_ADMIN
+                    ) != PackageManager.PERMISSION_GRANTED) {
+                        CovLogger.e(TAG, "ble device scan error: no permission")
+                        ToastUtil.show("blue tooth is not available, please check your bluetooth permission", Toast.LENGTH_LONG)
+                        runOnUiThread {
+                            updateConnectState(ConnectState.FAILED)
+                        }
+                        return@launch
+                    }
+                }
                 // 1. connect ble device
                 bleManager.connect(device.device)
                 CovLogger.d(TAG, "ble device connect success")
@@ -136,7 +174,9 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                 CovLogger.d(TAG, "get device id: $deviceId")
 
                 if (deviceId.isEmpty()) {
-                    updateConnectState(ConnectState.FAILED)
+                    runOnUiThread {
+                        updateConnectState(ConnectState.FAILED)
+                    }
                     return@launch
                 }
 
@@ -171,7 +211,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                                                      ssid = wifiSsid,
                                                      pwd = wifiPassword,
                                                      token = model?.auth_token ?: "",
-                                                     url = "https://toolbox-staging.sh3t.agoralab.co"
+                                                     url = io.agora.scene.common.BuildConfig.TOOLBOX_SERVER_HOST
                                                  )
 
                                                 runOnUiThread {

@@ -22,6 +22,7 @@ android {
 
     defaultConfig {
         minSdk rootProject.ext.minSdkVersion
+        buildConfigField("String", "TOOLBOX_SERVER_HOST", "\"${project.getProperty("TOOLBOX_SERVER_HOST")}\"")
         buildConfigField("String", "BASIC_AUTH_KEY", "\"${project.getProperty("BASIC_AUTH_KEY")}\"")
         buildConfigField("String", "BASIC_AUTH_SECRET", "\"${project.getProperty("BASIC_AUTH_SECRET")}\"")
         buildConfigField("String", "LLM_URL", "\"${project.getProperty("LLM_URL")}\"")
