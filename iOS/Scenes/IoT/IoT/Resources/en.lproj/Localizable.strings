@@ -1,0 +1,98 @@
+"error.network" = "request failed:";
+"error.room.error" = "Room no longer exists. Please join a new call.";
+"error.join.error" = "Failed to join. Please try again.";
+"error.join.error.resource.limit" = "The current preset resources are out of limit. Please try again later";
+"error.network.disconnect" = "Network error. Please check yournetwork settings.";
+
+"error.microphone.permission.alert.title" = "No microphone permission";
+"error.microphone.permission.alert.description" = "Please enable microphone permissions in the settings";
+"error.permission.alert.cancel" = "Cancel";
+"error.permission.alert.confirm" = "Setting";
+
+"iot.info.title" = "Conversational AI Device";
+"iot.info.inner.title" = "Conversational AI Device";
+"iot.info.device" = "%@ Devices";
+"iot.common.submit" = "Confirm";
+"iot.common.cancel" = "Cancel";
+"iot.common.alert.confim" = "Got it";
+
+"iot.permission.title" = "Enable Permissions & Switches";
+"iot.permission.description" = "Enable the following permissions and switches to add nearby devices";
+"iot.permission.go_button" = "Go to Enable";
+"iot.permission.item.bluetooth" = "Bluetooth";
+"iot.permission.item.location" = "Location";
+"iot.permission.item.wifi" = "2.4G Wi-Fi";
+"iot.permission.bluetooth.enable" = "Enable Bluetooth";
+"iot.permission.bluetooth.unauthorized" = "Bluetooth Permission Denied";
+"iot.permission.location.unauthorized" = "Location Permission Denied";
+"iot.permission.button.next" = "Next";
+
+"iot.device.add.title" = "Adding Device";
+"iot.device.add.progress" = "Adding device...";
+"iot.device.add.send.data" = "Sending Data";
+"iot.device.add.success.title" = "Device Added";
+"iot.device.add.success.description" = "Note: Device addition info is saved locally. Re-add device after reinstalling the app.";
+
+"iot.device.scanning.title" = "Scanning...";
+"iot.device.scanning.description" = "Make sure the smart device's network switch is on and it's near your phone";
+
+"iot.device.empty.welcome" = "Welcome";
+"iot.device.empty.description" = "Let's add a device now";
+"iot.device.empty.add_button" = "Add Device";
+
+"iot.device.setup.instruction.title" = "Preparation";
+"iot.device.setup.instruction" = "Hold the network button for 3 seconds to enter network mode";
+"iot.device.setup.instruction.sub" = "";
+"iot.device.setup.permission_description" = "These permissions and switches will be requested during pairing";
+"iot.device.setup.complete" = "Completed the above actions";
+
+"iot.device.default_preset" = "Default Preset";
+"iot.device.step1.title" = "Connect Power";
+"iot.device.step1.description" = "Connect the device to power and turn it on";
+"iot.device.step2.title" = "Wait for Start";
+"iot.device.step2.description" = "The device light will turn on. Wait for it to start up";
+"iot.device.step3.title" = "Connect to Wi-Fi";
+"iot.device.step3.description" = "Make sure your phone is connected to a Wi-Fi network";
+
+"iot.device.search.failed.title" = "Search Failed";
+"iot.device.search.failed.description" = "Check if the device is in network mode";
+"iot.device.search.failed.retry" = "Rescan";
+"iot.device.search.failed.tip" = "Make sure the smart device's network switch is on and it's near your phone";
+"iot.device.search.failed.swipe.tip" = "swipe Left & right for more";
+
+"iot.error.alert.title" = "Can't Connect to Smart Device!";
+"iot.error.alert.subtitle" = "Check as follows:";
+"iot.error.check.wifi" = "Check if Wi-Fi password is correct";
+"iot.error.check.pairing" = "Check if device is in network mode";
+"iot.error.check.router" = "Check if device is near the router";
+
+"iot.device.rename.title" = "Rename Device";
+"iot.device.rename.success" = "Device Name Updated";
+"iot.device.rename.placeholder" = "Enter a name";
+"iot.device.rename.tips" = "Max 10 characters, can't be empty";
+
+"iot.device.settings.title" = "Settings";
+"iot.device.settings.preset" = "Preset Character";
+"iot.device.settings.language" = "Language";
+"iot.device.settings.language.title" = "Select Language";
+"iot.device.settings.advanced" = "Advanced Settings";
+"iot.device.settings.interrupt" = "Enable Graceful Interrupt";
+"iot.device.settings.interrupt.match" = "Interrupt";
+"iot.device.settings.reconnect" = "Reconfigure Network";
+"iot.device.settings.delete" = "Delete Device";
+"iot.device.settings.delete.title" = "Delete %@?";
+"iot.device.settings.delete.description" = "Can't change its conversation settings after deletion. Delete anyway?";
+"iot.device.settings.delete.confirm" = "Delete";
+"iot.device.settings.save.title" = "Save Changes?";
+"iot.device.settings.save.description" = "Config will be updated when the device connects next time after confirming changes";
+"iot.device.settings.save.confirm" = "Confirm Changes";
+"iot.device.settings.save.discard" = "Discard Changes";
+
+"iot.device.search.title" = "Scan Nearby Devices";
+"iot.wifi.settings.title" = "Select 2.4GHz Wi-Fi Network";
+"iot.wifi.settings.subtitle" = "Enter Wi-Fi Password";
+"iot.wifi.settings.tip" = "5G Wi-Fi not supported";
+"iot.wifi.settings.error" = "Enter a 2.4G Wi-Fi network";
+"iot.wifi.settings.password.placeholder" = "Password";
+"iot.wifi.settings.switch" = "Switch";
+"iot.wifi.settings.next" = "Next";

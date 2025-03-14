@@ -108,3 +108,6 @@
 "devmode.close" = "Close Developer Mode";
 "devmode.graph" = "graph id";
 "devmode.server" = "Server";
+
+"iot.info.title" = "Conversational AI Device";
+"iot.info.device" = "%@ Devices";
