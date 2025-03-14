@@ -79,7 +79,7 @@ class CovIotDeviceSettingsDialog : BaseSheetDialog<CovIotDeviceSettingsDialogBin
         // Record initial state
         device?.let { device ->
             // If device value is empty, use default value
-            initialLanguage = device.currentLanguage.takeIf { it.isNotEmpty() } ?: CovIotPresetManager.getDefaultLanguage()?.code ?: "zh-CN"
+            initialLanguage = device.currentLanguage.takeIf { it.isNotEmpty() } ?: CovIotPresetManager.getDefaultLanguage()?.code ?: "en-US"
             initialAiVad = device.enableAIVAD
             initialPreset = device.currentPreset.takeIf { it.isNotEmpty() } ?: CovIotPresetManager.getDefaultPreset()?.preset_name ?: "story_mode"
         }
@@ -137,7 +137,7 @@ class CovIotDeviceSettingsDialog : BaseSheetDialog<CovIotDeviceSettingsDialogBin
                                 binding?.let { binding ->
                                     // Get language code for current displayed language name
                                     val languageName = binding.tvLanguageDetail.text.toString()
-                                    val languageCode = getCurrentLanguageCode(languageName) ?: initialLanguage ?: "zh-CN"
+                                    val languageCode = getCurrentLanguageCode(languageName) ?: initialLanguage ?: "en-US"
                                     
                                     val selectedPreset = presetList[selectedPresetPosition]
                                     val newDevice = CovIotDevice(
