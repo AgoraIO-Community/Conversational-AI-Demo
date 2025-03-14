@@ -79,7 +79,7 @@
                 android:textSize="14sp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:maxWidth="300dp"
+                android:maxWidth="250dp"
                 tools:text="237263263847SDJK" />
         </LinearLayout>
 

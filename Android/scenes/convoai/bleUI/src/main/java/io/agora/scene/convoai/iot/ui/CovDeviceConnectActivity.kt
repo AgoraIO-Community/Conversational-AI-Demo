@@ -194,7 +194,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                                 CovIotApiManager.updateSettings(
                                     deviceId = deviceId,
                                     presetName = CovIotPresetManager.getDefaultPreset()?.preset_name ?: "story_mode",
-                                    asrLanguage = CovIotPresetManager.getDefaultLanguage()?.code ?: "zh-CN",
+                                    asrLanguage = CovIotPresetManager.getDefaultLanguage()?.code ?: "en-US",
                                     enableAiVad = false
                                 ) { err ->
                                     if (err != null) {
@@ -368,7 +368,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                     name = device.name,
                     bleDevice = device,
                     currentPreset = CovIotPresetManager.getDefaultPreset()?.preset_name ?: "story_mode",
-                    currentLanguage = CovIotPresetManager.getDefaultLanguage()?.code ?: "zh-CN",
+                    currentLanguage = CovIotPresetManager.getDefaultLanguage()?.code ?: "en-US",
                     enableAIVAD = false
                 )
                 
