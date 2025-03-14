@@ -252,8 +252,7 @@ extension SearchDeviceViewController: BLEManagerDelegate {
         if let data = device.data[CBAdvertisementDataManufacturerDataKey] as? Data {
 //            if bluetoothManager.bekenDeviceManufacturerData == data {
             let prefixName = device.name.prefix(3)
-//            prefixName == "X1-"
-            if !devices.contains(where: { $0.id == device.id }) {
+            if prefixName == "X1-", !devices.contains(where: { $0.id == device.id }) {
                     if devices.isEmpty {
                         remakeConstraints()
                         searchingView.hideTextView(isHidden: true)

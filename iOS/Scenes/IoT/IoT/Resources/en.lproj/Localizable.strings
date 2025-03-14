@@ -76,7 +76,7 @@
 "iot.device.settings.language" = "Language";
 "iot.device.settings.language.title" = "Select Language";
 "iot.device.settings.advanced" = "Advanced Settings";
-"iot.device.settings.interrupt" = "Enable Graceful Interrupt";
+"iot.device.settings.interrupt" = "Intelligent Interruption Handling";
 "iot.device.settings.interrupt.match" = "Interrupt";
 "iot.device.settings.reconnect" = "Reconfigure Network";
 "iot.device.settings.delete" = "Delete Device";
@@ -85,13 +85,13 @@
 "iot.device.settings.delete.confirm" = "Delete";
 "iot.device.settings.save.title" = "Save Changes?";
 "iot.device.settings.save.description" = "Config will be updated when the device connects next time after confirming changes";
-"iot.device.settings.save.confirm" = "Confirm Changes";
-"iot.device.settings.save.discard" = "Discard Changes";
+"iot.device.settings.save.confirm" = "Confirm";
+"iot.device.settings.save.discard" = "Discard";
 
 "iot.device.search.title" = "Scan Nearby Devices";
 "iot.wifi.settings.title" = "Select 2.4GHz Wi-Fi Network";
 "iot.wifi.settings.subtitle" = "Enter Wi-Fi Password";
-"iot.wifi.settings.tip" = "5G Wi-Fi not supported";
+"iot.wifi.settings.tip" = "Note: 5G Wi-Fi not supported";
 "iot.wifi.settings.error" = "Enter a 2.4G Wi-Fi network";
 "iot.wifi.settings.password.placeholder" = "Password";
 "iot.wifi.settings.switch" = "Switch";
