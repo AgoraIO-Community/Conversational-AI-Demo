@@ -129,21 +129,36 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
 
         viewModelScope.launch {
             try {
-                if (ActivityCompat.checkSelfPermission(
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    // Android 12 and above use BLUETOOTH_SCAN permission
+                    if (ActivityCompat.checkSelfPermission(
+                            this@CovDeviceConnectActivity,
+                            Manifest.permission.BLUETOOTH_SCAN
+                        ) != PackageManager.PERMISSION_GRANTED) {
+                        CovLogger.e(TAG, "ble device scan error: no permission")
+                        ToastUtil.show("blue tooth is not available, please check your bluetooth permission", Toast.LENGTH_LONG)
+                        runOnUiThread {
+                            updateConnectState(ConnectState.FAILED)
+                        }
+                        return@launch
+                    }
+                } else {
+                    // Android 11 and below use BLUETOOTH and BLUETOOTH_ADMIN permissions
+                    if (ActivityCompat.checkSelfPermission(
                         this@CovDeviceConnectActivity,
-                        Manifest.permission.BLUETOOTH_SCAN
+                        Manifest.permission.BLUETOOTH
                     ) != PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.checkSelfPermission(
                         this@CovDeviceConnectActivity,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    CovLogger.e(TAG, "ble device scan error: no permission")
-                    ToastUtil.show("blue tooth is not available, please check your bluetooth permission", Toast.LENGTH_LONG)
-                    runOnUiThread {
-                        updateConnectState(ConnectState.FAILED)
+                        Manifest.permission.BLUETOOTH_ADMIN
+                    ) != PackageManager.PERMISSION_GRANTED) {
+                        CovLogger.e(TAG, "ble device scan error: no permission")
+                        ToastUtil.show("blue tooth is not available, please check your bluetooth permission", Toast.LENGTH_LONG)
+                        runOnUiThread {
+                            updateConnectState(ConnectState.FAILED)
+                        }
+                        return@launch
                     }
-                    return@launch
                 }
                 // 1. connect ble device
                 bleManager.connect(device.device)
@@ -191,7 +206,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                                                      ssid = wifiSsid,
                                                      pwd = wifiPassword,
                                                      token = model?.auth_token ?: "",
-                                                     url = "https://toolbox-staging.sh3t.agoralab.co"
+                                                     url = io.agora.scene.common.BuildConfig.TOOLBOX_SERVER_HOST
                                                  )
 
                                                 runOnUiThread {

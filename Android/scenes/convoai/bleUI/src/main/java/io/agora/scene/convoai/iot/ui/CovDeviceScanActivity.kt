@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -327,39 +326,66 @@ class CovDeviceScanActivity : BaseActivity<CovActivityDeviceScanBinding>() {
     }
 
     private fun startScanIotDevice() {
-        // Start Bluetooth scanning
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            CovLogger.e(TAG, "ble device scan error: no permission")
-            ToastUtil.show("blue tooth is not available, please check your bluetooth status", Toast.LENGTH_LONG)
-            finish()
+        // check permission
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Android 12 and above use BLUETOOTH_SCAN permission
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) != PackageManager.PERMISSION_GRANTED) {
+                CovLogger.e(TAG, "ble device scan error: no permission")
+                ToastUtil.show("bluetooth permission is not available, please check your bluetooth permission settings", Toast.LENGTH_LONG)
+                finish()
+                return
+            }
+        } else {
+            // Android 11 and below use BLUETOOTH and BLUETOOTH_ADMIN permissions
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_ADMIN
+                ) != PackageManager.PERMISSION_GRANTED) {
+                CovLogger.e(TAG, "ble device scan error: no permission")
+                ToastUtil.show("bluetooth permission is not available, please check your bluetooth permission settings", Toast.LENGTH_LONG)
+                finish()
+                return
+            }
         }
-        bleManager.startScan(null)
-        //bleManager.startScan(listOf(ScanFilter.Builder().setDeviceName("X1").build()))
+        
+        bleManager.startScan(listOf(ScanFilter.Builder().setDeviceName("X1").build()))
     }
 
     private fun stopScanIotDevice() {
-        // Start Bluetooth scanning
-        if (ActivityCompat.checkSelfPermission(
-                this@CovDeviceScanActivity,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(
-                this@CovDeviceScanActivity,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            CovLogger.e(TAG, "ble device scan error: no permission")
-            updateScanState(ScanState.FAILED)
-            return
+        // check permission
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Android 12 and above use BLUETOOTH_SCAN permission
+            if (ActivityCompat.checkSelfPermission(
+                    this@CovDeviceScanActivity,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) != PackageManager.PERMISSION_GRANTED) {
+                CovLogger.e(TAG, "ble device scan error: no permission")
+                updateScanState(ScanState.FAILED)
+                return
+            }
+        } else {
+            // Android 11 and below use BLUETOOTH and BLUETOOTH_ADMIN permissions
+            if (ActivityCompat.checkSelfPermission(
+                    this@CovDeviceScanActivity,
+                    Manifest.permission.BLUETOOTH
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(
+                    this@CovDeviceScanActivity,
+                    Manifest.permission.BLUETOOTH_ADMIN
+                ) != PackageManager.PERMISSION_GRANTED) {
+                CovLogger.e(TAG, "ble device scan error: no permission")
+                updateScanState(ScanState.FAILED)
+                return
+            }
         }
+        
         bleManager.stopScan()
     }
 } 
