@@ -170,7 +170,6 @@ class CovIotDeviceSettingsDialog : BaseSheetDialog<CovIotDeviceSettingsDialogBin
                         },
                         onCancel = {
                             // When canceled, restore UI to initial state
-                            restoreInitialSettings()
                             onDismissCallback?.invoke()
                             dismiss()
                         }
@@ -300,23 +299,6 @@ class CovIotDeviceSettingsDialog : BaseSheetDialog<CovIotDeviceSettingsDialogBin
         }
         
         return false
-    }
-    
-    // Method to restore initial settings
-    private fun restoreInitialSettings() {
-        // Restore preset selection
-        selectedPresetPosition = if (initialPreset?.contains("故事") == true) 0 else 1
-        presetAdapter.updateSelectedPosition(selectedPresetPosition)
-        
-        // Update UI
-        binding?.apply {
-            // Restore AI VAD switch state
-            cbAiVad.isChecked = initialAiVad
-            
-            // Restore language display, use language code to get corresponding language name
-            val languageName = CovIotPresetManager.getLanguageByCode(initialLanguage)?.name ?: initialLanguage
-            tvLanguageDetail.text = languageName
-        }
     }
 
     private fun showDeleteConfirmDialog(deviceName: String, onDelete: () -> Unit) {

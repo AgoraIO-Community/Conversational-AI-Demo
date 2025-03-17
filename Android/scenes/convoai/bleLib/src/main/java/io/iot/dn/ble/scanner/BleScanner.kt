@@ -59,7 +59,13 @@ class BleScanner(private val config: BleConfig) : IBleScanner {
                 .build()
             BleLogger.d(TAG, "Scan settings: Low latency mode")
             BleLogger.d(TAG, "Scan started")
-            startScan(filters, settings, scanCallback)
+            try {
+                startScan(filters, settings, scanCallback)
+            } catch (e: Exception) {
+                BleLogger.e(TAG, "Failed to start scan: ${e.message}")
+                updateScanState(BleScanState.FAILED)
+                return@apply
+            }
         }
 
         // Start timeout timer
@@ -98,8 +104,13 @@ class BleScanner(private val config: BleConfig) : IBleScanner {
                 @RequiresPermission(android.Manifest.permission.BLUETOOTH_SCAN)
                 override fun run() {
                     BleLogger.d(TAG, "Scan timeout")
-                    stopScan()
-                    updateScanState(BleScanState.TIMEOUT)
+                    try {
+                        stopScan()
+                    } catch (e: Exception) {
+                        BleLogger.e(TAG, "Failed to stop scan on timeout: ${e.message}")
+                    } finally {
+                        updateScanState(BleScanState.TIMEOUT)
+                    }
                 }
             }, timeout)
         }
@@ -120,7 +131,7 @@ class BleScanner(private val config: BleConfig) : IBleScanner {
                     address = result.device.address,
                 )
 
-                BleLogger.d(TAG, "Device found: ${result.device.address}, RSSI: ${result.rssi}")
+                //BleLogger.d(TAG, "Device found: ${result.device.address}, RSSI: ${result.rssi}")
                 updateScanState(BleScanState.FOUND)
                 callback?.onDeviceFound(device)
             }
