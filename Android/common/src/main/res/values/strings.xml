@@ -7,7 +7,7 @@
     <string name="common_debug_app_build">App Build No</string>
     <string name="common_debug_rtc_version">Rtc Version</string>
     <string name="common_debug_switch_server">Switch Server</string>
-    <string name="common_debug_current_server">Switched to \n %1s</string>
+    <string name="common_debug_current_server">Switched to %1s \n %2s</string>
     <string name="common_debug_switch_tips">Server can be switched before entering the scene.</string>
     <string name="common_debug_convoai_host">ConvoAI host</string>
     <string name="common_debug_audio_dump">Audio Dump</string>

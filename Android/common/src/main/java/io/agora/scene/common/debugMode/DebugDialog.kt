@@ -150,7 +150,7 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
     }
 
     private fun onCloseDebug() {
-        if (!ServerConfig.isBuildEnv){
+        if (!ServerConfig.isBuildEnv) {
             onDebugDialogCallback?.onEnvConfigChange()
             ServerConfig.reset()
         }
@@ -183,7 +183,9 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
             params.height = finalHeight
             cvOptions.layoutParams = params
 
-            val selectedEnvConfig = serverConfigList.firstOrNull { it.toolboxServerHost == ServerConfig.toolBoxUrl }
+            val selectedEnvConfig = serverConfigList.firstOrNull {
+                it.toolboxServerHost == ServerConfig.toolBoxUrl && it.rtcAppId == ServerConfig.rtcAppId
+            }
             // Update options and handle selection
             (rcOptions.adapter as? OptionsAdapter)?.updateOptions(
                 serverConfigList.map { it.envName }.toTypedArray(),
@@ -200,10 +202,7 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                 updateEnvConfig()
                 vOptionsMask.visibility = View.INVISIBLE
                 ToastUtil.show(
-                    getString(
-                        io.agora.scene.common.R.string.common_debug_current_server,
-                        ServerConfig.toolBoxUrl
-                    )
+                    getString(R.string.common_debug_current_server,ServerConfig.envName, ServerConfig.toolBoxUrl)
                 )
                 dismiss()
             }
