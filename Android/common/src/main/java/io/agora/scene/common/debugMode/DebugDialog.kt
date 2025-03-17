@@ -190,7 +190,11 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                 serverConfigList.indexOf(selectedEnvConfig)
             ) { index ->
                 val selectConfig = serverConfigList[index]
-                if (selectConfig.toolboxServerHost == selectedEnvConfig?.toolboxServerHost) return@updateOptions
+                if (selectConfig.toolboxServerHost == selectedEnvConfig?.toolboxServerHost &&
+                    selectConfig.rtcAppId == selectedEnvConfig?.rtcAppId
+                ) {
+                    return@updateOptions
+                }
                 ServerConfig.updateDebugConfig(selectConfig)
                 onDebugDialogCallback?.onEnvConfigChange()
                 updateEnvConfig()

@@ -8,7 +8,7 @@
     android:layout_gravity="bottom"
     tools:theme="@style/Theme.AppCompat">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
                 android:background="@drawable/settings_item_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -230,7 +231,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_reset" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/v_options_mask"
