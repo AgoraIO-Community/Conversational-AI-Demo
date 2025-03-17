@@ -13,10 +13,7 @@ import BLEManager
 class IOTWifiSettingViewController: BaseViewController {
     
     // MARK: - Properties
-    var deviceId: String = ""
-    var deviceName: String = ""
-    var rssi: Int = 0
-    
+    var device: BLEDevice?
     private let wifiManager = WiFiManager()
 
     private lazy var titleLabel: UILabel = {
@@ -24,8 +21,8 @@ class IOTWifiSettingViewController: BaseViewController {
         let text = ResourceManager.L10n.Iot.wifiSettingsTitle
         let attributedString = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: "2.4GHz")
-        attributedString.addAttribute(.foregroundColor, 
-                                    value: UIColor.themColor(named: "ai_green6"), 
+        attributedString.addAttribute(.foregroundColor,
+                                    value: UIColor.themColor(named: "ai_green6"),
                                     range: range)
         label.attributedText = attributedString
         label.font = .systemFont(ofSize: 24, weight: .medium)
@@ -321,12 +318,12 @@ class IOTWifiSettingViewController: BaseViewController {
     }
     
     @objc private func nextButtonTapped() {
+        guard let device = self.device else { return }
         // Handle next button tap
         let vc = DeviceAddingViewController()
         vc.wifiName = wifiNameField.text ?? ""
         vc.password = passwordField.text ?? ""
-        vc.deviceId = deviceId
-        vc.deviceName = deviceName
+        vc.device = device
         self.navigationController?.pushViewController(vc)
     }
 }
@@ -348,3 +345,5 @@ extension IOTWifiSettingViewController {
         return result
     }
 }
+
+

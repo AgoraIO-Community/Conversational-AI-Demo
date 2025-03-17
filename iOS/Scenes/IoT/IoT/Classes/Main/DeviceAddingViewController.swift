@@ -13,9 +13,8 @@ import BLEManager
 class DeviceAddingViewController: BaseViewController {
     var wifiName: String = ""
     var password: String = ""
-    var deviceId: String = ""
-    var deviceName: String = ""
-    
+    var device: BLEDevice?
+
     private let apiManger = IOTApiManager()
     private var bluetoothManager: AIBLEManager = .shared
 
@@ -46,7 +45,6 @@ class DeviceAddingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         setupConstraints()
         setupRotatingBorder()
@@ -56,12 +54,10 @@ class DeviceAddingViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        bluetoothManager.delegate = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        bluetoothManager.delegate = nil
     }
     
     private func setupView() {
@@ -140,12 +136,20 @@ class DeviceAddingViewController: BaseViewController {
     
     private func prepareToAddDevice() {
         addLog("[Call] prepareToAddDevice")
+        bluetoothManager.delegate = self
+        guard let device = self.device else { return }
         statusLabel.text = ResourceManager.L10n.Iot.deviceAddProgress
+        bluetoothManager.connect(device)
+    }
+    
+    private func startGetDeviceId() {
         bluetoothManager.getDeviceId {[weak self] deviceId in
             guard let self = self else { return }
             self.addLog("device id: \(deviceId ?? "")")
             if let deviceId = deviceId {
                 self.addDevice(deviceId: deviceId)
+            } else {
+                showErrorAlert()
             }
         }
     }
@@ -250,13 +254,14 @@ class DeviceAddingViewController: BaseViewController {
     }
     
     private func addDeviceSuccess() {
+        guard let device = self.device else { return }
         guard let preset = AppContext.iotPresetsManager()?.allPresets()?.first,
               let defaultLanguage = preset.support_languages.first(where: { $0.isDefault }) else {
             return
         }
         AppContext.iotDeviceManager()?.addDevice(device: LocalDevice(
-            name: deviceName,
-            deviceId: deviceId,
+            name: device.name,
+            deviceId: device.id.uuidString,
             rssi: wifiName,
             currentPreset: preset,
             currentLanguage: defaultLanguage,
@@ -282,8 +287,13 @@ extension DeviceAddingViewController: BLEManagerDelegate {
         case .wifiConfigurationDone:
             addLog("wifiConfigurationDone")
             addDeviceSuccess()
+        case .deviceConnected:
+            addLog("device connected")
+            startGetDeviceId()
         default:
             addLog("other state : \(newState)")
         }
     }
 }
+
+
