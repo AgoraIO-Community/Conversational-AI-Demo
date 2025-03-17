@@ -42,6 +42,7 @@ abstract class BaseSheetDialog<B : ViewBinding?> : BottomSheetDialogFragment() {
                 val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
                 val behavior = BottomSheetBehavior.from(bottomSheet)
                 behavior.isDraggable = false
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
         dialog?.setOnShowListener { _: DialogInterface? ->
