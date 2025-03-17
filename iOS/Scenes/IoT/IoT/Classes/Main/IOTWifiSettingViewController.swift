@@ -13,10 +13,7 @@ import BLEManager
 class IOTWifiSettingViewController: BaseViewController {
     
     // MARK: - Properties
-    var deviceId: String = ""
-    var deviceName: String = ""
-    var rssi: Int = 0
-    
+    var device: BLEDevice?
     private let wifiManager = WiFiManager()
 
     private lazy var titleLabel: UILabel = {
@@ -24,8 +21,8 @@ class IOTWifiSettingViewController: BaseViewController {
         let text = ResourceManager.L10n.Iot.wifiSettingsTitle
         let attributedString = NSMutableAttributedString(string: text)
         let range = (text as NSString).range(of: "2.4GHz")
-        attributedString.addAttribute(.foregroundColor, 
-                                    value: UIColor.themColor(named: "ai_green6"), 
+        attributedString.addAttribute(.foregroundColor,
+                                    value: UIColor.themColor(named: "ai_green6"),
                                     range: range)
         label.attributedText = attributedString
         label.font = .systemFont(ofSize: 24, weight: .medium)
@@ -140,6 +137,7 @@ class IOTWifiSettingViewController: BaseViewController {
         setupConstraints()
         updateNextButtonState()
         setupKeyboardHandling()
+        setupNotifications()
     }
     
     deinit {
@@ -321,13 +319,38 @@ class IOTWifiSettingViewController: BaseViewController {
     }
     
     @objc private func nextButtonTapped() {
+        guard let device = self.device else { return }
         // Handle next button tap
         let vc = DeviceAddingViewController()
         vc.wifiName = wifiNameField.text ?? ""
         vc.password = passwordField.text ?? ""
-        vc.deviceId = deviceId
-        vc.deviceName = deviceName
+        vc.device = device
         self.navigationController?.pushViewController(vc)
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self,
+                                             selector: #selector(applicationDidEnterBackground),
+                                             name: UIApplication.didEnterBackgroundNotification,
+                                             object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                             selector: #selector(applicationWillEnterForeground),
+                                             name: UIApplication.willEnterForegroundNotification,
+                                             object: nil)
+    }
+    
+    @objc private func applicationDidEnterBackground() {
+        // Handle background state if needed in the future
+    }
+    
+    @objc private func applicationWillEnterForeground() {
+        // Check WiFi SSID when app comes to foreground
+        if let currentSSID = getCurrentWiFiSSID() {
+            updateWifiNameField(with: currentSSID)
+        } else {
+            updateWifiNameField(with: "")
+        }
     }
 }
 
@@ -337,6 +360,8 @@ extension IOTWifiSettingViewController {
         super.viewWillAppear(animated)
         if let currentSSID = getCurrentWiFiSSID() {
             updateWifiNameField(with: currentSSID)
+        } else {
+            updateWifiNameField(with: "")
         }
     }
     
@@ -348,3 +373,5 @@ extension IOTWifiSettingViewController {
         return result
     }
 }
+
+

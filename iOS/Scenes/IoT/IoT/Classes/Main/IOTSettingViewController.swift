@@ -13,7 +13,7 @@ class IOTSettingViewController: UIViewController {
     
     // MARK: - Properties
     var deviceId: String = ""
-        
+    var reconnectedTap: (() -> ())?
     private var selectedPresetIndex: Int = 0 // Track current selected preset index
     private var currentLanguage: CovIotLanguage?
     private var currentPreset: CovIotPreset?
@@ -441,8 +441,8 @@ class IOTSettingViewController: UIViewController {
             
             SVProgressHUD.show()
             self.iotApiManager.updateSettings(deviceId: self.deviceId, presetName: presetName, asrLanguage: languageCode, aivad: aivadState) { [weak self] error in
-                guard let self = self else { return }
                 SVProgressHUD.dismiss()
+                guard let self = self else { return }
                 if let error = error {
                     SVProgressHUD.showError(withStatus: error.message)
                 } else {
@@ -452,7 +452,6 @@ class IOTSettingViewController: UIViewController {
                 self.dismiss(animated: true)
             }
             
-            self.dismiss(animated: true)
         } onCancel: { [weak self] in
             self?.dismiss(animated: true)
         }
@@ -460,13 +459,15 @@ class IOTSettingViewController: UIViewController {
     
     @objc private func reconnectButtonTapped() {
         // Handle reconnect
+        self.dismiss(animated: false)
+        reconnectedTap?()
     }
     
     @objc private func deleteButtonTapped() {
         guard let device = AppContext.iotDeviceManager()?.getDevice(deviceId: deviceId) else { return }
         
         AgentAlertView.show(
-            in: view, 
+            in: view,
             title: String(format: ResourceManager.L10n.Iot.deviceSettingsDeleteTitle, "\"\(device.name)\""),
             content: ResourceManager.L10n.Iot.deviceSettingsDeleteDescription,
             cancelTitle: "取消",
@@ -707,3 +708,5 @@ private class PresetModeCell: UIView {
         separatorLine.isHidden = isLastCell
     }
 }
+
+

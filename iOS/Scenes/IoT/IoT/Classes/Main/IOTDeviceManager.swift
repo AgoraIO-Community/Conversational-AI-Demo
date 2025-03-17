@@ -54,7 +54,13 @@ class IOTDeviceManager: IOTDeviceManagerProtocol {
     
     // MARK: - Device Management
     func addDevice(device: LocalDevice) {
-        if !devices.contains(where: { $0.deviceId == device.deviceId }) {
+        if let index = devices.firstIndex(where: { $0.deviceId == device.deviceId }) {
+            // Device exists, update it
+            devices[index] = device
+            saveDevices()
+            notifyDelegates { $0.deviceManager(self, didUpdateDevice: device) }
+        } else {
+            // New device, add it
             devices.append(device)
             saveDevices()
             notifyDelegates { $0.deviceManager(self, didAddDevice: device) }
@@ -154,3 +160,4 @@ struct LocalDevice: Codable {
     var currentLanguage: CovIotLanguage
     var aiVad: Bool
 }
+

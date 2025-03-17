@@ -41,7 +41,7 @@ class TimeoutAlertView: UIView {
     
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "PingFang HK", size: 14) ?? UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -161,3 +161,4 @@ class TimeoutAlertView: UIView {
         }
     }
 }
+

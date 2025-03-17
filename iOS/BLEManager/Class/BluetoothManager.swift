@@ -55,28 +55,30 @@ public class BLENetworkConfigInfo: NSObject {
     }
 }
 
-enum BLEManagerError: Error {
+public enum BLEManagerError: Error {
     case bleNotAvailable
     case connectDeviceNotFound
     case deviceConnectFailed
     case deviceDisconnected
+    case writeTimeout
     case custom(String)
 }
 
 extension BLEManagerError: CustomNSError {
-    static var errorDomain: String { "com.beken.iot" }
+    public static var errorDomain: String { "com.beken.iot" }
 
-    var errorCode: Int {
+    public var errorCode: Int {
         switch self {
         case .bleNotAvailable: return 100
         case .connectDeviceNotFound: return 101
         case .deviceConnectFailed: return 102
         case .deviceDisconnected: return 103
-        case .custom: return 104
+        case .writeTimeout: return 104
+        case .custom: return 99
         }
     }
 
-    var errorUserInfo: [String: Any] {
+    public var errorUserInfo: [String: Any] {
         switch self {
         case .bleNotAvailable:
             return [NSLocalizedDescriptionKey: "蓝牙不可用，请检查系统蓝牙功能是否开启、App蓝牙权限是否已授权"]
@@ -86,6 +88,8 @@ extension BLEManagerError: CustomNSError {
             return [NSLocalizedDescriptionKey: "连接设备失败，请重试"]
         case .deviceDisconnected:
             return [NSLocalizedDescriptionKey: "设备已断开连接"]
+        case .writeTimeout:
+            return [NSLocalizedDescriptionKey: "写入超时"]
         case let .custom(err):
             return [NSLocalizedDescriptionKey: err]
         }
@@ -116,6 +120,7 @@ public class AIBLEManager: NSObject {
     public static let shared = AIBLEManager()
 
     public var deviceConnectTimeout: TimeInterval = 60 // 设备连接超时时间
+    public var writeValueTimeout: TimeInterval = 10 // 写入特征值超时时间
 
     @objc public enum DeviceConfigState: Int {
         case none = 0
@@ -174,6 +179,9 @@ public class AIBLEManager: NSObject {
 
     private var timer: Timer?
     private var curTimeoutCountdown: TimeInterval = 0
+
+    private var writeTimer: Timer?
+    private var currentWriteOperation: String?
 
     public var delegate: BLEManagerDelegate?
     public var isBLEAvailable: Bool { lastState == .poweredOn }
@@ -247,7 +255,7 @@ public class AIBLEManager: NSObject {
     public func send(info: String, uuid: CBUUID) {
         if let cs = findCharacteristic(uuid: uuid),
            let data = info.data(using: .utf8) {
-            curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+            writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送自定义数据")
         } else {
             onConfigFailed(with: .custom("发送data错误: 数据错误"))
         }
@@ -260,6 +268,7 @@ public class AIBLEManager: NSObject {
         wifiConfigState = .none
         wifiInfo = nil
         stopTimer()
+        clearWriteTimer()
         
         // Clear any pending completion handlers
         deviceIdCompletion = nil
@@ -269,6 +278,12 @@ public class AIBLEManager: NSObject {
         timer?.invalidate()
         timer = nil
         curTimeoutCountdown = 0
+    }
+
+    private func clearWriteTimer() {
+        writeTimer?.invalidate()
+        writeTimer = nil
+        currentWriteOperation = nil
     }
 }
 
@@ -390,11 +405,35 @@ extension AIBLEManager {
         return nil
     }
 
+    private func writeValueWithTimeout(data: Data, for characteristic: CBCharacteristic, type: CBCharacteristicWriteType, operationName: String) {
+        // 取消之前的计时器
+        writeTimer?.invalidate()
+        
+        // 记录当前操作
+        currentWriteOperation = operationName
+        
+        // 设置超时计时器
+        writeTimer = Timer.scheduledTimer(withTimeInterval: writeValueTimeout, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+            
+            // 超时处理
+            self.writeTimer?.invalidate()
+            self.writeTimer = nil
+            
+            if let operation = self.currentWriteOperation {
+                self.onConfigFailed(with: .writeTimeout)
+            }
+        }
+        
+        // 执行写入操作
+        curPeripheral?.writeValue(data, for: characteristic, type: type)
+    }
+
     private func sendSSID() {
         if let cs = findCharacteristic(uuid: .AI_SSID_UUID),
            let ssid = wifiInfo?.ssid,
            let data = ssid.data(using: .utf8) {
-            curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+            writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送SSID")
         } else {
             onConfigFailed(with: .custom("发送ssid错误: 数据错误"))
         }
@@ -404,12 +443,12 @@ extension AIBLEManager {
         if let cs = findCharacteristic(uuid: .AI_PASSWORD_UUID),
            let password = wifiInfo?.password {
             if let data = password.data(using: .utf8) {
-                curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+                writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送密码")
             } else {
-                onConfigFailed(with: .custom("发送password后半段错误: 数据编码错误"))
+                onConfigFailed(with: .custom("发送password错误: 数据编码错误"))
             }
         } else {
-            onConfigFailed(with: .custom("发送password后半段错误: 特征值或密码获取失败"))
+            onConfigFailed(with: .custom("发送password错误: 特征值或密码获取失败"))
         }
     }
 
@@ -419,12 +458,12 @@ extension AIBLEManager {
             let halfLength = password.count / 2
             let frontPart = String(password.prefix(halfLength))
             if let data = frontPart.data(using: .utf8) {
-                curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+                writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送Token前半段")
             } else {
-                onConfigFailed(with: .custom("发送password前半段错误: 数据编码错误"))
+                onConfigFailed(with: .custom("发送authToken前半段错误: 数据编码错误"))
             }
         } else {
-            onConfigFailed(with: .custom("发送password前半段错误: 特征值或密码获取失败"))
+            onConfigFailed(with: .custom("发送authToken前半段错误: 特征值或authToken获取失败"))
         }
     }
 
@@ -434,7 +473,7 @@ extension AIBLEManager {
             let halfLength = password.count / 2
             let backPart = String(password.suffix(from: password.index(password.startIndex, offsetBy: halfLength)))
             if let data = backPart.data(using: .utf8) {
-                curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+                writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送Token后半段")
             } else {
                 onConfigFailed(with: .custom("发送authToken后半段错误: 数据编码错误"))
             }
@@ -447,7 +486,7 @@ extension AIBLEManager {
         if let cs = findCharacteristic(uuid: .AI_URL_UUID),
            let url = wifiInfo?.url {
             if let data = url.data(using: .utf8) {
-                curPeripheral?.writeValue(data, for: cs, type: .withResponse)
+                writeValueWithTimeout(data: data, for: cs, type: .withResponse, operationName: "发送URL")
             } else {
                 onConfigFailed(with: .custom("发送URL错误: 数据编码错误"))
             }
@@ -484,7 +523,10 @@ extension AIBLEManager {
             value[3] = UInt8(0)
         }
 
-        curPeripheral?.writeValue(Data(bytes: value, count: totalLegnth), for: characteristic, type: .withResponse)
+        let operationName = opcode == BLEOpCode.WifiStationStart ? "发送WiFi连接指令" : 
+                           (opcode == BLEOpCode.OpGetDeviceId ? "获取设备ID" : "发送操作指令")
+        
+        writeValueWithTimeout(data: Data(bytes: value, count: totalLegnth), for: characteristic, type: .withResponse, operationName: operationName)
     }
 }
 
@@ -612,10 +654,7 @@ extension AIBLEManager: CBPeripheralDelegate {
                 notificationDataHandle(opcode: opcode, statusCode: statusCode, payload: Data(bytes: payload!, count: length))
             } else {
                 onConfigFailed(with: .custom("op error: \(opcode) statusCode: \(statusCode)"))
-                
-                // Add handling for getDeviceId error
                 if opcode == BLEOpCode.OpGetDeviceId {
-                    let error = BLEManagerError.custom("op error: \(opcode) statusCode: \(statusCode)")
                     deviceIdCompletion?(nil)
                     deviceIdCompletion = nil
                 }
@@ -627,6 +666,8 @@ extension AIBLEManager: CBPeripheralDelegate {
         let payloadString = String(data: payload, encoding: .utf8) ?? ""
 
         if opcode == BLEOpCode.WifiStationStart {
+            // 清除写入超时计时器
+            clearWriteTimer()
             onProgress(1.0)
             updateState(.wifiConfigurationDone)
             _log("配网成功!")

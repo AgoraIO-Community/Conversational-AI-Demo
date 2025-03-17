@@ -13,12 +13,12 @@ import BLEManager
 class DeviceAddingViewController: BaseViewController {
     var wifiName: String = ""
     var password: String = ""
+    var device: BLEDevice?
     var deviceId: String = ""
-    var deviceName: String = ""
-    
+
     private let apiManger = IOTApiManager()
     private var bluetoothManager: AIBLEManager = .shared
-
+    private var backFlag = false
     private var rotatingGradientLayer: CAGradientLayer?
     
     private lazy var circleBackgroundView: UIView = {
@@ -60,7 +60,6 @@ class DeviceAddingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         setupConstraints()
         setupRotatingBorder()
@@ -68,14 +67,10 @@ class DeviceAddingViewController: BaseViewController {
         prepareToAddDevice()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        bluetoothManager.delegate = self
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        bluetoothManager.delegate = nil
+    override func navigationBackButtonTapped() {
+        guard let device = self.device else { return }
+        backFlag = true
+        bluetoothManager.disconnect(device)
     }
     
     private func setupView() {
@@ -168,13 +163,25 @@ class DeviceAddingViewController: BaseViewController {
     
     private func prepareToAddDevice() {
         addLog("[Call] prepareToAddDevice")
+        bluetoothManager.delegate = self
+        guard let device = self.device else { return }
         statusLabel.text = ResourceManager.L10n.Iot.deviceAddProgress
-        bluetoothManager.getDeviceId {[weak self] deviceId in
-            guard let self = self else { return }
-            self.addLog("device id: \(deviceId ?? "")")
-            if let deviceId = deviceId {
-                self.addDevice(deviceId: deviceId)
-            }
+        bluetoothManager.connect(device)
+    }
+    
+    private func startGetDeviceId() {
+        addLog("[Call] startGetDeviceId")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+           self.bluetoothManager.getDeviceId {[weak self] deviceId in
+               guard let self = self else { return }
+               self.addLog("device id: \(deviceId ?? "")")
+               if let deviceId = deviceId {
+                   self.deviceId = deviceId
+                   self.addDevice(deviceId: deviceId)
+               } else {
+                   showErrorAlert()
+               }
+           }
         }
     }
     
@@ -232,6 +239,10 @@ class DeviceAddingViewController: BaseViewController {
     
     private func showErrorAlert() {
         addLog("[Call] showErrorAlert, add device failed")
+        if backFlag {
+            addLog("Navigation bar back button action")
+            return
+        }
         let errorAlert = IOTErrorAlertViewController { [weak self] in
             guard let self = self else { return }
             self.goToDeviceViewController()
@@ -278,13 +289,14 @@ class DeviceAddingViewController: BaseViewController {
     }
     
     private func addDeviceSuccess() {
+        guard let device = self.device else { return }
         guard let preset = AppContext.iotPresetsManager()?.allPresets()?.first,
               let defaultLanguage = preset.support_languages.first(where: { $0.isDefault }) else {
             return
         }
         AppContext.iotDeviceManager()?.addDevice(device: LocalDevice(
-            name: deviceName,
-            deviceId: deviceId,
+            name: device.name,
+            deviceId: self.deviceId,
             rssi: wifiName,
             currentPreset: preset,
             currentLanguage: defaultLanguage,
@@ -310,8 +322,13 @@ extension DeviceAddingViewController: BLEManagerDelegate {
         case .wifiConfigurationDone:
             addLog("wifiConfigurationDone")
             addDeviceSuccess()
+        case .deviceConnected:
+            addLog("device connected")
+            startGetDeviceId()
         default:
             addLog("other state : \(newState)")
         }
     }
 }
+
+
