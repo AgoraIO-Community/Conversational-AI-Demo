@@ -44,7 +44,7 @@ class BleManager(
         }
 
         override fun onDeviceFound(device: BleDevice) {
-            BleLogger.d(TAG, "Device found: ${device.device.address}")
+            // BleLogger.d(TAG, "Device found: ${device.device.address}")
             // Handle scan result
             listeners.forEach { it.onDeviceFound(device) }
         }

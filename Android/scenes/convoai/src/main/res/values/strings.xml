@@ -20,7 +20,7 @@
     <string name="cov_detail_start_agent_limit_error">The current preset resources are out of limit. Please try again later.</string>
 
     <string name="cov_info_dialog_title">INFO</string>
-    <string name="cov_channel_info_title">CHANNEL INFO</string>
+    <string name="cov_channel_info_title">Channel Info</string>
     <string name="cov_info_agent_status">Agent Status</string>
     <string name="cov_info_agent_id">Agent ID</string>
     <string name="cov_info_agent_connected">Connected</string>
@@ -73,5 +73,5 @@
     <!-- IOT  -->
     <string name="cov_iot_title">Conversational AI Device</string>
     <string name="cov_iot_devices_num">%d Devices</string>
-    <string name="cov_my_device">Conversational AI Device</string>
+    <string name="cov_my_device">My Devices</string>
 </resources>
