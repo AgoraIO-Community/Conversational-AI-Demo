@@ -33,6 +33,7 @@ extension ResourceManager {
             public static let title = ResourceManager.localizedString("login.title")
             public static let description = ResourceManager.localizedString("login.description")
             public static let buttonTitle = ResourceManager.localizedString("login.start.button.title")
+            public static let signup = ResourceManager.localizedString("login.start.button.signup")
             public static let termsServicePrefix = ResourceManager.localizedString("login.terms.service.prefix")
             public static let termsServiceName = ResourceManager.localizedString("login.terms.service.name")
             public static let termsServiceAndWord = ResourceManager.localizedString("login.terms.service.and")

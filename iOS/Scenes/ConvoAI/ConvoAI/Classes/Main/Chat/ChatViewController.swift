@@ -409,10 +409,9 @@ public class ChatViewController: UIViewController {
         ConvoAILogger.info(txt)
     }
     
-    private func goToSSOViewController() {
+    private func goToSSO(urlString: String) {
         let ssoWebVC = SSOWebViewController()
-        let baseUrl = AppContext.shared.baseServerUrl
-        ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/login"
+        ssoWebVC.urlString = urlString
         ssoWebVC.completionHandler = { [weak self] token in
             guard let self = self else { return }
             if let token = token {
@@ -771,7 +770,12 @@ private extension ChatViewController {
             let loginVC = LoginViewController()
             loginVC.modalPresentationStyle = .overFullScreen
             loginVC.loginAction = { [weak self] in
-                self?.goToSSOViewController()
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
+            }
+            loginVC.signupAction = { [weak self] in
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
             }
             self.present(loginVC, animated: false)
         }

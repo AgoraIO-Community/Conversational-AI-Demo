@@ -2,6 +2,7 @@
 "login.title" = "Unlock ♾️ Free Chat";
 "login.description" = "Power your business future at once";
 "login.start.button.title" = "Log in with Agora account";
+"login.start.button.signup" = "Sign up for free";
 "login.terms.service.prefix" = " I accept the ";
 "login.terms.service.name" = "Terms of Services";
 "login.terms.service.and" = " and ";
