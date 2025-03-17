@@ -122,7 +122,6 @@
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"/>
 
-            <!-- 权限选项 -->
             <LinearLayout
                 android:id="@+id/ll_permissions"
                 android:layout_width="match_parent"

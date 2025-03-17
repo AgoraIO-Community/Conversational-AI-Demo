@@ -198,7 +198,7 @@ class CovDeviceConnectActivity : BaseActivity<CovActivityDeviceConnectBinding>()
                                     enableAiVad = false
                                 ) { err ->
                                     if (err != null) {
-                                        CovLogger.e(TAG, "CovIotApiManager updateSettings失败: $err")
+                                        CovLogger.e(TAG, "CovIotApiManager updateSettings error: $err")
                                         updateConnectState(ConnectState.FAILED)
                                     } else {
                                         // 5. update settings success, then configure WiFi network

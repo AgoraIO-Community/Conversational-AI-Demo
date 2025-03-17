@@ -55,7 +55,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/tv_title"
                 app:tint="@null" />
 
-            <!-- 预设人设部分 -->
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_preset_section"
                 android:layout_width="wrap_content"
@@ -136,7 +135,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
-            <!-- 高级设置部分 -->
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_advanced_settings"
                 android:layout_width="wrap_content"

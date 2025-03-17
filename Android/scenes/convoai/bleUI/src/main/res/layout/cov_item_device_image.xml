@@ -8,6 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="设备图片" />
+        android:contentDescription="Device Image" />
 
 </FrameLayout> 
