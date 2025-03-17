@@ -1107,6 +1107,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     }
 
                     override fun onClickSignupSSO() {
+                        cleanCookie()
                         activityResultLauncher.launch(SSOWebViewActivity.TYPE_SIGNUP)
                         showLoginLoading(true)
                     }
