@@ -9,7 +9,7 @@ import { useGlobalStore, useUserInfoStore } from '@/store'
 import { cn } from '@/lib/utils'
 import { LoadingSpinner } from '@/components/Icons'
 
-const LOGIN_URL = `${process.env.NEXT_PUBLIC_SSO_LOGIN_URL}/v1/convoai/sso/login`
+const LOGIN_URL = `${process.env.NEXT_PUBLIC_DEMO_SERVER_URL}/v1/convoai/sso/login`
 
 export function LoginButton(props: ButtonProps) {
   const { className, onClick, ...rest } = props
