@@ -774,6 +774,7 @@ private extension ChatViewController {
                 self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
             }
             loginVC.signupAction = { [weak self] in
+                SSOWebViewController.clearWebViewCache()
                 let baseUrl = AppContext.shared.baseServerUrl
                 self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
             }
