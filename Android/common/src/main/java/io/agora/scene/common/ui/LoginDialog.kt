@@ -22,6 +22,7 @@ import io.agora.scene.common.databinding.CommonLoginDialogBinding
 interface LoginDialogCallback {
     fun onDialogDismiss() = Unit
     fun onClickStartSSO() = Unit
+    fun onClickSignupSSO() = Unit
     fun onTermsOfServices() = Unit
     fun onPrivacyPolicy() = Unit
 }
@@ -47,6 +48,14 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
             btnLoginSSO.setOnClickListener { v: View? ->
                 if (cbTerms.isChecked) {
                     onLoginDialogCallback?.onClickStartSSO()
+                    dismiss()
+                } else {
+                    animCheckTip()
+                }
+            }
+            btnSignUp.setOnClickListener { v: View? ->
+                if (cbTerms.isChecked) {
+                    onLoginDialogCallback?.onClickSignupSSO()
                     dismiss()
                 } else {
                     animCheckTip()

@@ -16,10 +16,10 @@
         android:layout_marginTop="25dp"
         android:padding="16dp"
         android:src="@drawable/ai_login_icon"
-        app:layout_constraintBottom_toTopOf="@+id/btnLoginSSO"
+        app:layout_constraintBottom_toTopOf="@+id/layoutSSO"
         app:layout_constraintDimensionRatio="1:1"
         android:layout_marginBottom="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/btnLoginSSO"
+        app:layout_constraintEnd_toEndOf="@+id/layoutSSO"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.25" />
 
@@ -38,7 +38,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/btnLoginSSO"
+        app:layout_constraintStart_toStartOf="@+id/layoutSSO"
         app:layout_constraintTop_toTopOf="@+id/ivAppLogin"
         android:orientation="vertical"
         android:gravity="center_vertical"
@@ -67,28 +67,54 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLoginSSO"
+    <LinearLayout
+        android:id="@+id/layoutSSO"
         android:layout_width="0dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="8dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        android:text="@string/common_login_with_agora_sso"
-        android:textAllCaps="false"
-        android:textColor="@color/ai_icontext_inverse1"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="@color/ai_icontext1"
-        app:cornerRadius="12dp"
-        android:gravity="center"
-        android:paddingHorizontal="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvCheckTips"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="6dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.84"
-        app:rippleColor="#1AFFFFFF" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvCheckTips"
+        android:layout_marginBottom="6dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLoginSSO"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/common_login_with_agora_sso"
+            android:textAllCaps="false"
+            android:textColor="@color/ai_icontext_inverse1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/ai_icontext1"
+            app:cornerRadius="12dp"
+            android:gravity="center"
+            android:paddingHorizontal="0dp"
+            app:rippleColor="#803e3e4d" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/common_sign_up_for_free"
+            android:textAllCaps="false"
+            android:textColor="@color/ai_icontext1"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/ai_line2"
+            app:backgroundTint="@color/ai_fill5"
+            app:cornerRadius="12dp"
+            android:gravity="center"
+            android:paddingHorizontal="0dp"
+            app:rippleColor="#80FFFFFF" />
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/tvCheckTips"
@@ -103,7 +129,7 @@
         tools:visibility="visible"
         android:text="@string/common_terms_tips"
         app:layout_constraintBottom_toTopOf="@+id/layoutAgreeTerms"
-        app:layout_constraintStart_toStartOf="@+id/btnLoginSSO" />
+        app:layout_constraintStart_toStartOf="@+id/layoutSSO" />
 
     <LinearLayout
         android:id="@+id/layoutAgreeTerms"
@@ -113,8 +139,8 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tvCheckTips"
-        app:layout_constraintStart_toStartOf="@+id/btnLoginSSO"
-        app:layout_constraintEnd_toEndOf="@+id/btnLoginSSO">
+        app:layout_constraintStart_toStartOf="@+id/layoutSSO"
+        app:layout_constraintEnd_toEndOf="@+id/layoutSSO">
 
         <CheckBox
             android:id="@+id/cb_terms"
