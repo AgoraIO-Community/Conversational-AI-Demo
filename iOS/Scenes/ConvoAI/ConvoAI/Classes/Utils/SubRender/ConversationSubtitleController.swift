@@ -256,7 +256,11 @@ private typealias TurnState = SubtitleStatus
         }
         let messageState: SubtitleStatus
         if let turnStatus = message.turn_status {
-            messageState = SubtitleStatus(rawValue: turnStatus) ?? .inprogress
+            var state = TurnState(rawValue: turnStatus) ?? .inprogress
+            if state == .interrupt {
+                state = .end
+            }
+            messageState = state
         } else {
             let isFinal = message.is_final ?? message.final ?? false
             messageState = isFinal ? .end : .inprogress
