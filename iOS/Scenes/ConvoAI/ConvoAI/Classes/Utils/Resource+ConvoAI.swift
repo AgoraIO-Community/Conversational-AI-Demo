@@ -117,6 +117,7 @@ extension ResourceManager {
         }
         
         public enum ChannelInfo {
+            public static let deviceTitle = ResourceManager.localizedString("channel.info.device.titie")
             public static let title = ResourceManager.localizedString("channel.info.title")
             public static let subtitle = ResourceManager.localizedString("channel.info.subtitle")
             public static let networkInfoTitle = ResourceManager.localizedString("channel.network.info.title")
@@ -153,12 +154,13 @@ extension ResourceManager {
             public static let close = ResourceManager.localizedString("devmode.close")
             public static let server = ResourceManager.localizedString("devmode.server")
         }
-        
+
         public enum Iot {
             public static let title = ResourceManager.localizedString("iot.info.title")
             public static let device = ResourceManager.localizedString("iot.info.device")
         }
     }
 }
+
 
 

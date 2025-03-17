@@ -63,7 +63,6 @@ class SearchDeviceViewController: BaseViewController {
     private var devices: [BLEDevice] = []
     override func viewDidLoad() {
         super.viewDidLoad()
-        bluetoothManager.deviceConnectTimeout = 10
         setupViews()
         setupConstraints()
         startSearchDevice()
@@ -77,6 +76,7 @@ class SearchDeviceViewController: BaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         bluetoothManager.delegate = nil
+        bluetoothManager.stopScan()
     }
     
     override func viewDidLayoutSubviews() {
@@ -87,6 +87,7 @@ class SearchDeviceViewController: BaseViewController {
     }
     
     private func startSearchDevice() {
+        bluetoothManager.deviceConnectTimeout = 10
         bluetoothManager.startScan()
     }
     
@@ -178,8 +179,6 @@ extension SearchDeviceViewController: UITableViewDelegate, UITableViewDataSource
             guard let self = self else { return }
             if isWiFiEnabled {
                 let device = self.devices[indexPath.row]
-                bluetoothManager.connect(device)
-
                 let vc = IOTWifiSettingViewController()
                 vc.device = device
                 

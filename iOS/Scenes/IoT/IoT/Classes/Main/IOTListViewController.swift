@@ -98,8 +98,8 @@ class IOTListViewController: BaseViewController {
         if isEmpty {
             naviBar.rightItems = nil  // This will remove the right button
         } else {
-            naviBar.setRightButtonTarget(self, 
-                                       action: #selector(navigationRightButtonTapped), 
+            naviBar.setRightButtonTarget(self,
+                                       action: #selector(navigationRightButtonTapped),
                                        image: UIImage.ag_named("ic_iot_bar_add_icon"))
         }
     }
@@ -118,8 +118,7 @@ class IOTListViewController: BaseViewController {
     
     // MARK: - Actions
     override func navigationRightButtonTapped() {
-        let vc = DeviceIntroductionViewController()
-        self.navigationController?.pushViewController(vc)
+        pushToDeviceIntroductionVC()
     }
     
     @objc private func addDeviceButtonTapped() {
@@ -128,9 +127,14 @@ class IOTListViewController: BaseViewController {
     }
     
     private func showRenameAlert(for device: LocalDevice) {
-        IOTTextFieldAlertViewController.show(in: self) { text in
+        IOTTextFieldAlertViewController.show(in: self, defaultText: device.name) { text in
             AppContext.iotDeviceManager()?.updateDeviceName(name: text, deviceId: device.deviceId)
         }
+    }
+    
+    private func pushToDeviceIntroductionVC() {
+        let vc = DeviceIntroductionViewController()
+        self.navigationController?.pushViewController(vc)
     }
 }
 
@@ -154,6 +158,10 @@ extension IOTListViewController: UITableViewDelegate, UITableViewDataSource {
         cell.onSettingsTapped = { [weak self] in
             let settingsVC = IOTSettingViewController()
             settingsVC.deviceId = device.deviceId
+            settingsVC.reconnectedTap = { [weak self] in
+                guard let self = self else { return }
+                self.pushToDeviceIntroductionVC()
+            }
             self?.present(settingsVC, animated: true)
         }
         
@@ -189,3 +197,4 @@ extension IOTListViewController: IOTDeviceManagerDelegate {
         }
     }
 }
+

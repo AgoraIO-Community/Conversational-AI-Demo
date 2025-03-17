@@ -198,7 +198,7 @@ class IOTTextFieldAlertViewController: UIViewController {
         }
         
         containerView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerY.equalToSuperview()
             make.left.right.equalToSuperview().inset(40)
         }
         
@@ -223,7 +223,7 @@ class IOTTextFieldAlertViewController: UIViewController {
             make.left.equalTo(textField.snp.left).offset(12)
         }
         
-        confirmButton.snp.remakeConstraints { make in
+        confirmButton.snp.makeConstraints { make in
             make.top.equalTo(tipLabel.snp.bottom).offset(4)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(40)
@@ -234,11 +234,6 @@ class IOTTextFieldAlertViewController: UIViewController {
     private func setupInitialState() {
         textField.text = defaultText
         updateConfirmButtonState(text: defaultText)
-    }
-    
-    @objc private func textFieldDidChange(_ textField: UITextField) {
-        let text = textField.text ?? ""
-        updateConfirmButtonState(text: text)
     }
     
     private func updateConfirmButtonState(text: String) {
@@ -270,7 +265,7 @@ class IOTTextFieldAlertViewController: UIViewController {
             let keyboardHeight = keyboardFrame.height
             
             containerView.snp.updateConstraints { make in
-                make.center.equalToSuperview().offset(-keyboardHeight/4)
+                make.centerY.equalToSuperview().offset(-keyboardHeight/4)
             }
             
             UIView.animate(withDuration: 0.3) {
@@ -282,16 +277,14 @@ class IOTTextFieldAlertViewController: UIViewController {
 
 // MARK: - UITextFieldDelegate
 extension IOTTextFieldAlertViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = textField.text ?? ""
-        guard let stringRange = Range(range, in: currentText) else { return false }
-        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-        
-        DispatchQueue.main.async {
-            self.updateConfirmButtonState(text: updatedText)
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        // Only check when there's no marked text (input method composition is complete)
+        if textField.markedTextRange == nil {
+            if let text = textField.text, text.count > maxLength {
+                textField.text = String(text.prefix(maxLength))
+            }
+            updateConfirmButtonState(text: textField.text ?? "")
         }
-        
-        return updatedText.count <= maxLength
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

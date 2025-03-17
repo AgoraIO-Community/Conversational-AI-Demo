@@ -138,6 +138,7 @@ class IotDeviceCardView: UIView {
         subtitleLabel.snp.makeConstraints { make in
             make.top.equalTo(titleButton.snp.bottom).offset(8)
             make.left.equalTo(titleButton)
+            make.right.equalTo(-16)
         }
         
         settingsButton.snp.makeConstraints { make in
@@ -156,6 +157,17 @@ class IotDeviceCardView: UIView {
     
     func configure(title: String, subtitle: String) {
         titleButton.setTitle(title, for: .normal)
-        subtitleLabel.text = subtitle
+        var fullText = subtitle
+        let attributedString = NSMutableAttributedString(string: fullText)
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSRange(location: 0, length: fullText.count))
+
+        if let range = fullText.range(of: "SN") {
+            let nsRange = NSRange(range, in: fullText)
+            
+            attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 16, weight: .semibold), range: nsRange)
+        }
+        
+        subtitleLabel.attributedText = attributedString
     }
 }
+

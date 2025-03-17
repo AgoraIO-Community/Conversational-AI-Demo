@@ -137,6 +137,7 @@ class IOTWifiSettingViewController: BaseViewController {
         setupConstraints()
         updateNextButtonState()
         setupKeyboardHandling()
+        setupNotifications()
     }
     
     deinit {
@@ -326,6 +327,31 @@ class IOTWifiSettingViewController: BaseViewController {
         vc.device = device
         self.navigationController?.pushViewController(vc)
     }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self,
+                                             selector: #selector(applicationDidEnterBackground),
+                                             name: UIApplication.didEnterBackgroundNotification,
+                                             object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                             selector: #selector(applicationWillEnterForeground),
+                                             name: UIApplication.willEnterForegroundNotification,
+                                             object: nil)
+    }
+    
+    @objc private func applicationDidEnterBackground() {
+        // Handle background state if needed in the future
+    }
+    
+    @objc private func applicationWillEnterForeground() {
+        // Check WiFi SSID when app comes to foreground
+        if let currentSSID = getCurrentWiFiSSID() {
+            updateWifiNameField(with: currentSSID)
+        } else {
+            updateWifiNameField(with: "")
+        }
+    }
 }
 
 // MARK: - WiFi Monitoring
@@ -334,6 +360,8 @@ extension IOTWifiSettingViewController {
         super.viewWillAppear(animated)
         if let currentSSID = getCurrentWiFiSSID() {
             updateWifiNameField(with: currentSSID)
+        } else {
+            updateWifiNameField(with: "")
         }
     }
     

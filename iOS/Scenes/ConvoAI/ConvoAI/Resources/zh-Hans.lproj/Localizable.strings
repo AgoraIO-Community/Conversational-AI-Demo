@@ -60,6 +60,7 @@
 "settings.noise.forceResponse" = "Force Response";
 "settings.noise.bhvs" = "启用 对话人声锁定";
 
+"channel.info.device.titie" = "我的设备";
 "channel.info.title" = "信息";
 "channel.info.subtitle" = "频道信息";
 "channel.network.info.title" = "网络信息";
@@ -106,3 +107,4 @@
 
 "iot.info.title" = "对话式 AI 设备";
 "iot.info.device" = "%@个设备";
+

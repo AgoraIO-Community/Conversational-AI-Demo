@@ -164,7 +164,7 @@ class IOTApiManager: IOTApiProtocol {
             "device_id": deviceId,
             "preset_name": presetName,
             "asr_language": asrLanguage,
-            "advanced_feature_enable_aivad": aivad
+            "advanced_features_enable_aivad": aivad
         ]
         
         IoTLogger.info("update setting api: \(url) parameters: \(parameters)")
@@ -204,3 +204,4 @@ enum IOTRequestError: Error {
         }
     }
 }
+

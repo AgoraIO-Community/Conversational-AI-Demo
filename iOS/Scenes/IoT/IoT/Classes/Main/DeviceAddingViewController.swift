@@ -14,10 +14,11 @@ class DeviceAddingViewController: BaseViewController {
     var wifiName: String = ""
     var password: String = ""
     var device: BLEDevice?
+    var deviceId: String = ""
 
     private let apiManger = IOTApiManager()
     private var bluetoothManager: AIBLEManager = .shared
-
+    private var backFlag = false
     private var rotatingGradientLayer: CAGradientLayer?
     
     private lazy var circleBackgroundView: UIView = {
@@ -52,12 +53,10 @@ class DeviceAddingViewController: BaseViewController {
         prepareToAddDevice()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func navigationBackButtonTapped() {
+        guard let device = self.device else { return }
+        backFlag = true
+        bluetoothManager.disconnect(device)
     }
     
     private func setupView() {
@@ -143,14 +142,18 @@ class DeviceAddingViewController: BaseViewController {
     }
     
     private func startGetDeviceId() {
-        bluetoothManager.getDeviceId {[weak self] deviceId in
-            guard let self = self else { return }
-            self.addLog("device id: \(deviceId ?? "")")
-            if let deviceId = deviceId {
-                self.addDevice(deviceId: deviceId)
-            } else {
-                showErrorAlert()
-            }
+        addLog("[Call] startGetDeviceId")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+           self.bluetoothManager.getDeviceId {[weak self] deviceId in
+               guard let self = self else { return }
+               self.addLog("device id: \(deviceId ?? "")")
+               if let deviceId = deviceId {
+                   self.deviceId = deviceId
+                   self.addDevice(deviceId: deviceId)
+               } else {
+                   showErrorAlert()
+               }
+           }
         }
     }
     
@@ -208,6 +211,10 @@ class DeviceAddingViewController: BaseViewController {
     
     private func showErrorAlert() {
         addLog("[Call] showErrorAlert, add device failed")
+        if backFlag {
+            addLog("Navigation bar back button action")
+            return
+        }
         let errorAlert = IOTErrorAlertViewController { [weak self] in
             guard let self = self else { return }
             self.goToDeviceViewController()
@@ -261,7 +268,7 @@ class DeviceAddingViewController: BaseViewController {
         }
         AppContext.iotDeviceManager()?.addDevice(device: LocalDevice(
             name: device.name,
-            deviceId: device.id.uuidString,
+            deviceId: self.deviceId,
             rssi: wifiName,
             currentPreset: preset,
             currentLanguage: defaultLanguage,
