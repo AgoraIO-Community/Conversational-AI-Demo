@@ -44,20 +44,6 @@ class DeviceAddingViewController: BaseViewController {
         return label
     }()
     
-    private lazy var leftLabelImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.ag_named("ic_iot_adding_label_left")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private lazy var rightLabelImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.ag_named("ic_iot_adding_label_right")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -68,15 +54,17 @@ class DeviceAddingViewController: BaseViewController {
     }
     
     override func navigationBackButtonTapped() {
-        guard let device = self.device else { return }
+        if let device = device {
+            bluetoothManager.disconnect(device)
+        }
         backFlag = true
-        bluetoothManager.disconnect(device)
+        super.navigationBackButtonTapped()
     }
     
     private func setupView() {
         navigationTitle = ResourceManager.L10n.Iot.deviceAddTitle
         view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        [circleBackgroundView, iconImageView, statusLabel, leftLabelImageView, rightLabelImageView].forEach { view.addSubview($0) }
+        [circleBackgroundView, iconImageView, statusLabel].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -95,20 +83,6 @@ class DeviceAddingViewController: BaseViewController {
         statusLabel.snp.makeConstraints { make in
             make.top.equalTo(circleBackgroundView.snp.bottom).offset(56)
             make.centerX.equalToSuperview()
-            make.width.equalTo(120)
-            make.height.equalTo(38)
-        }
-        
-        leftLabelImageView.snp.makeConstraints { make in
-            make.centerY.equalTo(statusLabel)
-            make.right.equalTo(statusLabel.snp.left).offset(-8)
-            make.width.height.equalTo(38)
-        }
-        
-        rightLabelImageView.snp.makeConstraints { make in
-            make.centerY.equalTo(statusLabel)
-            make.left.equalTo(statusLabel.snp.right).offset(8)
-            make.width.height.equalTo(38)
         }
     }
     
@@ -228,8 +202,8 @@ class DeviceAddingViewController: BaseViewController {
             title: ResourceManager.L10n.Iot.deviceAddSuccessTitle,
             description: ResourceManager.L10n.Iot.deviceAddSuccessDescription
         ) { [weak self] in
+            self?.bluetoothManager.dispose()
             guard let self = self else { return }
-            
             // Find and pop to IOTListViewController
             if let targetVC = self.navigationController?.viewControllers.first(where: { $0 is IOTListViewController }) {
                 self.navigationController?.popToViewController(targetVC, animated: true)
@@ -255,6 +229,9 @@ class DeviceAddingViewController: BaseViewController {
     }
     
     private func goToDeviceViewController() {
+        if let device = device {
+            bluetoothManager.disconnect(device)
+        }
         if let targetVC = self.navigationController?.viewControllers.first(where: { $0 is IOTListViewController }) {
             self.navigationController?.popToViewController(targetVC, animated: true)
         }
