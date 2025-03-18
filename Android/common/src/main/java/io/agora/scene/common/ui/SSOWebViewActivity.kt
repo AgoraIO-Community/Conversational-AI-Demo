@@ -162,7 +162,6 @@ class SSOWebViewActivity : BaseActivity<CommonActivitySsoBinding>() {
 
         @JavascriptInterface
         fun handleResponse(response: String) {
-            CommonLogger.d(TAG, "handleResponse = $response")
             // If it's a token, perform the corresponding action
             if (!response.startsWith("Error")) {
                 // Process the token, e.g., save it to SharedPreferences
