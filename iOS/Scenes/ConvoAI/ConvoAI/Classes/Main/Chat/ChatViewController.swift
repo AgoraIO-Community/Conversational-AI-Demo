@@ -330,13 +330,19 @@ public class ChatViewController: UIViewController {
     private func prepareToStartAgent() async {
         startLoading()
         
-        do {
-            try await fetchPresetsIfNeeded()
-            try await fetchTokenIfNeeded()
-            startAgentRequest()
-            joinChannel()
-        } catch {
-            handleStartError()
+        Task {
+            do {
+                try await fetchPresetsIfNeeded()
+                try await fetchTokenIfNeeded()
+                await MainActor.run {
+                    if bottomBar.style == .startButton { return }
+                    startAgentRequest()
+                    joinChannel()
+                }
+            } catch {
+                
+                handleStartError()
+            }
         }
     }
     
