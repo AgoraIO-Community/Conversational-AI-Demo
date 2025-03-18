@@ -50,12 +50,10 @@ sudo dnf install git-all
 - Install dependencies
 
 ```bash
-# Use your preferred package manager to install dependencies: npm/yarn/pnpm/bun
+# Install dependencies with your preferred package manager (npm/pnpm/bun)
+# yarn is not recommended
 # Using npm to install
 npm i
-# Using yarn to install
-# npm install -g yarn
-yarn
 # Using pnpm to install
 # npm install -g pnpm
 pnpm i
