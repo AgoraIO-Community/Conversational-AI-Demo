@@ -336,6 +336,7 @@ public class ChatViewController: UIViewController {
                 try await fetchTokenIfNeeded()
                 await MainActor.run {
                     if bottomBar.style == .startButton { return }
+                    subRenderController.reset()
                     startAgentRequest()
                     joinChannel()
                 }
@@ -396,7 +397,7 @@ public class ChatViewController: UIViewController {
         addLog("[Call] stopAgent()")
         stopAgentRequest()
         leaveChannel()
-        stopCovSubRenderController()
+        subRenderController.reset()
         setupMuteState(state: false)
         animateView.updateAgentState(.idle)
         messageView.clearMessages()
@@ -502,10 +503,6 @@ extension ChatViewController {
         stopLoading()
         stopAgent()
         SVProgressHUD.showError(withStatus: ResourceManager.L10n.Error.joinError)
-    }
-    
-    private func stopCovSubRenderController() {
-        subRenderController.reset()
     }
     
     private func startAgentRequest() {
