@@ -44,6 +44,20 @@ class DeviceAddingViewController: BaseViewController {
         return label
     }()
     
+    private lazy var leftLabelImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("ic_iot_adding_label_left")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private lazy var rightLabelImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("ic_iot_adding_label_right")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -64,7 +78,7 @@ class DeviceAddingViewController: BaseViewController {
     private func setupView() {
         navigationTitle = ResourceManager.L10n.Iot.deviceAddTitle
         view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        [circleBackgroundView, iconImageView, statusLabel].forEach { view.addSubview($0) }
+        [circleBackgroundView, iconImageView, statusLabel, leftLabelImageView, rightLabelImageView].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -83,6 +97,20 @@ class DeviceAddingViewController: BaseViewController {
         statusLabel.snp.makeConstraints { make in
             make.top.equalTo(circleBackgroundView.snp.bottom).offset(56)
             make.centerX.equalToSuperview()
+            make.width.equalTo(120)
+            make.height.equalTo(38)
+        }
+        
+        leftLabelImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(statusLabel)
+            make.right.equalTo(statusLabel.snp.left).offset(-8)
+            make.width.height.equalTo(38)
+        }
+        
+        rightLabelImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(statusLabel)
+            make.left.equalTo(statusLabel.snp.right).offset(8)
+            make.width.height.equalTo(38)
         }
     }
     
@@ -307,5 +335,4 @@ extension DeviceAddingViewController: BLEManagerDelegate {
         }
     }
 }
-
 

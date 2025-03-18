@@ -181,14 +181,25 @@ class PermissionAlertViewController: UIViewController {
         titleLabel.text = permission.title
         titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = UIColor.themColor(named: "ai_icontext1")
+        titleLabel.numberOfLines = 0
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         
         let goButton = UIButton(type: .custom)
-        goButton.setTitle(ResourceManager.L10n.Iot.permissionGoButton, for: .normal)
-        goButton.setTitleColor(permission.cardBackgroundColor, for: .normal)
-        goButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        goButton.backgroundColor = .white
+        var configuration = UIButton.Configuration.plain()
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+        configuration.baseForegroundColor = permission.cardBackgroundColor
+        configuration.background.backgroundColor = .white
+        
+        var container = AttributeContainer()
+        container.font = .systemFont(ofSize: 14, weight: .semibold)
+        configuration.attributedTitle = AttributedString(ResourceManager.L10n.Iot.permissionGoButton, attributes: container)
+        
+        goButton.configuration = configuration
         goButton.layer.cornerRadius = 7
         goButton.addTarget(self, action: #selector(goButtonTapped(_:)), for: .touchUpInside)
+        goButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        goButton.setContentHuggingPriority(.required, for: .horizontal)
         
         cardView.addSubview(iconBackground)
         iconBackground.addSubview(iconImageView)
@@ -206,20 +217,20 @@ class PermissionAlertViewController: UIViewController {
             make.size.equalTo(CGSize(width: 24, height: 24))
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(iconBackground.snp.right).offset(12)
-            make.centerY.equalToSuperview()
-        }
-        
         goButton.snp.makeConstraints { make in
             make.right.equalTo(-16)
             make.centerY.equalToSuperview()
-            make.width.equalTo(80)
             make.height.equalTo(30)
         }
         
+        titleLabel.snp.makeConstraints { make in
+            make.left.equalTo(iconBackground.snp.right).offset(12)
+            make.right.equalTo(goButton.snp.left).offset(-12)
+            make.centerY.equalToSuperview()
+        }
+        
         cardView.snp.makeConstraints { make in
-            make.height.equalTo(72)
+            make.height.greaterThanOrEqualTo(72)
         }
         
         return cardView
