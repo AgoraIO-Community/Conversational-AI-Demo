@@ -242,7 +242,6 @@ class IOTWifiSettingViewController: BaseViewController {
     
     private func updateWifiNameField(with ssid: String) {
         wifiNameField.text = ssid
-        let is5G = is5GWifi(ssid: ssid)
         wifiNameField.textColor = UIColor.themColor(named: "ai_icontext1")
         updateNextButtonState()
     }
