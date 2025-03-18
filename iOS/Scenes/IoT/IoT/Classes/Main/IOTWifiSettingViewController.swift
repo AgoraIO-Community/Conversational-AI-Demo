@@ -59,7 +59,7 @@ class IOTWifiSettingViewController: BaseViewController {
         let label = UILabel()
         label.text = ResourceManager.L10n.Iot.wifiSettingsError
         label.font = .systemFont(ofSize: 14)
-        label.textColor = UIColor.themColor(named: "ai_red6")
+        label.textColor = UIColor.themColor(named: "ai_icontext1")
         label.isHidden = true
         return label
     }()
@@ -243,8 +243,7 @@ class IOTWifiSettingViewController: BaseViewController {
     private func updateWifiNameField(with ssid: String) {
         wifiNameField.text = ssid
         let is5G = is5GWifi(ssid: ssid)
-        wifiNameField.textColor = is5G ? UIColor.themColor(named: "ai_red6") : UIColor.themColor(named: "ai_icontext1")
-        wifiErrorLabel.isHidden = !is5G
+        wifiNameField.textColor = UIColor.themColor(named: "ai_icontext1")
         updateNextButtonState()
     }
     

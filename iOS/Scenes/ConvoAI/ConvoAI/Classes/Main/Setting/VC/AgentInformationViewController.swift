@@ -192,6 +192,15 @@ class AgentInformationViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         animateBackgroundViewIn()
+        SVProgressHUD.show()
+        IoTEntrance.fetchPresetIfNeed { error in
+            SVProgressHUD.dismiss()
+            if let error = error {
+                ConvoAILogger.info("fetch preset error: \(error.localizedDescription)")
+                return
+            }
+        }
+        deviceCard.configure(title: ResourceManager.L10n.Iot.title, subtitle: String(format: ResourceManager.L10n.Iot.device, "\(IoTEntrance.deviceCount())"))
     }
     
     private func registerDelegate() {
