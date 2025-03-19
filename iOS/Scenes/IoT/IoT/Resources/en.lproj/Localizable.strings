@@ -77,7 +77,7 @@
 "iot.device.settings.language.title" = "Select Language";
 "iot.device.settings.advanced" = "Advanced Settings";
 "iot.device.settings.interrupt" = "Intelligent Interruption Handling";
-"iot.device.settings.interrupt.match" = "Interrupt";
+"iot.device.settings.interrupt.match" = "Intelligent Interruption Handling";
 "iot.device.settings.reconnect" = "Reconfigure Network";
 "iot.device.settings.delete" = "Delete Device";
 "iot.device.settings.delete.title" = "Delete %@?";
