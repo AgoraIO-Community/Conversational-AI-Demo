@@ -279,15 +279,23 @@ class IOTWifiSettingViewController: BaseViewController {
         let overlap = passwordFieldBottom - keyboardTop + 20 // Add 20pt padding
         
         if overlap > 0 {
-            UIView.animate(withDuration: 0.3) {
-                self.contentView.transform = CGAffineTransform(translationX: 0, y: -overlap)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.contentView.snp.updateConstraints { make in
+                    make.top.equalTo(self.naviBar.snp.bottom).offset((-overlap))
+                }
+                UIView.animate(withDuration: 0.3) {
+                    self.view.layoutIfNeeded()
+                }
             }
         }
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
+        self.contentView.snp.updateConstraints { make in
+            make.top.equalTo(naviBar.snp.bottom)
+        }
         UIView.animate(withDuration: 0.3) {
-            self.contentView.transform = .identity
+            self.view.layoutIfNeeded()
         }
     }
     
