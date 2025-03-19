@@ -33,9 +33,9 @@ class CovIotDeviceListAdapter(private val devices: List<CovIotDevice>) :
             false
         )
         val backgroundResId = if (viewType == 0) {
-            R.drawable.cov_iot_device_item_bg_2
-        } else {
             R.drawable.cov_iot_device_item_bg
+        } else {
+            R.drawable.cov_iot_device_item_bg_2
         }
         binding.clIotItem.setBackgroundResource(backgroundResId)
         
