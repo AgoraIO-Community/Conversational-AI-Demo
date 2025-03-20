@@ -7,7 +7,6 @@
 
 import UIKit
 import Common
-import Kingfisher
 
 class TextContentView: UIView {
     

@@ -33,6 +33,7 @@ extension ResourceManager {
             public static let title = ResourceManager.localizedString("login.title")
             public static let description = ResourceManager.localizedString("login.description")
             public static let buttonTitle = ResourceManager.localizedString("login.start.button.title")
+            public static let signup = ResourceManager.localizedString("login.start.button.signup")
             public static let termsServicePrefix = ResourceManager.localizedString("login.terms.service.prefix")
             public static let termsServiceName = ResourceManager.localizedString("login.terms.service.name")
             public static let termsServiceAndWord = ResourceManager.localizedString("login.terms.service.and")
@@ -117,6 +118,7 @@ extension ResourceManager {
         }
         
         public enum ChannelInfo {
+            public static let deviceTitle = ResourceManager.localizedString("channel.info.device.titie")
             public static let title = ResourceManager.localizedString("channel.info.title")
             public static let subtitle = ResourceManager.localizedString("channel.info.subtitle")
             public static let networkInfoTitle = ResourceManager.localizedString("channel.network.info.title")
@@ -153,7 +155,13 @@ extension ResourceManager {
             public static let close = ResourceManager.localizedString("devmode.close")
             public static let server = ResourceManager.localizedString("devmode.server")
         }
+
+        public enum Iot {
+            public static let title = ResourceManager.localizedString("iot.info.title")
+            public static let device = ResourceManager.localizedString("iot.info.device")
+        }
     }
 }
+
 
 

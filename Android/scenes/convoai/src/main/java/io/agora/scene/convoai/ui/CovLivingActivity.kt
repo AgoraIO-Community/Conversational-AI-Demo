@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.util.Log
@@ -11,7 +12,7 @@ import android.view.WindowManager
 import android.webkit.CookieManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
 import io.agora.rtc2.Constants
 import io.agora.rtc2.IRtcEngineEventHandler
@@ -48,10 +49,12 @@ import io.agora.scene.convoai.animation.CovBallAnim
 import io.agora.scene.convoai.animation.CovBallAnimCallback
 import io.agora.scene.convoai.api.AgentRequestParams
 import io.agora.scene.convoai.api.CovAgentApiManager
-import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
+import io.agora.scene.convoai.iot.api.CovIotApiManager
+import io.agora.scene.convoai.iot.manager.CovIotPresetManager
+import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.subRender.v1.SelfRenderConfig
 import io.agora.scene.convoai.subRender.v1.SelfSubRenderController
@@ -174,10 +177,26 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private var mLoginDialog: LoginDialog? = null
 
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Int>
     private lateinit var mPermissionHelp: PermissionHelp
 
     private val mLoginViewModel: LoginViewModel by viewModels()
+
+    private class SSOWebViewContract : ActivityResultContract<Int, String?>() {
+        override fun createIntent(context: Context, input: Int): Intent {
+            return Intent(context, SSOWebViewActivity::class.java).apply {
+                putExtra(SSOWebViewActivity.EXTRA_TYPE, input)
+            }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): String? {
+            return if (resultCode == Activity.RESULT_OK) {
+                intent?.getStringExtra(SSOWebViewActivity.EXTRA_TOKEN)
+            } else {
+                null
+            }
+        }
+    }
 
     override fun getViewBinding(): CovActivityLivingBinding {
         return CovActivityLivingBinding.inflate(layoutInflater)
@@ -382,6 +401,17 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         CovAgentApiManager.fetchPresets { err, presets ->
             if (err == null) {
                 CovAgentManager.setPresetList(presets)
+                cont.resume(true)
+            } else {
+                cont.resume(false)
+            }
+        }
+    }
+
+    private suspend fun fetchIotPresetsAsync(): Boolean = suspendCoroutine { cont ->
+        CovIotApiManager.fetchPresets { err, presets ->
+            if (err == null) {
+                CovIotPresetManager.setPresetList(presets)
                 cont.resume(true)
             } else {
                 cont.resume(false)
@@ -774,21 +804,15 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     }
 
     private fun setupView() {
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data: Intent? = result.data
-                    val token = data?.getStringExtra("token")
-                    if (token != null) {
-                        SSOUserManager.saveToken(token)
-                        mLoginViewModel.getUserInfoByToken(token)
-                    } else {
-                        showLoginLoading(false)
-                    }
-                }else{
-                    showLoginLoading(false)
-                }
+        activityResultLauncher = registerForActivityResult(SSOWebViewContract()) { token: String? ->
+            if (token != null) {
+                SSOUserManager.saveToken(token)
+                mLoginViewModel.getUserInfoByToken(token)
+            } else {
+                showLoginLoading(false)
             }
+        }
+        
         mPermissionHelp = PermissionHelp(this)
         mBinding?.apply {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -835,13 +859,30 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
             clTop.btnInfo.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
-                    infoDialog = CovAgentInfoDialog.newInstance({
-                        infoDialog = null
-                    }) {
-                        showLogoutConfirmDialog {
-                            infoDialog?.dismiss()
+                    infoDialog = CovAgentInfoDialog.newInstance(
+                        {
+                            infoDialog = null
+                        },
+                        {
+                            showLogoutConfirmDialog {
+                                infoDialog?.dismiss()
+                            }
+                        },
+                        {
+                            if (CovIotPresetManager.getPresetList().isNullOrEmpty()) {
+                                coroutineScope.launch {
+                                    val success = fetchIotPresetsAsync()
+                                    if (success) {
+                                        CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
+                                    } else {
+                                        ToastUtil.show(getString(io.agora.scene.convoai.iot.R.string.cov_detail_net_state_error))
+                                    }
+                                }
+                            } else {
+                                CovIotDeviceListActivity.startActivity(this@CovLivingActivity)
+                            }
                         }
-                    }
+                    )
                     infoDialog?.updateConnectStatus(connectionState)
                     infoDialog?.show(supportFragmentManager, "InfoDialog")
                 }
@@ -1012,7 +1053,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         coroutineScope.launch {
             val deferreds = listOf(
                 async { updateTokenAsync() },
-                async { fetchPresetsAsync() }
+                async { fetchPresetsAsync() },
+                async { fetchIotPresetsAsync() }
             )
             deferreds.awaitAll()
         }
@@ -1060,7 +1102,13 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     }
 
                     override fun onClickStartSSO() {
-                        activityResultLauncher.launch(Intent(this@CovLivingActivity, SSOWebViewActivity::class.java))
+                        activityResultLauncher.launch(SSOWebViewActivity.TYPE_LOGIN)
+                        showLoginLoading(true)
+                    }
+
+                    override fun onClickSignupSSO() {
+                        cleanCookie()
+                        activityResultLauncher.launch(SSOWebViewActivity.TYPE_SIGNUP)
                         showLoginLoading(true)
                     }
 

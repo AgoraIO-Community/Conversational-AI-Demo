@@ -12,6 +12,7 @@ import SVProgressHUD
 
 class LoginViewController: UIViewController {
     var loginAction: (() -> ())?
+    var signupAction: (() -> ())?
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -53,6 +54,19 @@ class LoginViewController: UIViewController {
         button.setTitle(ResourceManager.L10n.Login.buttonTitle, for: .normal)
         button.setTitleColor(UIColor.themColor(named: "ai_icontext_inverse1"), for: .normal)
         button.addTarget(self, action: #selector(phoneLoginTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var signUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor.clear
+        button.layer.cornerRadius = 12
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.themColor(named: "ai_line2").cgColor
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        button.setTitle(ResourceManager.L10n.Login.signup, for: .normal)
+        button.setTitleColor(UIColor.themColor(named: "ai_icontext1"), for: .normal)
+        button.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         return button
     }()
     
@@ -174,6 +188,7 @@ class LoginViewController: UIViewController {
         containerView.addSubview(subtitleLabel)
         containerView.addSubview(logoView)
         containerView.addSubview(phoneLoginButton)
+        containerView.addSubview(signUpButton)
         containerView.addSubview(warningButton)
         containerView.addSubview(termsCheckbox)
         containerView.addSubview(termsTextLabel)
@@ -187,7 +202,7 @@ class LoginViewController: UIViewController {
         
         containerView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
-            make.height.equalTo(319)
+            make.height.equalTo(395)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -214,8 +229,15 @@ class LoginViewController: UIViewController {
             make.height.equalTo(58)
         }
         
+        signUpButton.snp.makeConstraints { make in
+            make.top.equalTo(phoneLoginButton.snp.bottom).offset(20)
+            make.left.equalTo(30)
+            make.right.equalTo(-30)
+            make.height.equalTo(58)
+        }
+        
         termsCheckbox.snp.makeConstraints { make in
-            make.top.equalTo(phoneLoginButton.snp.bottom).offset(50)
+            make.top.equalTo(signUpButton.snp.bottom).offset(30)
             make.left.equalTo(titleLabel)
             make.width.height.equalTo(20)
         }
@@ -270,6 +292,17 @@ class LoginViewController: UIViewController {
         }
         
         loginAction?()
+        self.dismiss()
+    }
+    
+    @objc private func signUpTapped() {
+        if !termsCheckbox.isSelected {
+            warningButton.isHidden = false
+            shakeWarningLabel()
+            return
+        }
+        
+        signupAction?()
         self.dismiss()
     }
     

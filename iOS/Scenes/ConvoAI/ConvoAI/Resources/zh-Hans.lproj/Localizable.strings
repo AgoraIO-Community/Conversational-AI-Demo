@@ -1,6 +1,7 @@
 "login.title" = "一键登录";
 "login.description" = "解锁♾️免费畅聊";
 "login.start.button.title" = "账号登录";
+"login.start.button.signup" = "立即注册";
 "login.terms.service.prefix" = "我已阅读并同意 ";
 "login.terms.service.name" = "《用户协议》";
 "login.terms.service.and" = "和";
@@ -60,6 +61,7 @@
 "settings.noise.forceResponse" = "Force Response";
 "settings.noise.bhvs" = "启用 对话人声锁定";
 
+"channel.info.device.titie" = "我的设备";
 "channel.info.title" = "信息";
 "channel.info.subtitle" = "频道信息";
 "channel.network.info.title" = "网络信息";
@@ -82,7 +84,7 @@
 "channel.more.feedback.failed" = "提交失败，请稍后重试";
 "channel.more.logout" = "退出登录";
 "channel.time.limited.alert.title" = "本次对话时间到！";
-"channel.time.limited.alert.description" = "每次对话限时%d分钟，本次对话时间已到，你可关闭弹窗后再发起新的对话体验。";
+"channel.time.limited.alert.description" = "体验对话限时%d分钟，本次对话时间已到";
 "channel.time.limited.alert.confim" = "我知道了";
 
 "error.network" = "请求失败：";
@@ -103,3 +105,7 @@
 "devmode.close" = "关闭开发者模式";
 "devmode.graph" = "graph id";
 "devmode.server" = "服务器";
+
+"iot.info.title" = "对话式 AI 设备";
+"iot.info.device" = "%@个设备";
+

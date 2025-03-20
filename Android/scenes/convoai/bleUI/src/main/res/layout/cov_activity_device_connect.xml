@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ai_fill1">
+
+    <!-- header title bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:padding="12dp"
+            android:src="@drawable/cov_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cov_iot_devices_connect"
+            android:textColor="@color/ai_icontext1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- connecting state -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_connecting"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_title_bar">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_device_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="80dp"
+            app:cardBackgroundColor="#1F2128"
+            app:cardCornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_device"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="40dp"
+                android:src="@drawable/cov_iot_device_icon" />
+
+        </androidx.cardview.widget.CardView>
+        
+        <!-- add rotating circle -->
+        <ImageView
+            android:id="@+id/iv_connecting_circle"
+            android:layout_width="205dp"
+            android:layout_height="205dp"
+            android:src="@drawable/cov_connecting_circle"
+            app:layout_constraintBottom_toBottomOf="@id/cv_device_image"
+            app:layout_constraintEnd_toEndOf="@id/cv_device_image"
+            app:layout_constraintStart_toStartOf="@id/cv_device_image"
+            app:layout_constraintTop_toTopOf="@id/cv_device_image" />
+
+        <TextView
+            android:id="@+id/tv_connecting_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/cov_iot_devices_connecting"
+            android:textColor="@color/ai_icontext1"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_device_image" />
+            
+        <ImageView
+            android:id="@+id/iv_left_bracket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:src="@drawable/cov_iot_left_text"
+            app:layout_constraintBottom_toBottomOf="@id/tv_connecting_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_connecting_status" />
+            
+        <ImageView
+            android:id="@+id/iv_right_bracket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:src="@drawable/cov_iot_right_text"
+            app:layout_constraintBottom_toBottomOf="@id/tv_connecting_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_connecting_status" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout> 

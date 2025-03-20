@@ -63,7 +63,7 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                     layoutCopyUserQuestion.isVisible = false
                 }
 
-                AgentScenes.ConvoAi -> {
+                AgentScenes.ConvoAi, AgentScenes.ConvoAiIot -> {
                     layoutSwitchEnv.isVisible = true
                     layoutConvoaiHost.isVisible = true
                     layoutAudioDump.isVisible = true
@@ -150,7 +150,7 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
     }
 
     private fun onCloseDebug() {
-        if (!ServerConfig.isBuildEnv){
+        if (!ServerConfig.isBuildEnv) {
             onDebugDialogCallback?.onEnvConfigChange()
             ServerConfig.reset()
         }
@@ -183,23 +183,26 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
             params.height = finalHeight
             cvOptions.layoutParams = params
 
-            val selectedEnvConfig = serverConfigList.firstOrNull { it.toolboxServerHost == ServerConfig.toolBoxUrl }
+            val selectedEnvConfig = serverConfigList.firstOrNull {
+                it.toolboxServerHost == ServerConfig.toolBoxUrl && it.rtcAppId == ServerConfig.rtcAppId
+            }
             // Update options and handle selection
             (rcOptions.adapter as? OptionsAdapter)?.updateOptions(
                 serverConfigList.map { it.envName }.toTypedArray(),
                 serverConfigList.indexOf(selectedEnvConfig)
             ) { index ->
                 val selectConfig = serverConfigList[index]
-                if (selectConfig.toolboxServerHost == selectedEnvConfig?.toolboxServerHost) return@updateOptions
+                if (selectConfig.toolboxServerHost == selectedEnvConfig?.toolboxServerHost &&
+                    selectConfig.rtcAppId == selectedEnvConfig?.rtcAppId
+                ) {
+                    return@updateOptions
+                }
                 ServerConfig.updateDebugConfig(selectConfig)
                 onDebugDialogCallback?.onEnvConfigChange()
                 updateEnvConfig()
                 vOptionsMask.visibility = View.INVISIBLE
                 ToastUtil.show(
-                    getString(
-                        io.agora.scene.common.R.string.common_debug_current_server,
-                        ServerConfig.toolBoxUrl
-                    )
+                    getString(R.string.common_debug_current_server,ServerConfig.envName, ServerConfig.toolBoxUrl)
                 )
                 dismiss()
             }

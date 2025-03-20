@@ -29,13 +29,24 @@ class SSOWebViewActivity : BaseActivity<CommonActivitySsoBinding>() {
         private const val TAG = "SSOWebViewActivity"
 
         private val ssoUrl: String get() = "$toolBoxUrl/v1/convoai/sso/login"
+        private val signupUrl: String get() = "$toolBoxUrl/v1/convoai/sso/signup"
 
         private const val ssoCallbackPath = "v1/convoai/sso/callback"
+
+        const val EXTRA_TYPE = "extra_type"
+        const val TYPE_LOGIN = 0
+        const val TYPE_SIGNUP = 1
+
+        const val EXTRA_TOKEN = "token"
+
     }
 
     private var mLoadingDialog: LoadingDialog? = null
+    private var mType: Int = TYPE_LOGIN
 
     override fun initView() {
+        mType = intent.getIntExtra(EXTRA_TYPE, TYPE_LOGIN)
+
         mBinding?.apply {
             val statusBarHeight = getStatusBarHeight() ?: 25.dp.toInt()
             val layoutParams = layoutTitle.layoutParams as ViewGroup.MarginLayoutParams
@@ -115,8 +126,9 @@ class SSOWebViewActivity : BaseActivity<CommonActivitySsoBinding>() {
                 }
             }
 
+            val urlToLoad = if (mType == TYPE_LOGIN) ssoUrl else signupUrl
             webView.addJavascriptInterface(WebAppInterface(this@SSOWebViewActivity), "Android")
-            webView.loadUrl(ssoUrl)
+            webView.loadUrl(urlToLoad)
         }
     }
 
@@ -150,13 +162,12 @@ class SSOWebViewActivity : BaseActivity<CommonActivitySsoBinding>() {
 
         @JavascriptInterface
         fun handleResponse(response: String) {
-            CommonLogger.d(TAG, "handleResponse = $response")
             // If it's a token, perform the corresponding action
             if (!response.startsWith("Error")) {
                 // Process the token, e.g., save it to SharedPreferences
                 // Here you can save the token or perform other actions
                 runOnUiThread {
-                    setResult(Activity.RESULT_OK, Intent().putExtra("token", response))
+                    setResult(Activity.RESULT_OK, Intent().putExtra(EXTRA_TOKEN, response))
                     finish()
                 }
             } else {

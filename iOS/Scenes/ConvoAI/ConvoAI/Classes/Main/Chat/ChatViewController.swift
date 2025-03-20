@@ -11,6 +11,7 @@ import AgoraRtcKit
 import SVProgressHUD
 import SwifterSwift
 import Common
+import IoT
 
 public class ChatViewController: UIViewController {
     private var isDenoise = true
@@ -211,6 +212,14 @@ public class ChatViewController: UIViewController {
             
             Task {
                 do {
+                    try await self.fetchIotPresetsIfNeeded()
+                } catch {
+                    self.addLog("[PreloadData error - iot presets]: \(error)")
+                }
+            }
+            
+            Task {
+                do {
                     try await self.fetchPresetsIfNeeded()
                 } catch {
                     self.addLog("[PreloadData error - presets]: \(error)")
@@ -321,13 +330,20 @@ public class ChatViewController: UIViewController {
     private func prepareToStartAgent() async {
         startLoading()
         
-        do {
-            try await fetchPresetsIfNeeded()
-            try await fetchTokenIfNeeded()
-            startAgentRequest()
-            joinChannel()
-        } catch {
-            handleStartError()
+        Task {
+            do {
+                try await fetchPresetsIfNeeded()
+                try await fetchTokenIfNeeded()
+                await MainActor.run {
+                    if bottomBar.style == .startButton { return }
+                    subRenderController.reset()
+                    startAgentRequest()
+                    joinChannel()
+                }
+            } catch {
+                
+                handleStartError()
+            }
         }
     }
     
@@ -381,7 +397,7 @@ public class ChatViewController: UIViewController {
         addLog("[Call] stopAgent()")
         stopAgentRequest()
         leaveChannel()
-        stopCovSubRenderController()
+        subRenderController.reset()
         setupMuteState(state: false)
         animateView.updateAgentState(.idle)
         messageView.clearMessages()
@@ -400,10 +416,9 @@ public class ChatViewController: UIViewController {
         ConvoAILogger.info(txt)
     }
     
-    private func goToSSOViewController() {
+    private func goToSSO(urlString: String) {
         let ssoWebVC = SSOWebViewController()
-        let baseUrl = AppContext.shared.baseServerUrl
-        ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/login"
+        ssoWebVC.urlString = urlString
         ssoWebVC.completionHandler = { [weak self] token in
             guard let self = self else { return }
             if let token = token {
@@ -429,6 +444,18 @@ public class ChatViewController: UIViewController {
 
 // MARK: - Agent Request
 extension ChatViewController {
+    private func fetchIotPresetsIfNeeded() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            IoTEntrance.fetchPresetIfNeed { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
     private func fetchPresetsIfNeeded() async throws {
         guard AppContext.preferenceManager()?.allPresets() == nil else { return }
         
@@ -476,10 +503,6 @@ extension ChatViewController {
         stopLoading()
         stopAgent()
         SVProgressHUD.showError(withStatus: ResourceManager.L10n.Error.joinError)
-    }
-    
-    private func stopCovSubRenderController() {
-        subRenderController.reset()
     }
     
     private func startAgentRequest() {
@@ -750,7 +773,13 @@ private extension ChatViewController {
             let loginVC = LoginViewController()
             loginVC.modalPresentationStyle = .overFullScreen
             loginVC.loginAction = { [weak self] in
-                self?.goToSSOViewController()
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
+            }
+            loginVC.signupAction = { [weak self] in
+                SSOWebViewController.clearWebViewCache()
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
             }
             self.present(loginVC, animated: false)
         }
@@ -882,7 +911,7 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
         let title = ResourceManager.L10n.ChannelInfo.timeLimitdAlertTitle
         if let manager = AppContext.preferenceManager(), let preset = manager.preference.preset {
             let min = preset.callTimeLimitSecond / 60
-            TimeoutAlertView.show(in: view, title: title, description: String(format: ResourceManager.L10n.ChannelInfo.timeLimitdAlertDescription, min))
+            TimeoutAlertView.show(in: view, image:UIImage.ag_named("ic_alert_timeout_icon"), title: title, description: String(format: ResourceManager.L10n.ChannelInfo.timeLimitdAlertDescription, min))
         }
     }
     

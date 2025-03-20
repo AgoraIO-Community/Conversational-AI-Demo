@@ -1,7 +1,7 @@
-
 "login.title" = "Unlock ♾️ Free Chat";
 "login.description" = "Power your business future at once";
 "login.start.button.title" = "Log in with Agora account";
+"login.start.button.signup" = "Sign up for free";
 "login.terms.service.prefix" = " I accept the ";
 "login.terms.service.name" = "Terms of Services";
 "login.terms.service.and" = " and ";
@@ -43,6 +43,7 @@
 "conversation.message.alert.content" = "Are you sure you want to clear all messages?";
 
 "conversation.alert.cancel" = "Cancel";
+"conversation.alert.confirm" = "Confirm";
 "conversation.alert.clear" = "Clear";
 
 // Settings View
@@ -63,8 +64,9 @@
 "settings.noise.bhvs" = "Background Human Voice Suppression";
 
 // Channel Info View
-"channel.info.title" = "INFO";
-"channel.info.subtitle" = "CHANNEL INFO";
+"channel.info.device.titie" = "My Devices";
+"channel.info.title" = "Info";
+"channel.info.subtitle" = "Channel Info";
 "channel.network.info.title" = "NETWORK INFO";
 "channel.info.agent.status" = "Agent Status";
 "channel.info.agent.id" = "Agent ID";
@@ -108,3 +110,7 @@
 "devmode.close" = "Close Developer Mode";
 "devmode.graph" = "graph id";
 "devmode.server" = "Server";
+
+"iot.info.title" = "Conversational AI Device";
+"iot.info.device" = "%@ Devices";
+
