@@ -9,14 +9,14 @@
     "hiIN": "हिन्दी"
   },
   "metadata": {
-    "title": "对话式 AI 引擎",
-    "description": "对话式 AI 引擎"
+    "title": "对话式 AI 引擎体验",
+    "description": "对话式 AI 引擎体验"
   },
   "common": {
     "language": "语言"
   },
   "homePage": {
-    "title": "对话式 AI 引擎"
+    "title": "对话式 AI 引擎体验"
   },
   "status": {
     "unknown": "未知",
@@ -52,7 +52,7 @@
     "moreAction": "更多操作"
   },
   "settings": {
-    "title": "设置",
+    "title": "人物设定",
     "save": "保存",
     "options": {
       "custom": "自定义",
@@ -86,7 +86,9 @@
   "agent": {
     "greeting": {
       "hi": "你好，",
-      "human": "欢迎体验声网对话式 AI 引擎",
+      "greeting1": "人类",
+      "greeting2": "我是对话式AI引擎",
+      "greeting3": "秒应智答，零滞畅聊",
       "connecting": "我在连接中...",
       "connected": "我已加入",
       "speakLoudly": "请你大声跟我说话，以便我更好地和你沟通",
@@ -148,19 +150,22 @@
     "uploadErrorTip": "提交失败，请稍后重试"
   },
   "login": {
-    "title": "免费聊天",
-    "buttonTip": "一键登录",
+    "title": "账号登录",
+    "buttonTip1": "请勾选协议",
+    "buttonTip2": "请勾选协议",
     "panelTitle": "一键登录",
     "panelDescription": "解锁∞免费畅聊",
     "panelButton": "手机号登录",
+    "panelSignupButton": "免费注册",
     "privacyPolicy": "我已阅读并同意<link>《用户协议》</link> 和 <policyLink>《隐私政策》</policyLink>",
-    "termsTip":"请勾选协议",
+    "termsTip": "请勾选协议",
     "unauthorizedError": "登录过期，请重新登录"
   },
   "conversationTimer": {
-    "tip": "每次对话限时{minutes}分钟",
-    "title": "本次对话时间到！",
-    "description": "每次对话限时{minutes}分钟，本次对话时间已到，你可关闭弹窗后再发起新的对话体验。",
+    "tip": "体验对话限时{minutes}分钟",
+    "tipSmallScreen": "体验对话限时{minutes}分钟",
+    "title": "体验对话时间到！",
+    "description": "体验对话限时{minutes}分钟，本次对话时间已到。",
     "button": "我知道了"
   }
 }
