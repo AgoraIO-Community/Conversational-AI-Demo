@@ -16,9 +16,9 @@ target 'Agent-global' do
   pod 'Common', :path => 'Common'
 
   # Agents
-  pod 'ConvoAI', :path => 'Scenes/ConvoAI'
-  pod 'IoT', :path => 'Scenes/IoT'
-  pod 'BLEManager', :path => './BLEManager'
+  pod 'ConvoAI', :path => 'Scenes/ConvoAI/ConvoAI'
+  pod 'IoT', :path => 'Scenes/ConvoAI/IoT'
+  pod 'BLEManager', :path => 'Scenes/ConvoAI/BLEManager'
 
   pod 'Kingfisher'
 
