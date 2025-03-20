@@ -16,9 +16,10 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { BrandLogo } from '@/components/Icons'
 import { cn } from '@/lib/utils'
-import { useGlobalStore } from '@/store'
+import { useGlobalStore, useUserInfoStore } from '@/store'
 import { LoginButton } from '@/components/Button/LoginButton'
 import { POLICY_LINK, TERMS_LINK } from '@/constants'
+import { isCN } from '@/lib/utils'
 
 export const LoginPanel = () => {
   const [isPrivacyPolicyAccepted, setIsPrivacyPolicyAccepted] =
@@ -27,6 +28,7 @@ export const LoginPanel = () => {
 
   const tLogin = useTranslations('login')
   const { showLoginPanel, setShowLoginPanel } = useGlobalStore()
+  const { accountUid } = useUserInfoStore()
   const tooltipTimerRef = React.useRef<NodeJS.Timeout | null>(null)
 
   const handleClickWithoutPrivacyPolicyAccepted = () => {
@@ -51,11 +53,15 @@ export const LoginPanel = () => {
     }
   }, [showTermsTip])
 
+  if (accountUid) {
+    return null
+  }
+
   return (
     <Drawer open={showLoginPanel} onOpenChange={setShowLoginPanel}>
       <DrawerContent className="bg-fill-drawer">
         <div className="relative w-full">
-          <div className="mx-auto w-full max-w-sm py-4 px-7 text-icontext">
+          <div className="mx-auto w-full max-w-sm px-7 py-4 text-icontext">
             <DrawerHeader className="sr-only">
               <DrawerTitle>{tLogin('title')}</DrawerTitle>
             </DrawerHeader>
@@ -86,17 +92,35 @@ export const LoginPanel = () => {
               </div>
             </div>
             <DrawerFooter className="mb-10 gap-10 p-0">
-              <LoginButton
-                variant="ghost"
-                className="h-14 w-full bg-icontext text-lg text-icontext-inverse hover:bg-icontext-hover hover:text-icontext-inverse"
-                onClick={
-                  isPrivacyPolicyAccepted
-                    ? undefined
-                    : handleClickWithoutPrivacyPolicyAccepted
-                }
-              >
-                {tLogin('panelButton')}
-              </LoginButton>
+              <div className="flex flex-col gap-4">
+                <LoginButton
+                  variant="ghost"
+                  className="h-14 w-full bg-icontext text-lg text-icontext-inverse hover:bg-icontext-hover hover:text-icontext-inverse"
+                  onClick={
+                    isPrivacyPolicyAccepted
+                      ? undefined
+                      : handleClickWithoutPrivacyPolicyAccepted
+                  }
+                >
+                  {tLogin('panelButton')}
+                </LoginButton>
+                {!isCN && (
+                  <LoginButton
+                    isSignup
+                    className={cn(
+                      'h-14 w-full rounded-md text-lg text-icontext',
+                      'border-line-2 bg-fill-drawer'
+                    )}
+                    onClick={
+                      isPrivacyPolicyAccepted
+                        ? undefined
+                        : handleClickWithoutPrivacyPolicyAccepted
+                    }
+                  >
+                    {tLogin('panelSignupButton')}
+                  </LoginButton>
+                )}
+              </div>
               <div className={cn('relative flex')}>
                 {showTermsTip && (
                   <div
@@ -115,7 +139,7 @@ export const LoginPanel = () => {
                         'rounded-xl px-4 text-sm text-icontext-inverse'
                       )}
                     >
-                      {tLogin('buttonTip')}
+                      {tLogin('buttonTip1')}
                     </span>
                     <div
                       className="h-[6px] min-w-[36px] translate-x-[16px] translate-y-[-1px] bg-contain bg-right-top bg-no-repeat"
@@ -133,7 +157,7 @@ export const LoginPanel = () => {
                   <Checkbox
                     id="terms"
                     checked={isPrivacyPolicyAccepted}
-                    className={cn('mt-[3px]',{
+                    className={cn('mt-[3px]', {
                       'border-none ring-offset-transparent':
                         isPrivacyPolicyAccepted,
                       'border-line': !isPrivacyPolicyAccepted,
@@ -153,12 +177,20 @@ export const LoginPanel = () => {
                   >
                     {tLogin.rich('privacyPolicy', {
                       link: (chunks) => (
-                        <NextLink href={TERMS_LINK} target="_blank" className="underline">
+                        <NextLink
+                          href={TERMS_LINK}
+                          target="_blank"
+                          className="underline"
+                        >
                           {chunks}
                         </NextLink>
                       ),
                       policyLink: (chunks) => (
-                        <NextLink href={POLICY_LINK} target="_blank" className="underline">
+                        <NextLink
+                          href={POLICY_LINK}
+                          target="_blank"
+                          className="underline"
+                        >
                           {chunks}
                         </NextLink>
                       ),

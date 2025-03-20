@@ -8,11 +8,21 @@ import { Button, ButtonProps } from '@/components/ui/button'
 import { useGlobalStore, useUserInfoStore } from '@/store'
 import { cn } from '@/lib/utils'
 import { LoadingSpinner } from '@/components/Icons'
+import { LOGIN_URL, SIGNUP_URL } from '@/constants'
 
-const LOGIN_URL = `${process.env.NEXT_PUBLIC_DEMO_SERVER_URL}/v1/convoai/sso/login`
-
-export function LoginButton(props: ButtonProps) {
-  const { className, onClick, ...rest } = props
+export function LoginButton(
+  props: ButtonProps & {
+    isSignup?: boolean
+  }
+) {
+  const {
+    className,
+    onClick,
+    disabled,
+    children,
+    isSignup = false,
+    ...rest
+  } = props
 
   const router = useRouter()
   const tLogin = useTranslations('login')
@@ -21,24 +31,41 @@ export function LoginButton(props: ButtonProps) {
   const handleSSOLogin = () => {
     router.push(`${LOGIN_URL}?redirect_uri=${window.location.origin}/`)
   }
+  const handleSSOSignup = () => {
+    router.push(`${SIGNUP_URL}?redirect_uri=${window.location.origin}/`)
+  }
 
   return (
     <Button
       variant="info"
       size="icon"
       onClick={(e) => {
+        if (disabled) {
+          return
+        }
         if (onClick) {
           onClick(e)
-        } else {
-          handleSSOLogin()
+          return
         }
+        if (isSignup) {
+          handleSSOSignup()
+          return
+        }
+        handleSSOLogin()
       }}
-      disabled={globalLoading}
+      disabled={disabled || globalLoading}
       {...rest}
-      className={cn('w-fit gap-0 px-4 py-2 [&_svg]:size-6', className)}
+      className={cn(
+        'w-fit gap-0 px-4 py-2 [&_svg]:size-6',
+        {
+          'w-fit gap-0 border border-line-2 bg-fill px-4 py-2 text-icontext [&_svg]:size-6':
+            isSignup,
+        },
+        className
+      )}
     >
       {globalLoading && <LoadingSpinner />}
-      {tLogin('title')}
+      {children || tLogin('title')}
     </Button>
   )
 }
@@ -61,7 +88,10 @@ export function LoginPanelButton(props: ButtonProps) {
       onClick={handleClick}
       disabled={globalLoading}
       {...rest}
-      className={cn('w-fit gap-0 px-4 py-2 [&_svg]:size-6 bg-white text-icontext-inverse', className)}
+      className={cn(
+        'w-fit gap-0 bg-white px-4 py-2 text-icontext-inverse [&_svg]:size-6',
+        className
+      )}
     >
       {globalLoading && <LoadingSpinner />}
       {tLogin('title')}

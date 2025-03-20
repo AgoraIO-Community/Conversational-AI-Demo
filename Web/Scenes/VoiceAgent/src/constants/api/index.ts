@@ -1,15 +1,12 @@
-
-
 export * from '@/constants/api/schema'
 
-
-export enum ERROR_CODE{
-  RESOURCE_LIMIT_EXCEEDED = 1412
+export enum ERROR_CODE {
+  RESOURCE_LIMIT_EXCEEDED = 1412,
 }
 
 export enum ERROR_MESSAGE {
-  UNAUTHORIZED_ERROR_MESSAGE = "Unauthorized",
-  RESOURCE_LIMIT_EXCEEDED = "resource quota limit exceeded"
+  UNAUTHORIZED_ERROR_MESSAGE = 'Unauthorized',
+  RESOURCE_LIMIT_EXCEEDED = 'resource quota limit exceeded',
 }
 // --- LOCAL API ---
 
@@ -36,3 +33,6 @@ export const REMOTE_CONVOAI_AGENT_PING = '/v3/convoai/ping'
 export const REMOTE_SSO_LOGIN = '/v1/convoai/sso/callback'
 export const REMOTE_USER_INFO = '/v1/convoai/sso/userInfo'
 export const REMOTE_UPLOAD_LOG = '/v1/convoai/upload/log'
+
+export const LOGIN_URL = `${process.env.NEXT_PUBLIC_DEMO_SERVER_URL}/v1/convoai/sso/login`
+export const SIGNUP_URL = `${process.env.NEXT_PUBLIC_DEMO_SERVER_URL}/v1/convoai/sso/signup`

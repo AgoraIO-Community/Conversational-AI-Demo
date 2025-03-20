@@ -55,9 +55,7 @@ import {
 } from '@/type/rtc'
 import { startAgent, stopAgent, pingAgent } from '@/services/agent'
 import { cn } from '@/lib/utils'
-import type {
-  IMessageListItem,
-} from '@/services/message'
+import type { IMessageListItem } from '@/services/message'
 
 import { logger } from '@/lib/logger'
 
@@ -143,7 +141,7 @@ export default function AgentControl() {
         options: {
           devMode: isDevMode,
         },
-        messageServiceMode
+        messageServiceMode,
       })
       updateRoomStatus(EConnectionStatus.CONNECTED)
       setAgentConnectedTimeout(true)
@@ -227,7 +225,7 @@ export default function AgentControl() {
       if (
         (error as Error).message === ERROR_MESSAGE.UNAUTHORIZED_ERROR_MESSAGE
       ) {
-        logger.log('startAgentService unauthorizedError');
+        logger.log('startAgentService unauthorizedError')
         toast.error(tLogin('unauthorizedError'))
         clearAndExit()
         clearUserInfo()
@@ -278,7 +276,7 @@ export default function AgentControl() {
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new Event('stop-agent'))
           }
-          logger.log('heartBeat unauthorizedError');
+          logger.log('heartBeat unauthorizedError')
           toast.error(tLogin('unauthorizedError'))
         }
       }
@@ -351,7 +349,7 @@ export default function AgentControl() {
         (error as Error).message === ERROR_MESSAGE.UNAUTHORIZED_ERROR_MESSAGE
       ) {
         clearUserInfo()
-        logger.log('clearAndExit unauthorizedError');
+        logger.log('clearAndExit unauthorizedError')
         toast.error(tLogin('unauthorizedError'))
       }
     }
@@ -442,9 +440,7 @@ export default function AgentControl() {
     }
   }
 
-  const onTextChanged = (
-    history: IMessageListItem[]
-  ) => {
+  const onTextChanged = (history: IMessageListItem[]) => {
     logger.info({ history }, 'onTextChanged')
     console.log('[Agent/Control] onTextChanged', history)
     setHistory(history)
@@ -531,7 +527,7 @@ export default function AgentControl() {
                   'after:border-8 after:border-transparent after:border-t-brand-light'
                 )}
               >
-                {tLogin('buttonTip')}
+                {tLogin('buttonTip2')}
               </div>
             )}
           </AgentActionStart>

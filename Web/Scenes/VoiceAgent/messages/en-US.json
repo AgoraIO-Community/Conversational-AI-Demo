@@ -9,8 +9,8 @@
     "hiIN": "हिन्दी"
   },
   "metadata": {
-    "title": "Conversational AI Engine",
-    "description": "Conversational AI Engine"
+    "title": "Conversational AI Engine Demo",
+    "description": "Chat with a sample AI voice agent and select different voices in a live demo of Agora's Conversational AI Engine."
   },
   "common": {
     "language": "Language"
@@ -52,7 +52,7 @@
     "moreAction": "More Actions"
   },
   "settings": {
-    "title": "Settings",
+    "title": "Agent Settings",
     "save": "Save",
     "options": {
       "custom": "Custom",
@@ -85,14 +85,16 @@
   },
   "agent": {
     "greeting": {
-      "hi": "Hi,",
-      "human": "I'm Conversational AI Engine.",
+      "hi": "",
+      "greeting1": "Greetings, Human",
+      "greeting2": "Hey, I'm Conversational AI Engine.",
+      "greeting3": "Have you ever questioned the nature of your reality?",
       "connecting": "I'm connecting...",
       "connected": "I've joined",
-      "speakLoudly": "At the beginning of the conversation, please speak loudly and clearly to help the AI agent better lock onto your voice.",
+      "speakLoudly": "I'm ready to listen. Please speak clearly to start.",
       "failed": "Failed to join. Please try again."
     },
-    "getStart": "Call AI Agent",
+    "getStart": "Call AI Engine",
     "subtitle": "Subtitles",
     "enableSubtitle": "Enable Subtitles",
     "disableSubtitle": "Disable Subtitles",
@@ -147,17 +149,20 @@
     "uploadSuccessTip": "We've received your report. Thanks for helping us improve!"
   },
   "login": {
-    "title": "Log in with Agora account",
-    "buttonTip": "login to chat free",
+    "title": "Log in or Sign up",
+    "buttonTip1": "Read me first",
+    "buttonTip2": "Log in to chat for free",
     "panelTitle": "Unlock ♾️ Free Chat",
     "panelDescription": " ",
     "panelButton": "Log in with Agora account",
-    "privacyPolicy": "I agree to the <link>Agora Terms of Service</link> and <policyLink> Privacy Policy.</policyLink>",
+    "panelSignupButton": "Sign up for free",
+    "privacyPolicy": "I accept the <link>Terms of Service</link> and <policyLink>Privacy Policy</policyLink>",
     "termsTip": "Please accept the terms to proceed.",
     "unauthorizedError": "Your session has expired. Please log in again."
   },
   "conversationTimer": {
-    "tip": "Chats limited to {minutes} minutes each.",
+    "tip": "Session limited to {minutes} minutes.",
+    "tipSmallScreen": "Session limited",
     "title": "Time's Up!",
     "description": "Each conversation is limited to {minutes} minutes. The time is up for this conversation. You can close this dialog to start a new conversation.",
     "button": "Got it"
