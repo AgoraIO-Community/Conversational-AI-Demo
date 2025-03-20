@@ -36,7 +36,7 @@ android {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":scenes:convoai:bleLib"))
+    implementation(project(":scenes:convoai:bleManager"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
