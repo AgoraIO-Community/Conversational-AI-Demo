@@ -7,7 +7,6 @@ buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
     "sourceDir": "conversational-ai-demo",
-    "docker": "hub.agoralab.co/server/aes_build_ios:latest",
     "non-publish": [
         "command": "./cicd/build_scripts/build_ios.sh",
         "extraArgs": "",
@@ -29,7 +28,7 @@ def doBuild(buildVariables) {
         "command": command,
         "sourceRoot": "${compileConfig.sourceDir}",
         "extraArgs": extraArgs,
-        "docker": compileConfig.docker
+        "docker": docker,
     ]
     loadResources(["config.json", "artifactory_utils.py"])
     loadResources(["sign", "sign.py"], "publish")
