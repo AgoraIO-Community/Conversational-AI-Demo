@@ -18,11 +18,11 @@
 "join.start.state" = "未加入";
 "join.start.button.title" = "连接 AI 引擎";
 "join.start.agent.name" = "智能体";
-"join.start.tips" = "每次对话限时%d分钟";
+"join.start.tips" = "本次体验对话限制%d分钟";
 "join.timeout.tips" = "智能体加入超时，请稍后重试。";
 
 "conversation.ai.hello" = "你好，人类";
-"conversation.ai.welcome.title" = "你好，欢迎体验声网对话式 AI 引擎";
+"conversation.ai.welcome.title" = "你好，我是对话式AI引擎";
 "conversation.ai.welcome.description" = "秒应智答，零滞畅聊";
 "conversation.ai.app.name" = "对话式 AI 引擎体验";
 "conversation.agent.name" = "智能体";
@@ -101,6 +101,7 @@
 "devmode.rtc" = "RTC 版本";
 "devmode.host" = "Server Host";
 "devmode.dump" = "音频 Dump";
+"devmode.sessionLimit" = "时长限制";
 "devmode.copy" = "复制用户当前通话问题";
 "devmode.close" = "关闭开发者模式";
 "devmode.graph" = "graph id";
@@ -108,4 +109,3 @@
 
 "iot.info.title" = "对话式 AI 设备";
 "iot.info.device" = "%@个设备";
-

@@ -58,7 +58,7 @@
 "settings.microphone" = "Microphone";
 "settings.speaker" = "Speaker";
 "settings.noise.cancellation" = "Noise Cancellation";
-"settings.noise.aiVad.nomal" = "";
+"settings.noise.aiVad.nomal" = "Enable";
 "settings.noise.aiVad.highlight" = "Intelligent Interruption Handling";
 "settings.noise.forceResponse" = "Force Response";
 "settings.noise.bhvs" = "Background Human Voice Suppression";
@@ -106,11 +106,12 @@
 "devmode.rtc" = "RTC Version";
 "devmode.host" = "Server Host";
 "devmode.dump" = "Audio Dump";
+"devmode.sessionLimit" = "Session Limit";
 "devmode.copy" = "Copy Mine Messages";
 "devmode.close" = "Close Developer Mode";
 "devmode.graph" = "graph id";
 "devmode.server" = "Server";
 
+
 "iot.info.title" = "Conversational AI Device";
 "iot.info.device" = "%@ Devices";
-
