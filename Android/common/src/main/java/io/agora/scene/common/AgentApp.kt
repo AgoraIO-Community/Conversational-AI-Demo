@@ -20,6 +20,7 @@ import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.LocaleManager
 import android.content.Context
+import androidx.multidex.MultiDex
 
 class AgentApp : Application() {
 
@@ -40,7 +41,8 @@ class AgentApp : Application() {
                 envName = it.envName(),
                 toolboxHost = it.toolboxHost(),
                 rtcAppId = it.rtcAppId(),
-                rtcAppCert = it.rtcAppCert()
+                rtcAppCert = it.rtcAppCert(),
+                appVersionName = it.appVersionName()
             )
         } ?: run {
             Log.d(TAG, "No data provider found")
@@ -51,14 +53,15 @@ class AgentApp : Application() {
         fetchAppData()
         LocaleManager.init(this)
         super.attachBaseContext(LocaleManager.wrapContext(base))
+        MultiDex.install(this)
     }
 
     override fun onCreate() {
         super.onCreate()
         app = this
-        DebugConfigSettings.init(this)
         AgoraLogger.initXLog(this)
         initMMKV()
+        DebugConfigSettings.init(this)
 
         try {
             extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
