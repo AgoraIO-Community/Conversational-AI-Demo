@@ -27,8 +27,7 @@ def doBuild(buildVariables) {
     commandConfig = [
         "command": command,
         "sourceRoot": "${compileConfig.sourceDir}",
-        "extraArgs": extraArgs,
-        "docker": docker,
+        "extraArgs": extraArgs
     ]
     loadResources(["config.json", "artifactory_utils.py"])
     loadResources(["sign", "sign.py"], "publish")
