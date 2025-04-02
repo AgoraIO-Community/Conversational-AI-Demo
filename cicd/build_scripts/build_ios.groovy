@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "conversational-ai-demo",
+    "sourceDir": "conversational-ai-demo-shengwang",
     "non-publish": [
         "command": "./cicd/build_scripts/build_ios.sh",
         "extraArgs": "",
@@ -58,4 +58,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip || true"
 }
 
-pipelineLoad(this, "AgoraAIScenarios", "build", "ios", "apiexample_mac")
+pipelineLoad(this, "ConvoAIDemo", "build", "ios", "Convo-AI")
