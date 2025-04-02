@@ -1,0 +1,28 @@
+{
+  "global": [
+    {
+      "name": "prod(covai-prod)",
+      "host": "https://service.agora.io/toolbox-global",
+      "appId": "54faa34804aa4411a5a1c5f81a2a95b3",
+      "description": ""
+    },
+    {
+      "name": "staging(covai-prod)",
+      "host": "https://staging-toolbox-global.la3d.agoralab.co",
+      "appId": "c0e91033ca9e43f3adf4cc955261ee0b",
+      "description": ""
+    },
+    {
+      "name": "dev(covai-staging)",
+      "host": "https://dev-toolbox-convoai-global.ty3.agoralab.co",
+      "appId": "c0e91033ca9e43f3adf4cc955261ee0b",
+      "description": ""
+    },
+    {
+      "name": "testing(convoai-testing)",
+      "host": "https://test-toolbox-convoai-global.ty3.agoralab.co",
+      "appId": "91ae67ebc07d4930bbcad09d0ffa575f",
+      "description": ""
+    }
+  ]
+}

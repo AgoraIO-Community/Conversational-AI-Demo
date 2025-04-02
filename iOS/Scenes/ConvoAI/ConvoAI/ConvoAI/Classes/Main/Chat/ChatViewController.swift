@@ -995,6 +995,7 @@ extension ChatViewController {
     
     
     private func switchEnvironment() {
+        IoTEntrance.environmentDidChange()
         AppContext.preferenceManager()?.deleteAllPresets()
         stopLoading()
         stopAgent()
