@@ -544,10 +544,9 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     }
 
     private fun updateToken(complete: (Boolean) -> Unit) {
-        TokenGenerator.generateToken("",
-            CovAgentManager.uid.toString(),
-            TokenGeneratorType.Token007,
-            AgoraTokenType.Rtc,
+        TokenGenerator.generateToken(
+            channelName = "",
+            uid = CovAgentManager.uid.toString(),
             success = { token ->
                 CovLogger.d(TAG, "getToken success")
                 rtcToken = token
