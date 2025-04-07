@@ -22,6 +22,9 @@ target 'Agent-global' do
 
   pod 'Kingfisher'
 
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
+
 end
 
 post_install do |installer|

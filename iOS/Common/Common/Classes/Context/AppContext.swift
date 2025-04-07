@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseCore
 
 @objc public class AppContext: NSObject {
     @objc public static let shared: AppContext = .init()
@@ -27,9 +28,27 @@ import Foundation
     private var _llmParams: [String: Any] = [:]
     private var _ttsVendor: String = ""
     private var _ttsParams: [String: Any] = [:]
+    private var firebaseIsStarted: Bool = false
+    
+    public var isAgreeLicense: Bool = false {
+        willSet {
+            if !newValue {
+                return
+            }
+            
+            if firebaseIsStarted {
+                return
+            }
+            
+            setupFirebase()
+        }
+    }
     
     override init() {
         super.init()
+        if UserCenter.shared.isLogin() {
+            setupFirebase()
+        }
     }
     
     @objc public var appId: String {
@@ -49,6 +68,15 @@ import Foundation
     
     @objc public var environments: [[String : String]] {
         get { return _environments }
+    }
+    
+    private func setupFirebase() {
+#if DEBUG
+        print("debug mode")
+#else
+        FirebaseApp.configure()
+        firebaseIsStarted = true
+#endif
     }
     
     public func loadInnerEnvironment() {
