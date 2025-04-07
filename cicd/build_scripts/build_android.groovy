@@ -7,7 +7,6 @@ buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
     "sourceDir": "conversational-ai-demo",
-    "docker": "hub.agoralab.co/server/aes_build_android:latest",
     "non-publish": [
         "command": "./cicd/build_scripts/build_android.sh",
         "extraArgs": "",
@@ -59,4 +58,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.apk || true"
 }
 
-pipelineLoad(this, "AgoraAIScenarios", "build", "android", "apiexample_linux")
+pipelineLoad(this, "AgoraAIScenarios", "build", "android", "Convo-AI")
