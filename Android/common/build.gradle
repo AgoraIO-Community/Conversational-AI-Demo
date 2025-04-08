@@ -86,4 +86,7 @@ dependencies {
     } else {
         api libs.agora.rtc
     }
+
+    api platform(libs.firebase.bom)
+    api libs.firebase.crashlytics
 }

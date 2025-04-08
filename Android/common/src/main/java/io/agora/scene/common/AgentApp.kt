@@ -21,6 +21,8 @@ import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.LocaleManager
 import android.content.Context
 import androidx.multidex.MultiDex
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class AgentApp : Application() {
 
@@ -63,15 +65,18 @@ class AgentApp : Application() {
         initMMKV()
         DebugConfigSettings.init(this)
 
+        // init Firebase Crashlytics
+        initFirebaseCrashlytics()
+
         try {
             extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to init files", e)
+            CommonLogger.e(TAG, "Failed to init files:${e.message}")
         }
         try {
             initFile(AgentConstant.VIDEO_START_NAME)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to init files", e)
+            CommonLogger.e(TAG, "Failed to init files:${e.message}")
         }
         try {
             initFile(AgentConstant.VIDEO_ROTATING_NAME)
@@ -97,6 +102,26 @@ class AgentApp : Application() {
                 }
             }
         })
+    }
+
+    private fun initFirebaseCrashlytics() {
+        try {
+            if (FirebaseApp.getApps(this).isNotEmpty()) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+                CommonLogger.d(TAG, "Firebase already init")
+                return
+            }
+            
+            // init Firebase
+            FirebaseApp.initializeApp(this)
+            
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            FirebaseCrashlytics.getInstance().log("app start")
+            
+            CommonLogger.d(TAG, "Firebase Crashlytics init success")
+        } catch (e: Exception) {
+            CommonLogger.e(TAG, "Firebase Crashlytics init failed: ${e.message}")
+        }
     }
 
     private fun initMMKV() {

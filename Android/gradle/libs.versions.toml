@@ -1,6 +1,9 @@
 [versions]
 agp = "8.5.0"
 kotlin = "1.9.24"
+firebaseBom = "32.0.0"
+googleServices = "4.3.15"
+crashlytics = "2.9.9"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -27,6 +30,8 @@ undercouch = "4.1.2"
 multidex="2.0.0"
 
 [libraries]
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
@@ -58,5 +63,7 @@ agora-rtc = { module = "io.agora.rtc:full-sdk", version.ref = "agora-full" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch" }
 
