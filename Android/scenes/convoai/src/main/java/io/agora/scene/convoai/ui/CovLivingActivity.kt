@@ -14,9 +14,12 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.agora.rtc2.Constants
 import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngineEx
+import io.agora.scene.common.AgentApp
 import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.constant.AgentScenes
 import io.agora.scene.common.constant.SSOUserManager
@@ -28,7 +31,6 @@ import io.agora.scene.common.debugMode.DebugDialogCallback
 import io.agora.scene.common.net.AgoraTokenType
 import io.agora.scene.common.net.ApiManager
 import io.agora.scene.common.net.TokenGenerator
-import io.agora.scene.common.net.TokenGeneratorType
 import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.LoginDialog
@@ -37,6 +39,7 @@ import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.ui.SSOWebViewActivity
 import io.agora.scene.common.ui.TermsActivity
 import io.agora.scene.common.ui.vm.LoginViewModel
+import io.agora.scene.common.util.CommonLogger
 import io.agora.scene.common.util.PermissionHelp
 import io.agora.scene.common.util.copyToClipboard
 import io.agora.scene.common.util.dp
@@ -1199,6 +1202,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 clBottomNotLogged.root.visibility = View.INVISIBLE
 
                 clBottomNotLogged.tvTyping.stopAnimation()
+
+                initFirebaseCrashlytics()
             } else {
                 clTop.btnSettings.visibility = View.INVISIBLE
                 clTop.btnInfo.visibility = View.INVISIBLE
@@ -1248,6 +1253,12 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
                     override fun onPrivacyPolicy() {
                         TermsActivity.startActivity(this@CovLivingActivity, ServerConfig.privacyPolicyUrl)
+                    }
+
+                    override fun onPrivacyChecked(isChecked: Boolean) {
+                        if (isChecked) {
+                            initFirebaseCrashlytics()
+                        }
                     }
                 }
             }
@@ -1330,5 +1341,20 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             .setCancelable(false)
             .build()
             .show(supportFragmentManager, "permission_dialog")
+    }
+
+    private var isFirebaseInit = false
+    private fun initFirebaseCrashlytics() {
+        if (isFirebaseInit) return
+        try {
+            FirebaseApp.initializeApp(AgentApp.instance())
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            FirebaseCrashlytics.getInstance().log("app start with user consent")
+            
+            CommonLogger.d("Firebase", "Firebase initialized and enabled with user consent")
+            isFirebaseInit = true
+        } catch (e: Exception) {
+            CommonLogger.e("Firebase", "Firebase initialization failed: ${e.message}")
+        }
     }
 }

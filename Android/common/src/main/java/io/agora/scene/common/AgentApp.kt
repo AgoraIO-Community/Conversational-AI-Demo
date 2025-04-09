@@ -21,8 +21,6 @@ import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.LocaleManager
 import android.content.Context
 import androidx.multidex.MultiDex
-import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class AgentApp : Application() {
 
@@ -61,12 +59,12 @@ class AgentApp : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
+        
+        // 不在这里初始化Firebase，让用户同意隐私协议后再初始化
+        
         AgoraLogger.initXLog(this)
         initMMKV()
         DebugConfigSettings.init(this)
-
-        // init Firebase Crashlytics
-        initFirebaseCrashlytics()
 
         try {
             extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
@@ -104,25 +102,7 @@ class AgentApp : Application() {
         })
     }
 
-    private fun initFirebaseCrashlytics() {
-        try {
-            if (FirebaseApp.getApps(this).isNotEmpty()) {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-                CommonLogger.d(TAG, "Firebase already init")
-                return
-            }
-            
-            // init Firebase
-            FirebaseApp.initializeApp(this)
-            
-            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-            FirebaseCrashlytics.getInstance().log("app start")
-            
-            CommonLogger.d(TAG, "Firebase Crashlytics init success")
-        } catch (e: Exception) {
-            CommonLogger.e(TAG, "Firebase Crashlytics init failed: ${e.message}")
-        }
-    }
+
 
     private fun initMMKV() {
         val rootDir = MMKV.initialize(this)
