@@ -44,7 +44,6 @@ TODO: Add long description of the pod here.
     
   s.dependency 'SwiftyBeaver'
   s.dependency 'SSZipArchive'
-  s.dependency 'Firebase/Analytics'
   s.dependency 'Firebase/Crashlytics'
   # s.public_header_files = 'Pod/Classes/**/*.h'
   
