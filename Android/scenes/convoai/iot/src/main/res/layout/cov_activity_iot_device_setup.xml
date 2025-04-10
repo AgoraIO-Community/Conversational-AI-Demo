@@ -253,14 +253,15 @@
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="56dp"
-        android:background="@drawable/selector_gradient_button"
         android:text="@string/cov_iot_devices_prepare_next"
         android:textStyle="bold"
         android:textColor="@color/ai_brand_white10"
         android:textSize="16sp"
         android:textAllCaps="false"
         android:enabled="false"
-        app:backgroundTint="@null"
+        app:rippleColor="#1AFFFFFF"
+        app:cornerRadius="12dp"
+        app:backgroundTint="@color/ai_brand_main6"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

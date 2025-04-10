@@ -55,8 +55,8 @@ object DebugConfigSettings {
     fun init(context: Context) {
         if (instance != null) return
         try {
-            val jsonString = context.assets.open(DEV_CONFIG_FILE).bufferedReader().use(BufferedReader::readText)
-            instance = Gson().fromJson(jsonString, DevEnvConfig::class.java)
+//            val jsonString = context.assets.open(DEV_CONFIG_FILE).bufferedReader().use(BufferedReader::readText)
+//            instance = Gson().fromJson(jsonString, DevEnvConfig::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
         }
