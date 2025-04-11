@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "713836033951",
+    "project_id": "convoai-abe8d",
+    "storage_bucket": "convoai-abe8d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713836033951:android:e6ecc029228e404cc7afaa",
+        "android_client_info": {
+          "package_name": "io.agora.convoai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZSGHJmRm8JzDhODdyVNMn8etPqGtqWGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+} 
