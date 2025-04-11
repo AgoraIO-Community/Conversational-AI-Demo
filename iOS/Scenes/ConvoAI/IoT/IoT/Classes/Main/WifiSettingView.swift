@@ -124,7 +124,7 @@ class WifiSettingView: UIView {
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(ResourceManager.L10n.Iot.wifiSettingsNext, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor.themColor(named: "ai_icontext1"), for: .normal)
         button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)

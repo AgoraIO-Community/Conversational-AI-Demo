@@ -97,13 +97,13 @@
 "iot.wifi.settings.switch" = "Switch";
 "iot.wifi.settings.next" = "Next";
 
-"iot.hotspot.open.title" = "打开个人热点";
-"iot.hotspot.settings.button" = "去设置热点";
-"iot.hotspot.check.prefix" = "检查是否打开";
-"iot.hotspot.compatibility.mode" = "”最大兼容性“";
-"iot.hotspot.input.title" = "输入热点名称与密码";
-"iot.hotspot.device.name.placeholder" = "设备名称";
-"iot.hotspot.password.placeholder" = "密码";
-"iot.hotspot.next" = "下一步";
+"iot.hotspot.open.title" = "Turn on Personal Hotspot";
+"iot.hotspot.settings.button" = "Go to set up the hotspot";
+"iot.hotspot.check.prefix" = "Check if it's turned on";
+"iot.hotspot.compatibility.mode" = "”Maximum Compatibility“";
+"iot.hotspot.input.title" = "Enter the hotspot name and password";
+"iot.hotspot.device.name.placeholder" = "Hotspot Name";
+"iot.hotspot.password.placeholder" = "Password";
+"iot.hotspot.next" = "Next";
 "iot.hotspot.tab.wifi" = "Wi-Fi";
-"iot.hotspot.tab.mobile" = "移动热点";
+"iot.hotspot.tab.mobile" = "Mobile Hotspot";
