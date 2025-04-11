@@ -33,16 +33,16 @@
     <string name="cov_iot_wifi_warning">Please enter 2.4G Wi-Fi network</string>
 
     <string name="cov_iot_wifi_tab">Wi-Fi</string>
-    <string name="cov_iot_hotspot_tab">个人热点</string>
-    <string name="cov_iot_hotspot_title">打开个人热点</string>
-    <string name="cov_iot_hotspot_subtitle">如果你的手机支持5G网络，请在高级选项里选择“2.4GHz”</string>
-    <string name="cov_iot_hotspot_go_setting">去启用热点，选择2.4GHz</string>
-    <string name="cov_iot_hotspot_tips">输入热点名称和密码</string>
-    <string name="cov_iot_hotspot_name">设备名称</string>
+    <string name="cov_iot_hotspot_tab">Mobile Hotspot</string>
+    <string name="cov_iot_hotspot_title">Turn on Mobile Hotspot</string>
+    <string name="cov_iot_hotspot_subtitle">Please select "2.4GHz" in the advanced options.</string>
+    <string name="cov_iot_hotspot_go_setting">Go to enable the hotspot and select 2.4GHz</string>
+    <string name="cov_iot_hotspot_tips">Enter the hotspot name and password</string>
+    <string name="cov_iot_hotspot_name">Hotspot Name</string>
     <string name="cov_iot_hotspot_password">Password</string>
-    <string name="cov_iot_hotspot_setting_tips">请启用个人热点</string>
-    <string name="cov_iot_hotspot_warning_tips">注意：请务必在移动共享热点配置中，选择2.4GHz频段</string>
-    <string name="cov_iot_hotspot_go_setting2">去启用热点，更改频段</string>
+    <string name="cov_iot_hotspot_setting_tips">Please enable the personal hotspot</string>
+    <string name="cov_iot_hotspot_warning_tips">Note: Be sure to select the 2.4GHz frequency band in the mobile shared hotspot configuration.</string>
+    <string name="cov_iot_hotspot_go_setting2">Go to enable the hotspot and change the frequency band</string>
     <string name="cov_iot_step_1">1</string>
     <string name="cov_iot_step_2">2</string>
 

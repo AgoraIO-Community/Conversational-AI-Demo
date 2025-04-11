@@ -108,6 +108,7 @@
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="22.5dp"
                     android:scaleType="fitCenter"
+                    android:layout_marginTop="5dp"
                     android:src="@drawable/cov_iot_hotspot_bg"
                     app:layout_constraintDimensionRatio="270:204"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -123,13 +124,14 @@
                     android:textAllCaps="false"
                     android:textColor="@color/ai_brand_white10"
                     android:textSize="14sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     app:backgroundTint="@color/ai_brand_main6"
                     app:cornerRadius="12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_hotspot_icon"
                     app:rippleColor="#1AFFFFFF" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -187,18 +189,17 @@
                     android:paddingVertical="5dp"
                     android:textColor="@color/ai_brand_white10"/>
 
-
                 <LinearLayout
                     android:id="@+id/ll_title_input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cv_hotspot_name">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -206,6 +207,7 @@
                         android:text="@string/cov_iot_hotspot_tips"
                         android:textColor="@color/ai_icontext1"
                         android:textSize="20sp"
+                        android:paddingHorizontal="24dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -214,13 +216,13 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_marginHorizontal="30dp"
-                    android:layout_marginTop="20dp"
                     app:cardBackgroundColor="@color/ai_input"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ll_title_input"
+                    app:layout_constraintBottom_toTopOf="@+id/cv_hotspot_password"
+                    android:layout_marginBottom="16dp"
                     app:strokeColor="@color/ai_line1"
                     app:strokeWidth="0.5dp">
 
@@ -260,10 +262,11 @@
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0.5dp"
+                    android:layout_marginBottom="12dp"
                     app:strokeColor="@color/ai_line1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cv_hotspot_name">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
