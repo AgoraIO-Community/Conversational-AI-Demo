@@ -310,6 +310,7 @@ class LoginViewController: UIViewController {
         termsCheckbox.isSelected.toggle()
         if termsCheckbox.isSelected {
             warningButton.isHidden = true
+            AppContext.shared.isAgreeLicense = true
         }
     }
     
