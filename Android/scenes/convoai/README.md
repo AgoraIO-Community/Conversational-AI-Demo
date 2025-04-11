@@ -39,8 +39,8 @@ BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 #----------- LLM -----------
 LLM_URL=<LLM Vendor API BASE URL>
 LLM_API_KEY=<LLM Vendor API KEY>(optional)
+LLM_PARRAMS=<LLM Parameters>(optional)
 LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
-LLM_MODEL=<LLM Model>(optional)
 
 #----------- TTS -----------
 TTS_VENDOR=<TTS Vendor>
