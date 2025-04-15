@@ -25,7 +25,7 @@ class WifiSettingView: UIView {
                                     value: UIColor.themColor(named: "ai_green6"),
                                     range: range)
         label.attributedText = attributedString
-        label.font = .systemFont(ofSize: 24, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textAlignment = .center
         return label
     }()
@@ -33,7 +33,7 @@ class WifiSettingView: UIView {
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.text = ResourceManager.L10n.Iot.wifiSettingsSubtitle
-        label.font = .systemFont(ofSize: 24, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = UIColor.themColor(named: "ai_icontext1")
         label.textAlignment = .center
         return label
@@ -58,7 +58,7 @@ class WifiSettingView: UIView {
     private lazy var wifiErrorLabel: UILabel = {
         let label = UILabel()
         label.text = ResourceManager.L10n.Iot.wifiSettingsError
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 10)
         label.textColor = UIColor.themColor(named: "ai_icontext1")
         label.isHidden = true
         return label
@@ -124,7 +124,7 @@ class WifiSettingView: UIView {
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(ResourceManager.L10n.Iot.wifiSettingsNext, for: .normal)
-        button.setTitleColor(UIColor.themColor(named: "ai_icontext1"), for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
@@ -257,4 +257,3 @@ class WifiSettingView: UIView {
         onNextButtonTapped?()
     }
 }
-
