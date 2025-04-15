@@ -156,9 +156,15 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_change_wifi"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/cov_wift_change_btn_bg"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="15dp"
                 android:text="@string/cov_iot_wifi_change"
                 android:textAllCaps="false"
                 android:textColor="@color/ai_icontext1"
@@ -166,7 +172,8 @@
                 app:backgroundTint="@null"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="#1AFFFFFF" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
