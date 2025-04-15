@@ -84,7 +84,9 @@ dependencies {
     if (USE_LOCAL_SDK) {
         api fileTree(dir: "${localSdkPath}", include: ['*.jar'])
     } else {
-        api libs.agora.rtc
+        api(libs.agora.rtc) {
+            exclude group: 'io.agora.rtc', module: 'full-screen-sharing'
+        }
     }
 
     api platform(libs.firebase.bom)
