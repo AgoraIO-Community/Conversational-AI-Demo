@@ -15,6 +15,14 @@ class AppDataProvider : DataProvider {
         return BuildConfig.TOOLBOX_SERVER_HOST
     }
 
+    override fun appVersionCode(): Int {
+        return BuildConfig.VERSION_CODE
+    }
+
+    override fun appVersionName(): String {
+        return BuildConfig.VERSION_NAME
+    }
+
     override fun appBuildNo(): String {
         return BuildConfig.BUILD_TIMESTAMP
     }

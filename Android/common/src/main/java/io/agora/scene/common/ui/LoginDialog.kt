@@ -25,6 +25,7 @@ interface LoginDialogCallback {
     fun onClickSignupSSO() = Unit
     fun onTermsOfServices() = Unit
     fun onPrivacyPolicy() = Unit
+    fun onPrivacyChecked(isChecked: Boolean) = Unit
 }
 
 class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
@@ -65,6 +66,7 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
                 if (tvCheckTips.visibility == View.VISIBLE) {
                     tvCheckTips.visibility = View.INVISIBLE
                 }
+                onLoginDialogCallback?.onPrivacyChecked(isChecked)
             }
             setupRichTextTerms(tvTermsRichText)
         }

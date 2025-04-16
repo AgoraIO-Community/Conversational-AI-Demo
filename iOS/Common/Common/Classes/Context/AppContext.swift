@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseCore
 
 @objc public class AppContext: NSObject {
     @objc public static let shared: AppContext = .init()
@@ -23,13 +24,31 @@ import Foundation
     private var _basicAuthSecret: String = ""
     private var _llmUrl: String = ""
     private var _llmApiKey: String = ""
-    private var _llmSystemMessages: String = ""
-    private var _llmModel: String = ""
+    private var _llmSystemMessages: [[String: Any]] = []
+    private var _llmParams: [String: Any] = [:]
     private var _ttsVendor: String = ""
     private var _ttsParams: [String: Any] = [:]
+    private var firebaseIsStarted: Bool = false
+    
+    public var isAgreeLicense: Bool = false {
+        willSet {
+            if !newValue {
+                return
+            }
+            
+            if firebaseIsStarted {
+                return
+            }
+            
+            setupFirebase()
+        }
+    }
     
     override init() {
         super.init()
+        if UserCenter.shared.isLogin() {
+            setupFirebase()
+        }
     }
     
     @objc public var appId: String {
@@ -51,17 +70,26 @@ import Foundation
         get { return _environments }
     }
     
+    private func setupFirebase() {
+#if DEBUG
+        print("debug mode")
+#else
+        FirebaseApp.configure()
+        firebaseIsStarted = true
+#endif
+    }
+    
     public func loadInnerEnvironment() {
         if let bundlePath = Bundle.main.path(forResource: "Common", ofType: "bundle"),
            let bundle = Bundle(path: bundlePath),
-           let environmentsPath = bundle.path(forResource: "environments", ofType: "json"),
+           let environmentsPath = bundle.path(forResource: "dev_env_config", ofType: "json"),
            let data = try? Data(contentsOf: URL(fileURLWithPath: environmentsPath)),
            let environments = try? JSONDecoder().decode([String: [[String: String]]].self, from: data) {
             _environments = environments["global"] ?? []
             if (appId.isEmpty) {
-                _appId = _environments.first?["appId"] ?? ""
-                _certificate = _environments.first?["certificate"] ?? ""
-                _baseServerUrl = _environments.first?["host"] ?? ""
+                _appId = _environments.first?["rtc_app_id"] ?? ""
+                _certificate = _environments.first?["rtc_app_certificate"] ?? ""
+                _baseServerUrl = _environments.first?["toolbox_server_host"] ?? ""
             }
         }
     }
@@ -91,14 +119,14 @@ import Foundation
         set { _llmApiKey = newValue }
     }
     
-    @objc public var llmSystemMessages: String {
+    @objc public var llmSystemMessages: [[String: Any]] {
         get { return _llmSystemMessages }
         set { _llmSystemMessages = newValue }
     }
     
-    @objc public var llmModel: String {
-        get { return _llmModel }
-        set { _llmModel = newValue }
+    @objc public var llmParams: [String: Any] {
+        get { return _llmParams }
+        set { _llmParams = newValue }
     }
     
     @objc public var ttsVendor: String {

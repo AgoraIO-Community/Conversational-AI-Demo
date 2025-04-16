@@ -32,6 +32,21 @@
     <string name="cov_iot_wifi_change">Switch</string>
     <string name="cov_iot_wifi_warning">Please enter 2.4G Wi-Fi network</string>
 
+    <string name="cov_iot_wifi_tab">Wi-Fi</string>
+    <string name="cov_iot_hotspot_tab">Mobile Hotspot</string>
+    <string name="cov_iot_hotspot_title">Turn on Mobile Hotspot</string>
+    <string name="cov_iot_hotspot_subtitle">Please select "2.4GHz" in the advanced options.</string>
+    <string name="cov_iot_hotspot_go_setting">Enable the hotspot</string>
+    <string name="cov_iot_hotspot_go_setting_subtitle">(select 2.4GHz)</string>
+    <string name="cov_iot_hotspot_tips">Hotspot name and password</string>
+    <string name="cov_iot_hotspot_name">Hotspot Name</string>
+    <string name="cov_iot_hotspot_password">Password</string>
+    <string name="cov_iot_hotspot_setting_tips">Please enable the personal hotspot</string>
+    <string name="cov_iot_hotspot_warning_tips">Note: Be sure to select the 2.4GHz frequency band in the mobile shared hotspot configuration.</string>
+    <string name="cov_iot_hotspot_go_setting2">Go to enable the hotspot and change the frequency band</string>
+    <string name="cov_iot_step_1">1</string>
+    <string name="cov_iot_step_2">2</string>
+
     <string name="cov_iot_permission_title">Enable Permissions &amp; Switches</string>
     <string name="cov_iot_permission_tip">Enable the Following to Add Nearby Devices</string>
     <string name="cov_iot_permission_device">Nearby device service not authorized</string>

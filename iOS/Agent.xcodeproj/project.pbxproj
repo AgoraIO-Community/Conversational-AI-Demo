@@ -13,6 +13,7 @@
 		AB7A7D602D360F37000B3034 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7A7D532D360F37000B3034 /* SceneDelegate.swift */; };
 		AB7A7DA82D43B145000B3034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB7A7DA22D43B145000B3034 /* Assets.xcassets */; };
 		AB7A7DA92D43B145000B3034 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB7A7DA42D43B145000B3034 /* Localizable.strings */; };
+		F742FFCD2DA3B42D00D3508A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F742FFCC2DA3B42D00D3508A /* GoogleService-Info.plist */; };
 		F75CC8A72D3941B800F9D4B7 /* Info-global.plist in Resources */ = {isa = PBXBuildFile; fileRef = F75CC8A62D3941B800F9D4B7 /* Info-global.plist */; };
 		F7CEFFCC2D77F6B40029BD3B /* ball_video_rotating.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */; };
 		F7CEFFCD2D77F6B40029BD3B /* ball_video_start.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFCA2D77F6B40029BD3B /* ball_video_start.mp4 */; };
@@ -40,6 +41,7 @@
 		AB7A7DAD2D43B219000B3034 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D91E55880AF6C3438FDDFFF6 /* Pods-Agent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent.release.xcconfig"; path = "Target Support Files/Pods-Agent/Pods-Agent.release.xcconfig"; sourceTree = "<group>"; };
 		DB5CA60023278675289ED5E8 /* Pods-Agent-cn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-cn.debug.xcconfig"; path = "Target Support Files/Pods-Agent-cn/Pods-Agent-cn.debug.xcconfig"; sourceTree = "<group>"; };
+		F742FFCC2DA3B42D00D3508A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F75CC8A62D3941B800F9D4B7 /* Info-global.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-global.plist"; sourceTree = "<group>"; };
 		F7CE00262D81A78B0029BD3B /* Agent-global.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Agent-global.entitlements"; sourceTree = "<group>"; };
 		F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball_video_rotating.mp4; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 		AB297B5D2CA935A4007FB93B /* Agent */ = {
 			isa = PBXGroup;
 			children = (
+				F742FFCC2DA3B42D00D3508A /* GoogleService-Info.plist */,
 				AB297B722CA93805007FB93B /* KeyCenter.swift */,
 				AB7A7D552D360F37000B3034 /* src */,
 				AB7A7DA72D43B145000B3034 /* Resources */,
@@ -154,6 +157,7 @@
 				AB297B592CA935A4007FB93B /* Resources */,
 				59E38C4895818F7A848677D3 /* [CP] Embed Pods Frameworks */,
 				6A78C839D1C988E6D2D9DE1E /* [CP] Copy Pods Resources */,
+				F742FFCE2DA3B68900D3508A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -204,6 +208,7 @@
 			files = (
 				F7CEFFCD2D77F6B40029BD3B /* ball_video_start.mp4 in Resources */,
 				F7D294BF2D6C6F9C00583343 /* Agora_AiLogo.png in Resources */,
+				F742FFCD2DA3B42D00D3508A /* GoogleService-Info.plist in Resources */,
 				AB7A7DA92D43B145000B3034 /* Localizable.strings in Resources */,
 				F7D294B92D6C5D9900583343 /* Launch Screen.storyboard in Resources */,
 				F7CEFFCE2D77F6B40029BD3B /* common_resource.zip in Resources */,
@@ -271,6 +276,28 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		F742FFCE2DA3B68900D3508A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -433,7 +460,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Agent-global.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 20250416181747;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -461,7 +489,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.convoai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -483,7 +511,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Agent-global.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 20250416181747;
 				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -511,7 +539,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.convoai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

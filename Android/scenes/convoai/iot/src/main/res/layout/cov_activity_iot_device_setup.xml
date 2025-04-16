@@ -101,7 +101,7 @@
                 android:paddingHorizontal="40dp"
                 android:text="@string/cov_iot_devices_prepare_tip_1"
                 android:textColor="@color/ai_icontext1"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:singleLine="false"
                 android:lineSpacingMultiplier="1.3"
@@ -250,17 +250,20 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/ai_dp_default"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="56dp"
-        android:background="@drawable/selector_gradient_button"
         android:text="@string/cov_iot_devices_prepare_next"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
         android:textStyle="bold"
         android:textColor="@color/ai_brand_white10"
         android:textSize="16sp"
         android:textAllCaps="false"
         android:enabled="false"
-        app:backgroundTint="@null"
+        app:rippleColor="#1AFFFFFF"
+        app:cornerRadius="12dp"
+        app:backgroundTint="@color/ai_brand_main6"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

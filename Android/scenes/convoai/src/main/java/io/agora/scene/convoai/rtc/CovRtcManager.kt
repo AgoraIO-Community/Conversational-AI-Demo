@@ -12,6 +12,10 @@ import io.agora.rtc2.RtcEngineEx
 import io.agora.scene.common.AgentApp
 import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.convoai.CovLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 object CovRtcManager {
 
@@ -20,6 +24,26 @@ object CovRtcManager {
     private var rtcEngine: RtcEngineEx? = null
 
     private var mAudioRouting = Constants.AUDIO_ROUTE_DEFAULT
+
+    private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    private fun runOnMainThread(r: Runnable) {
+        mainScope.launch {
+            r.run()
+        }
+    }
+
+    private val covRtcHandler  = object : IRtcEngineEventHandler() {
+        override fun onAudioRouteChanged(routing: Int) {
+            super.onAudioRouteChanged(routing)
+            runOnMainThread {
+                CovLogger.d(TAG, "onAudioRouteChanged, routing:$routing")
+                // set audio config parameters
+                // you should set it before joinChannel and when audio route changed
+                setAudioConfigParameters(routing)
+            }
+        }
+    }
 
     fun createRtcEngine(rtcCallback: IRtcEngineEventHandler): RtcEngineEx {
         val config = RtcEngineConfig()
@@ -31,9 +55,8 @@ object CovRtcManager {
         try {
             rtcEngine = (RtcEngine.create(config) as RtcEngineEx).apply {
                 loadExtensionProvider("ai_echo_cancellation_extension")
-                loadExtensionProvider("ai_echo_cancellation_ll_extension")
                 loadExtensionProvider("ai_noise_suppression_extension")
-                loadExtensionProvider("ai_noise_suppression_ll_extension")
+                addHandler(covRtcHandler)
             }
         } catch (e: Exception) {
             CovLogger.e(TAG, "createRtcEngine error: $e")
@@ -55,15 +78,29 @@ object CovRtcManager {
 
     fun joinChannel(rtcToken: String, channelName: String, uid: Int, isIndependent: Boolean = false) {
         CovLogger.d(TAG, "onClickStartAgent channelName: $channelName, localUid: $uid, isIndependent: $isIndependent")
-        //set audio scenario 10，open AI-QoS
+
+        // isIndependent is always false in your app
         if (isIndependent) {
+            // ignore this, you should not set it
             rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
         } else {
+            // set audio scenario 10, open AI-QoS
             rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_AI_CLIENT)
         }
-        // audio predump default enable
+
+        // set audio config parameters
+        // you should set it before joinChannel and when audio route changed
+        setAudioConfigParameters(mAudioRouting)
+
+        // Calling this API enables the onAudioVolumeIndication callback to report volume values,
+        // which can be used to drive microphone volume animation rendering
+        // If you don't need this feature, you can skip this setting
+        rtcEngine?.enableAudioVolumeIndication(100, 3, true)
+
+        // Audio pre-dump is enabled by default in demo, you don't need to set this in your app
         rtcEngine?.setParameters("{\"che.audio.enable.predump\":{\"enable\":\"true\",\"duration\":\"60\"}}")
-        setAudioConfig(mAudioRouting)
+
+        // join rtc channel
         val options = ChannelMediaOptions()
         options.clientRoleType = CLIENT_ROLE_BROADCASTER
         options.publishMicrophoneTrack = true
@@ -71,7 +108,6 @@ object CovRtcManager {
         options.autoSubscribeAudio = true
         options.autoSubscribeVideo = false
         val ret = rtcEngine?.joinChannel(rtcToken, channelName, uid, options)
-        rtcEngine?.enableAudioVolumeIndication(100, 3, true)
         CovLogger.d(TAG, "Joining RTC channel: $channelName, uid: $uid")
         if (ret == ERR_OK) {
             CovLogger.d(TAG, "Join RTC room success")
@@ -80,16 +116,16 @@ object CovRtcManager {
         }
     }
 
-    fun setAudioConfig(routing: Int) {
+    // set audio config parameters
+    // you should set it before joinChannel and when audio route changed
+    private fun setAudioConfigParameters(routing: Int) {
         mAudioRouting = routing
         rtcEngine?.apply {
             setParameters("{\"che.audio.aec.split_srate_for_48k\":16000}")
             setParameters("{\"che.audio.sf.enabled\":true}")
-            // setParameters("{\"che.audio.sf.delayMode\":2}")
             setParameters("{\"che.audio.sf.stftType\":6}")
             setParameters("{\"che.audio.sf.ainlpLowLatencyFlag\":1}")
             setParameters("{\"che.audio.sf.ainsLowLatencyFlag\":1}")
-
             setParameters("{\"che.audio.sf.procChainMode\":1}")
             setParameters("{\"che.audio.sf.nlpDynamicMode\":1}")
 
@@ -102,27 +138,27 @@ object CovRtcManager {
             } else {
                 setParameters("{\"che.audio.sf.nlpAlgRoute\":1}")
             }
-            //setParameters("{\"che.audio.sf.ainlpToLoadFlag\":1}")
-            setParameters("{\"che.audio.sf.ainlpModelPref\":10}")
 
+            setParameters("{\"che.audio.sf.ainlpModelPref\":10}")
             setParameters("{\"che.audio.sf.nsngAlgRoute\":12}")
-            //setParameters("{\"che.audio.sf.ainsToLoadFlag\":1}")
             setParameters("{\"che.audio.sf.ainsModelPref\":10}")
             setParameters("{\"che.audio.sf.nsngPredefAgg\":11}")
-
             setParameters("{\"che.audio.agc.enable\":false}")
         }
     }
 
+    // leave rtc channel
     fun leaveChannel() {
         rtcEngine?.leaveChannel()
     }
 
+    // renew rtc token
     fun renewRtcToken(value: String) {
         val engine = rtcEngine ?: return
         engine.renewToken(value)
     }
 
+    // open or close microphone
     fun muteLocalAudio(mute: Boolean) {
         rtcEngine?.adjustRecordingSignalVolume(if (mute) 0 else 100)
     }
@@ -135,11 +171,12 @@ object CovRtcManager {
         }
     }
 
-    fun generatePredumpFile() {
+    fun generatePreDumpFile() {
         rtcEngine?.setParameters("{\"che.audio.start.predump\": true}")
     }
 
-    fun resetData() {
+    fun destroy() {
+        rtcEngine?.removeHandler(covRtcHandler)
         rtcEngine = null
         mediaPlayer = null
         RtcEngine.destroy()

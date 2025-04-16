@@ -20,6 +20,7 @@ import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.LocaleManager
 import android.content.Context
+import androidx.multidex.MultiDex
 
 class AgentApp : Application() {
 
@@ -40,7 +41,8 @@ class AgentApp : Application() {
                 envName = it.envName(),
                 toolboxHost = it.toolboxHost(),
                 rtcAppId = it.rtcAppId(),
-                rtcAppCert = it.rtcAppCert()
+                rtcAppCert = it.rtcAppCert(),
+                appVersionName = it.appVersionName()
             )
         } ?: run {
             Log.d(TAG, "No data provider found")
@@ -51,24 +53,28 @@ class AgentApp : Application() {
         fetchAppData()
         LocaleManager.init(this)
         super.attachBaseContext(LocaleManager.wrapContext(base))
+        MultiDex.install(this)
     }
 
     override fun onCreate() {
         super.onCreate()
         app = this
-        DebugConfigSettings.init(this)
+        
+        // 不在这里初始化Firebase，让用户同意隐私协议后再初始化
+        
         AgoraLogger.initXLog(this)
         initMMKV()
+        DebugConfigSettings.init(this)
 
         try {
             extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to init files", e)
+            CommonLogger.e(TAG, "Failed to init files:${e.message}")
         }
         try {
             initFile(AgentConstant.VIDEO_START_NAME)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to init files", e)
+            CommonLogger.e(TAG, "Failed to init files:${e.message}")
         }
         try {
             initFile(AgentConstant.VIDEO_ROTATING_NAME)
@@ -95,6 +101,8 @@ class AgentApp : Application() {
             }
         })
     }
+
+
 
     private fun initMMKV() {
         val rootDir = MMKV.initialize(this)

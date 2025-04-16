@@ -36,7 +36,7 @@
                 android:paddingHorizontal="16dp"
                 android:text="@string/cov_iot_devices_connect_connect_failed"
                 android:textColor="@color/ai_icontext1"
-                android:textSize="24sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
