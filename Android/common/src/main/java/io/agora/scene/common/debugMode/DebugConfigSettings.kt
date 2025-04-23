@@ -92,7 +92,7 @@ object DebugConfigSettings {
         graphId = ""
         isDebug = false
         isAudioDumpEnabled = false
-        sdkAudioParameters.clear()
+        _sdkAudioParameters.clear()
         convoAIParameter = ""
     }
 
