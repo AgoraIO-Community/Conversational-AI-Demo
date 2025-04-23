@@ -358,7 +358,7 @@ private typealias TurnState = SubtitleStatus
                                            start_ms: startTime)
                         }
                         curBuffer.words.append(contentsOf: addWords)
-                        // sort words by timestamp
+                        // sort words by timestamp  
                         curBuffer.words.sort { $0.start_ms < $1.start_ms }
                     }
                 }
