@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -14,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.agora.rtc2.Constants
@@ -49,7 +52,6 @@ import io.agora.scene.convoai.R
 import io.agora.scene.convoai.animation.AgentState
 import io.agora.scene.convoai.animation.CovBallAnim
 import io.agora.scene.convoai.animation.CovBallAnimCallback
-import io.agora.scene.convoai.api.AgentRequestParams
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
@@ -268,6 +270,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         super.onPause()
         // Clear debug callback when activity is paused
         DebugButton.setDebugCallback(null)
+        startRecordingService()
     }
 
     override fun onResume() {
@@ -276,6 +279,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         DebugButton.setDebugCallback {
             showCovAiDebugDialog()
         }
+        stopRecordingService()
     }
 
     private fun persistentToast(visible: Boolean, text: String) {
@@ -284,8 +288,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     }
 
     private fun getConvoaiBodyMap(channel:String): Map<String, Any?> {
+        CovLogger.d(TAG, "preset: ${DebugConfigSettings.convoAIParameter}")
         return mapOf(
             "graph_id" to DebugConfigSettings.graphId.takeIf { it.isNotEmpty() },
+            "preset" to DebugConfigSettings.convoAIParameter.takeIf { it.isNotEmpty() },
             "name" to null,
             "properties" to mapOf(
                 "channel" to channel,
@@ -376,36 +382,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         )
     }
 
-    private fun getAgentParams(): AgentRequestParams {
-        return AgentRequestParams(
-            appId = ServerConfig.rtcAppId,
-            appCert = ServerConfig.rtcAppCert.takeIf { it.isNotEmpty() },
-            basicAuthKey = BuildConfig.BASIC_AUTH_KEY.takeIf { it.isNotEmpty() },
-            basicAuthSecret = BuildConfig.BASIC_AUTH_SECRET.takeIf { it.isNotEmpty() },
-            presetName = CovAgentManager.getPreset()?.name,
-            channelName = CovAgentManager.channelName,
-            remoteRtcUid = CovAgentManager.uid.toString(),
-            agentRtcUid = CovAgentManager.agentUID.toString(),
-            llmUrl = BuildConfig.LLM_URL.takeIf { it.isNotEmpty() },
-            llmApiKey = BuildConfig.LLM_API_KEY.takeIf { it.isNotEmpty() },
-            llmPrompt = BuildConfig.LLM_SYSTEM_MESSAGES.takeIf { it.isNotEmpty() },
-            //llmModel = BuildConfig.LLM_MODEL.takeIf { it.isNotEmpty() },
-            ttsVendor = BuildConfig.TTS_VENDOR.takeIf { it.isNotEmpty() },
-            ttsParams = BuildConfig.TTS_PARAMS.takeIf { it.isNotEmpty() }?.let { JSONObject(it) },
-            asrLanguage = CovAgentManager.language?.language_code,
-            enableAiVad = CovAgentManager.enableAiVad,
-            enableBHVS = CovAgentManager.enableBHVS,
-            graphId = DebugConfigSettings.graphId.takeIf { it.isNotEmpty() },
-            parameters = JSONObject().apply {
-                put("transcript", JSONObject().apply {
-                    put("enable", true)
-                    put("protocol_version", "v2")
-                    put("enable_words", true)
-                })
-            }
-        )
-    }
-
     private fun onClickStartAgent() {
         subRenderController?.reset()
         // Immediately show the connecting status
@@ -486,10 +462,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     }
 
     private suspend fun startAgentAsync(): Pair<String, Int> = suspendCoroutine { cont ->
-//        CovAgentApiManager.startAgent(getAgentParams()) { err, channelName ->
-//            cont.resume(Pair(channelName, err?.errorCode ?: 0))
-//        }
-
         val channel = CovAgentManager.channelName
         CovAgentApiManager.startAgentWithMap(channel, getConvoaiBodyMap(channel)) { err, channelName ->
             cont.resume(Pair(channelName, err?.errorCode ?: 0))
@@ -575,6 +547,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
                 runOnUiThread {
                     updateNetworkStatus(1)
+                    enableNotifications()
                 }
             }
 
@@ -1348,5 +1321,49 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         } catch (e: Exception) {
             CommonLogger.e("Firebase", "Firebase initialization failed: ${e.message}")
         }
+    }
+
+    private fun enableNotifications() {
+        if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            CovLogger.d(TAG, "Notifications enable!")
+            return
+        }
+        CommonDialog.Builder()
+            .setTitle(getString(R.string.cov_permission_required))
+            .setContent(getString(R.string.cov_notifications_enable_tip))
+            .setPositiveButton(getString(R.string.cov_setting)) {
+                val intent = Intent()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, this.packageName)
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, this.applicationInfo.uid)
+                } else {
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton(getString(R.string.cov_exit)) {
+
+            }
+            .hideTopImage()
+            .setCancelable(false)
+            .build()
+            .show(supportFragmentManager, "permission_dialog")
+    }
+
+    private fun startRecordingService() {
+        if (connectionState == AgentConnectionState.CONNECTING || connectionState == AgentConnectionState.CONNECTED) {
+            val intent = Intent(this, CovLocalRecordingService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+        }
+    }
+
+    private fun stopRecordingService() {
+        val intent = Intent(this, CovLocalRecordingService::class.java)
+        stopService(intent)
     }
 }

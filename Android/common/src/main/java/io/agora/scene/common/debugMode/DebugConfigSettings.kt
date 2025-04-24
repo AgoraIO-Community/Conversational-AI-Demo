@@ -22,8 +22,27 @@ object DebugConfigSettings {
     var graphId: String = ""
         private set
 
-    fun updateGraphId(graphId:String){
+    fun setGraphId(graphId: String) {
         this.graphId = graphId
+    }
+
+    private val _sdkAudioParameters = LinkedHashSet<String>()
+    val sdkAudioParameters: List<String>
+        get() = _sdkAudioParameters.toList()
+
+    /**
+     * Add SDK audio parameters, preserving the order and avoiding duplicates
+     * @param sdkParameters The list of parameters to add
+     */
+    fun addSdkAudioParameter(sdkParameters: List<String>) {
+        _sdkAudioParameters.addAll(sdkParameters)
+    }
+
+    var convoAIParameter: String = ""
+        private set
+
+    fun setConvoAIParameter(apiParameter: String) {
+        this.convoAIParameter = apiParameter
     }
 
     var isDebug: Boolean = false
@@ -55,7 +74,8 @@ object DebugConfigSettings {
     fun init(context: Context) {
         if (instance != null) return
         try {
-            val jsonString = context.assets.open(DEV_CONFIG_FILE).bufferedReader().use(BufferedReader::readText)
+            val jsonString =
+                context.assets.open(DEV_CONFIG_FILE).bufferedReader().use(BufferedReader::readText)
             instance = Gson().fromJson(jsonString, DevEnvConfig::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -64,7 +84,7 @@ object DebugConfigSettings {
 
     @JvmStatic
     fun getServerConfig(): List<EnvConfig> {
-        val envConfigList = instance?.global
+        val envConfigList = instance?.china
         return envConfigList ?: emptyList()
     }
 
@@ -72,6 +92,8 @@ object DebugConfigSettings {
         graphId = ""
         isDebug = false
         isAudioDumpEnabled = false
+        _sdkAudioParameters.clear()
+        convoAIParameter = ""
     }
 
     // Counter for debug mode activation
