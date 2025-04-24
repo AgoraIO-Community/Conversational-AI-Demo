@@ -84,7 +84,7 @@ object DebugConfigSettings {
 
     @JvmStatic
     fun getServerConfig(): List<EnvConfig> {
-        val envConfigList = instance?.china
+        val envConfigList = instance?.global
         return envConfigList ?: emptyList()
     }
 
