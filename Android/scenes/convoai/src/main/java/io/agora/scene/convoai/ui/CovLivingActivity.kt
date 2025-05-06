@@ -1065,7 +1065,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     delay(1000L)
                     ToastUtil.show(getString(R.string.cov_detail_state_error), Toast.LENGTH_LONG)
                     stopAgentAndLeaveChannel()
-//                    onHandleOnBackPressed()
                 }
             }
         })
@@ -1093,14 +1092,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     mBinding?.apply {
                         val messageContents = if (isSelfSubRender) {
                             messageListViewV1.getAllMessages()
-                                .filter { it.isMe }
-                                .map { it.content }
-                                .joinToString("\n")
+                                .filter { it.isMe }.joinToString("\n") { it.content }
                         } else {
                             messageListViewV2.getAllMessages()
-                                .filter { it.isMe }
-                                .map { it.content }
-                                .joinToString("\n")
+                                .filter { it.isMe }.joinToString("\n") { it.content }
                         }
                         this@CovLivingActivity.copyToClipboard(messageContents)
                         ToastUtil.show(getString(R.string.cov_copy_succeed))
@@ -1111,6 +1106,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     stopAgentAndLeaveChannel()
                     SSOUserManager.logout()
                     updateLoginStatus(false)
+                }
+
+                override fun onAudioParameter(parameter: String) {
+                    CovRtcManager.setParameter(parameter)
                 }
             }
             mDebugDialog?.show(supportFragmentManager, "covAidebugSettings")

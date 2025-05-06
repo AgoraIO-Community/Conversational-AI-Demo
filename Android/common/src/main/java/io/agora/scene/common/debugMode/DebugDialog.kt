@@ -16,7 +16,6 @@ import io.agora.scene.common.constant.AgentScenes
 import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.databinding.CommonDebugDialogBinding
 import io.agora.scene.common.databinding.CommonDebugOptionItemBinding
-import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.ui.BaseSheetDialog
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.OnFastClickListener
@@ -37,6 +36,8 @@ interface DebugDialogCallback {
     fun onEnvConfigChange() = Unit  // Default implementation
 
     fun getConvoAiHost(): String = ""
+
+    fun onAudioParameter(parameter: String) = Unit
 }
 
 class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<CommonDebugDialogBinding>() {
@@ -141,14 +142,8 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
             }
 
             etSdkAudioParameter.setHint("{\"che.audio.sf.enabled\":true}|{\"che.audio.sf.stftType\":6}")
-            DebugConfigSettings.sdkAudioParameters.lastOrNull()?.let {
-                etSdkAudioParameter.setText(it)
-            }
-            btnSdkAudioParameterPreview.setOnClickListener {
-                val paramList = DebugConfigSettings.sdkAudioParameters
-                if (paramList.isEmpty()) return@setOnClickListener
-                val text = paramList.joinToString("|\n")
-                showPreConfig(text)
+            if (DebugConfigSettings.sdkAudioParameters.isNotEmpty()){
+                etSdkAudioParameter.setText(DebugConfigSettings.sdkAudioParameters.joinToString("|"))
             }
             btnSdkAudioParameterSetting.setOnClickListener {
                 val sdkAudioParameter = etSdkAudioParameter.text.toString().trim()
@@ -157,9 +152,10 @@ class DebugDialog constructor(val agentScene: AgentScenes) : BaseSheetDialog<Com
                     sdkAudioParameter.split("|").forEach { param ->
                         if (param.trim().isNotEmpty()) {
                             audioParams.add(param)
+                            onDebugDialogCallback?.onAudioParameter(param)
                         }
                     }
-                    DebugConfigSettings.addSdkAudioParameter(audioParams)
+                    DebugConfigSettings.updateSdkAudioParameter(audioParams)
                     ToastUtil.show("Sdk Audio Parameter:\n ${audioParams.joinToString("|\n")}")
                 }
             }
