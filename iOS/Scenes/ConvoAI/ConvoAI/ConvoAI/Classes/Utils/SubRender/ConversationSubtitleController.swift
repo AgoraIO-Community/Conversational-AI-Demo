@@ -358,7 +358,7 @@ private typealias TurnState = SubtitleStatus
                                            start_ms: startTime)
                         }
                         curBuffer.words.append(contentsOf: addWords)
-                        // sort words by timestamp  
+                        // sort words by timestamp
                         curBuffer.words.sort { $0.start_ms < $1.start_ms }
                     }
                 }
@@ -416,7 +416,7 @@ private typealias TurnState = SubtitleStatus
                 guard let minRange = minIndex else {
                     return
                 }
-                let currentWords = Array(buffer.words[0..<minRange])
+                let currentWords = Array(buffer.words[0...minRange])
                 self.addLog("🔔[CovSubRenderController] get minRange: \(minRange) words: \(buffer.words.count) current: \(currentWords.count)")
                 // send turn with state
                 var subtitleMessage: SubtitleMessage
