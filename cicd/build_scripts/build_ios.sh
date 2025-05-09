@@ -8,8 +8,6 @@ if [ -z "$WORKSPACE" ]; then
     export WORKSPACE=$(pwd)/cicd/iosExport
     export LOCALPACKAGE="true"
     mkdir -p $WORKSPACE
-else
-    source /Users/admin/jenkins/bin/activate
 fi
 
 if [ -z "$build_date" ]; then
@@ -79,8 +77,8 @@ else
     echo "Setting export method to: development (test package)"
 fi
 
-if [ -z "$bundleId" ]; then
-    export bundleId="io.agora.aiavatar"
+if [ -z "$bundle_id" ]; then
+    export bundle_id="io.agora.convoai"
 fi
 
 echo Package_Publish: $Package_Publish
@@ -94,7 +92,7 @@ echo pwd: `pwd`
 echo sdk_url: $sdk_url
 echo toolbox_url: $toolbox_url
 echo "APP_ID: ${APP_ID}"
-
+echo "bundle_id: ${bundle_id}"
 # Check key environment variables
 echo "Checking iOS build environment variables:"
 echo "Xcode version: $(xcodebuild -version | head -n 1)"
@@ -168,22 +166,20 @@ KEYCENTER_PATH=${PROJECT_PATH}"/"${PROJECT_NAME}"/KeyCenter.swift"
 
 # Build environment
 CONFIGURATION='Release'
-result=$(echo ${method} | grep "development")
-if [[ ! -z "$result" ]]; then
-    CONFIGURATION='Debug'
-fi
 
 # Signing configuration
-if [ "$method" = "app-store" ]; then
+if [[ "$bundle_id" != *"test"* ]]; then
     # App Store release configuration
-    PROVISIONING_PROFILE="App"
+    PROVISIONING_PROFILE="agora_convoai_test"
     CODE_SIGN_IDENTITY="iPhone Distribution"
     DEVELOPMENT_TEAM="48TB6ZZL5S"
+    PLIST_PATH="${CURRENT_PATH}/cicd/build_scripts/ios_export_store_test.plist"
 else
     # Development environment configuration
-    PROVISIONING_PROFILE="App"
+    PROVISIONING_PROFILE="agora_convoai_appstore"
     CODE_SIGN_IDENTITY="iPhone Distribution"
     DEVELOPMENT_TEAM="48TB6ZZL5S"
+    PLIST_PATH="${CURRENT_PATH}/cicd/build_scripts/ios_export_store_prod.plist"
 fi
 
 # Project file path
@@ -209,24 +205,10 @@ if [ ! -f "${PBXPROJ_PATH}" ]; then
     exit 1
 fi
 
-# Unlock keychain for non-local builds
-if [ "$LOCALPACKAGE" != "true" ]; then
-    echo "Non-local build, starting keychain unlock..."
-    cd ~/Library/Keychains
-    cp login.keychain-db login.keychain
-    security unlock-keychain -p "123456" ~/Library/Keychains/login.keychain
-    if [ $? -eq 0 ]; then
-        echo "Keychain unlocked successfully"
-    else
-        echo "Error: Keychain unlock failed"
-        exit 1
-    fi
-fi
-
 # Main project configuration
 # Debug
 sed -i '' "s|CURRENT_PROJECT_VERSION = .*;|CURRENT_PROJECT_VERSION = ${BUILD_VERSION};|g" $PBXPROJ_PATH
-sed -i '' "s|PRODUCT_BUNDLE_IDENTIFIER = .*;|PRODUCT_BUNDLE_IDENTIFIER = \"${bundleId}\";|g" $PBXPROJ_PATH
+sed -i '' "s|PRODUCT_BUNDLE_IDENTIFIER = .*;|PRODUCT_BUNDLE_IDENTIFIER = \"${bundle_id}\";|g" $PBXPROJ_PATH
 sed -i '' "s|CODE_SIGN_STYLE = .*;|CODE_SIGN_STYLE = \"Manual\";|g" $PBXPROJ_PATH
 sed -i '' "s|DEVELOPMENT_TEAM = .*;|DEVELOPMENT_TEAM = \"${DEVELOPMENT_TEAM}\";|g" $PBXPROJ_PATH
 sed -i '' "s|PROVISIONING_PROFILE_SPECIFIER = .*;|PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE}\";|g" $PBXPROJ_PATH
@@ -234,7 +216,7 @@ sed -i '' "s|CODE_SIGN_IDENTITY = .*;|CODE_SIGN_IDENTITY = \"${CODE_SIGN_IDENTIT
 
 # Release
 sed -i '' "s|CURRENT_PROJECT_VERSION = .*;|CURRENT_PROJECT_VERSION = ${BUILD_VERSION};|g" $PBXPROJ_PATH
-sed -i '' "s|PRODUCT_BUNDLE_IDENTIFIER = .*;|PRODUCT_BUNDLE_IDENTIFIER = \"${bundleId}\";|g" $PBXPROJ_PATH
+sed -i '' "s|PRODUCT_BUNDLE_IDENTIFIER = .*;|PRODUCT_BUNDLE_IDENTIFIER = \"${bundle_id}\";|g" $PBXPROJ_PATH
 sed -i '' "s|CODE_SIGN_STYLE = .*;|CODE_SIGN_STYLE = \"Manual\";|g" $PBXPROJ_PATH
 sed -i '' "s|DEVELOPMENT_TEAM = .*;|DEVELOPMENT_TEAM = \"${DEVELOPMENT_TEAM}\";|g" $PBXPROJ_PATH
 sed -i '' "s|PROVISIONING_PROFILE_SPECIFIER = .*;|PROVISIONING_PROFILE_SPECIFIER = \"${PROVISIONING_PROFILE}\";|g" $PBXPROJ_PATH
@@ -248,28 +230,19 @@ echo PROJECT_NAME: $PROJECT_NAME
 echo TARGET_NAME: $TARGET_NAME
 echo KEYCENTER_PATH: $KEYCENTER_PATH
 echo APP_PATH: $APP_PATH
-echo manifest_url: $manifest_url
+echo PLIST_PATH: $PLIST_PATH
 
 # Modify Keycenter file
 # Use sed to replace parameters in KeyCenter.swift
 if [ -n "$APP_ID" ]; then
-    sed -i '' "s|static let AppId: String = .*|static let AppId: String = \"$APP_ID\"|g" $KEYCENTER_PATH
+    sed -i '' "s|static let AG_APP_ID: String = .*|static let AG_APP_ID: String = \"$APP_ID\"|g" $KEYCENTER_PATH
 fi
 if [ -n "$toolbox_url" ]; then
     sed -i '' "s|static let TOOLBOX_SERVER_HOST: String = .*|static let TOOLBOX_SERVER_HOST: String = \"$toolbox_url\"|g" $KEYCENTER_PATH
 fi
-# Replace Certificate with empty string
-sed -i '' "s|static let Certificate: String? = .*|static let Certificate: String? = \"\"|g" $KEYCENTER_PATH
-# Replace manifestUrl
-sed -i '' "s|let manifestUrl = .*|let manifestUrl = \"$manifest_url\"|g" $KEYCENTER_PATH
 
 # Archive path
 ARCHIVE_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_VERSION}.xcarchive"
-
-# plist path
-PLIST_PATH="${CURRENT_PATH}/cicd/build_scripts/ExportOptions_${method}.plist"
-
-echo PLIST_PATH: $PLIST_PATH
 
 # Build and archive
 echo "Starting build and archive..."
@@ -316,6 +289,30 @@ if [ -f "${EXPORT_PATH}/${TARGET_NAME}.ipa" ]; then
 else
     echo "Error: IPA file not found!"
     exit 1
+fi
+
+# upload ipa to appstore
+if [ "$LOCALPACKAGE" != "true" ]; then
+    if [ "$upload_app_store" = "true" ]; then
+        echo "Uploading IPA to App Store..."
+        UPLOAD_RESULT=$(xcrun altool --upload-app \
+            -f "${PACKAGE_DIR}/${ARTIFACT_NAME}.ipa" \
+            -u "${IOS_APPSTORE_USER}" \
+            -p "${IOS_APPSTORE_PASSW}" \
+            -t ios 2>&1)
+        
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to upload IPA to App Store"
+            echo "Upload error details:"
+            echo "$UPLOAD_RESULT"
+            exit 1
+        fi
+        echo "Successfully uploaded IPA to App Store"
+        echo "Upload details:"
+        echo "$UPLOAD_RESULT"
+    else
+        echo "Skipping App Store upload as upload_app_store is not set to true"
+    fi
 fi
 
 if [ -d "${ARCHIVE_PATH}/dSYMs" ] && [ "$(ls -A "${ARCHIVE_PATH}/dSYMs")" ]; then

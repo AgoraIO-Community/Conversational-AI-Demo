@@ -18,7 +18,6 @@ import FirebaseCore
     private var _certificate: String = ""
     private var _baseServerUrl: String = ""
     private var _environments: [[String : String]] = []
-    private var _graphId: String = ""
     
     private var _basicAuthKey: String = ""
     private var _basicAuthSecret: String = ""
@@ -92,11 +91,6 @@ import FirebaseCore
                 _baseServerUrl = _environments.first?["toolbox_server_host"] ?? ""
             }
         }
-    }
-    
-    @objc public var graphId: String {
-        get { return _graphId }
-        set { _graphId = newValue }
     }
     
     @objc public var basicAuthKey: String {

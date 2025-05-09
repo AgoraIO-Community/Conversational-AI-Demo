@@ -11,11 +11,17 @@
     <string name="common_debug_convoai_host">ConvoAI Host</string>
     <string name="common_debug_audio_dump">Audio Dump</string>
     <string name="common_debug_session_limit">Session Limit</string>
+    <string name="common_debug_graph_id">Graph id</string>
+    <string name="common_debug_sdk_parameters">SDK audio parameter config</string>
+    <string name="common_debug_sc_config">Convo AI service preset config</string>
     <string name="common_debug_close">Close Debug Mode</string>
     <string name="common_debug_copy_user_question">Copy current user’s conversation question</string>
     <string name="common_call_time_is_up">Time\'s Up!</string>
     <string name="common_call_time_is_up_tips">Each session is limited to %1s minutes. Start a new conversation after closing this window.</string>
     <string name="common_i_known">Got it.</string>
+    <string name="common_close">Close</string>
+    <string name="common_preview">Preview</string>
+    <string name="common_confirm">Confirm</string>
 
     <string name="common_login_chat">Unlock \u221E Free Chat</string>
     <string name="common_login_chat_tips">""</string>

@@ -26,10 +26,10 @@ public class ChatViewController: UIViewController {
     private lazy var timerCoordinator: AgentTimerCoordinator = {
         let coordinator = AgentTimerCoordinator()
         coordinator.delegate = self
-        coordinator.setDurationLimit(limited: !DeveloperParams.getSessionFree())
+        coordinator.setDurationLimit(limited: !DeveloperConfig.shared.getSessionFree())
         return coordinator
     }()
-
+    
     private lazy var subRenderController: ConversationSubtitleController = {
         let renderCtrl = ConversationSubtitleController()
         return renderCtrl
@@ -53,7 +53,7 @@ public class ChatViewController: UIViewController {
         view.centerTitleButton.addTarget(self, action: #selector(onClickLogo), for: .touchUpInside)
         return view
     }()
-
+    
     private lazy var bottomBar: AgentControlToolbar = {
         let view = AgentControlToolbar()
         view.delegate = self
@@ -139,7 +139,7 @@ public class ChatViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-
+        
         let isLogin = UserCenter.shared.isLogin()
         welcomeMessageView.isHidden = isLogin
         topBar.updateButtonVisible(isLogin)
@@ -148,7 +148,7 @@ public class ChatViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         UIApplication.shared.isIdleTimerDisabled = true
-
+        
         registerDelegate()
         preloadData()
         setupViews()
@@ -200,7 +200,7 @@ public class ChatViewController: UIViewController {
         if !isLogin {
             return
         }
-
+        
         LoginApiService.getUserInfo { [weak self] error in
             guard let self = self else { return }
             
@@ -223,7 +223,7 @@ public class ChatViewController: UIViewController {
                     self.addLog("[PreloadData error - presets]: \(error)")
                 }
             }
-                
+            
             Task {
                 do {
                     try await self.fetchTokenIfNeeded()
@@ -320,9 +320,9 @@ public class ChatViewController: UIViewController {
         let subRenderConfig = SubtitleRenderConfig(rtcEngine: rtcEngine, renderMode: .words, delegate: self)
         subRenderController.setupWithConfig(subRenderConfig)
         
-        devModeButton.isHidden = !DeveloperParams.getDeveloperMode()
+        devModeButton.isHidden = !DeveloperConfig.shared.isDeveloperMode
     }
-
+    
     
     @MainActor
     private func prepareToStartAgent() async {
@@ -373,6 +373,12 @@ public class ChatViewController: UIViewController {
         rtcManager.joinChannel(rtcToken: token, channelName: channelName, uid: uid, isIndependent: independent)
         AppContext.preferenceManager()?.updateRoomState(.connected)
         AppContext.preferenceManager()?.updateRoomId(channelName)
+        
+        // set debug params
+        DeveloperConfig.shared.sdkParams.forEach {
+            addLog("rtc setParameter \($0)")
+            rtcManager.getRtcEntine().setParameters($0)
+        }
     }
     
     private func leaveChannel() {
@@ -399,7 +405,7 @@ public class ChatViewController: UIViewController {
         timerCoordinator.stopAllTimer()
         AppContext.preferenceManager()?.resetAgentInformation()
     }
-        
+    
     private func setupMuteState(state: Bool) {
         addLog("setupMuteState: \(state)")
         rtcManager.muteLocalAudio(mute: state)
@@ -448,7 +454,7 @@ extension ChatViewController {
             }
         }
     }
-
+    
     private func fetchPresetsIfNeeded() async throws {
         guard AppContext.preferenceManager()?.allPresets() == nil else { return }
         
@@ -461,7 +467,7 @@ extension ChatViewController {
                 
                 guard let result = result else {
                     continuation.resume(throwing: NSError(domain: "", code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "result is empty"]))
+                                                          userInfo: [NSLocalizedDescriptionKey: "result is empty"]))
                     return
                 }
                 
@@ -486,7 +492,7 @@ extension ChatViewController {
                     continuation.resume()
                 } else {
                     continuation.resume(throwing: NSError(domain: "", code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "generate token error"]))
+                                                          userInfo: [NSLocalizedDescriptionKey: "generate token error"]))
                 }
             }
         }
@@ -505,7 +511,7 @@ extension ChatViewController {
             return
         }
         manager.updateAgentState(.disconnected)
-        if DeveloperParams.getDeveloperMode() {
+        if DeveloperConfig.shared.isDeveloperMode {
             channelName = "agent_debug_\(UUID().uuidString.prefix(8))"
         } else {
             channelName = "agent_\(UUID().uuidString.prefix(8))"
@@ -523,7 +529,7 @@ extension ChatViewController {
             
             guard let error = error else {
                 if let remoteAgentId = remoteAgentId,
-                     let targetServer = targetServer {
+                   let targetServer = targetServer {
                     self.remoteAgentId = remoteAgentId
                     AppContext.preferenceManager()?.updateAgentId(remoteAgentId)
                     AppContext.preferenceManager()?.updateUserId(self.uid)
@@ -592,8 +598,9 @@ extension ChatViewController {
     
     private func getConvoaiBodyMap() -> [String: Any?] {
         return [
-            "graph_id": AppContext.shared.graphId.isEmpty ? nil : AppContext.shared.graphId,
+            "graph_id": DeveloperConfig.shared.graphId,
             "name": nil,
+            "preset": DeveloperConfig.shared.convoaiServerConfig,
             "properties": [
                 "channel": channelName,
                 "token": nil,
@@ -728,7 +735,7 @@ extension ChatViewController: AgoraRtcEngineDelegate {
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         addLog("[RTC Call Back] didJoinChannel uid: \(uid), channelName: \(channel)")
         self.addLog("Join success")
-
+        
     }
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
@@ -833,7 +840,7 @@ private extension ChatViewController {
     private func clickTheStartButton() async {
         addLog("[Call] clickTheStartButton()")
         let loginState = UserCenter.shared.isLogin()
-
+        
         if loginState {
             await MainActor.run {
                 let needsShowMicrophonePermissionAlert = PermissionManager.getMicrophonePermission() == .denied
@@ -909,9 +916,9 @@ private extension ChatViewController {
     }
     
     func onThresholdReached() {
-        if !DeveloperParams.getDeveloperMode() {
+        if !DeveloperConfig.shared.isDeveloperMode {
             devModeButton.isHidden = false
-            DeveloperParams.setDeveloperMode(true)
+            DeveloperConfig.shared.isDeveloperMode = true
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }
@@ -1050,30 +1057,34 @@ extension ChatViewController: LoginManagerDelegate {
 
 extension ChatViewController {
     @objc private func onClickDevMode() {
-        DeveloperModeViewController.show(
-            from: self,
-            audioDump: rtcManager.getAudioDump(),
-            serverHost: AppContext.preferenceManager()?.information.targetServer ?? "")
-        {
-            self.devModeButton.isHidden = true
-            self.switchEnvironment()
-        } onAudioDump: { isOn in
-            self.rtcManager.enableAudioDump(enabled: isOn)
-        } onSwitchServer: {
-            self.switchEnvironment()
-        } onCopy: {
-            let messageContents = self.messageView.getAllMessages()
-                .filter { $0.isMine }
-                .map { $0.content }
-                .joined(separator: "\n")
-            let pasteboard = UIPasteboard.general
-            pasteboard.string = messageContents
-            SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.DevMode.copy)
-        } onSessionLimit: { isOn in
-            self.timerCoordinator.setDurationLimit(limited: isOn)
-        }
+        DeveloperConfig.shared
+            .setServerHost(AppContext.preferenceManager()?.information.targetServer ?? "")
+            .setAudioDump(enabled: rtcManager.getAudioDump(), onChange: { isOn in
+                self.rtcManager.enableAudioDump(enabled: isOn)
+            })
+            .setSessionLimit(enabled: !DeveloperConfig.shared.getSessionFree(), onChange: { isOn in
+                self.timerCoordinator.setDurationLimit(limited: isOn)
+            })
+            .setCloseDevModeCallback {
+                self.devModeButton.isHidden = true
+            }
+            .setSwitchServerCallback {
+                self.switchEnvironment()
+            }
+            .setSDKParamsCallback { [weak self] param in
+                self?.rtcManager.getRtcEntine().setParameters(param)
+            }
+            .setCopyCallback {
+                let messageContents = self.messageView.getAllMessages()
+                    .filter { $0.isMine }
+                    .map { $0.content }
+                    .joined(separator: "\n")
+                let pasteboard = UIPasteboard.general
+                pasteboard.string = messageContents
+                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.DevMode.copy)
+            }
+        DeveloperModeViewController.show(from: self)
     }
-    
     
     private func switchEnvironment() {
         AppContext.preferenceManager()?.deleteAllPresets()

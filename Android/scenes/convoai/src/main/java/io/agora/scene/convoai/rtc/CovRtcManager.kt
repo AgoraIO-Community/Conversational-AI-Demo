@@ -147,6 +147,11 @@ object CovRtcManager {
         }
     }
 
+    fun setParameter(parameter:String){
+        CovLogger.d(TAG, "setParameter $parameter")
+        rtcEngine?.setParameters(parameter)
+    }
+
     // leave rtc channel
     fun leaveChannel() {
         rtcEngine?.leaveChannel()
