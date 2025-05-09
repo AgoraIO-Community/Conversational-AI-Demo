@@ -11,7 +11,6 @@ import io.agora.rtc2.RtcEngineConfig
 import io.agora.rtc2.RtcEngineEx
 import io.agora.scene.common.AgentApp
 import io.agora.scene.common.constant.ServerConfig
-import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.convoai.CovLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -101,12 +100,6 @@ object CovRtcManager {
         // Audio pre-dump is enabled by default in demo, you don't need to set this in your app
         rtcEngine?.setParameters("{\"che.audio.enable.predump\":{\"enable\":\"true\",\"duration\":\"60\"}}")
 
-        // set debug mode audio parameter
-        DebugConfigSettings.sdkAudioParameters.forEach{ audioParameters->
-            CovLogger.d(TAG, "sdkAudioParameter: $audioParameters")
-            rtcEngine?.setParameters(audioParameters)
-        }
-
         // join rtc channel
         val options = ChannelMediaOptions()
         options.clientRoleType = CLIENT_ROLE_BROADCASTER
@@ -152,6 +145,11 @@ object CovRtcManager {
             setParameters("{\"che.audio.sf.nsngPredefAgg\":11}")
             setParameters("{\"che.audio.agc.enable\":false}")
         }
+    }
+
+    fun setParameter(parameter:String){
+        CovLogger.d(TAG, "setParameter $parameter")
+        rtcEngine?.setParameters(parameter)
     }
 
     // leave rtc channel
