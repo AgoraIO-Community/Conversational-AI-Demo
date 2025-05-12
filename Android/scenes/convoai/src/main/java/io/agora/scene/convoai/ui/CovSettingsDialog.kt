@@ -111,6 +111,11 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
             } else {
                 if (CovAgentManager.language?.englishEnvironment() == true) {
                     cbAiVad.isEnabled = isIdle
+                    if (isIdle){
+                        // TEN-1534: Under all presets, when a language supporting AI-VAD is selected, it is enabled by default and can be manually disabled when not connected.
+                        CovAgentManager.enableAiVad = true
+                        cbAiVad.isChecked = true
+                    }
                 } else {
                     CovAgentManager.enableAiVad = false
                     cbAiVad.isChecked = false
