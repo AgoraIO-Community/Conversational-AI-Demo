@@ -1,7 +1,9 @@
 # Enable only specific rules - we will add more gradually
-only_rules: [
-  identifier_name  # Variable naming rules
-]
+only_rules: []
+
+# Enable analyzer rules
+analyzer_rules:
+  - unused_declaration  # Check for unused variables, functions, etc.
 
 # Excluded paths
 excluded:
