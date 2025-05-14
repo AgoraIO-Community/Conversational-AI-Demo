@@ -12,6 +12,8 @@ import kotlinx.coroutines.channels.ticker
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
 
+const val SUBTITLE_VERSION = "1.4.0"
+
 /**
  * Configuration class for subtitle rendering
  * 
@@ -51,9 +53,9 @@ interface IConversationSubtitleCallback {
     /**
      * Called when AI conversation state changes
      *
-     * @param agentMessageState agent message state
+     * @param agentState agent message state
      */
-    fun onAIConversationStatus(agentMessageState: AgentMessageState)
+    fun onAgentStateChange(agentState: AgentMessageState)
 
     /**
      * Called when a debug log is received
@@ -321,15 +323,18 @@ class ConversationSubtitleController(
                         }
                         "message.state" -> {
                             isUserMsg = false
-                            val messageId = msg["message_id"] as? String?:""
                             // Deduplication
+                            val messageId = msg["message_id"] as? String?:""
                             if (messageId == mAgentMessageState?.messageId) return
-                            val ts = (msg["ts_ms"] as? Number)?.toLong() ?: 0L
-                            if (ts == mAgentMessageState?.ts) return
-                            val turnId = (msg["turn_id"] as? Number)?.toLong() ?: 0L
-                            val state = msg["state"] as? String ?: ""
 
-                            val aiConversationStatus = if (state == "listening") AgentConversationStatus.Listening
+                            val turnId = (msg["turn_id"] as? Number)?.toLong() ?: 0L
+                            if (turnId < (mAgentMessageState?.turnId ?: 0)) return
+
+                            val ts = (msg["ts_ms"] as? Number)?.toLong() ?: 0L
+                            if (ts <= (mAgentMessageState?.ts ?: 0)) return
+
+                            val state = msg["state"] as? String ?: ""
+                            val aiConvStatus = if (state == "listening") AgentConversationStatus.Listening
                             else if (state == "thinking") AgentConversationStatus.Thinking
                             else if (state == "speaking") AgentConversationStatus.Speaking
                             else AgentConversationStatus.Silent
@@ -338,9 +343,9 @@ class ConversationSubtitleController(
                                     messageId = messageId,
                                     turnId = turnId,
                                     ts = ts,
-                                    state = aiConversationStatus
+                                    state = aiConvStatus
                                 ).also {
-                                    config.callback?.onAIConversationStatus(it)
+                                    config.callback?.onAgentStateChange(it)
                                 }
                             }
                             return
