@@ -5,13 +5,12 @@ on:
     branches: [ main, master ]
     paths:
       - 'iOS/**'
-    paths-ignore:
-      - '**/Pods/**'
-      - 'iOS/dotLottie-iOS/**'
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.png'
-      - '**/*.jpg'
+      - '!**/Pods/**'
+      - '!iOS/dotLottie-iOS/**'
+      - '!**/*.md'
+      - '!**/*.txt'
+      - '!**/*.png'
+      - '!**/*.jpg'
 
 
 jobs:
