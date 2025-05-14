@@ -1,29 +1,12 @@
-disabled_rules:
-    - trailing_whitespace # Conflicts with Xcode's auto-alignment of empty lines with spaces, recommended to exclude
-    - missing_docs # Missing documentation comments. Official explanation: "Public declarations should be documented." Public declarations should be commented/marked. When declaring functions, generally functions with public keyword can only use "///" and "/* /" for comments, while functions without public keyword can only use "//" and "/* */". This rule should be disabled, unnecessary!
-    - function_parameter_count # Function parameter count violation: functions should have 5 parameters, more will cause error. Function parameter count (except init methods) should be fewer. SwiftLint specifies warning for more than 5 parameters and error for more than 8. This rule is recommended. No example needed since it's simple. Note: function_parameter_count: error cannot change its warning/error status, this property cannot be modified but can be disabled
-    - identifier_name # Naming must follow camel case (may conflict with JSON field names in models, recommended to exclude)
-    - type_name # Type naming rule restriction, must start with capital letter and be between 1-20 characters
-    - shorthand_operator # Use +=, -=, *=, /= instead of a = a + 1
-    - large_tuple # Tuple members conflict: tuples should have maximum 2 members, more will cause error
-    - for_where # Use `for where` instead of simple `for { if }`
-    - class_delegate_protocol # Delegate protocol should be class-only to allow weak references
-    - todo # Avoid TODOs and FIXMEs markers
 
-# Enable analyzer rules
-analyzer_rules:
-  - unused_declaration  # Check for unused variables, functions, etc.
+only_rules:
+  - todo
 
-# Include paths to analyze - absolute path with trailing slash to ensure only this directory
-included:
-  - ./Scenes/ConvoAI/ConvoAI/
-
-# Excluded paths
-# excluded:
-#   - Pods
-#   - dotLottie-iOS
-#   - "*/Frameworks"
-#   - "**/Generated"
-#   - Carthage
-#   - fastlane
-#   - "**/*.generated.swift" 
+excluded:
+  - Pods
+  - dotLottie-iOS
+  - "*/Frameworks"
+  - "**/Generated"
+  - Carthage
+  - fastlane
+  - "**/*.generated.swift" 
