@@ -1,25 +1,25 @@
-# Disabled rules - Temporarily disable rules that may cause massive changes
+# Disabled rules - Temporarily disable almost all rules for initial setup
 disabled_rules:
-  - line_length                 # Line length limit
-  - trailing_whitespace         # Trailing whitespace
-  - function_body_length        # Function body length
-  - type_body_length            # Type definition length  
-  - file_length                 # File length
-  - cyclomatic_complexity       # Complexity limit
-  - todo                        # TODO comments
-  - nesting                     # Nested type limit
-  - function_parameter_count    # Parameter count limit
-  - large_tuple                 # Tuple element count
-  - unused_optional_binding     # Unused optional binding
-  - implicitly_unwrapped_optional # Implicitly unwrapped optional
-
-# Only keep basic optional rules
-opt_in_rules:
-  - empty_count               # Prefer isEmpty over count == 0
-
-# Rule parameter configuration - Use relaxed values
-force_cast: warning           # as! cast warning instead of error
-force_try: warning            # try! warning instead of error
+  - line_length
+  - trailing_whitespace
+  - function_body_length
+  - type_body_length
+  - file_length
+  - cyclomatic_complexity
+  - todo
+  - nesting
+  - function_parameter_count
+  - large_tuple
+  - unused_optional_binding
+  - implicitly_unwrapped_optional
+  - trailing_newline
+  - vertical_whitespace
+  - identifier_name
+  - colon
+  - unused_closure_parameter
+  - empty_count
+  - force_cast
+  - force_try
 
 # Excluded paths
 excluded:
@@ -28,20 +28,4 @@ excluded:
   - "*/Frameworks"
   - "**/Generated"
   - Carthage
-  - fastlane
-
-# Allow short variable names
-identifier_name:
-  min_length: 1  # Minimum allowed identifier length
-  excluded:
-    - id
-    - i
-    - j
-    - k
-    - x
-    - y
-    - z
-    - to
-    - at
-    - in
-    - me 
+  - fastlane 
