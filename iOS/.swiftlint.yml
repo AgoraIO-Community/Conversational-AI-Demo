@@ -16,14 +16,14 @@ analyzer_rules:
 
 # Include paths to analyze - absolute path with trailing slash to ensure only this directory
 included:
-  - ./iOS/Scenes/ConvoAI/ConvoAI/
+  - ./Scenes/ConvoAI/ConvoAI/
 
 # Excluded paths
-excluded:
-  - Pods
-  - dotLottie-iOS
-  - "*/Frameworks"
-  - "**/Generated"
-  - Carthage
-  - fastlane
-  - "**/*.generated.swift" 
+# excluded:
+#   - Pods
+#   - dotLottie-iOS
+#   - "*/Frameworks"
+#   - "**/Generated"
+#   - Carthage
+#   - fastlane
+#   - "**/*.generated.swift" 
