@@ -14,9 +14,9 @@ disabled_rules:
 analyzer_rules:
   - unused_declaration  # Check for unused variables, functions, etc.
 
-# Include paths to analyze
+# Include paths to analyze - absolute path with trailing slash to ensure only this directory
 included:
-  - Scenes/ConvoAI/ConvoAI
+  - ./iOS/Scenes/ConvoAI/ConvoAI/
 
 # Excluded paths
 excluded:
@@ -25,4 +25,5 @@ excluded:
   - "*/Frameworks"
   - "**/Generated"
   - Carthage
-  - fastlane 
+  - fastlane
+  - "**/*.generated.swift" 
