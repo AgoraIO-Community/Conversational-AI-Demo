@@ -7,6 +7,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -76,9 +77,13 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
                 }
             })
             cbAiVad.isChecked = CovAgentManager.enableAiVad
-            cbAiVad.setOnClickListener {
-                CovAgentManager.enableAiVad = cbAiVad.isChecked
-            }
+            cbAiVad.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+                override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
+                    if (buttonView.isPressed){
+                        CovAgentManager.enableAiVad = isChecked
+                    }
+                }
+            })
             btnClose.setOnClickListener {
                 dismiss()
             }
@@ -102,20 +107,22 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
     private val isIdle get() = connectionState == AgentConnectionState.IDLE
 
     // The non-English overseas version must disable AiVad.
-    private fun setAiVadBySelectLanguage() {
+    private fun setAiVadBySelectLanguage(userClick: Boolean = false) {
         binding?.apply {
-            if (CovAgentManager.getPreset()?.isIndependent() == true) {
+            // Feature: TEN-1534
+            if (CovAgentManager.language?.aivad_supported == true) {
+                cbAiVad.isEnabled = isIdle
+                if (isIdle){
+                    val aiVadEnableDefault = (CovAgentManager.language?.aivad_enabled_by_default == true)
+                    if (userClick){
+                        CovAgentManager.enableAiVad = aiVadEnableDefault
+                    }
+                    cbAiVad.isChecked = CovAgentManager.enableAiVad
+                }
+            } else {
                 CovAgentManager.enableAiVad = false
                 cbAiVad.isChecked = false
                 cbAiVad.isEnabled = false
-            } else {
-                if (CovAgentManager.language?.englishEnvironment() == true) {
-                    cbAiVad.isEnabled = isIdle
-                } else {
-                    CovAgentManager.enableAiVad = false
-                    cbAiVad.isChecked = false
-                    cbAiVad.isEnabled = false
-                }
             }
         }
     }
@@ -204,7 +211,7 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
                 val preset = presets[index]
                 CovAgentManager.setPreset(preset)
                 updateBaseSettings()
-                setAiVadBySelectLanguage()
+                setAiVadBySelectLanguage(true)
                 vOptionsMask.visibility = View.INVISIBLE
             }
         }
@@ -250,7 +257,7 @@ class CovSettingsDialog : BaseSheetDialog<CovSettingDialogBinding>() {
             ) { index ->
                 CovAgentManager.language = languages[index]
                 updateBaseSettings()
-                setAiVadBySelectLanguage()
+                setAiVadBySelectLanguage(true)
                 vOptionsMask.visibility = View.INVISIBLE
             }
         }

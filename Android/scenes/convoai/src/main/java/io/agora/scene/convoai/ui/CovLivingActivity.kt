@@ -62,6 +62,7 @@ import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.subRender.v1.SelfRenderConfig
 import io.agora.scene.convoai.subRender.v1.SelfSubRenderController
+import io.agora.scene.convoai.subRender.v2.AgentConversationStatus
 import io.agora.scene.convoai.subRender.v2.ConversationSubtitleController
 import io.agora.scene.convoai.subRender.v2.SubtitleRenderConfig
 import io.agora.scene.convoai.subRender.v2.SubtitleRenderMode
@@ -404,6 +405,13 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 selfRenderController?.enable(false)
                 subRenderController?.enable(true)
                 messageListViewV2.updateAgentName(CovAgentManager.getPreset()?.display_name ?: "")
+                // Set AI status listener in v2 mode
+                messageListViewV2.onAIStatusChanged = { status ->
+                    // Only respond to AI status changes when connected
+                    if (connectionState == AgentConnectionState.CONNECTED) {
+                        mBinding?.tvConversationState?.text = "Agent State: ${status}"
+                    }
+                }
             }
         }
 
