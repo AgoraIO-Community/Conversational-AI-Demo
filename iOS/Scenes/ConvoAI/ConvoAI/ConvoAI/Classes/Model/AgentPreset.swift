@@ -10,10 +10,14 @@ import Foundation
 struct SupportLanguage: Codable {
     let languageCode: String
     let languageName: String
+    let aivadSupported: Bool
+    let aivadEnabledByDefault: Bool
     
     enum CodingKeys: String, CodingKey {
         case languageCode = "language_code"
         case languageName = "language_name"
+        case aivadSupported = "aivad_supported"
+        case aivadEnabledByDefault = "aivad_enabled_by_default"
     }
 }
 
