@@ -1,7 +1,9 @@
 
 only_rules:
   - todo
-
+  - empty_count
+  - toggle_bool
+  
 excluded:
   - Pods
   - dotLottie-iOS
