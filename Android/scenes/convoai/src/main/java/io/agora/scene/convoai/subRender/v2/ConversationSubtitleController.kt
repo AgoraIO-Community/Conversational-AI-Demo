@@ -51,9 +51,9 @@ interface IConversationSubtitleCallback {
     /**
      * Called when AI conversation state changes
      *
-     * @param agentConversationStatus agent conversation status
+     * @param agentMessageState agent message state
      */
-    fun onAIConversationStatus(agentConversationStatus: AgentConversationStatus)
+    fun onAIConversationStatus(agentMessageState: AgentMessageState)
 
     /**
      * Called when a debug log is received
@@ -78,6 +78,16 @@ data class SubtitleMessage(
     val userId: Int,
     val text: String,
     var status: SubtitleStatus
+)
+
+/**
+ * Agent Conversation State
+ */
+data class AgentMessageState(
+    val messageId: String,
+    val turnId: Long,
+    val ts: Long,
+    val state: AgentConversationStatus
 )
 
 /**
@@ -187,7 +197,7 @@ class ConversationSubtitleController(
     private var enable = true
 
     @Volatile
-    private var mLastMessageStateTs: Long = 0L
+    private var mAgentMessageState: AgentMessageState? = null
 
     init {
         config.rtcEngine.addHandler(this)
@@ -311,17 +321,27 @@ class ConversationSubtitleController(
                         }
                         "message.state" -> {
                             isUserMsg = false
-                            val messageStateTs = (msg["ts"] as? Number)?.toLong() ?: 0L
+                            val messageId = msg["message_id"] as? String?:""
                             // Deduplication
-                            if (mLastMessageStateTs == messageStateTs) return
-                            mLastMessageStateTs = messageStateTs
-                            val current = msg["current"] as? String ?: ""
-                            val aiConversationStatus = if (current == "listening") AgentConversationStatus.Listening
-                            else if (current == "thinking") AgentConversationStatus.Thinking
-                            else if (current == "speaking") AgentConversationStatus.Speaking
+                            if (messageId == mAgentMessageState?.messageId) return
+                            val ts = (msg["ts_ms"] as? Number)?.toLong() ?: 0L
+                            if (ts == mAgentMessageState?.ts) return
+                            val turnId = (msg["turn_id"] as? Number)?.toLong() ?: 0L
+                            val state = msg["state"] as? String ?: ""
+
+                            val aiConversationStatus = if (state == "listening") AgentConversationStatus.Listening
+                            else if (state == "thinking") AgentConversationStatus.Thinking
+                            else if (state == "speaking") AgentConversationStatus.Speaking
                             else AgentConversationStatus.Silent
                             runOnMainThread {
-                                config.callback?.onAIConversationStatus(aiConversationStatus)
+                                mAgentMessageState = AgentMessageState(
+                                    messageId = messageId,
+                                    turnId = turnId,
+                                    ts = ts,
+                                    state = aiConversationStatus
+                                ).also {
+                                    config.callback?.onAIConversationStatus(it)
+                                }
                             }
                             return
 
