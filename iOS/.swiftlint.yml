@@ -1,9 +1,14 @@
-
+# Only enable specific rules
 only_rules:
-  - todo
-  - empty_count
-  - toggle_bool
+  - todo        # TODO and FIXME comments
+  - empty_count # Prefer isEmpty over count == 0
+  - toggle_bool # Prefer someBool.toggle() over someBool = !someBool
   
+# Include only specific directories with correct path
+included:
+  - iOS/Scenes/ConvoAI/ConvoAI  # Path as shown in error messages
+  
+# Excluded paths
 excluded:
   - Pods
   - dotLottie-iOS
@@ -11,4 +16,6 @@ excluded:
   - "**/Generated"
   - Carthage
   - fastlane
-  - "**/*.generated.swift" 
+
+# Output format
+reporter: "xcode" # Detailed output with file names and line numbers 

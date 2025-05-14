@@ -25,4 +25,4 @@ jobs:
       uses: norio-nomura/action-swiftlint@3.2.1
       with:
         working-directory: ./iOS
-        args: --strict --reporter github-actions-logging
+        args: --strict --reporter xcode
