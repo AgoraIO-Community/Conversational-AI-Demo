@@ -1,25 +1,7 @@
-# Disabled rules - Temporarily disable almost all rules for initial setup
-disabled_rules:
-  - line_length
-  - trailing_whitespace
-  - function_body_length
-  - type_body_length
-  - file_length
-  - cyclomatic_complexity
-  - todo
-  - nesting
-  - function_parameter_count
-  - large_tuple
-  - unused_optional_binding
-  - implicitly_unwrapped_optional
-  - trailing_newline
-  - vertical_whitespace
-  - identifier_name
-  - colon
-  - unused_closure_parameter
-  - empty_count
-  - force_cast
-  - force_try
+# Enable only specific rules - we will add more gradually
+only_rules: [
+  identifier_name  # Variable naming rules
+]
 
 # Excluded paths
 excluded:
