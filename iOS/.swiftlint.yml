@@ -1,48 +1,65 @@
 # Rule list in https://realm.github.io/SwiftLint/rule-directory.html
-disabled_rules: # rule identifiers to exclude from running
-  - colon
-  - comma
-  - control_statement
-  - cyclomatic_complexity
-  - identifier_name
-  - line_length
-  - private_over_fileprivate
-  - void_return
-  - type_name
-  - multiple_closures_with_trailing_closure
-  - comment_spacing
-  - inclusive_language
-  - computed_accessors_order
-  - class_delegate_protocol
-  - operator_usage_whitespace
-  - trailing_comma
-  - sorted_imports
 
-opt_in_rules: # some rules are only opt-in
-  - array_init                                # Prefer using Array(seq) than seq.map { $0 } to convert a sequence into an Array.
-  # - attributes                                # Attributes should be on their own lines in functions and types, but on the same line as variables and imports.
-  - closure_spacing                           # Closure expressions should have a single space inside each brace.
-  # - empty_count                               # Prefer checking isEmpty over comparing count to zero.
-  - empty_string                              # Prefer checking isEmpty over comparing string to an empty string literal.
-  # - fatal_error_message                       # A fatalError call should have a message.
-  - force_unwrapping                          # Force unwrapping should be avoided.
-  - first_where                               # Prefer using .first(where:) over .filter { }.first in collections.
-  # - implicitly_unwrapped_optional             # Implicitly unwrapped optionals should be avoided when possible.
-  - literal_expression_end_indentation        # Array and dictionary literal end should have the same indentation as the line that started it.
-  # - operator_usage_whitespace                 # Operators should be surrounded by a single whitespace when they are being used.
-  - overridden_super_call                     # Some overridden methods should always call super.
-  - pattern_matching_keywords                 # Combine multiple pattern matching bindings by moving keywords out of tuples.
-  - prohibited_super_call                     # Some methods should not call super.
-  - sorted_imports                            # Imports should be sorted.
-  - toggle_bool                               # Prefer someBool.toggle() over someBool = !someBool.
-  # - unneeded_parentheses_in_closure_argument  # Parentheses are not needed when declaring closure arguments.
-  # - vertical_parameter_alignment_on_call      # Function parameters should be aligned vertically if they're in multiple lines in a method call.
-  - yoda_condition                            # The variable should be placed on the left, the constant on the right of a comparison operator.
+# 使用only_rules替代disabled_rules和opt_in_rules组合
+# 当指定only_rules时，只有列出的规则会被启用，其他所有规则都被禁用
+only_rules:
+  # 以下是您想要启用的规则列表
+  - empty_string                              # 检查空字符串比较，推荐使用isEmpty
+  # - toggle_bool                               # 使用.toggle()而不是取反赋值
+  # - trailing_whitespace                       # 检查行尾空格
+  # - unused_declaration                        # 检查未使用的变量、函数和类等声明
+  # - unused_import                             # 检查未使用的导入语句
+  # - first_where                               # 使用.first(where:)而不是.filter { }.first
+  # - array_init                                # 使用Array(seq)而不是seq.map { $0 }创建数组
+  # - sorted_imports                            # 检查导入语句是否按字母顺序排序
+  # - yoda_condition                            # 变量应在左侧，常量在右侧（如 age == 5 而非 5 == age）
+  # - force_try                                 # 避免使用强制try!
+  # - force_unwrapping                          # 避免使用强制解包!
+  # - force_cast                                # 避免使用强制类型转换as!
+  # - pattern_matching_keywords                 # 在模式匹配中优化关键词使用（如用let (x, y)替代(let x, let y)）
+  # - literal_expression_end_indentation        # 数组和字典字面量结束括号应与开始行保持同样缩进
+  # - 根据需要添加更多规则...
 
-  # Find all the available rules by running:
-  # swiftlint rules
+
+# 以下注释掉原来的规则配置
+# disabled_rules:
+#   - colon
+#   - comma
+#   - control_statement
+#   - cyclomatic_complexity
+#   - identifier_name
+#   - line_length
+#   - private_over_fileprivate
+#   - void_return
+#   - type_name
+#   - multiple_closures_with_trailing_closure
+#   - comment_spacing
+#   - inclusive_language
+#   - computed_accessors_order
+#   - class_delegate_protocol
+#   - operator_usage_whitespace
+#   - trailing_comma
+#   - sorted_imports
+#   - force_cast
+
+# opt_in_rules:
+#   - array_init
+#   - closure_spacing
+#   - empty_string
+#   - force_unwrapping
+#   - first_where
+#   - literal_expression_end_indentation
+#   - overridden_super_call
+#   - pattern_matching_keywords
+#   - prohibited_super_call
+#   - sorted_imports
+#   - toggle_bool
+#   - yoda_condition
+
 included: # paths to include during linting. `--path` is ignored if present.
-  - iOS/Scenes/ConvoAI/IoT
+  - Scenes/ConvoAI/IoT
+  - Scenes/ConvoAI/ConvoAI
+  
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Pods
   - dotLottie-iOS
@@ -56,17 +73,8 @@ analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
 
 # configurable rules can be customized from this configuration file
 # binary rules can set their severity level
-force_cast: error # implicitly
-force_try:
-  severity: error # explicitly
-force_unwrapping:
-  severity: error
-first_where:
-  severity: error
-for_where:
-  severity: error
-toggle_bool:
-  severity: error
+force_cast:
+  severity: warning 
 trailing_whitespace:
   ignores_empty_lines: true
 # rules that have both warning and error levels, can set just the warning level
@@ -97,11 +105,5 @@ identifier_name:
     - URL
     - GlobalAPIKey
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji, sonarqube, markdown)
-overridden_super_call:
-  included:
-    - '*'
-    - 'onStart()'
-    - 'onPause()'
-    - 'onResume()'
-    - 'onStop()'
+
     

@@ -21,7 +21,7 @@ target 'Agent-global' do
   pod 'BLEManager', :path => 'Scenes/ConvoAI/BLEManager'
 
   pod 'Kingfisher'
-
+  pod 'SwiftLint'
   pod 'Firebase/Crashlytics'
 
 end
