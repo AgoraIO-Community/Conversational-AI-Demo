@@ -1,21 +1,107 @@
-# Only enable specific rules
-only_rules:
-  - todo        # TODO and FIXME comments
-  - empty_count # Prefer isEmpty over count == 0
-  - toggle_bool # Prefer someBool.toggle() over someBool = !someBool
-  
-# Include only specific directories with correct path
-included:
-  - iOS/Scenes/ConvoAI/ConvoAI  # Path as shown in error messages
-  
-# Excluded paths
-excluded:
+# Rule list in https://realm.github.io/SwiftLint/rule-directory.html
+disabled_rules: # rule identifiers to exclude from running
+  - colon
+  - comma
+  - control_statement
+  - cyclomatic_complexity
+  - identifier_name
+  - line_length
+  - private_over_fileprivate
+  - void_return
+  - type_name
+  - multiple_closures_with_trailing_closure
+  - comment_spacing
+  - inclusive_language
+  - computed_accessors_order
+  - class_delegate_protocol
+  - operator_usage_whitespace
+  - trailing_comma
+  - sorted_imports
+
+opt_in_rules: # some rules are only opt-in
+  - array_init                                # Prefer using Array(seq) than seq.map { $0 } to convert a sequence into an Array.
+  # - attributes                                # Attributes should be on their own lines in functions and types, but on the same line as variables and imports.
+  - closure_spacing                           # Closure expressions should have a single space inside each brace.
+  # - empty_count                               # Prefer checking isEmpty over comparing count to zero.
+  - empty_string                              # Prefer checking isEmpty over comparing string to an empty string literal.
+  # - fatal_error_message                       # A fatalError call should have a message.
+  - force_unwrapping                          # Force unwrapping should be avoided.
+  - first_where                               # Prefer using .first(where:) over .filter { }.first in collections.
+  # - implicitly_unwrapped_optional             # Implicitly unwrapped optionals should be avoided when possible.
+  - literal_expression_end_indentation        # Array and dictionary literal end should have the same indentation as the line that started it.
+  # - operator_usage_whitespace                 # Operators should be surrounded by a single whitespace when they are being used.
+  - overridden_super_call                     # Some overridden methods should always call super.
+  - pattern_matching_keywords                 # Combine multiple pattern matching bindings by moving keywords out of tuples.
+  - prohibited_super_call                     # Some methods should not call super.
+  - sorted_imports                            # Imports should be sorted.
+  - toggle_bool                               # Prefer someBool.toggle() over someBool = !someBool.
+  # - unneeded_parentheses_in_closure_argument  # Parentheses are not needed when declaring closure arguments.
+  # - vertical_parameter_alignment_on_call      # Function parameters should be aligned vertically if they're in multiple lines in a method call.
+  - yoda_condition                            # The variable should be placed on the left, the constant on the right of a comparison operator.
+
+  # Find all the available rules by running:
+  # swiftlint rules
+included: # paths to include during linting. `--path` is ignored if present.
+  - iOS/Scenes/ConvoAI/IoT
+excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Pods
   - dotLottie-iOS
   - "*/Frameworks"
   - "**/Generated"
   - Carthage
   - fastlane
+  - "**/*.generated.swift" 
+analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
+  - explicit_self
 
-# Output format
-reporter: "xcode" # Detailed output with file names and line numbers 
+# configurable rules can be customized from this configuration file
+# binary rules can set their severity level
+force_cast: error # implicitly
+force_try:
+  severity: error # explicitly
+force_unwrapping:
+  severity: error
+first_where:
+  severity: error
+for_where:
+  severity: error
+toggle_bool:
+  severity: error
+trailing_whitespace:
+  ignores_empty_lines: true
+# rules that have both warning and error levels, can set just the warning level
+# implicitly
+# they can set both implicitly with an array
+type_body_length:
+  - 500 # warning
+  - 600 # error
+nesting:
+  type_level: 3 # warning
+# or they can set both explicitly
+file_length:
+  warning: 1000
+  error: 2000
+function_body_length:
+  warning: 100
+  error: 120
+identifier_name:
+  min_length: 3 # only warning
+  max_length: # warning and error
+    warning: 40
+    error: 60
+  allowed_symbols:
+    - _
+  excluded: # excluded via string array
+    - vc
+    - id
+    - URL
+    - GlobalAPIKey
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji, sonarqube, markdown)
+overridden_super_call:
+  included:
+    - '*'
+    - 'onStart()'
+    - 'onPause()'
+    - 'onResume()'
+    - 'onStop()'
+    
