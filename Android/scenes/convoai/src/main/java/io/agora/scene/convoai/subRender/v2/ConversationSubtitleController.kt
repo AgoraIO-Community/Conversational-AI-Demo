@@ -305,7 +305,9 @@ class ConversationSubtitleController(
             }
         })
         config.rtcEngine.setPlaybackAudioFrameBeforeMixingParameters(44100, 1)
-        config.rtcEngine.setParameters("{\"rtc.log_external_input\": true}")
+        if (config.writeRtcLog){
+            config.rtcEngine.setParameters("{\"rtc.log_external_input\": true}")
+        }
     }
 
     private val executorService = Executors.newSingleThreadExecutor()
@@ -313,8 +315,10 @@ class ConversationSubtitleController(
 
     private fun onDebugLog(tag: String, message: String) {
         config.callback?.onDebugLog(tag, message)
-        executorService.submit {
-            rtcEngineRef.get()?.writeLog(Constants.LOG_LEVEL_WARNING, "[$tag] : $message")
+        if (config.writeRtcLog) {
+            executorService.submit {
+                rtcEngineRef.get()?.writeLog(Constants.LOG_LEVEL_INFO, "[$tag] : $message")
+            }
         }
     }
 
