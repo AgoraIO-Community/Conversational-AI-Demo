@@ -409,7 +409,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 messageListViewV2.onAIStatusChanged = { status ->
                     // Only respond to AI status changes when connected
                     if (connectionState == AgentConnectionState.CONNECTED) {
-                        mBinding?.tvConversationState?.text = "Agent State: ${status}"
+                        mBinding?.tvConversationState?.text = "Agent State:${status.state}"
                     }
                 }
             }
