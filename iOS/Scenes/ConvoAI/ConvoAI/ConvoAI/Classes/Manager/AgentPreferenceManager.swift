@@ -167,6 +167,7 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
         }
         
         self.updateLanguage(language)
+        updateAiVadState(language.aivadEnabledByDefault)
     }
     
     // MARK: - Private Methods
@@ -251,7 +252,7 @@ enum NetworkStatus: String {
 class AgentPreference {
     var preset: AgentPreset?
     var language: SupportLanguage?
-    var aiVad = false
+    var aiVad = true
     var bhvs = true
 }
 

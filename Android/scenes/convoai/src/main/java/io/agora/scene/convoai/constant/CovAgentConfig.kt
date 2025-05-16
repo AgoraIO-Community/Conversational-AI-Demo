@@ -23,7 +23,7 @@ object CovAgentManager {
     private var preset: CovAgentPreset? = null
     var language: CovAgentLanguage? = null
 
-    var enableAiVad = false
+    var enableAiVad = true
     val enableBHVS = true
 
     // values
@@ -63,6 +63,6 @@ object CovAgentManager {
     }
 
     fun resetData() {
-        enableAiVad = false
+        enableAiVad = true
     }
 }
