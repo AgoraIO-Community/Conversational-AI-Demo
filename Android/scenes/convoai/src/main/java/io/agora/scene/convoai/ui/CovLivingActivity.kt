@@ -50,9 +50,12 @@ import io.agora.scene.common.util.getStatusBarHeight
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
 import io.agora.scene.convoai.R
+import io.agora.scene.convoai.animation.AgentLottieState
 import io.agora.scene.convoai.animation.AgentState
 import io.agora.scene.convoai.animation.CovBallAnim
 import io.agora.scene.convoai.animation.CovBallAnimCallback
+import io.agora.scene.convoai.animation.CovLottieAnim
+import io.agora.scene.convoai.animation.CovLottieAnimCallback
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
@@ -137,26 +140,35 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                                 delay(10000) // 10s
                             }
                         }
+                        mCovLottieAnim?.updateAgentState(AgentLottieState.Ambient)
                     }
 
                     AgentConnectionState.IDLE -> {
                         // cancel ping
                         innerCancelJob()
                         mCovBallAnim?.updateAgentState(AgentState.STATIC)
+
+                        mCovLottieAnim?.updateAgentState(AgentLottieState.NotJoined)
                     }
 
                     AgentConnectionState.ERROR -> {
                         // cancel ping
                         innerCancelJob()
                         mCovBallAnim?.updateAgentState(AgentState.STATIC)
+
+                        mCovLottieAnim?.updateAgentState(AgentLottieState.Disconnected)
                     }
 
                     AgentConnectionState.CONNECTED_INTERRUPT -> {
                         mCovBallAnim?.updateAgentState(AgentState.STATIC)
+
+                        mCovLottieAnim?.updateAgentState(AgentLottieState.Disconnected)
                     }
 
                     AgentConnectionState.CONNECTING -> {
                         innerCancelJob()
+
+                        mCovLottieAnim?.updateAgentState(AgentLottieState.Disconnected)
                     }
                 }
             }
@@ -173,6 +185,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private var isUserEndCall = false
 
     private var mCovBallAnim: CovBallAnim? = null
+
+    private var mCovLottieAnim: CovLottieAnim? = null
 
     private var isSelfSubRender = false
 
@@ -214,7 +228,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         updateStateView()
         CovAgentManager.resetData()
         val rtcEngine = createRtcEngine()
-        setupBallAnimView()
+//        setupBallAnimView()
+        setLottieAnim()
 
         checkLogin()
         // v1 Subtitle Rendering Controller
@@ -414,6 +429,20 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     // Only respond to AI status changes when connected
                     if (connectionState == AgentConnectionState.CONNECTED) {
                         mBinding?.tvConversationState?.text = "Agent State: ${status.state}"
+
+                        when (status.state) {
+                            AgentConversationStatus.Idle -> {
+                                mCovLottieAnim?.updateAgentState(AgentLottieState.Ambient)
+                            }
+                            AgentConversationStatus.Listening -> {
+                                mCovLottieAnim?.updateAgentState(AgentLottieState.Listening)
+                            }
+                            AgentConversationStatus.Thinking -> {
+                                mCovLottieAnim?.updateAgentState(AgentLottieState.ScaleDownOnce)
+                            }
+                            AgentConversationStatus.Speaking -> {}
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -665,6 +694,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                         }
                         if (state == Constants.REMOTE_AUDIO_STATE_STOPPED) {
                             mCovBallAnim?.updateAgentState(AgentState.LISTENING)
+
+                            mCovLottieAnim?.updateAgentState(AgentLottieState.Listening)
                         }
                     }
                 }
@@ -684,8 +715,12 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                                 if (connectionState != AgentConnectionState.IDLE) {
                                     if (it.volume > 0) {
                                         mCovBallAnim?.updateAgentState(AgentState.SPEAKING, it.volume)
+
+//                                        mCovLottieAnim?.updateAgentState(AgentLottieState.Talking, it.volume)
                                     } else {
                                         mCovBallAnim?.updateAgentState(AgentState.LISTENING, it.volume)
+
+//                                        mCovLottieAnim?.updateAgentState(AgentLottieState.Listening)
                                     }
                                 }
                             }
@@ -1377,5 +1412,19 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private fun stopRecordingService() {
         val intent = Intent(this, CovLocalRecordingService::class.java)
         stopService(intent)
+    }
+
+    private fun setLottieAnim(){
+        val binding = mBinding ?: return
+        mCovLottieAnim = CovLottieAnim(this, binding.lottieAnimView, callback = object : CovLottieAnimCallback {
+            override fun onError(error: Exception) {
+                coroutineScope.launch {
+                    delay(1000L)
+                    ToastUtil.show(getString(R.string.cov_detail_state_error), Toast.LENGTH_LONG)
+                    stopAgentAndLeaveChannel()
+                }
+            }
+        })
+        mCovLottieAnim?.setupView()
     }
 }

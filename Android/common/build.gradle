@@ -79,6 +79,7 @@ dependencies {
     api libs.mmkv
     api libs.xlog
     api libs.multidex
+    api libs.lottie
 
     api libs.commons.codec
     if (USE_LOCAL_SDK) {
