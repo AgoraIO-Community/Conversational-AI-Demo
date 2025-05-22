@@ -308,6 +308,10 @@ class ConversationSubtitleController(
         if (config.writeRtcLog){
             config.rtcEngine.setParameters("{\"rtc.log_external_input\": true}")
         }
+        onDebugLog(
+            TAG,
+            "init this:0x${this.hashCode().toString(16)}, version:$SUBTITLE_VERSION, renderMode:${config.renderMode}, writeRtcLog:${config.writeRtcLog}"
+        )
     }
 
     private val executorService = Executors.newSingleThreadExecutor()
@@ -502,13 +506,13 @@ class ConversationSubtitleController(
                 } else {
                     SubtitleRenderMode.Text
                 }
-                onDebugLog(TAG, "Subtitle Version: $SUBTITLE_VERSION")
-                onDebugLog(TAG, "Mode auto detected: $mRenderMode")
             } else {
                 mRenderMode = SubtitleRenderMode.Text
-                onDebugLog(TAG, "Subtitle Version: $SUBTITLE_VERSION")
-                onDebugLog(TAG, "Mode auto: $mRenderMode")
             }
+            onDebugLog(
+                TAG,
+                "render mode auto detected: $mRenderMode, this:0x${this.hashCode().toString(16)}, version: $SUBTITLE_VERSION"
+            )
         }
 
         if (mRenderMode == SubtitleRenderMode.Text && status != TurnStatus.INTERRUPTED) {
