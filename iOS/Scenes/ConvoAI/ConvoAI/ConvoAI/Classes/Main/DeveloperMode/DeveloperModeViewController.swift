@@ -129,7 +129,6 @@ public class DeveloperModeViewController: UIViewController {
         button.setTitleColor(UIColor.themColor(named: "ai_icontext1"), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14)
         button.showsMenuAsPrimaryAction = true
-        button.menu = createEnvironmentMenu()
         return button
     }()
     
@@ -182,6 +181,7 @@ public class DeveloperModeViewController: UIViewController {
                 break
             }
         }
+        menuButton.menu = createEnvironmentMenu()
     }
     
     private func updateUI() {
