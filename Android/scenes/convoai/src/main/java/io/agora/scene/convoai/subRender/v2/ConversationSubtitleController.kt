@@ -16,7 +16,7 @@ const val SUBTITLE_VERSION = "1.4.0"
 
 /**
  * Configuration class for subtitle rendering
- * 
+ *
  * @property rtcEngine The RTC engine instance used for real-time communication
  * @property renderMode The mode of subtitle rendering (Idle, Text, or Word)
  * @property callback Callback interface for subtitle updates
@@ -29,7 +29,7 @@ data class SubtitleRenderConfig (
 
 /**
  * Defines different modes for subtitle rendering
- * 
+ *
  * Text: Full text subtitles are rendered
  * Word: Word-by-word subtitles are rendered
  */
@@ -45,7 +45,7 @@ enum class SubtitleRenderMode {
 interface IConversationSubtitleCallback {
     /**
      * Called when a subtitle is updated and needs to be displayed
-     * 
+     *
      * @param subtitle The updated subtitle message
      */
     fun onSubtitleUpdated(subtitle: SubtitleMessage)
@@ -59,7 +59,7 @@ interface IConversationSubtitleCallback {
 
     /**
      * Called when a debug log is received
-     * 
+     *
      * @param tag The tag of the log
      * @param msg The log message
      */
@@ -120,7 +120,7 @@ enum class AgentConversationStatus {
 /**
  * Subtitle Rendering Controller
  * Manages the processing and rendering of subtitles in conversation
- * 
+ *
  * @property config Configuration for the subtitle controller
  */
 class ConversationSubtitleController(
@@ -130,7 +130,7 @@ class ConversationSubtitleController(
     /**
      * Internal data class representing individual word information
      * Used by the producer side of the subtitle pipeline
-     * 
+     *
      * @property word The actual word text
      * @property startMs Timestamp when the word started (in milliseconds)
      * @property status Current status of the word
@@ -154,7 +154,7 @@ class ConversationSubtitleController(
     /**
      * Internal data class representing a complete turn message
      * Used by the producer side of the subtitle pipeline
-     * 
+     *
      * @property userId User identifier for this turn
      * @property turnId Unique identifier for this turn
      * @property startMs Start timestamp of the turn (in milliseconds)
@@ -305,6 +305,9 @@ class ConversationSubtitleController(
             TAG,
             "init this:0x${this.hashCode().toString(16)}, version:$SUBTITLE_VERSION, renderMode:${config.renderMode}"
         )
+        mMessageParser.onDebugLog = { tag,message->
+            config.callback?.onDebugLog(tag, message)
+        }
     }
 
     private fun onDebugLog(tag: String, message: String) {
@@ -316,10 +319,7 @@ class ConversationSubtitleController(
         data?.let { bytes ->
             try {
                 val rawString = String(bytes, Charsets.UTF_8)
-                val message =
-                    mMessageParser.parseStreamMessage(rawString, completion = { messageMap ->
-                        onDebugLog(TAG, "MessageParser Loop printing: $messageMap")
-                    })
+                val message = mMessageParser.parseStreamMessage(rawString)
                 message?.let { msg ->
                     val transcription = msg["object"] as? String ?: return
                     var isInterrupt = false
@@ -677,7 +677,7 @@ class ConversationSubtitleController(
                         runOnMainThread {
                             config.callback?.onSubtitleUpdated(interruptedMessage)
                         }
-                    
+
                         // remove the turn if interrupt condition is met
                         mLastDequeuedTurn = turn
                         agentTurnQueue.remove(turn)
@@ -690,14 +690,14 @@ class ConversationSubtitleController(
                     }
                 }
                 .toList()
-        
+
             if (availableTurns.isEmpty()) return
-        
+
             // Find the latest turn to display
             val latestValidTurn = availableTurns.last()
             val (targetTurn, targetWords) = latestValidTurn
             val targetIsEnd = targetWords.last().status == SubtitleStatus.End
-        
+
             // Interrupt all previous turns
             if (availableTurns.size > 1) {
                 // Iterate through all turns except the last one
@@ -718,7 +718,7 @@ class ConversationSubtitleController(
                 }
                 mCurSubtitleMessage = null
             }
-        
+
             // Display the latest turn
             val newSubtitleMessage = SubtitleMessage(
                 turnId = targetTurn.turnId,
@@ -735,7 +735,7 @@ class ConversationSubtitleController(
             runOnMainThread {
                 config.callback?.onSubtitleUpdated(newSubtitleMessage)
             }
-        
+
             if (targetIsEnd) {
                 mLastDequeuedTurn = targetTurn
                 agentTurnQueue.remove(targetTurn)
