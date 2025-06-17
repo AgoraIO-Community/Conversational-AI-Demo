@@ -88,7 +88,9 @@ dependencies {
             exclude group: 'io.agora.rtc', module: 'full-screen-sharing'
         }
     }
+    api libs.agora.rtm
 
     api platform(libs.firebase.bom)
     api libs.firebase.crashlytics
+
 }

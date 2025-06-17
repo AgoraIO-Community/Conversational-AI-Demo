@@ -20,7 +20,7 @@ import io.agora.scene.common.constant.AgentConstant
 import io.agora.scene.convoai.CovLogger
 import java.io.File
 
-enum class AgentState {
+enum class BallAnimState {
     /** Idle state, no video or animation is playing */
     STATIC,
 
@@ -83,20 +83,20 @@ class CovBallAnim constructor(
 
     private var scaleAnimator: Animator? = null
 
-    private var currentState = AgentState.STATIC
+    private var currentState = BallAnimState.STATIC
         private set(value) {
             if (field != value) {
                 field = value
                 when (value) {
-                    AgentState.STATIC -> {
+                    BallAnimState.STATIC -> {
                         rtcMediaPlayer.setPlaybackSpeed(100)
                     }
 
-                    AgentState.LISTENING -> {
+                    BallAnimState.LISTENING -> {
                         rtcMediaPlayer.setPlaybackSpeed(150)
                     }
 
-                    AgentState.SPEAKING -> {
+                    BallAnimState.SPEAKING -> {
                         rtcMediaPlayer.setPlaybackSpeed(250)
                     }
                 }
@@ -114,12 +114,9 @@ class CovBallAnim constructor(
 
     private val animatorListener = object : Animator.AnimatorListener {
         override fun onAnimationEnd(animation: Animator) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "onAnimationEnd $scaleAnimator")
-            }
             // Use the latest pending execution parameters
             pendingAnimParams?.let { params ->
-                if (currentState == AgentState.SPEAKING) {
+                if (currentState == BallAnimState.SPEAKING) {
                     if (BuildConfig.DEBUG) {
                         Log.d(TAG, "onAnimationRepeat call new Animation $scaleAnimator")
                     }
@@ -130,24 +127,15 @@ class CovBallAnim constructor(
         }
 
         override fun onAnimationStart(animation: Animator) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "onAnimationStart $scaleAnimator")
-            }
         }
 
         override fun onAnimationCancel(animation: Animator) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "onAnimationCancel $scaleAnimator")
-            }
             updateParentScale(1.0f)
         }
 
         override fun onAnimationRepeat(animation: Animator) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "onAnimationRepeat $scaleAnimator")
-            }
             // Check the state, stop the animation if it's not in the SPEAKING state
-            if (currentState != AgentState.SPEAKING) {
+            if (currentState != BallAnimState.SPEAKING) {
                 pendingAnimParams = null
                 Log.d(TAG, "onAnimationRepeat call cancel $scaleAnimator")
                 animation.cancel()
@@ -238,7 +226,7 @@ class CovBallAnim constructor(
         }
     }
 
-    fun updateAgentState(newState: AgentState, volume: Int = 0) {
+    fun updateAgentState(newState: BallAnimState, volume: Int = 0) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             updateAgentStateInternal(newState, volume)
         } else {
@@ -248,20 +236,20 @@ class CovBallAnim constructor(
         }
     }
 
-    private fun updateAgentStateInternal(newState: AgentState, volume: Int) {
+    private fun updateAgentStateInternal(newState: BallAnimState, volume: Int) {
         val oldState = currentState
         currentState = newState
         handleStateTransition(oldState, newState, volume)
     }
 
-    private fun handleStateTransition(oldState: AgentState, newState: AgentState, volume: Int = 0) {
+    private fun handleStateTransition(oldState: BallAnimState, newState: BallAnimState, volume: Int = 0) {
         when (newState) {
-            AgentState.STATIC -> {
+            BallAnimState.STATIC -> {
                 // Handle the static state
             }
 
-            AgentState.LISTENING, AgentState.SPEAKING -> {
-                if (newState == AgentState.SPEAKING) {
+            BallAnimState.LISTENING, BallAnimState.SPEAKING -> {
+                if (newState == BallAnimState.SPEAKING) {
                     startAgentAnimation(volume)
                 }
             }
@@ -337,6 +325,6 @@ class CovBallAnim constructor(
             it.cancel()
             scaleAnimator = null
         }
-        currentState = AgentState.STATIC
+        currentState = BallAnimState.STATIC
     }
 }

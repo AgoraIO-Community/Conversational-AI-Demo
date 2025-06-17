@@ -1,4 +1,4 @@
-package io.agora.scene.convoai.subRender.v2
+package io.agora.scene.convoai.convoaiApi.subRender.v2
 
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
@@ -22,16 +22,16 @@ class MessageParser {
         .setDateFormat("yyyy-MM-dd HH:mm:ss")
         .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
         .registerTypeAdapter(TypeToken.get(JSONObject::class.java).type, object : TypeAdapter<JSONObject>() {
-            @Throws(IOException::class)
-            override fun write(jsonWriter: JsonWriter, value: JSONObject) {
-                jsonWriter.jsonValue(value.toString())
-            }
+                @Throws(IOException::class)
+                override fun write(jsonWriter: JsonWriter, value: JSONObject) {
+                    jsonWriter.jsonValue(value.toString())
+                }
 
-            @Throws(IOException::class)
-            override fun read(jsonReader: JsonReader): JSONObject? {
-                return null
-            }
-        })
+                @Throws(IOException::class)
+                override fun read(jsonReader: JsonReader): JSONObject? {
+                    return null
+                }
+            })
         .enableComplexMapKeySerialization()
         .create()
     private val maxMessageAge = 5 * 60 * 1000 // 5 minutes
