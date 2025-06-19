@@ -61,6 +61,11 @@
     <string name="cov_agent_connecting">Connecting…</string>
     <string name="cov_copy_succeed">Copied</string>
     <string name="cov_interrupted">Interrupted</string>
+    <string name="cov_agent_silent">You may start speaking</string>
+    <string name="cov_agent_listening">Listening…</string>
+    <string name="cov_agent_thinking">Speak or tap to interrupt</string>
+    <string name="cov_agent_speaking">Speak or tap to interrupt</string>
+    <string name="cov_user_muted">Muted</string>
 
     <string-array name="cov_setting_microphone_array">
         <item>Inbuilt Mic</item>
