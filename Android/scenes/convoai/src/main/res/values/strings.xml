@@ -18,8 +18,9 @@
     <string name="cov_detail_state_error">Agent left abnormally. Please try again.</string>
     <string name="cov_detail_room_error">Room no longer exists. Please join a new call.</string>
     <string name="cov_detail_start_agent_limit_error">The current preset resources are out of limit. Please try again later.</string>
-    <string name="cov_detail_login_rtm_error">RTM login failed. Please try again later.</string>
-    <string name="cov_detail_update_token_error">Failed to retrieve token</string>
+    <string name="cov_detail_login_rtm_error">RTM login failed.\n %s</string>
+    <string name="cov_detail_renew_rtm_token_error">RTM retrieve token failed.\n %s</string>
+    <string name="cov_detail_update_token_error">Failed to retrieve token.</string>
     <string name="cov_detail_llm_error">LLM exception</string>
     <string name="cov_detail_tts_error">TTS exception</string>
 
