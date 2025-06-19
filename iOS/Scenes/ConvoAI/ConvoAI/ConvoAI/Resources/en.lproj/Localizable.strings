@@ -105,6 +105,8 @@
 
 "devmode.title" = "Developer Mode";
 "devmode.rtc" = "RTC Version";
+"devmode.rtm" = "RTM Version";
+"devmode.metric" = "Metrics";
 "devmode.host" = "ConvoAI Host";
 "devmode.dump" = "Audio Dump";
 "devmode.sessionLimit" = "Session Limit";

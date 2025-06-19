@@ -2,14 +2,14 @@ import UIKit
 import AVFoundation
 import AgoraRtcKit
 
-enum AgentState {
+enum AnimateState {
     case idle  // Idle state, no video or animation is playing
     case listening // Listening state, playing slow animation
     case speaking  // AI speaking animation in progress
 }
 
 protocol AnimateViewDelegate: NSObject {
-    func onError(error: AgentError)
+    func onError(error: ConvoAIError)
 }
 
 class AnimateView: NSObject {
@@ -46,7 +46,7 @@ class AnimateView: NSObject {
     private var pendingAnimParams: AnimParams?
     private var isInForeground = true
     
-    private var currentState: AgentState = .idle {
+    private var currentState: AnimateState = .idle {
         didSet {
             if oldValue != currentState {
                 switch currentState {
@@ -115,19 +115,19 @@ class AnimateView: NSObject {
         }
     }
     
-    func updateAgentState(_ newState: AgentState, volume: Int = 0) {
+    func updateAgentState(_ newState: AnimateState, volume: Int = 0) {
         DispatchQueue.main.async { [weak self] in
             self?.updateAgentStateInternal(newState, volume: volume)
         }
     }
     
-    private func updateAgentStateInternal(_ newState: AgentState, volume: Int) {
+    private func updateAgentStateInternal(_ newState: AnimateState, volume: Int) {
         let oldState = currentState
         currentState = newState
         handleStateTransition(oldState: oldState, newState: newState, volume: volume)
     }
     
-    private func handleStateTransition(oldState: AgentState, newState: AgentState, volume: Int = 0) {
+    private func handleStateTransition(oldState: AnimateState, newState: AnimateState, volume: Int = 0) {
         switch newState {
         case .idle, .listening:
             if let group = scaleAnimator {
@@ -277,7 +277,7 @@ extension AnimateView: AgoraRtcMediaPlayerDelegate {
     func AgoraRtcMediaPlayer(_ playerKit: any AgoraRtcMediaPlayerProtocol, didPreloadEvent event: AgoraMediaPlayerPreloadEvent) {
         ConvoAILogger.info("onPreloadEvent : \(event)")
         if event == .error {
-            delegate?.onError(error: AgentError.unknownError(message: "video preload error: \(event)"))
+            delegate?.onError(error: ConvoAIError.unknownError(message: "video preload error: \(event)"))
         }
     }
     
@@ -302,7 +302,7 @@ extension AnimateView: AgoraRtcMediaPlayerDelegate {
                 rtcMediaPlayer?.setLoopCount(-1)
             }
         } else if state == .failed {
-            delegate?.onError(error: AgentError.unknownError(message: "play video error: \(state)"))
+            delegate?.onError(error: ConvoAIError.unknownError(message: "play video error: \(state)"))
         }
     }
 }
