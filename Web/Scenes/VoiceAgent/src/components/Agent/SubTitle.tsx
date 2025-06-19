@@ -18,7 +18,7 @@ import {
   useAgentSettingsStore,
   useChatStore,
   useGlobalStore,
-  useRTCStore,
+  // useRTCStore,
   useUserInfoStore,
 } from '@/store'
 import { useAutoScroll } from '@/hooks/use-auto-scroll'
@@ -40,7 +40,7 @@ export function SubTitle(props: { className?: string }) {
     accountUid: accountUid,
   })
   const { settings } = useAgentSettingsStore()
-  const { remote_rtc_uid } = useRTCStore()
+  // const { remote_rtc_uid } = useRTCStore()
   const { abort, reset } = useAutoScroll(scrollAreaRef)
 
   const presetSelected = React.useMemo(() => {
@@ -116,27 +116,28 @@ export function SubTitle(props: { className?: string }) {
         type="auto"
         viewportRef={scrollAreaRef}
       >
-        {history.map((item) => (
-          <ChatItem
-            key={`${item.turn_id}-${item.uid}`}
-            type={
-              item.uid === Number(remote_rtc_uid)
-                ? EChatItemType.USER
-                : EChatItemType.AGENT
+        {history
+          .sort((a, b) => {
+            if (a.turn_id !== b.turn_id) {
+              return a.turn_id - b.turn_id
             }
-            label={
-              item.uid === Number(remote_rtc_uid)
-                ? tAgent('userLabel')
-                : presetSelected?.display_name
-            }
-            status={item.status}
-            className={cn({
-              hidden: item.text === '',
-            })}
-          >
-            {item.text}
-          </ChatItem>
-        ))}
+            return a.uid - b.uid
+          })
+          .map((item) => (
+            <ChatItem
+              key={`${item.turn_id}-${item.uid}`}
+              type={item.uid ? EChatItemType.AGENT : EChatItemType.USER}
+              label={
+                item.uid ? presetSelected?.display_name : tAgent('userLabel')
+              }
+              status={item.status}
+              className={cn({
+                hidden: item.text === '',
+              })}
+            >
+              {item.text}
+            </ChatItem>
+          ))}
       </ScrollArea>
       {!isAutoScrollEnabledRef.current && (
         <ScrollDownButton
@@ -206,16 +207,18 @@ const ChatItem = React.forwardRef<
         })}
       >
         {children}
-        {status === EMessageStatus.IN_PROGRESS && type === EChatItemType.AGENT && (
-          <span className="text-xs text-icontext-disabled">...</span>
-        )}
+        {status === EMessageStatus.IN_PROGRESS &&
+          type === EChatItemType.AGENT && (
+            <span className="text-xs text-icontext-disabled">...</span>
+          )}
       </div>
-      {status === EMessageStatus.INTERRUPTED && type === EChatItemType.AGENT && (
-        <div className="bg-brand-white-1 flex w-fit items-center gap-1 rounded-xs p-1">
-          <ChatInterruptIcon className="size-4" />
-          <span className="text-xs text-icontext">{t('interrupted')}</span>
-        </div>
-      )}
+      {status === EMessageStatus.INTERRUPTED &&
+        type === EChatItemType.AGENT && (
+          <div className="flex w-fit items-center gap-1 rounded-xs bg-brand-white-1 p-1">
+            <ChatInterruptIcon className="size-4" />
+            <span className="text-xs text-icontext">{t('interrupted')}</span>
+          </div>
+        )}
     </div>
   )
 })
