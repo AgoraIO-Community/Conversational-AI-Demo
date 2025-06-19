@@ -67,7 +67,6 @@ import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.convoaiApi.subRender.v1.SelfRenderConfig
 import io.agora.scene.convoai.convoaiApi.subRender.v1.SelfSubRenderController
-import io.agora.scene.convoai.convoaiApi.subRender.v3.AgentSession
 import io.agora.scene.convoai.convoaiApi.subRender.v3.Transcription
 import io.agora.scene.convoai.rtm.IRtmManagerListener
 import kotlinx.coroutines.CoroutineScope
@@ -216,7 +215,13 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         }
 
         // Create ConversationalAIAPI instance
-        conversationalAIAPI = ConversationalAIAPIImpl(ConversationalAIAPIConfig(rtcEngine, rtmClient))
+        conversationalAIAPI = ConversationalAIAPIImpl(
+            ConversationalAIAPIConfig(
+                rtcEngine = rtcEngine,
+                rtmClient = rtmClient,
+                enableLog = true
+            )
+        )
         conversationalAIAPI?.addHandler(covEventHandler)
     }
 
@@ -349,23 +354,23 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private val covEventHandler = object : IConversationalAIAPIEventHandler {
         private val tag = "ConversationalAI"
-        override fun onAgentStateChanged(agentSession: AgentSession, event: StateChangeEvent) {
+        override fun onAgentStateChanged(agentUserId: String, event: StateChangeEvent) {
             mBinding?.agentStateView?.updateAgentState(event.state)
         }
 
-        override fun onAgentInterrupted(agentSession: AgentSession, event: InterruptEvent) {
+        override fun onAgentInterrupted(agentUserId: String, event: InterruptEvent) {
             // TODO: something
         }
 
-        override fun onAgentMetrics(agentSession: AgentSession, metrics: Metrics) {
+        override fun onAgentMetrics(agentUserId: String, metrics: Metric) {
             // TODO: something
         }
 
-        override fun onAgentError(agentSession: AgentSession, error: AgentError) {
+        override fun onAgentError(agentUserId: String, error: ModuleError) {
             // TODO: something
         }
 
-        override fun onTranscriptionUpdated(agentSession: AgentSession, transcription: Transcription) {
+        override fun onTranscriptionUpdated(agentUserId: String, transcription: Transcription) {
             // Handle transcription updates
             // Update subtitle display based on render mode
             if (!isSelfSubRender) {
@@ -382,15 +387,16 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         // Immediately show the connecting status
         isUserEndCall = false
         connectionState = AgentConnectionState.CONNECTING
+        isSelfSubRender = CovAgentManager.getPreset()?.isIndependent() == true
+
         if (DebugConfigSettings.isDebug) {
-            mBinding?.btnSendMsg?.isVisible = true
+            mBinding?.btnSendMsg?.isVisible = !isSelfSubRender
             CovAgentManager.channelName = "agent_debug_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8)
         } else {
             mBinding?.btnSendMsg?.isVisible = false
             CovAgentManager.channelName = "agent_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8)
         }
 
-        isSelfSubRender = CovAgentManager.getPreset()?.isIndependent() == true
         mBinding?.apply {
             if (isSelfSubRender) {
                 selfRenderController?.enable(true)
@@ -439,7 +445,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
 
-            conversationalAIAPI?.subscribe(CovAgentManager.channelName, completion = { errorInfo ->
+            conversationalAIAPI?.subscribeMessage(CovAgentManager.channelName, completion = { errorInfo ->
                 if (errorInfo != null) {
                     stopAgentAndLeaveChannel()
                     CovLogger.e(TAG, "subscribe ${CovAgentManager.channelName} error")
@@ -533,7 +539,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         stopRoomCountDownTask()
         stopTitleAnim()
         CovRtcManager.leaveChannel()
-        conversationalAIAPI?.unsubscribe(CovAgentManager.channelName, completion = {})
+        conversationalAIAPI?.unsubscribeMessage(CovAgentManager.channelName, completion = {})
         if (connectionState == AgentConnectionState.IDLE) {
             return
         }
@@ -698,7 +704,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                             }
 
                             0 -> {
-                                updateUserVolumeAnim(it.volume)
+                                // hide mic anim
+                                // updateUserVolumeAnim(it.volume)
                             }
                         }
                     }
@@ -1043,11 +1050,11 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
                 val chatMessage = ChatMessage(
                     priority = Priority.INTERRUPT,
-                    interruptable = true,
+                    responseInterruptable = true,
                     text = "tell me a joke!"
                 )
                 conversationalAIAPI?.chat(
-                    AgentSession(CovAgentManager.agentUID.toString()),
+                    CovAgentManager.agentUID.toString(),
                     chatMessage,
                     completion = { error ->
                         if (error != null) {
@@ -1063,7 +1070,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             agentStateView.setOnInterruptClickListener {
                 if (connectionState != AgentConnectionState.CONNECTED) return@setOnInterruptClickListener
                 conversationalAIAPI?.interrupt(
-                    AgentSession(CovAgentManager.agentUID.toString()),
+                    CovAgentManager.agentUID.toString(),
                     completion = { error ->
                         if (error != null) {
                             CovLogger.e(TAG, "Send interrupt failed: ${error.message}")
