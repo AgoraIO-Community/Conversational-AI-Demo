@@ -23,6 +23,7 @@ target 'Agent-global' do
   pod 'Kingfisher'
 
   pod 'Firebase/Crashlytics'
+  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
 
 end
 
