@@ -115,6 +115,15 @@ public class ChatViewController: UIViewController {
         return view
     }()
     
+    private lazy var aiNameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.text = ResourceManager.L10n.Conversation.agentName
+        label.textAlignment = .center
+        label.backgroundColor = UIColor(hex:0x000000, transparency: 0.25)
+        return label
+    }()
+    
     private lazy var micStateImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.ag_named("ic_agent_detail_mute"))
         return imageView
@@ -442,7 +451,7 @@ public class ChatViewController: UIViewController {
     private func stopAgent() {
         addLog("[Call] stopAgent()")
         rtmManager.logout(completion: nil)
-        convoAIAPI.unsubscribe(channelName: channelName) { error in
+        convoAIAPI.unsubscribeMessage(channelName: channelName) { error in
             
         }
         stopAgentRequest()
@@ -604,7 +613,7 @@ extension ChatViewController {
         agentUid = AppContext.agentUid
         remoteIsJoined = false
         
-        convoAIAPI.subscribe(channelName: channelName) { err in
+        convoAIAPI.subscribeMessage(channelName: channelName) { err in
             if let error = err {
                 
             }
@@ -900,6 +909,8 @@ extension ChatViewController: AgoraRtcEngineDelegate {
                         animateView.updateAgentState(.listening, volume: Int(currentVolume))
                     }
                 }
+            } else if (info.uid == 0) {
+                bottomBar.setVolumeProgress(value: Float(info.volume))
             }
         }
     }
@@ -999,9 +1010,7 @@ private extension ChatViewController {
     }
     
     @objc private func onClickStopSpeakingButton(_ sender: UIButton) {
-        let session = AgentSession()
-        session.userId = "\(agentUid)"
-        convoAIAPI.interrupt(agentSession: session) { error in
+        convoAIAPI.interrupt(agentUserId: "\(agentUid)") { error in
             
         }
     }
@@ -1230,9 +1239,7 @@ extension ChatViewController: RTMManagerDelegate {
     
     @objc func testChat() {
         let message = ChatMessage(text: "tell me a joke？", imageUrl: nil, audioUrl: nil)
-        let session = AgentSession()
-        session.userId = "\(agentUid)"
-        convoAIAPI.chat(agentSession: session, message: message) { error in
+        convoAIAPI.chat(agentUserId: "\(agentUid)", message: message) { error in
             
         }
     }
@@ -1240,30 +1247,30 @@ extension ChatViewController: RTMManagerDelegate {
 }
 
 extension ChatViewController: ConversationalAIAPIEventHandler {
-    public func onAgentStateChanged(agentSession: AgentSession, event: StateChangeEvent) {
+    public func onAgentStateChanged(agentUserId: String, event: StateChangeEvent) {
         agentStateView.setState(event.state)
     }
     
-    public func onAgentInterrupted(agentSession: AgentSession, event: InterruptEvent) {
+    public func onAgentInterrupted(agentUserId: String, event: InterruptEvent) {
         
     }
     
-    public func onAgentMetrics(agentSession: AgentSession, metrics: Metrics) {
+    public func onAgentMetrics(agentUserId: String, metrics: Metric) {
         addLog("<<< [onAgentMetrics] metrics: \(metrics)")
     }
     
-    public func onAgentError(agentSession: AgentSession, error: AgentError) {
+    public func onAgentError(agentUserId: String, error: ModuleError) {
         addLog("<<< [onAgentError] error: \(error)")
     }
     
-    public func onTranscriptionUpdated(agentSession: AgentSession, transcription: Transcription) {
+    public func onTranscriptionUpdated(agentUserId: String, transcription: Transcription) {
         if isSelfSubRender {
             return
         }
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.messageView.viewModel.reduceStandardMessage(turnId: transcription.turnId, message: transcription.text, timestamp: 0, owner: transcription.type, isInterrupted: transcription.status == .interrupt)
+            self.messageView.viewModel.reduceStandardMessage(turnId: transcription.turnId, message: transcription.text, timestamp: 0, owner: transcription.type, isInterrupted: transcription.status == .interrupted)
         }
     }
     
