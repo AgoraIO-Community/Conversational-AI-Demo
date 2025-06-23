@@ -27,8 +27,8 @@ object CovAgentManager {
     val enableBHVS = true
 
     // values
-    val uid = Random.nextInt(10000, 10000000)
-    const val agentUID = 999
+    val uid = Random.nextInt(10000, 100000000)
+    val agentUID = Random.nextInt(10000, 100000000)
     var channelName: String = ""
 
     // room expire time sec
