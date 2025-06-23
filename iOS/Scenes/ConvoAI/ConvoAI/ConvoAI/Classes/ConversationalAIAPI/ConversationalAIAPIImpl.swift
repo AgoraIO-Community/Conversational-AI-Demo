@@ -52,9 +52,8 @@ extension ConversationalAIAPIImpl: ConversationalAIAPI {
         
         let publishOptions = AgoraRtmPublishOptions()
         publishOptions.channelType = .user
-        publishOptions.customType = "user.transcription"
+        publishOptions.customType = MessageType.user.rawValue
         let messageData: [String : Any] = [
-            "customType": "user.transcription",
             "priority": message.priority.stringValue,
             "interruptable": message.responseInterruptable,
             "message": message.text ?? "",
@@ -469,4 +468,6 @@ extension ConversationalAIAPIImpl: TranscriptionDelegate {
         callMessagePrint(msg: txt)
     }
 }
+
+
 

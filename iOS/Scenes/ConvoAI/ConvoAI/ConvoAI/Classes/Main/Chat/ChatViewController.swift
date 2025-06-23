@@ -26,7 +26,7 @@ public class ChatViewController: UIViewController {
     private let tag = "ChatViewController"
     private var isSelfSubRender = false
     private lazy var enableMetric: Bool = {
-        let res = DeveloperConfig.shared.getMetrics()
+        let res = DeveloperConfig.shared.metrics
         return res
     }()
     
@@ -1167,7 +1167,7 @@ extension ChatViewController {
             .setSessionLimit(enabled: !DeveloperConfig.shared.getSessionFree(), onChange: { [weak self] isOn in
                 self?.timerCoordinator.setDurationLimit(limited: isOn)
             })
-            .setMetrics(enabled: DeveloperConfig.shared.getMetrics(), onChange: { [weak self] isOn in
+            .setMetrics(enabled: DeveloperConfig.shared.metrics, onChange: { [weak self] isOn in
                 self?.enableMetric = isOn
             })
             .setCloseDevModeCallback { [weak self] in
@@ -1337,4 +1337,5 @@ extension ChatViewController: ConversationSubtitleDelegate1 {
         }
     }
 }
+
 
