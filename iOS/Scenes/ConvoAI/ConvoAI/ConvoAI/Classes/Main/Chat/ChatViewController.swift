@@ -35,6 +35,7 @@ public class ChatViewController: UIViewController {
         button.addTarget(self, action: #selector(testChat), for: .touchUpInside)
         button.setTitle("Chat", for: .normal)
         button.backgroundColor = .blue
+        button.isHidden = true
         return button
     }()
     
@@ -364,6 +365,7 @@ public class ChatViewController: UIViewController {
         animateView.setupMediaPlayer(rtcEngine)
         animateView.updateAgentState(.idle)
         devModeButton.isHidden = !DeveloperConfig.shared.isDeveloperMode
+        sendMessageButton.isHidden = !DeveloperConfig.shared.isDeveloperMode
 
         guard let rtmEngine = rtmManager.getRtmEngine() else {
             //TODO: log
@@ -1040,6 +1042,7 @@ private extension ChatViewController {
     func onThresholdReached() {
         if !DeveloperConfig.shared.isDeveloperMode {
             devModeButton.isHidden = false
+            sendMessageButton.isHidden = false
             DeveloperConfig.shared.isDeveloperMode = true
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
@@ -1172,6 +1175,7 @@ extension ChatViewController {
             })
             .setCloseDevModeCallback { [weak self] in
                 self?.devModeButton.isHidden = true
+                self?.sendMessageButton.isHidden = true
             }
             .setSwitchServerCallback { [weak self] in
                 self?.switchEnvironment()
