@@ -155,6 +155,7 @@ extension ConversationalAIAPIImpl: ConversationalAIAPI {
         let traceId = UUID().uuidString.prefix(8)
         callMessagePrint(msg: ">>> [traceId:\(traceId)] [subscribe] channel: \(channelName)")
         
+        stateChangeEvent = nil
         self.transcriptionController.reset()
         let subscribeOptions = AgoraRtmSubscribeOptions()
         subscribeOptions.features = [.presence, .message]
@@ -175,6 +176,7 @@ extension ConversationalAIAPIImpl: ConversationalAIAPI {
             return
         }
         channel = nil
+        stateChangeEvent = nil
         transcriptionController.reset()
         let traceId = UUID().uuidString.prefix(8)
         callMessagePrint(msg: ">>> [traceId:\(traceId)] [unsubscribe] channel: \(channelName)")
@@ -415,6 +417,7 @@ extension ConversationalAIAPIImpl: AgoraRtmClientDelegate {
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceivePresenceEvent event: AgoraRtmPresenceEvent) {
         callMessagePrint(msg: "<<< [didReceivePresenceEvent] routing: \(event)")
         if event.channelName != channel {
+            callMessagePrint(msg: "<<< channel name is not equal current chanel: \(event)")
             return
         }
         
