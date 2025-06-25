@@ -374,7 +374,7 @@ public class ChatViewController: UIViewController {
         
         //init transcritpion V3
 
-        let config = ConversationalAIAPIConfig(rtcEngine: rtcEngine, rtmEngine: rtmEngine, renderMode: .words)
+        let config = ConversationalAIAPIConfig(rtcEngine: rtcEngine, rtmEngine: rtmEngine, renderMode: .words, enableLog: true)
         convoAIAPI = ConversationalAIAPIImpl(config: config)
         
         //init transcritpion V1
@@ -509,6 +509,8 @@ public class ChatViewController: UIViewController {
                         SVProgressHUD.showInfo(withStatus: err.localizedDescription)
                     }
                 }
+            } else {
+                AppContext.loginManager()?.logout()
             }
         }
         self.navigationController?.pushViewController(ssoWebVC, animated: false)

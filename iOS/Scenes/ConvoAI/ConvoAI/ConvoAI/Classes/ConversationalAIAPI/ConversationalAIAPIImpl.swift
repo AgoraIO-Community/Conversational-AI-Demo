@@ -267,7 +267,7 @@ extension ConversationalAIAPIImpl {
     private func notifyDelegatesDebugLog(_ log: String) {
         DispatchQueue.main.async {
             for delegate in self.delegates.allObjects {
-                delegate.onDebugLog(log)
+//                delegate.onDebugLog(log)
             }
         }
     }
@@ -366,7 +366,9 @@ extension ConversationalAIAPIImpl {
     
     func callMessagePrint(msg: String) {
         let log = "\(tag) \(msg)"
-        writeLogToRTCSDK(log: log)
+        if config.enableLog {
+            writeLogToRTCSDK(log: log)
+        }
         notifyDelegatesDebugLog(log)
     }
     
