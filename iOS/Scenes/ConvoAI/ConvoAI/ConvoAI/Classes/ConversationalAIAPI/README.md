@@ -21,6 +21,7 @@
 ## Integration Steps
 
 1. Copy the following files and folders to your iOS project:
+
    - [ConversationalAIAPI](./) (entire folder)
 
 2. Ensure your project has integrated Agora RTC/RTM, and RTC version is **4.5.1 or above**.
@@ -115,7 +116,7 @@ Please follow these steps to quickly integrate and use the ConversationalAI API:
 - [ConversationalAIAPI.swift](./ConversationalAIAPI.swift) — API interfaces and related data structures and enums
 - [ConversationalAIAPIImpl.swift](./ConversationalAIAPIImpl.swift) — ConversationalAI API main implementation logic
 - [Transcription/](./Transcription/)
-  - [TranscriptionController.swift](./SubRender/TranscriptionController.swift) — Subtitle controller
+  - [TranscriptionController.swift](./Transcription/TranscriptionController.swift) — Subtitle controller
 
 > The above files and folders are all the content needed to integrate ConversationalAI API, no need to copy other files.
 
