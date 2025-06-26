@@ -24,7 +24,7 @@ import AgoraRtmKit
         return subtitleController
     }()
 
-    init(config: ConversationalAIAPIConfig) {
+    @objc public init(config: ConversationalAIAPIConfig) {
         self.config = config
         super.init()
         
@@ -139,7 +139,11 @@ extension ConversationalAIAPIImpl: ConversationalAIAPI {
         }
     }
     
-    @objc public func loadAudioSettings(secnario: AgoraAudioScenario = .aiClient) {
+    @objc public func loadAudioSettings() {
+        loadAudioSettings(secnario: .aiClient)
+    }
+    
+    @objc public func loadAudioSettings(secnario: AgoraAudioScenario) {
         callMessagePrint(msg: ">>> [loadAudioSettings] secnairo: \(secnario)")
         self.config.rtcEngine?.setAudioScenario(secnario)
         
