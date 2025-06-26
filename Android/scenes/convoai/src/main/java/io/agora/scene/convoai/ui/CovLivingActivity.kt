@@ -839,8 +839,12 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     clBottomLogged.llCalling.visibility = View.VISIBLE
                     clBottomLogged.btnJoinCall.visibility = View.INVISIBLE
                     vConnecting.visibility = View.GONE
-                    agentStateView.visibility =
-                        if (connectionState == AgentConnectionState.CONNECTED) View.VISIBLE else View.GONE
+                    if (isSelfSubRender) {
+                        agentStateView.visibility = View.GONE
+                    } else {
+                        agentStateView.visibility =
+                            if (connectionState == AgentConnectionState.CONNECTED) View.VISIBLE else View.GONE
+                    }
                 }
 
                 AgentConnectionState.ERROR -> {}

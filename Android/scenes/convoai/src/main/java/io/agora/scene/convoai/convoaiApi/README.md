@@ -10,11 +10,6 @@
 > You are expected to have already integrated Agora RTC/RTM in your project. Please ensure you are using Agora RTC SDK version **4.5.1 or above**.
 >
 > ⚠️ Before using this component, you must enable the "Real-time Messaging (RTM)" feature in your Agora project console. If RTM is not enabled, the component will not function properly.
->
-> RTM Integration Guide: [RTM](https://doc.shengwang.cn/doc/rtm2/android/landing-page)
-
-![Enable RTM in Agora Console](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ent-full/sdhy_7.jpg)
-*Screenshot: Enable RTM in the Agora Console Project Settings*
 
 ---
 
@@ -82,30 +77,13 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
    rtcEngine.joinChannel(token, channelName, null, userId)
    ```
 
-6. **Send a message to the AI agent**
-
-   ```kotlin
-   api.chat(
-       agentUserId = "agentId",
-       message = ChatMessage(
-           priority = Priority.INTERRUPT,
-           responseInterruptable = true,
-           text = "Hello!"
-       )
-   ) { error ->
-       if (error != null) {
-           // handle error
-       }
-   }
-   ```
-
-7. **Interrupt the agent (if needed)**
+6. **Interrupt the agent (if needed)**
 
    ```kotlin
    api.interrupt("agentId") { error -> /* ... */ }
    ```
 
-8. **Destroy the API instance when done**
+7. **Destroy the API instance when done**
 
    ```kotlin
    api.destroy()
@@ -124,12 +102,6 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
 
 - **All event callbacks are on the main thread.**  
   You can safely update UI in your event handlers.
-
-- **Some callbacks (e.g., `onTranscriptionUpdated`) may be high-frequency.**  
-  If needed, implement deduplication or throttling in your handler.
-
-- **Error Handling:**  
-  All API methods provide error callbacks. Always check for errors in your completion handlers.
 
 ---
 

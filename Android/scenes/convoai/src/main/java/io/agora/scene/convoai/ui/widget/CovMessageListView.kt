@@ -1,4 +1,4 @@
-package io.agora.scene.convoai.convoaiApi.subRender
+package io.agora.scene.convoai.ui.widget
 
 import android.content.Context
 import android.os.Handler
@@ -79,9 +79,9 @@ class CovMessageListView @JvmOverloads constructor(
                     if (dy < -50) {
                         if (!recyclerView.canScrollVertically(1)) {
                             // Don't show button if already at bottom
-                            binding.cvToBottom.visibility = View.INVISIBLE
+                            binding.cvToBottom.visibility = INVISIBLE
                         } else {
-                            binding.cvToBottom.visibility = View.VISIBLE
+                            binding.cvToBottom.visibility = VISIBLE
                             autoScrollToBottom = false
                         }
                     }
@@ -96,7 +96,7 @@ class CovMessageListView @JvmOverloads constructor(
     private fun setupBottomButton() {
         binding.btnToBottom.setOnClickListener {
             binding.btnToBottom.isEnabled = false
-            binding.cvToBottom.visibility = View.INVISIBLE
+            binding.cvToBottom.visibility = INVISIBLE
             autoScrollToBottom = true
             scrollToBottom()
             binding.btnToBottom.postDelayed({ binding.btnToBottom.isEnabled = true }, 300)
@@ -112,7 +112,7 @@ class CovMessageListView @JvmOverloads constructor(
             scrollToBottom()
         } else if (!isScrollBottom) {
             // Show button and visual cue when not at bottom
-            binding.cvToBottom.visibility = View.VISIBLE
+            binding.cvToBottom.visibility = VISIBLE
 
             // Only show visual cue for new messages to avoid frequent flashing during updates
             if (isNewMessage) {
@@ -126,7 +126,7 @@ class CovMessageListView @JvmOverloads constructor(
      */
     fun clearMessages() {
         autoScrollToBottom = true
-        binding.cvToBottom.visibility = View.INVISIBLE
+        binding.cvToBottom.visibility = INVISIBLE
         messageAdapter.clearMessages()
     }
 
@@ -227,14 +227,14 @@ class CovMessageListView @JvmOverloads constructor(
             val isAtBottom = !binding.rvMessages.canScrollVertically(1)
 
             if (isAtBottom) {
-                if (binding.cvToBottom.visibility != View.INVISIBLE) {
-                    binding.cvToBottom.visibility = View.INVISIBLE
+                if (binding.cvToBottom.visibility != INVISIBLE) {
+                    binding.cvToBottom.visibility = INVISIBLE
                 }
                 autoScrollToBottom = true
                 isScrollBottom = true
             } else {
-                if (binding.cvToBottom.visibility != View.VISIBLE) {
-                    binding.cvToBottom.visibility = View.VISIBLE
+                if (binding.cvToBottom.visibility != VISIBLE) {
+                    binding.cvToBottom.visibility = VISIBLE
                 }
                 // Don't auto-change autoScrollToBottom, let user trigger manually
             }
@@ -247,7 +247,7 @@ class CovMessageListView @JvmOverloads constructor(
     private fun showVisualCueForNewMessage() {
         if (!autoScrollToBottom) {
             binding.cvToBottom.apply {
-                if (visibility == View.VISIBLE) {
+                if (visibility == VISIBLE) {
                     // Create "bounce" effect to indicate new message
                     animate().scaleX(1.2f).scaleY(1.2f).setDuration(150).withEndAction {
                         animate().scaleX(1f).scaleY(1f).setDuration(150)
@@ -255,7 +255,7 @@ class CovMessageListView @JvmOverloads constructor(
                 } else {
                     // Fade in effect
                     alpha = 0f
-                    visibility = View.VISIBLE
+                    visibility = VISIBLE
                     animate().alpha(1f).setDuration(200).start()
                 }
             }
@@ -468,7 +468,7 @@ class CovMessageListView @JvmOverloads constructor(
 
             // Update UI state
             isScrollBottom = true
-            binding.cvToBottom.visibility = View.INVISIBLE
+            binding.cvToBottom.visibility = INVISIBLE
         }
     }
 }
