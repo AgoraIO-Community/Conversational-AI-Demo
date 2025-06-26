@@ -65,7 +65,7 @@ TTS_PARAMS=<TTS Parameters>
 
 ### 2.2 Real-time Subtitles
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- To implement this feature, you need to use the [Open Source Subtitle Processing Module](src/main/java/io/agora/scene/convoai/convoaiApi/IConversationalAIAPI.kt)
+- To implement this feature, please refer to [README.md in the convoaiApi directory](src/main/java/io/agora/scene/convoai/convoaiApi/README.md) for integration.
 - ⚠️ The Open Source subtitle processing module is developed in Kotlin. If your project is a pure Java project, you can refer to Google's official documentation [Add Kotlin to an existing app](https://developer.android.com/kotlin/add-kotlin) to integrate the corresponding files into your project
 
 
