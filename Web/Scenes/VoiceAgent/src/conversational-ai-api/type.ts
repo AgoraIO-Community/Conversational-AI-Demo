@@ -134,19 +134,25 @@ export type TAgentMetric = {
 }
 
 /**
- * Agent metrics information type / 代理指标信息类型
+ * Module error type definition / 模块错误类型定义
  *
- * Represents the metrics data structure for agent monitoring, including type, name,
- * value, and timestamp / 表示代理监控的指标数据结构，包含类型、名称、数值和时间戳
+ * @description
+ * Represents error information from different AI modules including error type, code,
+ * message and timestamp. Used for error handling and debugging.
+ * 表示来自不同 AI 模块的错误信息，包括错误类型、代码、消息和时间戳。用于错误处理和调试。
  *
  * @remarks
- * - All metric values should be numeric / 所有指标值都应为数值类型
- * - Timestamp is in milliseconds since epoch / 时间戳为自纪元以来的毫秒数
+ * - Error codes are module-specific and should be documented by each module
+ *   错误代码是模块特定的，应由每个模块进行文档记录
+ * - Timestamp is in Unix milliseconds format
+ *   时间戳采用 Unix 毫秒格式
+ * - Error messages should be human readable and provide actionable information
+ *   错误消息应该易于人类阅读并提供可操作的信息
  *
- * @param type The module type of the metric / 指标所属的模块类型 {@link EModuleType}
- * @param name The name identifier of the metric / 指标的名称标识符
- * @param value The numeric value of the metric / 指标的数值
- * @param timestamp The timestamp when the metric was recorded / 记录该指标时的时间戳
+ * @param type - The module type where error occurred / 发生错误的模块类型 {@link EModuleType}
+ * @param code - Error code specific to the module / 模块特定的错误代码
+ * @param message - Human readable error description / 人类可读的错误描述
+ * @param timestamp - Unix timestamp in milliseconds when error occurred / 错误发生时的 Unix 时间戳(毫秒)
  *
  * @since 1.0.0
  */
@@ -412,18 +418,27 @@ export type TQueueItem = {
 }
 
 /**
- * Interface representing a subtitle helper item with generic metadata
+ * 字幕帮助器项的接口 / Interface for subtitle helper item
  *
- * @interface ISubtitleHelperItem
- * @template T - Type of the metadata
+ * 定义了字幕系统中单个字幕项的数据结构。包含了字幕的基本信息，如用户ID、流ID、轮次ID、时间戳、文本内容、状态和元数据。
+ * Defines the data structure for a single subtitle item in the subtitle system. Contains basic subtitle information such as user ID, stream ID, turn ID, timestamp, text content, status, and metadata.
  *
- * @property {string} uid - Unique identifier for the subtitle item
- * @property {number} stream_id - Stream identifier number
- * @property {number} turn_id - Turn identifier number
- * @property {number} _time - Timestamp of the subtitle item
- * @property {string} text - Text content of the subtitle
- * @property {ETurnStatus} status - Status of the turn
- * @property {T | null} metadata - Additional metadata of type T, can be null
+ * @remarks
+ * - 该接口支持泛型，可以根据需要定义不同类型的元数据
+ * - This interface supports generics, allowing different types of metadata as needed
+ * - 状态值必须是 {@link ETurnStatus} 中定义的有效值
+ * - Status value must be a valid value defined in {@link ETurnStatus}
+ *
+ * @param T - 元数据的类型 / Type of metadata
+ * @param uid - 用户的唯一标识符 / Unique identifier for the user
+ * @param stream_id - 流的唯一标识符 / Stream identifier
+ * @param turn_id - 对话轮次的标识符 / Turn identifier in the conversation
+ * @param _time - 字幕的时间戳（毫秒） / Timestamp of the subtitle (in milliseconds)
+ * @param text - 字幕文本内容 / Subtitle text content
+ * @param status - 字幕项的当前状态 / Current status of the subtitle item
+ * @param metadata - 附加的元数据信息 / Additional metadata information
+ *
+ * @since 1.0.0
  */
 export interface ISubtitleHelperItem<T> {
   uid: string
