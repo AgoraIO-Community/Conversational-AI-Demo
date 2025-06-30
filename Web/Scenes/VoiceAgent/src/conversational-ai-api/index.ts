@@ -1,5 +1,5 @@
-import { IAgoraRTCClient } from 'agora-rtc-sdk-ng'
-import { RTMClient, RTMEvents, ChannelType } from 'agora-rtm'
+import type { IAgoraRTCClient } from 'agora-rtc-sdk-ng'
+import type { RTMClient, RTMEvents, ChannelType } from 'agora-rtm'
 
 import { EventHelper } from '@/conversational-ai-api/utils/event'
 import { CovSubRenderController } from '@/conversational-ai-api/utils/sub-render'
@@ -7,17 +7,17 @@ import {
   ESubtitleHelperMode,
   ERTMEvents,
   ERTCEvents,
-  IConversationalAIAPIEventHandlers,
+  type IConversationalAIAPIEventHandlers,
   EConversationalAIAPIEvents,
   NotFoundError,
-  EAgentState,
-  ISubtitleHelperItem,
-  IUserTranscription,
-  IAgentTranscription,
-  TStateChangeEvent,
+  type EAgentState,
+  type ISubtitleHelperItem,
+  type IUserTranscription,
+  type IAgentTranscription,
+  type TStateChangeEvent,
   EMessageType,
-  TAgentMetric,
-  TModuleError,
+  type TAgentMetric,
+  type TModuleError,
 } from '@/conversational-ai-api/type'
 import { factoryFormatLog } from '@/conversational-ai-api/utils'
 import { logger, ELoggerType } from '@/lib/logger'
