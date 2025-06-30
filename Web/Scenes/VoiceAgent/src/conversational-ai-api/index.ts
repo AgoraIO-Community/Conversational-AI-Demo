@@ -36,6 +36,52 @@ export interface IConversationalAIAPIConfig {
   enableLog?: boolean
 }
 
+/**
+ * A class that manages conversational AI interactions through Agora's RTC and RTM services.
+ * 一个通过 Agora 的 RTC 和 RTM 服务管理会话 AI 交互的类。
+ * 
+ * Provides functionality to handle real-time communication between users and AI agents,
+ * including message processing, state management, and event handling. It integrates with
+ * Agora's RTC client for audio streaming and RTM client for messaging.
+ * 
+ * 提供用户与 AI 代理之间实时通信的功能，包括消息处理、状态管理和事件处理。
+ * 它集成了用于音频流的 Agora RTC 客户端和用于消息传递的 RTM 客户端。
+ * 
+ * Key features 主要功能：
+ * - Singleton instance management 单例实例管理
+ * - RTC and RTM event handling RTC 和 RTM 事件处理
+ * - Chat history and transcription management 聊天历史和转录管理
+ * - Agent state monitoring 代理状态监控
+ * - Debug logging 调试日志
+ * 
+ * @remarks
+ * - Must be initialized with {@link IConversationalAIAPIConfig} before use
+ *   使用前必须使用 {@link IConversationalAIAPIConfig} 初始化
+ * - Only one instance can exist at a time
+ *   同一时间只能存在一个实例
+ * - Requires both RTC and RTM engines to be properly configured
+ *   需要正确配置 RTC 和 RTM 引擎
+ * - Events are emitted for state changes, transcriptions, and errors
+ *   会发出状态变化、转录和错误的事件
+ * 
+ * @example
+ * ```typescript
+ * const api = ConversationalAIAPI.init({
+ *   rtcEngine: rtcClient,
+ *   rtmEngine: rtmClient,
+ *   renderMode: ESubtitleHelperMode.REALTIME
+ * });
+ * ```
+ * 
+ * @fires {@link EConversationalAIAPIEvents.TRANSCRIPTION_UPDATED} When chat history is updated / 当聊天历史更新时
+ * @fires {@link EConversationalAIAPIEvents.AGENT_STATE_CHANGED} When agent state changes / 当代理状态改变时
+ * @fires {@link EConversationalAIAPIEvents.AGENT_INTERRUPTED} When agent is interrupted / 当代理被中断时
+ * @fires {@link EConversationalAIAPIEvents.AGENT_METRICS} When agent metrics are received / 当收到代理指标时
+ * @fires {@link EConversationalAIAPIEvents.AGENT_ERROR} When an error occurs / 当发生错误时
+ * @fires {@link EConversationalAIAPIEvents.DEBUG_LOG} When debug logs are generated / 当生成调试日志时
+ * 
+ * @since 1.0.0
+ */
 export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHandlers> {
   private static NAME = TAG
   private static VERSION = VERSION
@@ -78,10 +124,10 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
   }
 
   public static getInstance() {
-    if (!this._instance) {
+    if (!ConversationalAIAPI._instance) {
       throw new NotFoundError('ConversationalAIAPI is not initialized')
     }
-    return this._instance
+    return ConversationalAIAPI._instance
   }
 
   public getCfg() {
@@ -98,13 +144,13 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
   }
 
   public static init(cfg: IConversationalAIAPIConfig) {
-    this._instance = new ConversationalAIAPI()
-    this._instance.rtcEngine = cfg.rtcEngine
-    this._instance.rtmEngine = cfg.rtmEngine
-    this._instance.renderMode = cfg.renderMode ?? ESubtitleHelperMode.UNKNOWN
-    this._instance.enableLog = cfg.enableLog ?? false
+    ConversationalAIAPI._instance = new ConversationalAIAPI()
+    ConversationalAIAPI._instance.rtcEngine = cfg.rtcEngine
+    ConversationalAIAPI._instance.rtmEngine = cfg.rtmEngine
+    ConversationalAIAPI._instance.renderMode = cfg.renderMode ?? ESubtitleHelperMode.UNKNOWN
+    ConversationalAIAPI._instance.enableLog = cfg.enableLog ?? false
 
-    return this._instance
+    return ConversationalAIAPI._instance
   }
 
   public subscribeMessage(channel: string) {

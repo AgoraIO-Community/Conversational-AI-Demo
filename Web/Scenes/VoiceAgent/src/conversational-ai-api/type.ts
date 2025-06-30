@@ -1,12 +1,12 @@
-import { RTMEvents } from 'agora-rtm'
-import {
+import type { RTMEvents } from 'agora-rtm'
+import type {
   IMicrophoneAudioTrack,
   UID,
-  type NetworkQuality,
-  type IAgoraRTCRemoteUser,
-  type ConnectionState,
+  NetworkQuality,
+  IAgoraRTCRemoteUser,
+  ConnectionState,
   ICameraVideoTrack,
-  type ConnectionDisconnectedReason,
+  ConnectionDisconnectedReason,
 } from 'agora-rtc-sdk-ng'
 
 export enum ESubtitleHelperMode {
@@ -55,6 +55,7 @@ export enum ERTCCustomEvents {
   LOCAL_TRACKS_CHANGED = 'local-tracks-changed',
 }
 
+
 export enum EConversationalAIAPIEvents {
   AGENT_STATE_CHANGED = 'agent-state-changed',
   AGENT_INTERRUPTED = 'agent-interrupted',
@@ -92,6 +93,52 @@ export type TStateChangeEvent = {
   reason: string
 }
 
+
+/**
+ * Event handlers interface for the Conversational AI API module.
+ * 会话 AI API 模块的事件处理器接口。
+ * 
+ * @since 1.0.0
+ * 
+ * Defines a set of event handlers that can be implemented to respond to various
+ * events emitted by the Conversational AI system, including agent state changes,
+ * interruptions, metrics, errors, and transcription updates.
+ * 定义了一组事件处理器，用于响应会话 AI 系统发出的各种事件，包括代理状态变化、
+ * 中断、指标、错误和转录更新。
+ * 
+ * @remarks
+ * - All handlers are required to be implemented when using this interface
+ *   使用此接口时必须实现所有处理器
+ * - Events are emitted asynchronously and should be handled accordingly
+ *   事件异步发出，应相应处理
+ * - Event handlers should be lightweight to avoid blocking the event loop
+ *   事件处理器应该轻量化以避免阻塞事件循环
+ * - Error handling should be implemented within each handler to prevent crashes
+ *   每个处理器内部都应实现错误处理以防崩溃
+ * 
+ * @example
+ * ```typescript
+ * const handlers: IConversationalAIAPIEventHandlers = {
+ *   [EConversationalAIAPIEvents.AGENT_STATE_CHANGED]: (agentUserId, event) => {
+ *     console.log(`Agent ${agentUserId} state changed:`, event);
+ *   },
+ *   // ... implement other handlers
+ * };
+ * ```
+ * 
+ * @param agentUserId - The unique identifier of the AI agent / AI 代理的唯一标识符
+ * @param event - Event data specific to each event type / 每种事件类型的具体事件数据
+ * @param metrics - Performance metrics data for the agent / 代理的性能指标数据
+ * @param error - Error information when agent encounters issues / 代理遇到问题时的错误信息
+ * @param transcription - Array of transcription items containing user and agent dialogue / 包含用户和代理对话的转录项数组
+ * @param message - Debug log message string / 调试日志消息字符串
+ * 
+ * @see {@link EConversationalAIAPIEvents} for all available event types / 查看所有可用事件类型
+ * @see {@link TStateChangeEvent} for state change event structure / 查看状态变更事件结构
+ * @see {@link TAgentMetric} for agent metrics structure / 查看代理指标结构
+ * @see {@link TModuleError} for error structure / 查看错误结构
+ * @see {@link ISubtitleHelperItem} for transcription item structure / 查看转录项结构
+ */
 export interface IConversationalAIAPIEventHandlers {
   [EConversationalAIAPIEvents.AGENT_STATE_CHANGED]: (
     agentUserId: string,
