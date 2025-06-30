@@ -1,8 +1,8 @@
-import type { IAgoraRTCClient } from 'agora-rtc-sdk-ng'
-import type { RTMClient, RTMEvents, ChannelType } from 'agora-rtm'
+import type { IAgoraRTCClient } from "agora-rtc-sdk-ng"
+import type { RTMClient, RTMEvents, ChannelType } from "agora-rtm"
 
-import { EventHelper } from '@/conversational-ai-api/utils/event'
-import { CovSubRenderController } from '@/conversational-ai-api/utils/sub-render'
+import { EventHelper } from "@/conversational-ai-api/utils/event"
+import { CovSubRenderController } from "@/conversational-ai-api/utils/sub-render"
 import {
   ESubtitleHelperMode,
   ERTMEvents,
@@ -18,14 +18,14 @@ import {
   EMessageType,
   type TAgentMetric,
   type TModuleError,
-} from '@/conversational-ai-api/type'
-import { factoryFormatLog } from '@/conversational-ai-api/utils'
-import { logger, ELoggerType } from '@/lib/logger'
-import { genTranceID } from '@/lib/utils'
+} from "@/conversational-ai-api/type"
+import { factoryFormatLog } from "@/conversational-ai-api/utils"
+import { logger, ELoggerType } from "@/lib/logger"
+import { genTranceID } from "@/lib/utils"
 
-const TAG = 'ConversationalAIAPI'
+const TAG = "ConversationalAIAPI"
 // const CONSOLE_LOG_PREFIX = `[${TAG}]`
-const VERSION = '1.6.0'
+const VERSION = "1.6.0"
 
 const formatLog = factoryFormatLog({ tag: TAG })
 
@@ -39,21 +39,21 @@ export interface IConversationalAIAPIConfig {
 /**
  * A class that manages conversational AI interactions through Agora's RTC and RTM services.
  * 一个通过 Agora 的 RTC 和 RTM 服务管理会话 AI 交互的类。
- * 
+ *
  * Provides functionality to handle real-time communication between users and AI agents,
  * including message processing, state management, and event handling. It integrates with
  * Agora's RTC client for audio streaming and RTM client for messaging.
- * 
+ *
  * 提供用户与 AI 代理之间实时通信的功能，包括消息处理、状态管理和事件处理。
  * 它集成了用于音频流的 Agora RTC 客户端和用于消息传递的 RTM 客户端。
- * 
+ *
  * Key features 主要功能：
  * - Singleton instance management 单例实例管理
  * - RTC and RTM event handling RTC 和 RTM 事件处理
  * - Chat history and transcription management 聊天历史和转录管理
  * - Agent state monitoring 代理状态监控
  * - Debug logging 调试日志
- * 
+ *
  * @remarks
  * - Must be initialized with {@link IConversationalAIAPIConfig} before use
  *   使用前必须使用 {@link IConversationalAIAPIConfig} 初始化
@@ -63,7 +63,7 @@ export interface IConversationalAIAPIConfig {
  *   需要正确配置 RTC 和 RTM 引擎
  * - Events are emitted for state changes, transcriptions, and errors
  *   会发出状态变化、转录和错误的事件
- * 
+ *
  * @example
  * ```typescript
  * const api = ConversationalAIAPI.init({
@@ -72,15 +72,15 @@ export interface IConversationalAIAPIConfig {
  *   renderMode: ESubtitleHelperMode.REALTIME
  * });
  * ```
- * 
+ *
  * @fires {@link EConversationalAIAPIEvents.TRANSCRIPTION_UPDATED} When chat history is updated / 当聊天历史更新时
  * @fires {@link EConversationalAIAPIEvents.AGENT_STATE_CHANGED} When agent state changes / 当代理状态改变时
  * @fires {@link EConversationalAIAPIEvents.AGENT_INTERRUPTED} When agent is interrupted / 当代理被中断时
  * @fires {@link EConversationalAIAPIEvents.AGENT_METRICS} When agent metrics are received / 当收到代理指标时
  * @fires {@link EConversationalAIAPIEvents.AGENT_ERROR} When an error occurs / 当发生错误时
  * @fires {@link EConversationalAIAPIEvents.DEBUG_LOG} When debug logs are generated / 当生成调试日志时
- * 
- * @since 1.0.0
+ *
+ * @since 1.6.0
  */
 export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHandlers> {
   private static NAME = TAG
@@ -125,14 +125,14 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
 
   public static getInstance() {
     if (!ConversationalAIAPI._instance) {
-      throw new NotFoundError('ConversationalAIAPI is not initialized')
+      throw new NotFoundError("ConversationalAIAPI is not initialized")
     }
     return ConversationalAIAPI._instance
   }
 
   public getCfg() {
     if (!this.rtcEngine || !this.rtmEngine) {
-      throw new NotFoundError('ConversationalAIAPI is not initialized')
+      throw new NotFoundError("ConversationalAIAPI is not initialized")
     }
     return {
       rtcEngine: this.rtcEngine,
@@ -147,7 +147,8 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
     ConversationalAIAPI._instance = new ConversationalAIAPI()
     ConversationalAIAPI._instance.rtcEngine = cfg.rtcEngine
     ConversationalAIAPI._instance.rtmEngine = cfg.rtmEngine
-    ConversationalAIAPI._instance.renderMode = cfg.renderMode ?? ESubtitleHelperMode.UNKNOWN
+    ConversationalAIAPI._instance.renderMode =
+      cfg.renderMode ?? ESubtitleHelperMode.UNKNOWN
     ConversationalAIAPI._instance.enableLog = cfg.enableLog ?? false
 
     return ConversationalAIAPI._instance
@@ -199,7 +200,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
     const { rtmEngine } = this.getCfg()
 
     const options = {
-      channelType: 'USER' as ChannelType,
+      channelType: "USER" as ChannelType,
       customType: EMessageType.MSG_INTERRUPTED,
     }
     const messageStr = JSON.stringify({
@@ -211,17 +212,17 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       this.callMessagePrint(
         ELoggerType.debug,
         `>>> [trancID:${traceId}] [interrupt]`,
-        'sucessfully sent interrupt message',
+        "sucessfully sent interrupt message",
         result
       )
     } catch (error: unknown) {
       this.callMessagePrint(
         ELoggerType.error,
         `>>> [trancID:${traceId}] [interrupt]`,
-        'failed to send interrupt message',
+        "failed to send interrupt message",
         error
       )
-      throw new Error('failed to send interrupt message')
+      throw new Error("failed to send interrupt message")
     }
   }
 
@@ -361,7 +362,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
     try {
       const messageData = message.message
       // if string, parse it
-      if (typeof messageData === 'string') {
+      if (typeof messageData === "string") {
         const parsedMessage = JSON.parse(messageData)
         this.callMessagePrint(
           ELoggerType.debug,
@@ -375,7 +376,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       }
       // if Uint8Array, convert to string
       if (messageData instanceof Uint8Array) {
-        const decoder = new TextDecoder('utf-8')
+        const decoder = new TextDecoder("utf-8")
         const messageString = decoder.decode(messageData)
         const parsedMessage = JSON.parse(messageString)
         this.callMessagePrint(
@@ -391,13 +392,13 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       this.callMessagePrint(
         ELoggerType.warn,
         `>>> [trancID:${traceId}] ${ERTMEvents.MESSAGE}`,
-        'Unsupported message type received'
+        "Unsupported message type received"
       )
     } catch (error) {
       this.callMessagePrint(
         ELoggerType.error,
         `>>> [trancID:${traceId}] ${ERTMEvents.MESSAGE}`,
-        'Failed to parse message',
+        "Failed to parse message",
         error
       )
     }
@@ -418,7 +419,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
         `State changed: ${stateChanged.state}, Turn ID: ${stateChanged.turn_id}, timestamp: ${presence.timestamp}`
       )
       this.covSubRenderController.handleAgentStatus(
-        presence as Omit<RTMEvents.PresenceEvent, 'stateChanged'> & {
+        presence as Omit<RTMEvents.PresenceEvent, "stateChanged"> & {
           stateChanged: {
             state: EAgentState
             turn_id: string
@@ -429,7 +430,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
     this.callMessagePrint(
       ELoggerType.debug,
       `>>> [trancID:${traceId}] ${ERTMEvents.PRESENCE}`,
-      'No state change detected, skipping handling presence event'
+      "No state change detected, skipping handling presence event"
     )
   }
   private _handleRtmStatus(

@@ -71,7 +71,7 @@ export enum ERTCCustomEvents {
  * - 所有事件都是字符串字面量，可用于事件监听器
  * - 事件名称区分大小写
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 export enum EConversationalAIAPIEvents {
   AGENT_STATE_CHANGED = "agent-state-changed",
@@ -102,7 +102,7 @@ export enum EConversationalAIAPIEvents {
  * - TTS: Text-to-Speech 文本转语音
  * - UNKNOWN: Unknown module type 未知模块类型
  *
- * @since Version 1.0.0
+ * @since 1.6.0
  */
 export enum EModuleType {
   LLM = "llm",
@@ -124,7 +124,7 @@ export enum EModuleType {
  * @param value - 指标数值 / Metric value
  * @param timestamp - 数据采集时间戳（毫秒） / Data collection timestamp (milliseconds)
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 export type TAgentMetric = {
   type: EModuleType
@@ -154,7 +154,7 @@ export type TAgentMetric = {
  * @param message - Human readable error description / 人类可读的错误描述
  * @param timestamp - Unix timestamp in milliseconds when error occurred / 错误发生时的 Unix 时间戳(毫秒)
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 export type TModuleError = {
   type: EModuleType
@@ -175,7 +175,7 @@ export type TModuleError = {
  * @param timestamp 状态变化发生的时间戳（毫秒） | Timestamp when the state change occurred (in milliseconds)
  * @param reason 状态变化的原因说明 | Reason description for the state change
  *
- * @since 1.0.0
+ * @since 1.6.0
  *
  * @remarks
  * - 状态变化事件会在语音助手状态发生改变时触发 | State change events are triggered when the voice agent's state changes
@@ -192,7 +192,7 @@ export type TStateChangeEvent = {
  * Event handlers interface for the Conversational AI API module.
  * 会话 AI API 模块的事件处理器接口。
  *
- * @since 1.0.0
+ * @since 1.6.0
  *
  * Defines a set of event handlers that can be implemented to respond to various
  * events emitted by the Conversational AI system, including agent state changes,
@@ -339,7 +339,7 @@ export enum ETurnStatus {
  * - State transitions should be handled properly to avoid deadlocks / 状态转换应妥善处理以避免死锁
  * - The SILENT state is different from IDLE as it represents an intentional non-response / SILENT 状态与 IDLE 不同，它表示有意识的不响应
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 export enum EAgentState {
   IDLE = "idle",
@@ -438,7 +438,7 @@ export type TQueueItem = {
  * @param status - 字幕项的当前状态 / Current status of the subtitle item
  * @param metadata - 附加的元数据信息 / Additional metadata information
  *
- * @since 1.0.0
+ * @since 1.6.0
  */
 export interface ISubtitleHelperItem<T> {
   uid: string
