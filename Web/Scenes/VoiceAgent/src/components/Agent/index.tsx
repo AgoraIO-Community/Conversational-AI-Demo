@@ -5,7 +5,7 @@ import * as React from "react"
 import Spline from "@splinetool/react-spline"
 import type { Application, SPEObject } from "@splinetool/runtime"
 
-import { cn } from "@/lib/utils"
+import { cn, isCN } from "@/lib/utils"
 import { useRTCStore, useGlobalStore, useChatStore } from "@/store"
 import { EConnectionStatus } from "@/type/rtc"
 import { SubTitle } from "@/components/Agent/SubTitle"

@@ -401,7 +401,6 @@ export const AgentActionAudio = (props: {
 }) => {
   const { className, audioTrack, showInterrupt, onInterrupt } = props
 
-  const [audioMute, setAudioMute] = React.useState(false)
   const [mediaStreamTrack, setMediaStreamTrack] =
     React.useState<MediaStreamTrack>()
 

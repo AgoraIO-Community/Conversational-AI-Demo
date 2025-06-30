@@ -62,9 +62,7 @@ import {
 import {
   EConnectionStatus,
   type IUserTracks,
-  ERTCServicesEvents,
   IRtcUser,
-  EAgentRunningStatus,
   ENetworkStatus,
 } from "@/type/rtc"
 import { startAgent, stopAgent, pingAgent } from "@/services/agent"
@@ -95,12 +93,8 @@ export default function AgentControl() {
     updateChannelName,
     updateAgentState,
   } = useRTCStore()
-  const {
-    settings,
-    presets,
-    conversationDuration,
-    setConversationTimerEndTimestamp,
-  } = useAgentSettingsStore()
+  const { settings, conversationDuration, setConversationTimerEndTimestamp } =
+    useAgentSettingsStore()
   const {
     showSubtitle,
     onClickSubtitle,
@@ -169,12 +163,6 @@ export default function AgentControl() {
 
       await rtcHelper.initDenoiserProcessor()
       await rtcHelper.createTracks()
-
-      const messageServiceMode =
-        presets.find((p) => p.name === settings.preset_name)?.preset_type ===
-        "standard"
-          ? "default"
-          : "legacy"
 
       await rtmHelper.join(channel_name)
       await rtcHelper.join({
