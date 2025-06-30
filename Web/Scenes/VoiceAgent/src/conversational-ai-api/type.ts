@@ -1,4 +1,4 @@
-import type { RTMEvents } from 'agora-rtm'
+import type { RTMEvents } from "agora-rtm"
 import type {
   IMicrophoneAudioTrack,
   UID,
@@ -7,71 +7,125 @@ import type {
   ConnectionState,
   ICameraVideoTrack,
   ConnectionDisconnectedReason,
-} from 'agora-rtc-sdk-ng'
+} from "agora-rtc-sdk-ng"
 
 export enum ESubtitleHelperMode {
-  TEXT = 'text',
-  WORD = 'word',
-  UNKNOWN = 'unknown',
+  TEXT = "text",
+  WORD = "word",
+  UNKNOWN = "unknown",
 }
 
 export enum EMessageType {
-  USER_TRANSCRIPTION = 'user.transcription',
-  AGENT_TRANSCRIPTION = 'assistant.transcription',
-  MSG_INTERRUPTED = 'message.interrupt',
-  MSG_METRICS = 'message.metrics',
-  MSG_ERROR = 'message.error',
+  USER_TRANSCRIPTION = "user.transcription",
+  AGENT_TRANSCRIPTION = "assistant.transcription",
+  MSG_INTERRUPTED = "message.interrupt",
+  MSG_METRICS = "message.metrics",
+  MSG_ERROR = "message.error",
   /** @deprecated */
-  MSG_STATE = 'message.state',
+  MSG_STATE = "message.state",
 }
 
 export enum ERTMEvents {
-  MESSAGE = 'message',
-  PRESENCE = 'presence',
+  MESSAGE = "message",
+  PRESENCE = "presence",
   // TOPIC = 'topic',
   // STORAGE = 'storage',
   // LOCK = 'lock',
-  STATUS = 'status',
+  STATUS = "status",
   // LINK_STATE = 'linkState',
   // TOKEN_PRIVILEGE_WILL_EXPIRE = 'tokenPrivilegeWillExpire',
 }
 
 export enum ERTCEvents {
-  NETWORK_QUALITY = 'network-quality',
-  USER_PUBLISHED = 'user-published',
-  USER_UNPUBLISHED = 'user-unpublished',
-  STREAM_MESSAGE = 'stream-message',
-  USER_JOINED = 'user-joined',
-  USER_LEFT = 'user-left',
-  CONNECTION_STATE_CHANGE = 'connection-state-change',
-  AUDIO_METADATA = 'audio-metadata',
+  NETWORK_QUALITY = "network-quality",
+  USER_PUBLISHED = "user-published",
+  USER_UNPUBLISHED = "user-unpublished",
+  STREAM_MESSAGE = "stream-message",
+  USER_JOINED = "user-joined",
+  USER_LEFT = "user-left",
+  CONNECTION_STATE_CHANGE = "connection-state-change",
+  AUDIO_METADATA = "audio-metadata",
 }
 
 export enum ERTCCustomEvents {
-  MICROPHONE_CHANGED = 'microphone-changed',
-  REMOTE_USER_CHANGED = 'remote-user-changed',
-  REMOTE_USER_JOINED = 'remote-user-joined',
-  REMOTE_USER_LEFT = 'remote-user-left',
-  LOCAL_TRACKS_CHANGED = 'local-tracks-changed',
+  MICROPHONE_CHANGED = "microphone-changed",
+  REMOTE_USER_CHANGED = "remote-user-changed",
+  REMOTE_USER_JOINED = "remote-user-joined",
+  REMOTE_USER_LEFT = "remote-user-left",
+  LOCAL_TRACKS_CHANGED = "local-tracks-changed",
 }
 
-
+/**
+ * Event types for the Conversational AI API
+ * 对话式 AI API 的事件类型
+ *
+ * @description
+ * Defines the event types that can be emitted by the Conversational AI API.
+ * Contains events for agent state changes, interruptions, metrics, errors, transcription updates, and debug logs.
+ * 定义对话式 AI API 可以触发的事件类型。
+ * 包含代理状态变更、中断、指标、错误、转录更新和调试日志等事件。
+ *
+ * @remarks
+ * - All events are string literals and can be used with event listeners
+ * - Events are case-sensitive
+ * - 所有事件都是字符串字面量，可用于事件监听器
+ * - 事件名称区分大小写
+ *
+ * @since 1.0.0
+ */
 export enum EConversationalAIAPIEvents {
-  AGENT_STATE_CHANGED = 'agent-state-changed',
-  AGENT_INTERRUPTED = 'agent-interrupted',
-  AGENT_METRICS = 'agent-metrics',
-  AGENT_ERROR = 'agent-error',
-  TRANSCRIPTION_UPDATED = 'transcription-updated',
-  DEBUG_LOG = 'debug-log',
+  AGENT_STATE_CHANGED = "agent-state-changed",
+  AGENT_INTERRUPTED = "agent-interrupted",
+  AGENT_METRICS = "agent-metrics",
+  AGENT_ERROR = "agent-error",
+  TRANSCRIPTION_UPDATED = "transcription-updated",
+  DEBUG_LOG = "debug-log",
 }
 
+/**
+ * Module type enumeration for AI capabilities
+ * 人工智能功能模块类型枚举
+ *
+ * Defines the different types of AI modules available in the system, including language models and text-to-speech
+ * 定义系统中可用的不同类型的 AI 模块，包括语言模型和文本转语音
+ *
+ * @remarks
+ * - Each enum value represents a distinct AI capability module
+ * - 每个枚举值代表一个独特的 AI 功能模块
+ * - Use these values to specify module type in API calls
+ * - 在 API 调用中使用这些值来指定模块类型
+ *
+ * Values include:
+ * 包含以下值：
+ * - LLM: Language Learning Model 语言学习模型
+ * - MLLM: Multimodal Language Learning Model 多模态语言学习模型
+ * - TTS: Text-to-Speech 文本转语音
+ * - UNKNOWN: Unknown module type 未知模块类型
+ *
+ * @since Version 1.0.0
+ */
 export enum EModuleType {
-  LLM = 'llm',
-  MLLM = 'mllm',
-  TTS = 'tts',
-  UNKNOWN = 'unknown',
+  LLM = "llm",
+  MLLM = "mllm",
+  TTS = "tts",
+  UNKNOWN = "unknown",
 }
 
+/**
+ * Agent指标统计数据的类型定义
+ * Type definition for agent metrics statistics data
+ *
+ * @description
+ * 用于存储AI智能体运行时的指标数据，包括类型、名称、数值和时间戳
+ * Used to store metric data during AI agent runtime, including type, name, value and timestamp
+ *
+ * @param type - 指标模块类型 {@link EModuleType} / Metric module type
+ * @param name - 指标名称 / Metric name
+ * @param value - 指标数值 / Metric value
+ * @param timestamp - 数据采集时间戳（毫秒） / Data collection timestamp (milliseconds)
+ *
+ * @since 1.0.0
+ */
 export type TAgentMetric = {
   type: EModuleType
   name: string
@@ -79,6 +133,23 @@ export type TAgentMetric = {
   timestamp: number
 }
 
+/**
+ * Agent metrics information type / 代理指标信息类型
+ *
+ * Represents the metrics data structure for agent monitoring, including type, name,
+ * value, and timestamp / 表示代理监控的指标数据结构，包含类型、名称、数值和时间戳
+ *
+ * @remarks
+ * - All metric values should be numeric / 所有指标值都应为数值类型
+ * - Timestamp is in milliseconds since epoch / 时间戳为自纪元以来的毫秒数
+ *
+ * @param type The module type of the metric / 指标所属的模块类型 {@link EModuleType}
+ * @param name The name identifier of the metric / 指标的名称标识符
+ * @param value The numeric value of the metric / 指标的数值
+ * @param timestamp The timestamp when the metric was recorded / 记录该指标时的时间戳
+ *
+ * @since 1.0.0
+ */
 export type TModuleError = {
   type: EModuleType
   code: number
@@ -86,6 +157,24 @@ export type TModuleError = {
   timestamp: number
 }
 
+/**
+ * 状态变化事件的类型定义
+ * Type definition for state change event
+ *
+ * 用于描述语音助手状态变化时的相关信息，包括当前状态、会话ID、时间戳和变化原因
+ * Used to describe the information related to voice agent state changes, including current state, turn ID, timestamp and reason
+ *
+ * @param state 当前的语音助手状态 | Current state of the voice agent. See {@link EAgentState}
+ * @param turnID 当前会话的唯一标识符 | Unique identifier for the current conversation turn
+ * @param timestamp 状态变化发生的时间戳（毫秒） | Timestamp when the state change occurred (in milliseconds)
+ * @param reason 状态变化的原因说明 | Reason description for the state change
+ *
+ * @since 1.0.0
+ *
+ * @remarks
+ * - 状态变化事件会在语音助手状态发生改变时触发 | State change events are triggered when the voice agent's state changes
+ * - timestamp 使用 UNIX 时间戳（毫秒） | timestamp uses UNIX timestamp (in milliseconds)
+ */
 export type TStateChangeEvent = {
   state: EAgentState
   turnID: number
@@ -93,19 +182,18 @@ export type TStateChangeEvent = {
   reason: string
 }
 
-
 /**
  * Event handlers interface for the Conversational AI API module.
  * 会话 AI API 模块的事件处理器接口。
- * 
+ *
  * @since 1.0.0
- * 
+ *
  * Defines a set of event handlers that can be implemented to respond to various
  * events emitted by the Conversational AI system, including agent state changes,
  * interruptions, metrics, errors, and transcription updates.
  * 定义了一组事件处理器，用于响应会话 AI 系统发出的各种事件，包括代理状态变化、
  * 中断、指标、错误和转录更新。
- * 
+ *
  * @remarks
  * - All handlers are required to be implemented when using this interface
  *   使用此接口时必须实现所有处理器
@@ -115,7 +203,7 @@ export type TStateChangeEvent = {
  *   事件处理器应该轻量化以避免阻塞事件循环
  * - Error handling should be implemented within each handler to prevent crashes
  *   每个处理器内部都应实现错误处理以防崩溃
- * 
+ *
  * @example
  * ```typescript
  * const handlers: IConversationalAIAPIEventHandlers = {
@@ -125,14 +213,14 @@ export type TStateChangeEvent = {
  *   // ... implement other handlers
  * };
  * ```
- * 
+ *
  * @param agentUserId - The unique identifier of the AI agent / AI 代理的唯一标识符
  * @param event - Event data specific to each event type / 每种事件类型的具体事件数据
  * @param metrics - Performance metrics data for the agent / 代理的性能指标数据
  * @param error - Error information when agent encounters issues / 代理遇到问题时的错误信息
  * @param transcription - Array of transcription items containing user and agent dialogue / 包含用户和代理对话的转录项数组
  * @param message - Debug log message string / 调试日志消息字符串
- * 
+ *
  * @see {@link EConversationalAIAPIEvents} for all available event types / 查看所有可用事件类型
  * @see {@link TStateChangeEvent} for state change event structure / 查看状态变更事件结构
  * @see {@link TAgentMetric} for agent metrics structure / 查看代理指标结构
@@ -179,11 +267,11 @@ export interface IHelperRTCEvents {
   [ERTCEvents.NETWORK_QUALITY]: (quality: NetworkQuality) => void
   [ERTCEvents.USER_PUBLISHED]: (
     user: IAgoraRTCRemoteUser,
-    mediaType: 'audio' | 'video'
+    mediaType: "audio" | "video"
   ) => void
   [ERTCEvents.USER_UNPUBLISHED]: (
     user: IAgoraRTCRemoteUser,
-    mediaType: 'audio' | 'video'
+    mediaType: "audio" | "video"
   ) => void
   [ERTCEvents.USER_JOINED]: (user: IAgoraRTCRemoteUser) => void
   [ERTCEvents.USER_LEFT]: (user: IAgoraRTCRemoteUser, reason?: string) => void
@@ -200,7 +288,7 @@ export interface IHelperRTCEvents {
 export class NotFoundError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = 'NotFoundError'
+    this.name = "NotFoundError"
   }
 }
 
@@ -222,12 +310,37 @@ export enum ETurnStatus {
   INTERRUPTED = 2,
 }
 
+/**
+ * Agent state enumeration / 智能体状态枚举
+ *
+ * Represents the different states of a conversational AI agent, including idle, listening, thinking, speaking and silent states
+ * 表示会话 AI 智能体的不同状态，包括空闲、监听、思考、说话和沉默状态
+ *
+ * Detailed Description / 详细描述：
+ * This enum is used to track and manage the current state of an AI agent in a conversational system.
+ * The states help coordinate the interaction flow between the user and the AI agent.
+ * 该枚举用于跟踪和管理会话系统中 AI 智能体的当前状态。
+ * 这些状态有助于协调用户和 AI 智能体之间的交互流程。
+ *
+ * States include / 状态包括:
+ * - IDLE: Agent is ready for new interaction / 智能体准备好进行新的交互
+ * - LISTENING: Agent is receiving user input / 智能体正在接收用户输入
+ * - THINKING: Agent is processing received input / 智能体正在处理接收到的输入
+ * - SPEAKING: Agent is delivering response / 智能体正在传递响应
+ * - SILENT: Agent is intentionally not responding / 智能体有意不作响应
+ *
+ * @remarks
+ * - State transitions should be handled properly to avoid deadlocks / 状态转换应妥善处理以避免死锁
+ * - The SILENT state is different from IDLE as it represents an intentional non-response / SILENT 状态与 IDLE 不同，它表示有意识的不响应
+ *
+ * @since 1.0.0
+ */
 export enum EAgentState {
-  IDLE = 'idle',
-  LISTENING = 'listening',
-  THINKING = 'thinking',
-  SPEAKING = 'speaking',
-  SILENT = 'silent',
+  IDLE = "idle",
+  LISTENING = "listening",
+  THINKING = "thinking",
+  SPEAKING = "speaking",
+  SILENT = "silent",
 }
 
 export interface ITranscriptionBase {
@@ -257,7 +370,7 @@ export interface IAgentTranscription extends ITranscriptionBase {
 export interface IMessageInterrupt {
   object: EMessageType.MSG_INTERRUPTED // "message.interrupt"
   message_id: string
-  data_type: 'message'
+  data_type: "message"
   turn_id: number
   start_ms: number
   send_ts: number
@@ -282,7 +395,7 @@ export interface IMessageError {
 }
 
 export interface IPresenceState
-  extends Omit<RTMEvents.PresenceEvent, 'stateChanged'> {
+  extends Omit<RTMEvents.PresenceEvent, "stateChanged"> {
   stateChanged: {
     state: EAgentState
     turn_id: string
@@ -298,6 +411,20 @@ export type TQueueItem = {
   uid: string
 }
 
+/**
+ * Interface representing a subtitle helper item with generic metadata
+ *
+ * @interface ISubtitleHelperItem
+ * @template T - Type of the metadata
+ *
+ * @property {string} uid - Unique identifier for the subtitle item
+ * @property {number} stream_id - Stream identifier number
+ * @property {number} turn_id - Turn identifier number
+ * @property {number} _time - Timestamp of the subtitle item
+ * @property {string} text - Text content of the subtitle
+ * @property {ETurnStatus} status - Status of the turn
+ * @property {T | null} metadata - Additional metadata of type T, can be null
+ */
 export interface ISubtitleHelperItem<T> {
   uid: string
   stream_id: number
