@@ -10,8 +10,14 @@ import org.json.JSONObject
 import java.io.IOException
 
 class MessageParser {
+    private var loopCount = 0
+    private val maxLoopCount = 5
+    private val TAG = "MessageParser"
+
     // Change message storage structure to Map<Int, String> for more intuitive partIndex and content storage
     private val messageMap = mutableMapOf<String, MutableMap<Int, String>>()
+    private val messagePartsMap = mutableMapOf<String, Int>()
+    private var lastPackTimeMillis: Long = 0L
     private val gson = GsonBuilder()
         .setDateFormat("yyyy-MM-dd HH:mm:ss")
         .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
@@ -30,6 +36,8 @@ class MessageParser {
         .create()
     private val maxMessageAge = 5 * 60 * 1000 // 5 minutes
     private val lastAccessMap = mutableMapOf<String, Long>()
+
+    var onDebugLog: ((tag: String,message: String) -> Unit)? = null
 
     fun parseStreamMessage(string: String): Map<String, Any>? {
         try {
@@ -51,8 +59,19 @@ class MessageParser {
                 throw IllegalArgumentException("partIndex out of range")
             }
 
+            val currentTimeMills = System.currentTimeMillis()
+            if (lastPackTimeMillis == 0L) {
+                lastPackTimeMillis = currentTimeMills
+            }
+            val tempLastTimeMills = lastPackTimeMillis
+            val intervalMs = currentTimeMills - tempLastTimeMills
+            if (intervalMs >= 500L) {
+                onDebugLog?.invoke(TAG,"Receive pack intervalMs: $intervalMs, $messageId,$partIndex/$totalParts")
+            }
+            lastPackTimeMillis = currentTimeMills
             // Update last access time
-            lastAccessMap[messageId] = System.currentTimeMillis()
+            lastAccessMap[messageId] = currentTimeMills
+            messagePartsMap[messageId] = totalParts
 
             // Use Map to store message parts for more intuitive partIndex and content management
             val messageParts = messageMap.getOrPut(messageId) { mutableMapOf() }
@@ -80,12 +99,21 @@ class MessageParser {
                 // Clean up processed message
                 messageMap.remove(messageId)
                 lastAccessMap.remove(messageId)
-
                 return result
             }
+
+            if (loopCount >= maxLoopCount) {
+                val transformedData = messageMap.mapValues { (outerKey, innerMap) ->
+                    val replacementValue = messagePartsMap[outerKey] ?: -1
+                    innerMap.mapValues { (_, _) -> replacementValue }
+                }
+                onDebugLog?.invoke(TAG,"Loop printing: $transformedData")
+                loopCount = 0
+            }
+            loopCount++
         } catch (e: Exception) {
             // Handle exception, can log or throw
-            println("Error parsing message: ${e.message}")
+            onDebugLog?.invoke(TAG,"Error: ${e.message}")
         }
         return null
     }
@@ -96,6 +124,7 @@ class MessageParser {
         expiredIds.forEach {
             messageMap.remove(it)
             lastAccessMap.remove(it)
+            messagePartsMap.remove(it)
         }
     }
 }
