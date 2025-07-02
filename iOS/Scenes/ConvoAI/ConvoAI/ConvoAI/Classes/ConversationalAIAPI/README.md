@@ -11,11 +11,6 @@
 >
 > ⚠️ Before using this component, you must enable the "Real-time Messaging RTM" feature in the Agora Console, otherwise the component will not work properly.
 >
-> RTM Access Guide: [RTM](https://doc.shengwang.cn/doc/rtm2/swift/landing-page)
-
-![Enable RTM feature in Agora Console](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ent-full/sdhy_7.jpg)
-*Screenshot: Enable RTM feature in Agora Console project settings*
-
 ---
 
 ## Integration Steps
