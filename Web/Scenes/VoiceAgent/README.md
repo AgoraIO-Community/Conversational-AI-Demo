@@ -103,7 +103,6 @@ bun dev
 | [app/page](./src/app/page.tsx)               | Main content of the page                       |
 | [components/](./src/components/)             | Page components                          |
 | [logger/](./src/lib/logger)                  | Logging                           |
-| [services/rtc](./src/services/rtc.ts)        | Implementation related to RTC audio and video communication              |
 | [type/rtc](./src/type/rtc.ts)                | Types and enumerations of Rtc     |
 
 
