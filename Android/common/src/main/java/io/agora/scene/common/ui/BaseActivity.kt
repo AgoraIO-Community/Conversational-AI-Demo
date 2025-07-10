@@ -8,12 +8,17 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.webkit.CookieManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.agora.scene.common.AgentApp
+import io.agora.scene.common.util.CommonLogger
 import io.agora.scene.common.util.LocaleManager
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
@@ -66,6 +71,33 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun cleanCookie() {
+        val cookieManager = CookieManager.getInstance()
+        cookieManager.removeAllCookies { success ->
+            if (success) {
+                CommonLogger.d("cleanCookie", "Cookies successfully removed")
+            } else {
+                CommonLogger.d("cleanCookie", "Failed to remove cookies")
+            }
+        }
+        cookieManager.flush()
+    }
+
+    private var isFirebaseInit = false
+    fun initFirebaseCrashlytics() {
+        if (isFirebaseInit) return
+        try {
+            FirebaseApp.initializeApp(AgentApp.instance())
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            FirebaseCrashlytics.getInstance().log("app start with user consent")
+
+            CommonLogger.d("Firebase", "Firebase initialized and enabled with user consent")
+            isFirebaseInit = true
+        } catch (e: Exception) {
+            CommonLogger.e("Firebase", "Firebase initialization failed: ${e.message}")
+        }
     }
 
     /**

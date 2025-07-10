@@ -31,7 +31,7 @@ class AgentStateIndicator @JvmOverloads constructor(
         private const val LISTENING_ANIMATION_DURATION = 500L
         private val STOP_BUTTON_SIZE = 16.dp.toFloat()
         private val STOP_BUTTON_CORNER_RADIUS = 4.dp.toFloat()
-
+        
         // Rectangle bar height definitions
         private val BAR_HEIGHT_MIN = 10.dp.toFloat()    // Static minimum height
         private val BAR_HEIGHT_MID = 24.dp.toFloat()    // Medium height
@@ -73,17 +73,17 @@ class AgentStateIndicator @JvmOverloads constructor(
                 // Static state, no animation needed
                 animationProgress = 0f
             }
-
+            
             AgentState.LISTENING -> {
                 // Start listening animation - rectangle bar height changes
                 startListeningAnimation()
             }
-
+            
             AgentState.THINKING, AgentState.SPEAKING -> {
                 // Thinking/speaking state, show stop button
                 animationProgress = 0f
             }
-
+            
             AgentState.UNKNOWN -> {
                 // Unknown state, display as static
                 animationProgress = 0f
@@ -97,12 +97,12 @@ class AgentStateIndicator @JvmOverloads constructor(
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.RESTART
             interpolator = LinearInterpolator()
-
+            
             addUpdateListener { animator ->
                 animationProgress = animator.animatedValue as Float
                 invalidate()
             }
-
+            
             start()
         }
     }
@@ -134,16 +134,16 @@ class AgentStateIndicator @JvmOverloads constructor(
     private fun drawStaticBars(canvas: Canvas, centerX: Float, centerY: Float) {
         paint.color = whiteColor
         paint.style = Paint.Style.FILL
-
+        
         // Calculate starting position - center align three bars
         val totalWidth = BAR_COUNT * BAR_WIDTH + (BAR_COUNT - 1) * BAR_SPACING
         val startX = centerX - totalWidth / 2f
-
+        
         for (i in 0 until BAR_COUNT) {
             val barX = startX + i * (BAR_WIDTH + BAR_SPACING)
             val barTop = centerY - BAR_HEIGHT_MIN / 2f
             val barBottom = centerY + BAR_HEIGHT_MIN / 2f
-
+            
             val rect = RectF(barX, barTop, barX + BAR_WIDTH, barBottom)
             canvas.drawRoundRect(rect, BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, paint)
         }
@@ -156,14 +156,14 @@ class AgentStateIndicator @JvmOverloads constructor(
     private fun drawListeningAnimation(canvas: Canvas, centerX: Float, centerY: Float) {
         paint.color = whiteColor
         paint.style = Paint.Style.FILL
-
+        
         // Calculate starting position
         val totalWidth = BAR_COUNT * BAR_WIDTH + (BAR_COUNT - 1) * BAR_SPACING
         val startX = centerX - totalWidth / 2f
-
+        
         for (i in 0 until BAR_COUNT) {
             val barX = startX + i * (BAR_WIDTH + BAR_SPACING)
-
+            
             // Calculate different animation heights for each bar
             val barHeight = when (i) {
                 0 -> { // Left bar: varies between minimum and medium height
@@ -180,10 +180,10 @@ class AgentStateIndicator @JvmOverloads constructor(
                 }
                 else -> BAR_HEIGHT_MIN
             }
-
+            
             val barTop = centerY - barHeight / 2f
             val barBottom = centerY + barHeight / 2f
-
+            
             val rect = RectF(barX, barTop, barX + BAR_WIDTH, barBottom)
             canvas.drawRoundRect(rect, BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, paint)
         }
@@ -195,7 +195,7 @@ class AgentStateIndicator @JvmOverloads constructor(
     private fun drawStopButton(canvas: Canvas, centerX: Float, centerY: Float) {
         paint.color = whiteTransparentColor
         paint.style = Paint.Style.FILL
-
+        
         // Draw rounded rectangle as stop button
         val rect = RectF(
             centerX - STOP_BUTTON_SIZE / 2,
@@ -203,7 +203,7 @@ class AgentStateIndicator @JvmOverloads constructor(
             centerX + STOP_BUTTON_SIZE / 2,
             centerY + STOP_BUTTON_SIZE / 2
         )
-
+        
         canvas.drawRoundRect(rect, STOP_BUTTON_CORNER_RADIUS, STOP_BUTTON_CORNER_RADIUS, paint)
     }
 
@@ -212,10 +212,10 @@ class AgentStateIndicator @JvmOverloads constructor(
         val totalWidth = BAR_COUNT * BAR_WIDTH + (BAR_COUNT - 1) * BAR_SPACING
         val desiredWidth = totalWidth.toInt()
         val desiredHeight = BAR_HEIGHT_MAX.toInt()
-
+        
         val width = resolveSize(desiredWidth, widthMeasureSpec)
         val height = resolveSize(desiredHeight, heightMeasureSpec)
-
+        
         setMeasuredDimension(width, height)
     }
 

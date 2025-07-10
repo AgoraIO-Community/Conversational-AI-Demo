@@ -23,6 +23,7 @@
     <string name="cov_detail_update_token_error">Failed to retrieve token.</string>
     <string name="cov_detail_llm_error">LLM exception</string>
     <string name="cov_detail_tts_error">TTS exception</string>
+    <string name="cov_detail_start_agent_avatar_limit_error">All avatars are busy now. Please try again later.</string>
 
     <string name="cov_info_dialog_title">INFO</string>
     <string name="cov_channel_info_title">Channel Info</string>
@@ -50,6 +51,7 @@
     <string name="cov_setting_voice">Voice</string>
     <string name="cov_setting_model">Model</string>
     <string name="cov_setting_language">Language</string>
+    <string name="cov_setting_avatar">Avatar</string>
     <string name="cov_setting_device">DEVICE</string>
     <string name="cov_setting_advanced_settings">Advanced Settings</string>
     <string name="cov_setting_microphone">Microphone</string>
@@ -77,11 +79,20 @@
 
     <string name="cov_permission_required">Permission Required</string>
     <string name="cov_mic_permission_required_content">Microphone permission is required for voice chat. Please grant the permission to continue.</string>
+    <string name="cov_camera_permission_required_content">Video streaming requires camera permission. Please grant the permission to proceed.</string>
     <string name="cov_notifications_enable_tip">Please turn on notification permission to prevent background recording from being interrupted.</string>
     <string name="cov_setting">Settings</string>
     <string name="cov_retry">Retry</string>
     <string name="cov_exit">Exit</string>
     <string name="cov_notification_content">Tap here to return to the app.</string>
+
+    <!-- avatar -->
+    <string name="cov_preset_change_dialog_title">Changing Preset requires reconfiguring the virtual human</string>
+    <string name="cov_preset_change_dialog_content">Preset is related to the gender of the virtual human. Please reconfigure the virtual human after changing the Preset.</string>
+    <string name="cov_language_change_dialog_title">Changing Language requires reconfiguring the virtual human</string>
+    <string name="cov_language_change_dialog_content">Language is related to the gender of the virtual human. Please reconfigure the virtual human after changing the Language.</string>
+    <string name="cov_preset_change_dialog_confirm">Confirm Change</string>
+    <string name="cov_captions">Transcription</string>
 
     <!-- IOT  -->
     <string name="cov_iot_title">Conversational AI Device</string>

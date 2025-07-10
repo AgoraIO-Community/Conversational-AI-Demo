@@ -15,6 +15,11 @@ object ToastUtil {
     }
 
     @JvmStatic
+    fun show(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT) {
+        show(AgentApp.instance().getString(resId), duration)
+    }
+
+    @JvmStatic
     fun show(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT, vararg formatArgs: String?) {
         show(AgentApp.instance().getString(resId, *formatArgs), duration)
     }
