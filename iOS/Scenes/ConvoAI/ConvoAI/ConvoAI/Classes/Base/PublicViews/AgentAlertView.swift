@@ -9,8 +9,18 @@ import UIKit
 import Common
 
 class AgentAlertView: UIView {
+    // MARK: - Types
+    
+    enum AlertType {
+        case normal
+        case delete
+    }
+    
+    // MARK: - Properties
+    
     var onConfirmButtonTapped: (() -> Void)?
     var onCancelButtonTapped: (() -> Void)?
+    private let alertType: AlertType
     
     private lazy var backgroundView: UIView = {
         let view = UIView()
@@ -64,13 +74,23 @@ class AgentAlertView: UIView {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
-        button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
         button.layer.cornerRadius = 12
         button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        
+        // Set background color based on alert type
+        switch alertType {
+        case .normal:
+            button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
+        case .delete:
+            button.backgroundColor = UIColor.themColor(named: "ai_red6")
+        }
         return button
     }()
     
-    override init(frame: CGRect) {
+    // MARK: - Initialization
+    
+    init(frame: CGRect, type: AlertType = .normal) {
+        self.alertType = type
         super.init(frame: frame)
         setupUI()
     }
@@ -111,7 +131,7 @@ class AgentAlertView: UIView {
             make.left.equalTo(24)
             make.right.equalTo(-24)
         }
-        
+
         buttonStackView.snp.makeConstraints { make in
             make.top.equalTo(contentLabel.snp.bottom).offset(20)
             make.left.equalTo(24)
@@ -121,8 +141,19 @@ class AgentAlertView: UIView {
         }
     }
     
-    static func show(in view: UIView, title: String, content: String, cancelTitle: String = ResourceManager.L10n.Error.permissionCancel, confirmTitle: String = ResourceManager.L10n.Error.permissionConfirm, onConfirm: (() -> Void)? = nil, onCancel: (() -> Void)? = nil) {
-        let alertView = AgentAlertView(frame: view.bounds)
+    // MARK: - Public Methods
+    
+    static func show(
+        in view: UIView,
+        title: String,
+        content: String,
+        cancelTitle: String = ResourceManager.L10n.Error.permissionCancel,
+        confirmTitle: String = ResourceManager.L10n.Error.permissionConfirm,
+        type: AlertType = .normal,
+        onConfirm: (() -> Void)? = nil,
+        onCancel: (() -> Void)? = nil
+    ) {
+        let alertView = AgentAlertView(frame: view.bounds, type: type)
         alertView.onConfirmButtonTapped = onConfirm
         alertView.onCancelButtonTapped = onCancel
         alertView.show(in: view, title: title, content: content, cancelTitle: cancelTitle, confirmTitle: confirmTitle)
@@ -133,6 +164,7 @@ class AgentAlertView: UIView {
         titleLabel.text = title
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5
+        paragraphStyle.alignment = .center
         let attributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: paragraphStyle
         ]
@@ -175,3 +207,4 @@ class AgentAlertView: UIView {
         }
     }
 }
+

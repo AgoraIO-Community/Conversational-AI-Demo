@@ -27,7 +27,7 @@ class TimeoutAlertView: UIView {
     
     private lazy var cardView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage.ag_named("ic_alert_timeout_icon")
+        view.contentMode = .scaleAspectFit
         return view
     }()
     
@@ -91,7 +91,7 @@ class TimeoutAlertView: UIView {
             make.top.equalTo(containerView)
             make.left.equalTo(containerView)
             make.right.equalTo(containerView)
-            make.height.equalTo(180)
+            make.height.equalTo(cardView.snp.width).multipliedBy(180.0/315.0)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -115,8 +115,15 @@ class TimeoutAlertView: UIView {
         }
     }
     
-    static func show(in view: UIView, title: String, description: String, onConfirm: (() -> Void)? = nil) {
+    static func show(
+        in view: UIView,
+        image: UIImage?,
+        title: String,
+        description: String,
+        onConfirm: (() -> Void)? = nil
+    ) {
         let alertView = TimeoutAlertView(frame: view.bounds)
+        alertView.cardView.image = image ?? UIImage.ag_named("ic_alert_timeout_icon")
         alertView.titleLabel.text = title
         alertView.contentLabel.text = description
         alertView.onConfirmButtonTapped = onConfirm
@@ -154,3 +161,4 @@ class TimeoutAlertView: UIView {
         }
     }
 }
+
