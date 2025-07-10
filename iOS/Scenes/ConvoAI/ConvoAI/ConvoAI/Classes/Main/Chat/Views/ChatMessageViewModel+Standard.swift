@@ -8,7 +8,7 @@
 import Foundation
 
 protocol MessageStandard {
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: MessageOwner, isInterrupted: Bool)
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool)
 }
 
 extension ChatMessageViewModel: MessageStandard {
@@ -17,8 +17,8 @@ extension ChatMessageViewModel: MessageStandard {
         return key
     }
     
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: MessageOwner, isInterrupted: Bool) {
-        let isMine = owner == .me
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool) {
+        let isMine = owner == .user
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         let messageObj = messageMapTable[key]
 
@@ -39,7 +39,7 @@ extension ChatMessageViewModel: MessageStandard {
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         messageMapTable[key] = message
         messages.append(message)
-        messages.sort { 
+        messages.sort {
             if $0.turn_id != $1.turn_id {
                 return $0.turn_id < $1.turn_id
             }

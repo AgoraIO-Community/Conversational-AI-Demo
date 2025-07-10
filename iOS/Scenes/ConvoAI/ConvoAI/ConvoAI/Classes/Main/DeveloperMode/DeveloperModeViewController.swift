@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import Common
 import AgoraRtcKit
+import AgoraRtmKit
 import SVProgressHUD
 import ObjectiveC
 
@@ -9,7 +10,8 @@ import ObjectiveC
 public class DeveloperConfig {
     
     private let kSessionFree = "io.agora.convoai.kSessionFree"
-    
+    private let kMetrics = "io.agora.convoai.kMetrics"
+
     static let shared = DeveloperConfig()
     
     public var isDeveloperMode = false
@@ -18,7 +20,8 @@ public class DeveloperConfig {
     public var convoaiServerConfig: String? = nil
     public var graphId: String? = nil
     public var sdkParams: [String] = []
-    
+    public var metrics: Bool = false
+
     internal var serverHost: String = ""
     internal var audioDump: Bool = false
     internal var sessionLimitEnabled: Bool = false
@@ -28,6 +31,7 @@ public class DeveloperConfig {
     internal var onCopy: (() -> Void)?
     internal var onSessionLimit: ((Bool) -> Void)?
     internal var onAudioDump: ((Bool) -> Void)?
+    internal var onMetrics: ((Bool) -> Void)?
     internal var onSDKParams: ((String) -> Void)?
 
     @discardableResult
@@ -57,6 +61,13 @@ public class DeveloperConfig {
     }
     
     @discardableResult
+    public func setMetrics(enabled: Bool = false, onChange: ((Bool) -> Void)? = nil) -> Self {
+        self.metrics = enabled
+        self.onMetrics = onChange
+        return self
+    }
+    
+    @discardableResult
     public func setSwitchServerCallback(callback: (() -> Void)?) -> Self {
         self.onSwitchServer = callback
         return self
@@ -77,6 +88,7 @@ public class DeveloperConfig {
     public func setSessionFree(_ enable: Bool) {
         UserDefaults.standard.set(enable, forKey: kSessionFree)
     }
+    
     public func getSessionFree() -> Bool {
         return UserDefaults.standard.bool(forKey: kSessionFree)
     }
@@ -84,6 +96,7 @@ public class DeveloperConfig {
     public func resetDevParams() {
         self.isDeveloperMode = false
         self.graphId = nil
+        self.metrics = false
         self.sdkParams.removeAll()
         self.convoaiServerConfig = nil
         if let defaultHost = self.defaultHost {
@@ -107,9 +120,11 @@ public class DeveloperModeViewController: UIViewController {
     
     private var config = DeveloperConfig.shared
     private let rtcVersionValueLabel = UILabel()
+    private let rtmVersionValueLabel = UILabel()
     private let serverHostValueLabel = UILabel()
     private let graphTextField = UITextField()
     private let audioDumpSwitch = UISwitch()
+    private let metricsSwitch = UISwitch()
     private let sessionLimitSwitch = UISwitch()
     private let sdkParamsTextView = UITextView()
     private let convoaiTextView = UITextView()
@@ -192,6 +207,7 @@ public class DeveloperModeViewController: UIViewController {
         
         sessionLimitSwitch.isOn = config.sessionLimitEnabled
         audioDumpSwitch.isOn = config.audioDump
+        metricsSwitch.isOn = config.metrics
     }
     
     @objc private func dismissKeyboard() {
@@ -213,6 +229,12 @@ extension DeveloperModeViewController {
     
     @objc private func onClickAudioDump(_ sender: UISwitch) {
         config.onAudioDump?(sender.isOn)
+    }
+    
+    @objc private func onClickMetricsButton(_ sender: UISwitch) {
+        let state = sender.isOn
+        config.metrics = state
+        config.onMetrics?(state)
     }
     
     @objc private func onClickCopy(_ sender: UIButton) {
@@ -373,6 +395,20 @@ extension DeveloperModeViewController {
         rtcStackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
         contentStackView.addArrangedSubview(rtcStackView)
         
+        // RTC Version Stack
+        let rtmVersionLabel = UILabel()
+        rtmVersionLabel.text = ResourceManager.L10n.DevMode.rtm
+        rtmVersionLabel.textColor = UIColor.themColor(named: "ai_icontext1")
+        rtmVersionLabel.font = UIFont.systemFont(ofSize: 14)
+        
+        rtmVersionValueLabel.text = AgoraRtmClientKit.getVersion()
+        rtmVersionValueLabel.textColor = UIColor.themColor(named: "ai_icontext4")
+        rtmVersionValueLabel.font = UIFont.systemFont(ofSize: 14)
+        
+        let rtmStackView = createHorizontalStack(with: [rtmVersionLabel, rtmVersionValueLabel])
+        rtmStackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        contentStackView.addArrangedSubview(rtmStackView)
+        
         // Title row
         let sdkParamsLabel = UILabel()
         sdkParamsLabel.text = ResourceManager.L10n.DevMode.sdkParams
@@ -518,6 +554,18 @@ extension DeveloperModeViewController {
         let serverHostStackView = createHorizontalStack(with: [serverHostLabel, serverHostValueLabel])
         serverHostStackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
         contentStackView.addArrangedSubview(serverHostStackView)
+        
+        // Metrics
+        let metricsLabel = UILabel()
+        metricsLabel.text = ResourceManager.L10n.DevMode.metrics
+        metricsLabel.textColor = UIColor.themColor(named: "ai_icontext1")
+        metricsLabel.font = UIFont.systemFont(ofSize: 14)
+        
+        metricsSwitch.addTarget(self, action: #selector(onClickMetricsButton(_ :)), for: .touchUpInside)
+        
+        let metricsStackView = createHorizontalStack(with: [metricsLabel, metricsSwitch])
+        metricsStackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        contentStackView.addArrangedSubview(metricsStackView)
         
         // Audio Dump
         let audioDumpLabel = UILabel()
@@ -737,3 +785,4 @@ extension UITextView {
         placeholderLabel?.isHidden = !((self.text?.isEmpty ?? true) || self.text == nil)
     }
 }
+

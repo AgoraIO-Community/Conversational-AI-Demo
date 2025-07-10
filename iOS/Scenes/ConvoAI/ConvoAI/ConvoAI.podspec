@@ -49,4 +49,6 @@ TODO: Add long description of the pod here.
   s.dependency 'Common'
   s.dependency 'Kingfisher'
   s.dependency 'IoT'
+  s.dependency 'AgoraRtm'
+  
 end

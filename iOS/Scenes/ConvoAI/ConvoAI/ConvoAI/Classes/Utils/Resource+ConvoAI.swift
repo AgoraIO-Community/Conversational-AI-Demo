@@ -80,6 +80,10 @@ extension ResourceManager {
             public static let alertClear = ResourceManager.localizedString("conversation.alert.clear")
             public static let userSpeakToast = ResourceManager.localizedString("conversation.user.speak.toast")
             public static let agentInterrputed = ResourceManager.localizedString("conversation.agent.interrputed")
+            public static let agentStateSilent = ResourceManager.localizedString("conversation.agent.state.silent")
+            public static let agentStateListening = ResourceManager.localizedString("conversation.agent.state.listening")
+            public static let agentStateSpeaking = ResourceManager.localizedString("conversation.agent.state.speaking")
+            public static let agentStateMuted = ResourceManager.localizedString("conversation.agent.state.muted")
         }
         
         public enum Setting {
@@ -150,6 +154,8 @@ extension ResourceManager {
             public static let title = ResourceManager.localizedString("devmode.title")
             public static let graph = ResourceManager.localizedString("devmode.graph")
             public static let rtc = ResourceManager.localizedString("devmode.rtc")
+            public static let rtm = ResourceManager.localizedString("devmode.rtm")
+            public static let metrics = ResourceManager.localizedString("devmode.metric")
             public static let host = ResourceManager.localizedString("devmode.host")
             public static let dump = ResourceManager.localizedString("devmode.dump")
             public static let sessionLimit = ResourceManager.localizedString("devmode.sessionLimit")

@@ -33,18 +33,6 @@ object CovRtcManager {
         }
     }
 
-    private val covRtcHandler  = object : IRtcEngineEventHandler() {
-        override fun onAudioRouteChanged(routing: Int) {
-            super.onAudioRouteChanged(routing)
-            runOnMainThread {
-                CovLogger.d(TAG, "onAudioRouteChanged, routing:$routing")
-                // set audio config parameters
-                // you should set it before joinChannel and when audio route changed
-                setAudioConfigParameters(routing)
-            }
-        }
-    }
-
     fun createRtcEngine(rtcCallback: IRtcEngineEventHandler): RtcEngineEx {
         val config = RtcEngineConfig()
         config.mContext = AgentApp.instance()
@@ -56,7 +44,6 @@ object CovRtcManager {
             rtcEngine = (RtcEngine.create(config) as RtcEngineEx).apply {
                 loadExtensionProvider("ai_echo_cancellation_extension")
                 loadExtensionProvider("ai_noise_suppression_extension")
-                addHandler(covRtcHandler)
             }
         } catch (e: Exception) {
             CovLogger.e(TAG, "createRtcEngine error: $e")
@@ -76,21 +63,8 @@ object CovRtcManager {
         return mediaPlayer!!
     }
 
-    fun joinChannel(rtcToken: String, channelName: String, uid: Int, isIndependent: Boolean = false) {
-        CovLogger.d(TAG, "onClickStartAgent channelName: $channelName, localUid: $uid, isIndependent: $isIndependent")
-
-        // isIndependent is always false in your app
-        if (isIndependent) {
-            // ignore this, you should not set it
-            rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
-        } else {
-            // set audio scenario 10, open AI-QoS
-            rtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_AI_CLIENT)
-        }
-
-        // set audio config parameters
-        // you should set it before joinChannel and when audio route changed
-        setAudioConfigParameters(mAudioRouting)
+    fun joinChannel(rtcToken: String, channelName: String, uid: Int) {
+        CovLogger.d(TAG, "onClickStartAgent channelName: $channelName, localUid: $uid")
 
         // Calling this API enables the onAudioVolumeIndication callback to report volume values,
         // which can be used to drive microphone volume animation rendering
@@ -181,7 +155,6 @@ object CovRtcManager {
     }
 
     fun destroy() {
-        rtcEngine?.removeHandler(covRtcHandler)
         rtcEngine = null
         mediaPlayer = null
         RtcEngine.destroy()

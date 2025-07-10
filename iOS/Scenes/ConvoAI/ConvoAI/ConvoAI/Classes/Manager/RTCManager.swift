@@ -23,7 +23,7 @@ protocol RTCManagerProtocol {
     func leaveChannel()
     
     // renew rtc token
-    func renewRtcToken(value: String)
+    func renewToken(token: String)
     
     /// Mutes or unmutes the voice
     /// - Parameter state: True to mute, false to unmute
@@ -154,8 +154,8 @@ extension RTCManager: RTCManagerProtocol {
         rtcEngine.leaveChannel()
     }
     
-    func renewRtcToken(value: String) {
-        rtcEngine.renewToken(value)
+    func renewToken(token: String) {
+        rtcEngine.renewToken(token)
     }
     
     func destroy() {
