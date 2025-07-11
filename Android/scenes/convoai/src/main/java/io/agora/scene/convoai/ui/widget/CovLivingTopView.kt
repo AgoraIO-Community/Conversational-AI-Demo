@@ -136,6 +136,23 @@ class CovLivingTopView @JvmOverloads constructor(
     }
 
     /**
+     * update light background
+     */
+    fun updateLightBackground(light: Boolean) {
+        binding.apply {
+            if (light) {
+                btnSwitchCamera.setBackgroundResource(R.drawable.btn_bg_brand_black3_selector)
+                btnAddPic.setBackgroundResource(R.drawable.btn_bg_brand_black3_selector)
+                tvCc.setBackgroundResource(R.drawable.btn_bg_brand_black3_selector)
+            } else {
+                btnSwitchCamera.setBackgroundResource(R.drawable.btn_bg_block1_selector)
+                btnAddPic.setBackgroundResource(R.drawable.btn_bg_block1_selector)
+                tvCc.setBackgroundResource(R.drawable.btn_bg_block1_selector)
+            }
+        }
+    }
+
+    /**
      * Update network status icon and visibility based on quality value.
      */
     fun updateNetworkStatus(value: Int) {
