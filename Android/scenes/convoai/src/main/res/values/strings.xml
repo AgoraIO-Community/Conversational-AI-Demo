@@ -98,4 +98,18 @@
     <string name="cov_iot_title">Conversational AI Device</string>
     <string name="cov_iot_devices_num">%d Devices</string>
     <string name="cov_my_device">My Devices</string>
+
+    <!-- photo -->
+    <string name="cov_photo_format_tips">Only JPG, PNG, WEBP, and JPEG image formats are supported.</string>
+    <string name="cov_photo_type_photo">Photo</string>
+    <string name="cov_photo_type_camera">Camera</string>
+    <string name="cov_photo_edit_done">Done</string>
+    <string name="cov_photo_permission_storage_gallery">We need access to your photo library to select images. Please enable photo access permission in Settings.</string>
+    <string name="cov_photo_permission_camera">We need access to your camera to take photos. Please enable camera access permission in Settings.</string>
+    <string name="cov_photo_permission_storage_camera">Photo access permission allows preview of recent photos on the camera page. You can choose to skip this permission.</string>
+    <string name="cov_photo_permission_skip">Skip</string>
+    <string name="cov_photo_permission_enable">Enable Permission</string>
+    <string name="cov_photo_permission_go_settings">Settings</string>
+    <string name="cov_photo_permission_cancel">Cancel</string>
+
 </resources>
