@@ -187,8 +187,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private var conversationalAIAPI: IConversationalAIAPI? = null
 
-    private var conversationalAIAPI: IConversationalAIAPI? = null
-
     override fun getViewBinding(): CovActivityLivingBinding {
         return CovActivityLivingBinding.inflate(layoutInflater)
     }
