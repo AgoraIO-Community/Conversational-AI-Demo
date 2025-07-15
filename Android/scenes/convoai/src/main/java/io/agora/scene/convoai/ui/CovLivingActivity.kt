@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Build
@@ -13,6 +14,7 @@ import android.view.WindowManager
 import android.webkit.CookieManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
@@ -180,10 +182,26 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private var mLoginDialog: LoginDialog? = null
 
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Int>
     private lateinit var mPermissionHelp: PermissionHelp
 
     private val mLoginViewModel: LoginViewModel by viewModels()
+
+    private class SSOWebViewContract : ActivityResultContract<Int, String?>() {
+        override fun createIntent(context: Context, input: Int): Intent {
+            return Intent(context, SSOWebViewActivity::class.java).apply {
+                putExtra(SSOWebViewActivity.EXTRA_TYPE, input)
+            }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): String? {
+            return if (resultCode == Activity.RESULT_OK) {
+                intent?.getStringExtra(SSOWebViewActivity.EXTRA_TOKEN)
+            } else {
+                null
+            }
+        }
+    }
 
     private var conversationalAIAPI: IConversationalAIAPI? = null
 
@@ -934,22 +952,14 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     )
 
     private fun setupView() {
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data: Intent? = result.data
-                    val token = data?.getStringExtra("token")
-                    if (token != null) {
-                        SSOUserManager.saveToken(token)
-                        mLoginViewModel.getUserInfoByToken(token)
-                    } else {
-                        showLoginLoading(false)
-                    }
-                } else {
-                    showLoginLoading(false)
-                }
+        activityResultLauncher = registerForActivityResult(SSOWebViewContract()) { token: String? ->
+            if (token != null) {
+                SSOUserManager.saveToken(token)
+                mLoginViewModel.getUserInfoByToken(token)
+            } else {
+                showLoginLoading(false)
             }
-
+        }
         mPermissionHelp = PermissionHelp(this)
         mBinding?.apply {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1307,9 +1317,13 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     }
 
                     override fun onClickStartSSO() {
-                        activityResultLauncher.launch(
-                            Intent(this@CovLivingActivity, SSOWebViewActivity::class.java)
-                        )
+                        activityResultLauncher.launch(SSOWebViewActivity.TYPE_LOGIN)
+                        showLoginLoading(true)
+                    }
+
+                    override fun onClickSignupSSO() {
+                        cleanCookie()
+                        activityResultLauncher.launch(SSOWebViewActivity.TYPE_SIGNUP)
                         showLoginLoading(true)
                     }
 

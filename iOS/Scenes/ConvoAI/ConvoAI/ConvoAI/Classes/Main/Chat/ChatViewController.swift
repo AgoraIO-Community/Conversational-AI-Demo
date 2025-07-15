@@ -488,10 +488,9 @@ public class ChatViewController: UIViewController {
         ConvoAILogger.info("\(tag) \(txt)")
     }
     
-    private func goToSSOViewController() {
+    private func goToSSO(urlString: String) {
         let ssoWebVC = SSOWebViewController()
-        let baseUrl = AppContext.shared.baseServerUrl
-        ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/login"
+        ssoWebVC.urlString = urlString
         ssoWebVC.completionHandler = { [weak self] token in
             guard let self = self else { return }
             if let token = token {
@@ -509,8 +508,6 @@ public class ChatViewController: UIViewController {
                         SVProgressHUD.showInfo(withStatus: err.localizedDescription)
                     }
                 }
-            } else {
-                AppContext.loginManager()?.logout()
             }
         }
         self.navigationController?.pushViewController(ssoWebVC, animated: false)
@@ -990,7 +987,13 @@ private extension ChatViewController {
             let loginVC = LoginViewController()
             loginVC.modalPresentationStyle = .overFullScreen
             loginVC.loginAction = { [weak self] in
-                self?.goToSSOViewController()
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
+            }
+            loginVC.signupAction = { [weak self] in
+                SSOWebViewController.clearWebViewCache()
+                let baseUrl = AppContext.shared.baseServerUrl
+                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
             }
             self.present(loginVC, animated: false)
         }
