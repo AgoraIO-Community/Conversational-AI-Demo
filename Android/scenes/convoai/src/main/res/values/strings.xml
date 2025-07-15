@@ -101,6 +101,7 @@
 
     <!-- vision -->
     <string name="cov_preset_not_support_vision">This preset does not support vision-related features. Please click the settings button in the upper right corner to select another preset.</string>
+    <string name="cov_vision_connect_and_try_again">Please connect and try again!</string>
 
     <!-- photo -->
     <string name="cov_photo_format_tips">Only JPG, PNG, WEBP, and JPEG image formats are supported.</string>
