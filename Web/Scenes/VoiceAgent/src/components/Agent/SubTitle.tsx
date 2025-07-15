@@ -1,33 +1,33 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import { useTranslations } from 'next-intl'
-import { ChevronDownIcon } from 'lucide-react'
+import * as React from "react"
+import { useTranslations } from "next-intl"
+import { ChevronDownIcon } from "lucide-react"
 
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { EChatItemType } from '@/type/rtc'
+import { cn } from "@/lib/utils"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { EChatItemType } from "@/type/rtc"
 import {
   AgentAvatarIcon,
   UserAvatarIcon,
   ChatInterruptIcon,
-} from '@/components/Icons'
-import { Button, ButtonProps } from '@/components/ui/button'
-import { useAgentPresets } from '@/services/agent'
+} from "@/components/Icons"
+import { Button, ButtonProps } from "@/components/ui/button"
+import { useAgentPresets } from "@/services/agent"
 import {
   useAgentSettingsStore,
   useChatStore,
   useGlobalStore,
-  useRTCStore,
+  // useRTCStore,
   useUserInfoStore,
-} from '@/store'
-import { useAutoScroll } from '@/hooks/use-auto-scroll'
-import { EMessageStatus } from '@/services/message'
+} from "@/store"
+import { useAutoScroll } from "@/hooks/use-auto-scroll"
+import { ETurnStatus } from "@/conversational-ai-api/type"
 
 export function SubTitle(props: { className?: string }) {
   const { className } = props
 
-  const tAgent = useTranslations('agent')
+  const tAgent = useTranslations("agent")
 
   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
   const isAutoScrollEnabledRef = React.useRef(true)
@@ -40,7 +40,7 @@ export function SubTitle(props: { className?: string }) {
     accountUid: accountUid,
   })
   const { settings } = useAgentSettingsStore()
-  const { remote_rtc_uid } = useRTCStore()
+  // const { remote_rtc_uid } = useRTCStore()
   const { abort, reset } = useAutoScroll(scrollAreaRef)
 
   const presetSelected = React.useMemo(() => {
@@ -96,54 +96,65 @@ export function SubTitle(props: { className?: string }) {
 
     const element = scrollAreaRef.current
     if (element) {
-      element.addEventListener('touchmove', handleScroll)
-      element.addEventListener('wheel', handleScroll)
+      element.addEventListener("touchmove", handleScroll)
+      element.addEventListener("wheel", handleScroll)
     }
 
     return () => {
       if (element) {
-        element.removeEventListener('touchmove', handleScroll)
-        element.removeEventListener('wheel', handleScroll)
+        element.removeEventListener("touchmove", handleScroll)
+        element.removeEventListener("wheel", handleScroll)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <div className={cn('relative backdrop-blur-lg', className)}>
+    <div className={cn("relative backdrop-blur-lg", className)}>
       <ScrollArea
         className="h-full w-full rounded-md p-4"
         type="auto"
         viewportRef={scrollAreaRef}
       >
-        {history.map((item) => (
-          <ChatItem
-            key={`${item.turn_id}-${item.uid}`}
-            type={
-              item.uid === Number(remote_rtc_uid)
-                ? EChatItemType.USER
-                : EChatItemType.AGENT
+        {history
+          .sort((a, b) => {
+            try {
+              const aUidNumber = Number(a.uid)
+              const bUidNumber = Number(b.uid)
+              return aUidNumber - bUidNumber
+            } catch (error) {
+              console.error("Error parsing uid to number:", error)
+              return 0 // Fallback to 0 if parsing fails
             }
-            label={
-              item.uid === Number(remote_rtc_uid)
-                ? tAgent('userLabel')
-                : presetSelected?.display_name
-            }
-            status={item.status}
-            className={cn({
-              hidden: item.text === '',
-            })}
-          >
-            {item.text}
-          </ChatItem>
-        ))}
+          })
+          .map((item) => (
+            <ChatItem
+              key={`${item.turn_id}-${item.uid}`}
+              type={
+                Number(item.uid) === 0
+                  ? EChatItemType.USER
+                  : EChatItemType.AGENT
+              }
+              label={
+                Number(item.uid) === 0
+                  ? tAgent("userLabel")
+                  : presetSelected?.display_name
+              }
+              status={item.status}
+              className={cn({
+                hidden: item.text === "",
+              })}
+            >
+              {item.text}
+            </ChatItem>
+          ))}
       </ScrollArea>
       {!isAutoScrollEnabledRef.current && (
         <ScrollDownButton
           onClick={handleScrollDownClick}
           className={cn(
-            'absolute bottom-3 left-[calc(50%-18px)] -translate-x-1/2',
-            'animate-bounce transition-all duration-1000'
+            "absolute bottom-3 left-[calc(50%-18px)] -translate-x-1/2",
+            "animate-bounce transition-all duration-1000"
           )}
         />
       )}
@@ -158,7 +169,7 @@ const ChatItem = React.forwardRef<
     type?: EChatItemType
     children?: React.ReactNode
     label?: string | React.ReactNode
-    status?: EMessageStatus
+    status?: ETurnStatus
   }
 >((props, ref) => {
   const {
@@ -171,20 +182,20 @@ const ChatItem = React.forwardRef<
 
   const { settings } = useAgentSettingsStore()
 
-  const t = useTranslations('agent')
+  const t = useTranslations("agent")
 
   // !SPECIAL CASE[Arabic]: align right
   const shouldAlignRightMemo = React.useMemo(() => {
-    return settings.asr.language?.startsWith('ar')
+    return settings.asr.language?.startsWith("ar")
   }, [settings.asr.language])
 
   return (
     <div
       ref={ref}
       className={cn(
-        'my-2 w-full text-sm text-icontext',
-        'flex flex-col gap-2',
-        { ['items-end']: type === EChatItemType.USER },
+        "my-2 w-full text-sm text-icontext",
+        "flex flex-col gap-2",
+        { ["items-end"]: type === EChatItemType.USER },
         className
       )}
     >
@@ -196,30 +207,30 @@ const ChatItem = React.forwardRef<
         )}
         <span className="text-icontext-disabled">
           {label ??
-            (type === EChatItemType.USER ? t('userLabel') : t('agentLabel'))}
+            (type === EChatItemType.USER ? t("userLabel") : t("agentLabel"))}
         </span>
       </div>
       <div
-        className={cn('rounded-md py-2', 'h-fit w-fit max-w-[80%]', {
-          ['bg-block-4 px-4']: type === EChatItemType.USER,
-          ['text-right']: shouldAlignRightMemo,
+        className={cn("rounded-md py-2", "h-fit w-fit max-w-[80%]", {
+          ["bg-block-4 px-4"]: type === EChatItemType.USER,
+          ["text-right"]: shouldAlignRightMemo,
         })}
       >
         {children}
-        {status === EMessageStatus.IN_PROGRESS && type === EChatItemType.AGENT && (
+        {status === ETurnStatus.IN_PROGRESS && type === EChatItemType.AGENT && (
           <span className="text-xs text-icontext-disabled">...</span>
         )}
       </div>
-      {status === EMessageStatus.INTERRUPTED && type === EChatItemType.AGENT && (
-        <div className="bg-brand-white-1 flex w-fit items-center gap-1 rounded-xs p-1">
+      {status === ETurnStatus.INTERRUPTED && type === EChatItemType.AGENT && (
+        <div className="flex w-fit items-center gap-1 rounded-xs bg-brand-white-1 p-1">
           <ChatInterruptIcon className="size-4" />
-          <span className="text-xs text-icontext">{t('interrupted')}</span>
+          <span className="text-xs text-icontext">{t("interrupted")}</span>
         </div>
       )}
     </div>
   )
 })
-ChatItem.displayName = 'ChatItem'
+ChatItem.displayName = "ChatItem"
 
 const ScrollDownButton = (props: ButtonProps) => {
   const { className, ...rest } = props
@@ -227,7 +238,7 @@ const ScrollDownButton = (props: ButtonProps) => {
     <Button
       variant="outline"
       size="icon"
-      className={cn('rounded-full border-none', className)}
+      className={cn("rounded-full border-none", className)}
       {...rest}
     >
       <ChevronDownIcon className="h-4 w-4" />
