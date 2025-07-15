@@ -347,7 +347,6 @@ internal class TranscriptionController(private val config: TranscriptionConfig) 
                         text = text,
                         status = if (isFinal) TranscriptionStatus.END else TranscriptionStatus.IN_PROGRESS,
                         type = TranscriptionType.USER,
-                        startMs = startMs
                     )
                     // Local user messages are directly callbacked out
                     callMessagePrint(
@@ -483,7 +482,6 @@ internal class TranscriptionController(private val config: TranscriptionConfig) 
                 text = text,
                 status = status,
                 type = TranscriptionType.AGENT,
-                startMs = startMs
             )
             // Agent text mode messages are directly callback out
             callMessagePrint(TAG_UI, "<<< [Text Mode] pts:$mPresentationMs $agentUserId $transcription")
@@ -526,7 +524,10 @@ internal class TranscriptionController(private val config: TranscriptionConfig) 
                 if (status == TranscriptionStatus.INTERRUPTED) {
                     // The actual effective timestamp for interruption, using the minimum of startMs and mPresentationMs
                     val interruptMarkMs = minOf(startMs, mPresentationMs)
-                    callMessagePrint(TAG, "interruptMarkMs:$interruptMarkMs startMs:$startMs mPresentationMs:$mPresentationMs")
+                    callMessagePrint(
+                        TAG,
+                        "interruptMarkMs:$interruptMarkMs startMs:$startMs mPresentationMs:$mPresentationMs"
+                    )
                     // Interrupt all words from the last one before interruptMarkMs to the end of the word list
                     var lastBeforeStartMs: TurnWordInfo? = null
                     val mergedWords = existingInfo.words.toMutableList()
@@ -651,7 +652,6 @@ internal class TranscriptionController(private val config: TranscriptionConfig) 
                             text = interruptedText,
                             status = TranscriptionStatus.INTERRUPTED,
                             type = TranscriptionType.AGENT,
-                            startMs = turn.startMs
                         )
                         val agentUserId = turn.agentUserId
                         callMessagePrint(
@@ -712,7 +712,6 @@ internal class TranscriptionController(private val config: TranscriptionConfig) 
                 text = if (targetIsEnd) targetTurn.text else targetWords.joinToString("") { it.word },
                 status = if (targetIsEnd) TranscriptionStatus.END else TranscriptionStatus.IN_PROGRESS,
                 type = TranscriptionType.AGENT,
-                startMs = targetTurn.startMs
             )
             if (targetIsEnd) {
                 callMessagePrint(TAG_UI, "<<< [end] pts:$mPresentationMs $agentUserId $newTranscription")

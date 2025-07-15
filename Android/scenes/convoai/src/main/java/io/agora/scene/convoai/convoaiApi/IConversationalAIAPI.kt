@@ -113,6 +113,20 @@ data class ImageMessage(
     val imageBase64: String? = null
 )
 
+// Base class for all media information types
+sealed class MediaInfo
+
+/**
+ * Image information data class, extends MediaInfo
+ * @property uuid Unique identifier for the image
+ * @property width Image width in pixels
+ * @property height Image height in pixels
+ * @property sizeBytes Image file size in bytes
+ * @property sourceType Source type of the image (e.g., local, remote)
+ * @property sourceValue Source value (e.g., file path or URL)
+ * @property uploadTime Upload timestamp in milliseconds
+ * @property totalUserImages Total number of user images
+ */
 data class ImageInfo(
     val uuid: String,
     val width: Int,
@@ -121,13 +135,19 @@ data class ImageInfo(
     val sourceType: String,
     val sourceValue: String,
     val uploadTime: Long,
-    val totalUserImages: Int
-)
+    val totalUserImages: Int,
+) : MediaInfo()
 
-data class ImageUploadError(
-    val uuid: String,
-    val code: Int,
-    val message: String
+/**
+ * Message receipt data class, supports multiple media types via MediaInfo
+ * @property type The module type (e.g., text, image, audio)
+ * @property turnId The turn ID of the message
+ * @property media The media information, can be ImageInfo, AudioInfo, etc.
+ */
+data class MessageReceipt(
+    val type: ModuleType,
+    val turnId: Long,
+    val media: MediaInfo?
 )
 
 /**
@@ -319,8 +339,8 @@ enum class MessageType(val value: String) {
     /** Interrupt message */
     INTERRUPT("message.interrupt"),
 
-    /** Image message */
-    IMAGE("message.info"),
+    /** Message receipt*/
+    MESSAGE_RECEIPT("message.info"),
 
     /** Unknown type */
     UNKNOWN("unknown");
@@ -359,7 +379,6 @@ enum class TranscriptionRenderMode {
  * @property text The actual transcription text content
  * @property status Current status of the transcription
  * @property type Transcription type (AGENT/USER)
- * @property sendMs Transcription sendMs
  */
 data class Transcription constructor(
     /** Unique identifier for the conversation turn */
@@ -372,8 +391,6 @@ data class Transcription constructor(
     var status: TranscriptionStatus,
     /** Transcription type (AGENT/USER) */
     var type: TranscriptionType,
-    /** Transcription start ms */
-    var startMs: Long,
 )
 
 /**
@@ -511,13 +528,12 @@ interface IConversationalAIAPIEventHandler {
      */
     fun onAgentError(agentUserId: String, error: ModuleError)
 
-
     /**
-     * Called when image upload
+     * Called when message receipt is updated
      * @param agentUserId Agent User ID
-     * @param image image info
+     * @param receipt message receipt info
      */
-    fun onImageUpload(agentUserId: String, image: ImageInfo)
+    fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt)
 
     /**
      * Called when transcription content is updated.
@@ -584,13 +600,13 @@ interface IConversationalAIAPI {
     fun chat(agentUserId: String, message: ChatMessage, completion: (error: ConversationalAIAPIError?) -> Unit)
 
     /**
-     * Uploads an image message to the specified agent user.
-     *
-     * @param agentUserId The user ID of the agent to receive the image message.
-     * @param message The image message to upload, containing image URL or base64 data.
+     * Send an image message to the agent.
+     * @param agentUserId Agent User ID
+     * @param uuid Unique identifier for the image
+     * @param imageUrl URL of the uploaded image
      * @param completion Callback invoked when the upload completes or fails. Returns an error if failed, or null if successful.
      */
-    fun uploadImage(agentUserId: String, message: ImageMessage, completion: (error: ConversationalAIAPIError?) -> Unit)
+    fun sendImage(agentUserId: String, uuid: String, imageUrl: String, completion: (error: ConversationalAIAPIError?) -> Unit)
 
     /**
      * Interrupt the AI agent's speaking.

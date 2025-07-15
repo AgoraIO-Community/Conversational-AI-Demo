@@ -250,8 +250,43 @@ class CovMessageListView @JvmOverloads constructor(
         val type: MessageType = MessageType.TEXT,
         var uploadStatus: UploadStatus = UploadStatus.NONE, // For image
         val localId: String? = null, // Unique local ID for local image messages
-        val startMs: Long = System.currentTimeMillis()
-    )
+        var imageUrl: String? = null, // If the upload is successful, imageUrl will be available
+    ){
+        companion object {
+            fun createLoading(uuid: String): Message {
+                return Message(
+                    isMe = true,
+                    turnId = -1L,
+                    content = "",
+                    localId = uuid,
+                    type = MessageType.IMAGE,
+                    uploadStatus = UploadStatus.UPLOADING
+                )
+            }
+
+            fun createFail(uuid: String, turnId: Long = -1L): Message {
+                return Message(
+                    isMe = true,
+                    turnId = turnId,
+                    content = "",
+                    localId = uuid,
+                    type = MessageType.IMAGE,
+                    uploadStatus = UploadStatus.FAILED
+                )
+            }
+
+            fun createSuccess(uuid: String, turnId: Long): Message {
+                return Message(
+                    isMe = true,
+                    turnId = turnId,
+                    content = "",
+                    localId = uuid,
+                    type = MessageType.IMAGE,
+                    uploadStatus = UploadStatus.SUCCESS
+                )
+            }
+        }
+    }
 
     /**
      * Message adapter
@@ -394,6 +429,26 @@ class CovMessageListView @JvmOverloads constructor(
         }
 
         /**
+         * Update upload status for a local image message by localId.
+         * Updates the uploadStatus field and refreshes the item in the adapter.
+         * @param message The message from uploadMessage.
+         */
+        fun replaceLocalWithUploadImageMessage(message: Message) {
+            val idx = messages.indexOfFirst { it.localId == message.localId }
+            if (idx != -1) {
+                val message = messages[idx].copy().apply {
+                    uploadStatus = message.uploadStatus
+                    message.imageUrl?.takeIf { it.isNotEmpty() }?.let {
+                        imageUrl = it
+                    }
+                }
+                messages[idx] = message
+                notifyItemChanged(idx)
+            }
+        }
+
+
+        /**
          * Replace a local image message (by localId) with the server message (with turnId).
          * After replacement, the list is sorted by turnId and user/agent order.
          * @param serverMessage The message from server (with turnId).
@@ -401,21 +456,16 @@ class CovMessageListView @JvmOverloads constructor(
         fun replaceLocalWithServerImageMessage(serverMessage: Message) {
             val idx = messages.indexOfFirst { it.localId == serverMessage.localId }
             if (idx != -1) {
-                val message = messages[idx].copy(uploadStatus = UploadStatus.SUCCESS, startMs = serverMessage.startMs)
+                val message = messages[idx].copy(uploadStatus = UploadStatus.SUCCESS, turnId = serverMessage.turnId)
                 messages[idx] = message
                 messages.sortWith(
                     compareBy<Message> {
                         if (it.turnId >= 0) it.turnId else Long.MAX_VALUE
                     }.thenBy {
-                        if (it.turnId == -1L) it.startMs else 0L
-                    }.thenBy {
                         if (it.isMe) 0 else 1
                     }
                 )
                 notifyDataSetChanged()
-            } else {
-                // Fallback: just add as normal
-                addOrUpdateMessage(serverMessage)
             }
         }
 
@@ -441,8 +491,6 @@ class CovMessageListView @JvmOverloads constructor(
                 messages.sortWith(
                     compareBy<Message> {
                         if (it.turnId >= 0) it.turnId else Long.MAX_VALUE
-                    }.thenBy {
-                        if (it.turnId == -1L) it.startMs else 0L
                     }.thenBy {
                         if (it.isMe) 0 else 1
                     }
@@ -559,11 +607,10 @@ class CovMessageListView @JvmOverloads constructor(
     /**
      * Update the upload status of a local image message by its localId.
      * Used to reflect upload progress, failure, or success in the UI.
-     * @param localId The unique localId of the image message.
-     * @param status The new upload status (UPLOADING, FAILED, SUCCESS).
+     * @param message The unique localId of the image message.
      */
-    fun updateLocalImageUploadStatus(localId: String, status: UploadStatus) {
-        messageAdapter.updateLocalImageUploadStatus(localId, status)
+    fun replaceLocalWithUploadImageMessage(message: Message) {
+        messageAdapter.replaceLocalWithUploadImageMessage(message)
     }
 
     /**
