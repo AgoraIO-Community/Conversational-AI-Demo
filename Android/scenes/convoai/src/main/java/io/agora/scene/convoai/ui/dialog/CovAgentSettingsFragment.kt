@@ -394,10 +394,6 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     }
 
     private fun onClickAvatar() {
-        if (CovAgentManager.getAvatars().isEmpty()) {
-            ToastUtil.show("No avatars available!")
-            return
-        }
         val activity = activity ?: return
 
         val avatarSelectorDialog = CovAvatarSelectorDialog.newInstance(
