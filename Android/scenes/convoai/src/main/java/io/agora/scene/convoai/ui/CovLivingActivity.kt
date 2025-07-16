@@ -224,18 +224,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 )
             }
             clTop.setOnSettingsClickListener {
-                if (CovAgentManager.getPresetList().isNullOrEmpty()) {
-                    lifecycleScope.launch {
-                        val success = viewModel.fetchPresetsAsync()
-                        if (success) {
-                            showSettingDialog()
-                        } else {
-                            ToastUtil.show(getString(R.string.cov_detail_net_state_error))
-                        }
-                    }
-                } else {
-                    showSettingDialog()
-                }
+                showSettingDialogWithPresetCheck(1) // Agent Settings tab
+            }
+            clTop.setOnWifiClickListener {
+                showSettingDialogWithPresetCheck(0) // Channel Info tab
             }
             clTop.setOnInfoClickListener {
                 showInfoDialog()
@@ -503,7 +495,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                         ivAvatarPreview.isVisible = true
                         GlideImageLoader.load(
                             ivAvatarPreview,
-                            avatar.avatar_url,
+                            avatar.bg_img_url,
                             null,
                             R.drawable.cov_default_avatar
                         )
@@ -778,9 +770,25 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         }
     }
 
-    private fun showSettingDialog() {
+    private fun showSettingDialogWithPresetCheck(initialTab: Int) {
+        if (CovAgentManager.getPresetList().isNullOrEmpty()) {
+            lifecycleScope.launch {
+                val success = viewModel.fetchPresetsAsync()
+                if (success) {
+                    showSettingDialog(initialTab)
+                } else {
+                    ToastUtil.show(getString(R.string.cov_detail_net_state_error))
+                }
+            }
+        } else {
+            showSettingDialog(initialTab)
+        }
+    }
+
+    private fun showSettingDialog(initialTab: Int = 1) {
         appTabDialog = CovAgentTabDialog.newInstance(
             viewModel.connectionState.value,
+            initialTab,
             onDismiss = {
                 appTabDialog = null
             })
@@ -789,6 +797,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private fun setupBallAnimView() {
         val binding = mBinding ?: return
+        if (isReleased) return
         val rtcMediaPlayer = CovRtcManager.createMediaPlayer()
         mCovBallAnim = CovBallAnim(this, rtcMediaPlayer, binding.videoView, object : CovBallAnimCallback {
             override fun onError(error: Exception) {
@@ -1194,6 +1203,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
             try {
                 isReleased = true   // Mark as releasing
+                viewModel.setAvatar(null)
                 viewModel.stopAgentAndLeaveChannel()  // Stop agent and leave channel
                 // lifecycleScope will be automatically cancelled when activity is destroyed
                 // Release animation resources

@@ -17,10 +17,6 @@ import android.view.animation.Animation
 import android.widget.ImageButton
 import androidx.core.view.isVisible
 import io.agora.scene.common.R
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlin.apply
-import kotlin.text.format
 
 /**
  * Top bar view for living activity, encapsulating info/settings/net buttons, ViewFlipper switching, and timer logic.
@@ -35,6 +31,7 @@ class CovLivingTopView @JvmOverloads constructor(
         CovActivityLivingTopBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var onInfoClick: (() -> Unit)? = null
+    private var onWifiClick: (() -> Unit)? = null
     private var onSettingsClick: (() -> Unit)? = null
     private var onIvTopClick: (() -> Unit)? = null
     private var onCCClick: (() -> Unit)? = null
@@ -52,6 +49,7 @@ class CovLivingTopView @JvmOverloads constructor(
 
     init {
         binding.btnInfo.setOnClickListener { onInfoClick?.invoke() }
+        binding.btnNet.setOnClickListener { onWifiClick?.invoke() }
         binding.btnSettings.setOnClickListener { onSettingsClick?.invoke() }
         binding.ivTop.setOnClickListener { onIvTopClick?.invoke() }
         binding.btnAddPic.setOnClickListener { onAddPicClick?.invoke() }
@@ -85,6 +83,13 @@ class CovLivingTopView @JvmOverloads constructor(
      */
     fun setOnInfoClickListener(listener: (() -> Unit)?) {
         onInfoClick = listener
+    }
+
+    /**
+     * Set callback for wifi button click.
+     */
+    fun setOnWifiClickListener(listener: (() -> Unit)?) {
+        onWifiClick = listener
     }
 
     /**
@@ -235,9 +240,9 @@ class CovLivingTopView @JvmOverloads constructor(
     fun showTitleAnim(sessionLimitMode: Boolean, roomExpireTime: Long, tipsText: String? = null) {
         stopTitleAnim()
         val tips = tipsText ?: if (sessionLimitMode) {
-            context.getString(R.string.common_limit_time, (roomExpireTime / 60).toInt())
+            context.getString(io.agora.scene.common.R.string.common_limit_time, (roomExpireTime / 60).toInt())
         } else {
-            context.getString(R.string.common_limit_time_none)
+            context.getString(io.agora.scene.common.R.string.common_limit_time_none)
         }
         binding.tvTips.text = tips
         isTitleAnimRunning = true
@@ -249,7 +254,7 @@ class CovLivingTopView @JvmOverloads constructor(
             updateTvCcVisibility()
             delay(2000)
             if (!isActive || !isTitleAnimRunning) return@launch
-            if (connectionState!= AgentConnectionState.IDLE) {
+            if (connectionState != AgentConnectionState.IDLE) {
                 binding.viewFlipper.showNext() // to ll_tips (index 1)
                 updateTvCcVisibility()
                 delay(3000)

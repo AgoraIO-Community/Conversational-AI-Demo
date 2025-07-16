@@ -123,7 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/settings_item_bg"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -165,10 +165,14 @@
                     android:text="@string/common_close"
                     android:textColor="@color/ai_icontext1"
                     android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    app:layout_constraintWidth_max="120dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_avatar_arrow"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="xxxx" />
+                    tools:text="xxx" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/iv_avatar"
