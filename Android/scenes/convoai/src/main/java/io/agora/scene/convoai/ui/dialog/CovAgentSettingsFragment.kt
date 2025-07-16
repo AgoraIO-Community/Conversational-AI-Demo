@@ -438,7 +438,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                 // Load avatar image with Glide
                 GlideImageLoader.load(
                     ivAvatar,
-                    selectedAvatar.avatar_url,
+                    selectedAvatar.thumb_img_url,
                     null,
                     io.agora.scene.convoai.R.drawable.cov_default_avatar
                 )
