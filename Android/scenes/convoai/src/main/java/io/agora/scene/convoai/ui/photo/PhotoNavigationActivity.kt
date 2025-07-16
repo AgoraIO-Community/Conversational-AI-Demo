@@ -1,5 +1,6 @@
 package io.agora.scene.convoai.ui.photo
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -15,63 +16,63 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>() {
-    
+
     private var completion: ((PhotoResult?) -> Unit)? = null
-    
+
     companion object {
         private const val EXTRA_CALLBACK_ID = "callback_id"
         private const val REQUEST_GALLERY = 1001
         private val callbacks = mutableMapOf<String, (PhotoResult?) -> Unit>()
-        
+
         fun start(context: Context, completion: (PhotoResult?) -> Unit) {
             val callbackId = System.currentTimeMillis().toString()
             callbacks[callbackId] = completion
-            
+
             val intent = Intent(context, PhotoNavigationActivity::class.java)
             intent.putExtra(EXTRA_CALLBACK_ID, callbackId)
             context.startActivity(intent)
-            
+
             if (context is Activity) {
                 context.overridePendingTransition(0, 0)
             }
         }
     }
 
-    override fun getViewBinding(): CovPhotoNavigationActivityBinding = 
+    override fun getViewBinding(): CovPhotoNavigationActivityBinding =
         CovPhotoNavigationActivityBinding.inflate(layoutInflater)
 
     override fun initView() {
         val callbackId = intent.getStringExtra(EXTRA_CALLBACK_ID)
         completion = callbackId?.let { callbacks[it] }
-        
+
         showPhotoPickType()
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         val callbackId = intent.getStringExtra(EXTRA_CALLBACK_ID)
         callbackId?.let { callbacks.remove(it) }
     }
-    
+
     private fun showPhotoPickType() {
         val fragment = PhotoPickTypeFragment.newInstance(
             onPickPhoto = { openGallery() },
             onTakePhoto = { pushTakePhoto() },
             onCancel = { dismissFlow() }
         )
-        
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment, "photo_pick_type")
             .commit()
     }
-    
+
     private fun pushTakePhoto() {
         val fragment = TakePhotoFragment.newInstance { bitmap ->
             if (bitmap != null) {
                 pushPhotoEdit(bitmap)
             }
         }
-        
+
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.slide_in_right,
@@ -83,7 +84,7 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
             .addToBackStack("take_photo")
             .commit()
     }
-    
+
     fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
             type = "image/*"
@@ -97,7 +98,7 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
         Thread {
             try {
                 val processedBitmap = PhotoProcessor.processPhoto(this, uri)
-                
+
                 runOnUiThread {
                     if (processedBitmap != null) {
                         // Successfully processed, proceed to edit page
@@ -114,13 +115,13 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
             }
         }.start()
     }
-    
+
     private fun pushPhotoEdit(bitmap: Bitmap) {
         // Bitmap should already be processed and ready for editing
         val fragment = PhotoEditFragment.newInstance(bitmap) { editedBitmap ->
             completeFlow(editedBitmap)
         }
-        
+
         runOnUiThread {
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
@@ -130,11 +131,11 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
                     R.anim.slide_out_right
                 )
                 .replace(R.id.fragment_container, fragment, "photo_edit")
-                .addToBackStack("photo_edit") 
+                .addToBackStack("photo_edit")
                 .commitAllowingStateLoss()
         }
     }
-    
+
     private fun completeFlow(bitmap: Bitmap?) {
         if (bitmap != null) {
             // Save file and generate result in background thread
@@ -161,13 +162,13 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
             overridePendingTransition(0, 0)
         }
     }
-    
+
     private fun dismissFlow() {
         completion?.invoke(null)
         finish()
         overridePendingTransition(0, 0)
     }
-    
+
     /**
      * Get app-specific photo output directory
      */
@@ -177,25 +178,25 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
             if (!exists()) mkdirs()
         }
     }
-    
+
     /**
      * Generate unique photo file name
      */
     private fun generatePhotoFileName(): String {
         return "photo_${System.currentTimeMillis()}.jpg"
     }
-    
+
     /**
      * Save Bitmap to file and create PhotoResult object
      */
     private fun saveBitmapAndCreateResult(bitmap: Bitmap): PhotoResult {
         val photoFile = File(getPhotoOutputDirectory(), generatePhotoFileName())
-        
+
         // Save bitmap to file
         FileOutputStream(photoFile).use { out ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
         }
-        
+
         // Create and return PhotoResult object
         return PhotoResult(
             bitmap = bitmap,
@@ -205,22 +206,22 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
         )
     }
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        super.onBackPressed()
         val fragmentManager = supportFragmentManager
-        
+
         if (fragmentManager.backStackEntryCount > 0) {
             fragmentManager.popBackStack()
         } else {
             dismissFlow()
         }
     }
-    
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        
+
         when (requestCode) {
             REQUEST_GALLERY -> {
                 if (resultCode == Activity.RESULT_OK && data?.data != null) {
@@ -230,7 +231,7 @@ class PhotoNavigationActivity : BaseActivity<CovPhotoNavigationActivityBinding>(
             }
         }
     }
-    
+
     private fun convertUriToBitmap(uri: Uri, callback: (Bitmap?) -> Unit) {
         try {
             val inputStream = contentResolver.openInputStream(uri)

@@ -96,7 +96,7 @@ class TakePhotoFragment : Fragment() {
     
     private fun setupViews() {
         // Adapt status bar height to prevent close button being obscured by notch screens
-        val statusBarHeight = requireContext().getStatusBarHeight() ?: 25.dp.toInt()
+        val statusBarHeight = context?.getStatusBarHeight() ?: 25.dp.toInt()
         val layoutParams = binding.topBar.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.topMargin = statusBarHeight
         binding.topBar.layoutParams = layoutParams
@@ -148,15 +148,19 @@ class TakePhotoFragment : Fragment() {
         }
     }
     
-    private fun allPermissionsGranted() = ContextCompat.checkSelfPermission(
-        requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    private fun allPermissionsGranted(): Boolean {
+        val ctx = context ?: return false
+        return ContextCompat.checkSelfPermission(
+            ctx, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
     
     private fun requestCameraPermission() {
         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
     
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        val ctx = context ?: return
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
         
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
@@ -196,7 +200,7 @@ class TakePhotoFragment : Fragment() {
                 Log.e(TAG, "Use case binding failed", exc)
                 ToastUtil.show("Camera failed to start: ${exc.message}")
             }
-        }, ContextCompat.getMainExecutor(requireContext()))
+        }, ContextCompat.getMainExecutor(ctx))
     }
     
     private fun takePhoto() {
@@ -290,14 +294,15 @@ class TakePhotoFragment : Fragment() {
     }
     
     private fun hasStoragePermission(): Boolean {
+        val ctx = context ?: return false
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
-                requireContext(),
+                ctx,
                 Manifest.permission.READ_MEDIA_IMAGES
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             ContextCompat.checkSelfPermission(
-                requireContext(),
+                ctx,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         }
@@ -318,6 +323,7 @@ class TakePhotoFragment : Fragment() {
             return
         }
         
+        val ctx = context ?: return
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val projection = arrayOf(
@@ -330,7 +336,7 @@ class TakePhotoFragment : Fragment() {
                 val selection = "${MediaStore.Images.Media.MIME_TYPE} IN (?, ?, ?)"
                 val selectionArgs = arrayOf("image/jpeg", "image/png", "image/jpg")
                 
-                val cursor = requireContext().contentResolver.query(
+                val cursor = ctx.contentResolver.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     projection,
                     selection,
@@ -347,14 +353,14 @@ class TakePhotoFragment : Fragment() {
                         )
                         
                         val thumbnail = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                            requireContext().contentResolver.loadThumbnail(
+                            ctx.contentResolver.loadThumbnail(
                                 imageUri,
                                 android.util.Size(200, 200),
                                 null
                             )
                         } else {
                             MediaStore.Images.Thumbnails.getThumbnail(
-                                requireContext().contentResolver,
+                                ctx.contentResolver,
                                 imageId,
                                 MediaStore.Images.Thumbnails.MINI_KIND,
                                 null
@@ -386,6 +392,7 @@ class TakePhotoFragment : Fragment() {
             return
         }
         
+        val ctx = context ?: return
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val projection = arrayOf(
@@ -393,7 +400,7 @@ class TakePhotoFragment : Fragment() {
                     MediaStore.Images.Media.DATA
                 )
                 
-                val cursor = requireContext().contentResolver.query(
+                val cursor = ctx.contentResolver.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     projection,
                     null,
