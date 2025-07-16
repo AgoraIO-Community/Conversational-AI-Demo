@@ -91,13 +91,17 @@
     <string name="cov_preset_change_dialog_content">Preset is related to the gender of the virtual human. Please reconfigure the virtual human after changing the Preset.</string>
     <string name="cov_language_change_dialog_title">Changing Language requires reconfiguring the virtual human</string>
     <string name="cov_language_change_dialog_content">Language is related to the gender of the virtual human. Please reconfigure the virtual human after changing the Language.</string>
-    <string name="cov_preset_change_dialog_confirm">Confirm Change</string>
-    <string name="cov_captions">Transcription</string>
+    <string name="cov_preset_change_dialog_confirm">Confirm</string>
+    <string name="cov_captions">CC</string>
 
     <!-- IOT  -->
     <string name="cov_iot_title">Conversational AI Device</string>
     <string name="cov_iot_devices_num">%d Devices</string>
     <string name="cov_my_device">My Devices</string>
+
+    <!-- vision -->
+    <string name="cov_preset_not_support_vision">This preset does not support vision-related features. Please click the settings button in the upper right corner to select another preset.</string>
+    <string name="cov_vision_connect_and_try_again">Please connect and try again!</string>
 
     <!-- photo -->
     <string name="cov_photo_format_tips">Only JPG, PNG, WEBP, and JPEG image formats are supported.</string>
