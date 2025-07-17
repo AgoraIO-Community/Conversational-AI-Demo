@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
@@ -51,9 +50,6 @@ import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.AgentState
-import io.agora.scene.convoai.convoaiApi.ImageInfo
-import io.agora.scene.convoai.convoaiApi.ModuleType
-import io.agora.scene.convoai.convoaiApi.PictureError
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
 import io.agora.scene.convoai.iot.manager.CovIotPresetManager
 import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
@@ -279,7 +275,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             })
 
             btnSendMsg.setOnClickListener {
-                viewModel.sendChatMessage("What can you see on this picture?")   // For test only
+                viewModel.sendChatMessage()   // For test only
             }
 
             agentStateView.setOnInterruptClickListener {
@@ -519,29 +515,33 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
         }
         lifecycleScope.launch {  // Observe message receipt updates
-            viewModel.messageReceiptUpdate.collect { messageInfo ->
+            viewModel.mediaInfoUpdate.collect { messageInfo ->
                 if (isSelfSubRender) return@collect
-                messageInfo?.media?.let { media ->
-                    when (media) {
-                        is ImageInfo -> {
-                            mBinding?.messageListViewV2?.updateLocalImageMessage(
-                                media.uuid, CovMessageListView.UploadStatus.SUCCESS
-                            )
-                        }
+                when (messageInfo) {
+                    is PictureInfo -> {
+                        mBinding?.messageListViewV2?.updateLocalImageMessage(
+                            messageInfo.uuid, CovMessageListView.UploadStatus.SUCCESS
+                        )
+                    }
+
+                    null -> {
+                        // nothing
                     }
                 }
             }
         }
         lifecycleScope.launch {  // Observe image updates
-            viewModel.moduleError.collect { moduleError ->
+            viewModel.resourceError.collect { resourceError ->
                 if (isSelfSubRender) return@collect
-                moduleError?.resourceError?.let { resourceError ->
-                    when (resourceError) {
-                        is PictureError -> {
-                            mBinding?.messageListViewV2?.updateLocalImageMessage(
-                                resourceError.uuid, CovMessageListView.UploadStatus.FAILED
-                            )
-                        }
+                when (resourceError) {
+                    is PictureError -> {
+                        mBinding?.messageListViewV2?.updateLocalImageMessage(
+                            resourceError.uuid, CovMessageListView.UploadStatus.FAILED
+                        )
+                    }
+
+                    null -> {
+                        // nothing
                     }
                 }
             }
@@ -626,79 +626,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
             vDragBigWindow.isVisible = newBigContent != null
             vDragSmallWindow.isVisible = newSmallContent != null
-
-            agentSpeakingIndicator.isVisible = !showAvatar && showVideo && !showTranscription
-            val isLight = vDragBigWindow.isVisible && !showTranscription
-            clTop.updateLightBackground(isLight)
-
-            if (isLight) {
-                clBottomLogged.btnEndCall.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-                clBottomLogged.btnCamera.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-            } else {
-                clBottomLogged.btnEndCall.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-                clBottomLogged.btnCamera.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-            }
-            updateMicrophoneView(viewModel.isLocalAudioMuted.value)
-        }
-    }
-
-
-    /**
-     * Update the content of vDragBigWindow and vDragSmallWindow according to the current state.
-     * Only one instance of localVisionView and remoteAvatarView is created and reused.
-     */
-    private fun updateWindowContent1() {
-        val showAvatar = viewModel.isAvatarJoinedRtc.value
-        val showVideo = viewModel.isPublishVideo.value
-        val showTranscription = viewModel.isShowMessageList.value
-        mBinding?.apply {
-            vDragBigWindow.container.removeAllViews()
-            vDragSmallWindow.container.removeAllViews()
-
-            if (showTranscription) { // Transcription mode
-                if (showAvatar && showVideo) {
-                    // Avatar in big window, video stream in small window
-                    vDragBigWindow.isVisible = true
-                    vDragSmallWindow.isVisible = true
-                    vDragBigWindow.container.addView(remoteAvatarView)
-                    vDragSmallWindow.container.addView(localVisionView)
-                } else if (showAvatar) {
-                    // Only avatar
-                    vDragBigWindow.isVisible = true
-                    vDragSmallWindow.isVisible = false
-                    vDragBigWindow.container.addView(remoteAvatarView)
-                } else if (showVideo) {
-                    // Only video stream
-                    vDragSmallWindow.isVisible = true
-                    vDragBigWindow.isVisible = false
-                    vDragSmallWindow.container.addView(localVisionView)
-                } else {
-                    vDragBigWindow.isVisible = false
-                    vDragSmallWindow.isVisible = false
-                }
-            } else {
-                // Non-transcription mode
-                if (showAvatar && showVideo) {
-                    vDragBigWindow.isVisible = true
-                    vDragSmallWindow.isVisible = true
-                    // Video stream in big window, avatar in small window
-                    vDragBigWindow.container.addView(localVisionView)
-                    vDragSmallWindow.container.addView(remoteAvatarView)
-                } else if (showAvatar) {
-                    // Only avatar
-                    vDragBigWindow.isVisible = true
-                    vDragSmallWindow.isVisible = false
-                    vDragBigWindow.container.addView(remoteAvatarView)
-                } else if (showVideo) {
-                    // Only video stream
-                    vDragBigWindow.isVisible = true
-                    vDragSmallWindow.isVisible = false
-                    vDragBigWindow.container.addView(localVisionView)
-                } else {
-                    vDragBigWindow.isVisible = false
-                    vDragSmallWindow.isVisible = false
-                }
-            }
 
             agentSpeakingIndicator.isVisible = !showAvatar && showVideo && !showTranscription
             val isLight = vDragBigWindow.isVisible && !showTranscription

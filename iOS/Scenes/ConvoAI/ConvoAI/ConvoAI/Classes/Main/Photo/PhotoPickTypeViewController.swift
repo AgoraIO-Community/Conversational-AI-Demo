@@ -292,7 +292,7 @@ class PhotoPickTypeViewController: UIViewController {
     
     private enum PermissionType {
         case photoLibrary      // Photo library permission for selecting photos
-        case camera           // Camera permission for taking photos  
+        case camera           // Camera permission for taking photos
     }
     
     private func showPermissionAlert(for type: PermissionType) {
@@ -328,7 +328,24 @@ class PhotoPickTypeViewController: UIViewController {
 extension PhotoPickTypeViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-        guard let itemProvider = results.first?.itemProvider, itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        guard let itemProvider = results.first?.itemProvider else { return }
+        let supportedUTTypes: [String] = [
+            "public.jpeg",           // image/jpeg, image/jpg
+            "public.png",            // image/png
+            "org.webmproject.webp"   // image/webp
+        ]
+        let isSupported = itemProvider.registeredTypeIdentifiers.contains { id in
+            print("pick photo type id: \(id)")
+            return supportedUTTypes.contains(id)
+        }
+
+        if !isSupported {
+            DispatchQueue.main.async {
+                SVProgressHUD.showError(withStatus: ResourceManager.L10n.Photo.formatTips)
+            }
+            return
+        }
+        guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             guard let self = self, let originalImage = image as? UIImage else { return }
             DispatchQueue.main.async {
