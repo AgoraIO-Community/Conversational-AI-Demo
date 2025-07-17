@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
@@ -51,9 +50,6 @@ import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.AgentState
-import io.agora.scene.convoai.convoaiApi.ImageInfo
-import io.agora.scene.convoai.convoaiApi.ModuleType
-import io.agora.scene.convoai.convoaiApi.PictureError
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
 import io.agora.scene.convoai.iot.manager.CovIotPresetManager
 import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
@@ -279,7 +275,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             })
 
             btnSendMsg.setOnClickListener {
-                viewModel.sendChatMessage("What can you see on this picture?")   // For test only
+                viewModel.sendChatMessage()   // For test only
             }
 
             agentStateView.setOnInterruptClickListener {
@@ -519,29 +515,33 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
         }
         lifecycleScope.launch {  // Observe message receipt updates
-            viewModel.messageReceiptUpdate.collect { messageInfo ->
+            viewModel.mediaInfoUpdate.collect { messageInfo ->
                 if (isSelfSubRender) return@collect
-                messageInfo?.media?.let { media ->
-                    when (media) {
-                        is ImageInfo -> {
-                            mBinding?.messageListViewV2?.updateLocalImageMessage(
-                                media.uuid, CovMessageListView.UploadStatus.SUCCESS
-                            )
-                        }
+                when (messageInfo) {
+                    is PictureInfo -> {
+                        mBinding?.messageListViewV2?.updateLocalImageMessage(
+                            messageInfo.uuid, CovMessageListView.UploadStatus.SUCCESS
+                        )
+                    }
+
+                    null -> {
+                        // nothing
                     }
                 }
             }
         }
         lifecycleScope.launch {  // Observe image updates
-            viewModel.moduleError.collect { moduleError ->
+            viewModel.resourceError.collect { resourceError ->
                 if (isSelfSubRender) return@collect
-                moduleError?.resourceError?.let { resourceError ->
-                    when (resourceError) {
-                        is PictureError -> {
-                            mBinding?.messageListViewV2?.updateLocalImageMessage(
-                                resourceError.uuid, CovMessageListView.UploadStatus.FAILED
-                            )
-                        }
+                when (resourceError) {
+                    is PictureError -> {
+                        mBinding?.messageListViewV2?.updateLocalImageMessage(
+                            resourceError.uuid, CovMessageListView.UploadStatus.FAILED
+                        )
+                    }
+
+                    null -> {
+                        // nothing
                     }
                 }
             }
