@@ -76,16 +76,7 @@ extension ChatMessageViewModel: MessageStandard {
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         messageMapTable[key] = message
         messages.append(message)
-<<<<<<< HEAD
-        messages.sort {
-            if $0.turn_id != $1.turn_id {
-                return $0.turn_id < $1.turn_id
-            }
-            return $0.isMine && !$1.isMine
-        }
-=======
         sortMessages()
->>>>>>> 4afb291a (llm Vision feature)
         
         delegate?.startNewMessage()
     }

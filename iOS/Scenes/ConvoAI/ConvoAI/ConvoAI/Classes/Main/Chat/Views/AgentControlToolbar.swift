@@ -374,11 +374,8 @@ class AgentControlToolbar: UIView {
     }
 }
 
-<<<<<<< HEAD
-=======
 extension AgentControlToolbar: AgentPreferenceManagerDelegate {
     func preferenceManager(_ manager: AgentPreferenceManager, presetDidUpdated preset: AgentPreset) {
         updateVideoButtonColor()
     }
 }
->>>>>>> 4afb291a (llm Vision feature)
