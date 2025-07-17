@@ -92,6 +92,8 @@
             app:backgroundTint="@color/ai_icontext1"
             app:cornerRadius="12dp"
             android:gravity="center"
+            android:ellipsize="middle"
+            android:lines="2"
             android:paddingHorizontal="0dp"
             app:rippleColor="#803e3e4d" />
 
