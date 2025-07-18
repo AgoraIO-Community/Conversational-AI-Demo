@@ -25,7 +25,7 @@ sealed class LoginState {
     object LoggedOut : LoginState()
 }
 
-class LoginViewModel : ViewModel() {
+class UserViewModel : ViewModel() {
 
     private fun getApiService() = ApiManager.getService(ApiManagerService::class.java)
 
