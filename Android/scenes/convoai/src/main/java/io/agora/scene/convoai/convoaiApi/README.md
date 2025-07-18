@@ -54,6 +54,7 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
        override fun onAgentInterrupted(agentUserId: String, event: InterruptEvent) { /* ... */ }
        override fun onAgentMetrics(agentUserId: String, metric: Metric) { /* ... */ }
        override fun onAgentError(agentUserId: String, error: ModuleError) { /* ... */ }
+       override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt) { /* ... */ }
        override fun onTranscriptionUpdated(agentUserId: String, transcription: Transcription) { /* ... */ }
        override fun onDebugLog(log: String) { /* ... */ }
    })
@@ -77,17 +78,131 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
    rtcEngine.joinChannel(token, channelName, null, userId)
    ```
 
-6. **Interrupt the agent (if needed)**
+6. **(Optional) Send image messages**
+
+   ```kotlin
+   val uuid = "unique-image-id-123" // Generate unique image identifier
+   val imageUrl = "https://example.com/image.jpg" // Image HTTP/HTTPS URL
+   
+   api.sendImage("agentUserId", uuid, imageUrl) { error ->
+       if (error != null) {
+           // Handle send error
+           Log.e("ImageSend", "Failed to send image: ${error.errorMessage}")
+       } else {
+           // Send request successful, waiting for receipt confirmation
+           Log.d("ImageSend", "Image send request successful")
+       }
+   }
+   ```
+
+7. **Interrupt the agent (if needed)**
 
    ```kotlin
    api.interrupt("agentId") { error -> /* ... */ }
    ```
 
-7. **Destroy the API instance when done**
+8. **Destroy the API instance when done**
 
    ```kotlin
    api.destroy()
    ```
+
+---
+
+## Sending Image Messages
+
+### Send Images
+
+Use the `sendImage` interface to send image messages to AI agent:
+
+```kotlin
+val uuid = "unique-image-id-123" // Generate unique image identifier
+val imageUrl = "https://example.com/image.jpg" // Image HTTP/HTTPS URL
+
+api.sendImage("agentUserId", uuid, imageUrl) { error ->
+    if (error != null) {
+        // Handle send error
+        Log.e("ImageSend", "Failed to send image: ${error.errorMessage}")
+    } else {
+        // Send request successful, waiting for receipt confirmation
+        Log.d("ImageSend", "Image send request successful")
+    }
+}
+```
+
+### Handle Image Send Status
+
+The actual success or failure status of image sending is confirmed through the following two callbacks:
+
+#### 1. Image Send Success - onMessageReceiptUpdated
+
+When receiving the `onMessageReceiptUpdated` callback, follow these steps to parse and confirm the image send status:
+
+**Important: You must first check if `receipt.type` is `ModuleType.Context`, then check `resource_type`**
+
+```kotlin
+override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt) {
+    // Step 1: Check if message type is Context
+    if (receipt.type == ModuleType.Context) {
+        try {
+            // Step 2: Parse receipt.message as JSON object
+            val jsonObject = JSONObject(receipt.message)
+            
+            // Step 3: Check if resource_type is picture
+            if (jsonObject.has("resource_type") && 
+                jsonObject.getString("resource_type") == "picture") {
+                
+                // Step 4: Check if uuid field is included
+                if (jsonObject.has("uuid")) {
+                    val receivedUuid = jsonObject.getString("uuid")
+                    
+                    // If uuid matches, this image was sent successfully
+                    if (receivedUuid == "your-sent-uuid") {
+                        Log.d("ImageSend", "Image sent successfully: $receivedUuid")
+                        // Update UI to show send success status
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("ImageSend", "Failed to parse message receipt: ${e.message}")
+        }
+    }
+}
+```
+
+#### 2. Image Send Failure - onAgentError
+
+When receiving the `onAgentError` callback and `error.type` is `ModuleType.Context`, parse `error.message` to confirm image send failure:
+
+```kotlin
+override fun onAgentError(agentUserId: String, error: ModuleError) {
+    // Check if it's a Context type error
+    if (error.type == ModuleType.Context) {
+        try {
+            // Parse error.message as JSON object
+            val jsonObject = JSONObject(error.message)
+            
+            // Check if resource_type is picture
+            if (jsonObject.has("resource_type") && 
+                jsonObject.getString("resource_type") == "picture") {
+                
+                // Check if uuid field is included
+                if (jsonObject.has("uuid")) {
+                    val failedUuid = jsonObject.getString("uuid")
+                    
+                    // If uuid matches, this image send failed
+                    if (failedUuid == "your-sent-uuid") {
+                        Log.e("ImageSend", "Image send failed: $failedUuid")
+                        // Update UI to show send failure status
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("ImageSend", "Failed to parse error message: ${e.message}")
+        }
+    }
+}
+```
 
 ---
 
@@ -102,6 +217,17 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
 
 - **All event callbacks are on the main thread.**  
   You can safely update UI in your event handlers.
+
+- **Image Send Status Confirmation:**
+    - The completion callback of `sendImage` interface only indicates whether the send request was successful, not the actual image send status
+    - Actual send success is confirmed through the `onMessageReceiptUpdated` callback
+    - Actual send failure is confirmed through the `onAgentError` callback
+    - You need to parse the JSON message in the callback to get specific uuid and status information
+
+- **Image Message Parsing Steps:**
+    - **Success Callback**: You must first check `receipt.type == ModuleType.Context`, then check `resource_type == "picture"`
+    - **Failure Callback**: You must first check `error.type == ModuleType.Context`, then check `resource_type == "picture"`
+    - Only after meeting the above conditions can you confirm the specific image send status through the `uuid` field
 
 ---
 
