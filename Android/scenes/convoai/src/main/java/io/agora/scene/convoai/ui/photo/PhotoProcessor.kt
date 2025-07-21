@@ -15,19 +15,19 @@ import java.io.ByteArrayOutputStream
  * 1. Format check -> 2. Resolution check -> 3. Size compression -> 4. Return processed photo
  */
 object PhotoProcessor {
-    
+
     private const val TAG = "PhotoProcessor"
     private const val MAX_DIMENSION = 2048 // Maximum width/height
     private const val MAX_FILE_SIZE = 5 * 1024 * 1024L // 5MB
-    
+
     // Supported image formats
     private val SUPPORTED_FORMATS = setOf(
         "image/jpeg",
-        "image/jpg", 
+        "image/jpg",
         "image/png",
         "image/webp"
     )
-    
+
     /**
      * Process photo from URI
      * @param context Android context
@@ -36,32 +36,32 @@ object PhotoProcessor {
      */
     fun processPhoto(context: Context, uri: Uri): Bitmap? {
         Log.d(TAG, "Starting photo processing for URI: $uri")
-        
+
         try {
             // 1. Format check
             val mimeType = getMimeType(context, uri)
             Log.d(TAG, "Detected MIME type: $mimeType")
-            
+
             if (mimeType == null || !SUPPORTED_FORMATS.contains(mimeType.lowercase())) {
                 Log.w(TAG, "Unsupported image format: $mimeType")
                 return null // Format not supported
             }
-            
-            // Convert URI to bitmap
-            val originalBitmap = loadBitmapFromUri(context, uri)
+
+            // 用采样方式加载大图，防止内存暴涨
+            val originalBitmap = loadBitmapFromUri(context, uri, MAX_DIMENSION, MAX_DIMENSION)
             if (originalBitmap == null) {
                 Log.e(TAG, "Failed to load bitmap from URI")
                 return null
             }
-            
+
             return processBitmap(originalBitmap)
-            
+
         } catch (e: Exception) {
             Log.e(TAG, "Error processing photo from URI: ${e.message}", e)
             return null
         }
     }
-    
+
     /**
      * Process photo from Bitmap
      * @param bitmap Original bitmap
@@ -72,34 +72,34 @@ object PhotoProcessor {
             Log.w(TAG, "Input bitmap is null")
             return null
         }
-        
+
         return processBitmap(bitmap)
     }
-    
+
     /**
      * Core bitmap processing logic
      */
     private fun processBitmap(originalBitmap: Bitmap): Bitmap? {
         try {
             Log.d(TAG, "Processing bitmap - Original size: ${originalBitmap.width}x${originalBitmap.height}")
-            
+
             // 2. Resolution check and resize if needed
             val resizedBitmap = resizeIfNeeded(originalBitmap)
             Log.d(TAG, "After resize - Size: ${resizedBitmap.width}x${resizedBitmap.height}")
-            
+
             // 3. Size compression if needed
             val finalBitmap = compressIfNeeded(resizedBitmap)
             Log.d(TAG, "After compression - Size: ${finalBitmap.width}x${finalBitmap.height}")
-            
+
             Log.i(TAG, "Photo processing completed successfully")
             return finalBitmap
-            
+
         } catch (e: Exception) {
             Log.e(TAG, "Error during bitmap processing: ${e.message}", e)
             return null
         }
     }
-    
+
     /**
      * Resize image if dimensions exceed MAX_DIMENSION
      * Scale down the longer side to MAX_DIMENSION while maintaining aspect ratio
@@ -107,13 +107,13 @@ object PhotoProcessor {
     private fun resizeIfNeeded(bitmap: Bitmap): Bitmap {
         val originalWidth = bitmap.width.toFloat()
         val originalHeight = bitmap.height.toFloat()
-        
+
         // Check if resize is needed
         if (originalWidth <= MAX_DIMENSION && originalHeight <= MAX_DIMENSION) {
             Log.d(TAG, "Image size is acceptable, no resize needed")
             return bitmap
         }
-        
+
         // Calculate new size, maintaining aspect ratio
         val aspectRatio = originalWidth / originalHeight
         val newSize = if (originalWidth > originalHeight) {
@@ -123,12 +123,12 @@ object PhotoProcessor {
             // Height is longer, scale based on height
             Pair((MAX_DIMENSION * aspectRatio).toInt(), MAX_DIMENSION)
         }
-        
+
         Log.d(TAG, "Resizing from ${originalWidth.toInt()}x${originalHeight.toInt()} to ${newSize.first}x${newSize.second}")
-        
+
         return Bitmap.createScaledBitmap(bitmap, newSize.first, newSize.second, true)
     }
-    
+
     /**
      * Compress image if estimated file size exceeds MAX_FILE_SIZE
      * Gradually reduce size until it meets the size requirement
@@ -136,28 +136,28 @@ object PhotoProcessor {
     private fun compressIfNeeded(bitmap: Bitmap): Bitmap {
         var currentBitmap = bitmap
         var estimatedSize = estimateJpegSize(currentBitmap, 80)
-        
+
         Log.d(TAG, "Initial estimated JPEG size: ${formatFileSize(estimatedSize)}")
-        
+
         // If size is within limit, return as is
         if (estimatedSize <= MAX_FILE_SIZE) {
             Log.d(TAG, "Image size is within limit, no compression needed")
             return currentBitmap
         }
-        
+
         // Gradually reduce size until it meets the requirement
         var scaleFactor = 1.0f
         while (estimatedSize > MAX_FILE_SIZE && scaleFactor > 0.1f) {
             scaleFactor *= 0.8f // Reduce to 80% each iteration
             val newWidth = (bitmap.width * scaleFactor).toInt()
             val newHeight = (bitmap.height * scaleFactor).toInt()
-            
+
             if (newWidth > 0 && newHeight > 0) {
                 // Clean up previous bitmap if it's not the original
                 if (currentBitmap != bitmap) {
                     currentBitmap.recycle()
                 }
-                
+
                 currentBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
                 estimatedSize = estimateJpegSize(currentBitmap, 80)
                 Log.d(TAG, "Compressed to: ${currentBitmap.width}x${currentBitmap.height}, estimated size: ${formatFileSize(estimatedSize)}")
@@ -165,18 +165,18 @@ object PhotoProcessor {
                 break
             }
         }
-        
+
         Log.i(TAG, "Final compressed size: ${currentBitmap.width}x${currentBitmap.height}, estimated JPEG size: ${formatFileSize(estimatedSize)}")
         return currentBitmap
     }
-    
+
     /**
      * Estimate JPEG file size after compression
      */
     private fun estimateJpegSize(bitmap: Bitmap, quality: Int): Long {
         val pixels = bitmap.width * bitmap.height.toLong()
         val baseSize = pixels * 3 // RGB base size
-        
+
         val compressionRatio = when {
             quality >= 90 -> 0.1f
             quality >= 80 -> 0.08f
@@ -189,10 +189,10 @@ object PhotoProcessor {
             quality >= 10 -> 0.015f
             else -> 0.01f
         }
-        
+
         return (baseSize * compressionRatio).toLong()
     }
-    
+
     /**
      * Get file MIME type
      */
@@ -213,22 +213,56 @@ object PhotoProcessor {
             null
         }
     }
-    
+
     /**
-     * Load bitmap from URI
+     * Efficiently load large images with sampling to avoid memory issues
      */
-    private fun loadBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+    private fun loadBitmapFromUri(
+        context: Context,
+        uri: Uri,
+        reqWidth: Int = MAX_DIMENSION,
+        reqHeight: Int = MAX_DIMENSION
+    ): Bitmap? {
         return try {
             val contentResolver = context.contentResolver
+
+            // First decode: only get image dimensions
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
+                BitmapFactory.decodeStream(inputStream, null, options)
+            }
+
+            // Calculate optimal inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+            options.inJustDecodeBounds = false
+            options.inPreferredConfig = Bitmap.Config.RGB_565
+
+            // Second decode: load the actual bitmap with sampling
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream, null, options)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading bitmap from URI: ${e.message}", e)
             null
         }
     }
-    
+
+    /**
+     * Calculate the optimal inSampleSize to ensure the loaded bitmap does not exceed the target size
+     */
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
+
     /**
      * Format file size for display
      */
@@ -239,7 +273,7 @@ object PhotoProcessor {
             else -> String.format("%.1fMB", bytes / (1024.0 * 1024.0))
         }
     }
-    
+
     /**
      * Rotate bitmap by specified degrees
      */
@@ -249,7 +283,7 @@ object PhotoProcessor {
         }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
-    
+
     /**
      * Flip bitmap horizontally (for front camera)
      */

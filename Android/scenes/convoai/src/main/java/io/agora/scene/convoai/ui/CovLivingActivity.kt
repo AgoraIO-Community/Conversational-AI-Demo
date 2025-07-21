@@ -34,7 +34,7 @@ import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.ui.SSOWebViewActivity
 import io.agora.scene.common.ui.TermsActivity
 import io.agora.scene.common.ui.vm.LoginState
-import io.agora.scene.common.ui.vm.LoginViewModel
+import io.agora.scene.common.ui.vm.UserViewModel
 import io.agora.scene.common.ui.widget.TextureVideoViewOutlineProvider
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.PermissionHelp
@@ -73,7 +73,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     // ViewModel instances
     private val viewModel: CovLivingViewModel by viewModels()
-    private val mLoginViewModel: LoginViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
     // UI related
     private var appInfoDialog: CovAppInfoDialog? = null
@@ -161,7 +161,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         activityResultLauncher = registerForActivityResult(SSOWebViewContract()) { token: String? ->
             if (token != null) {
                 SSOUserManager.saveToken(token)
-                mLoginViewModel.getUserInfoByToken(token)
+                userViewModel.getUserInfoByToken(token)
             } else {
                 showLoginLoading(false)
             }
@@ -306,7 +306,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     // Observe ViewModel state changes
     private fun observeViewModelStates() {
         lifecycleScope.launch {
-            mLoginViewModel.loginState.collect { state ->
+            userViewModel.loginState.collect { state ->
                 when (state) {
                     is LoginState.Success -> {
                         showLoginLoading(false)
@@ -816,7 +816,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         val tempToken = SSOUserManager.getToken()
         if (tempToken.isNotEmpty()) {
             showLoginLoading(true)
-            mLoginViewModel.getUserInfoByToken(tempToken)
+            userViewModel.getUserInfoByToken(tempToken)
         } else {
             updateLoginStatus(false)
         }
@@ -855,50 +855,29 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     private fun startUploadImage(file: File) {
         val requestId = UUID.randomUUID().toString().replace("-", "").substring(0, 16)
-        // 1. Add a local image message to the UI to indicate the image is being uploaded
+        // Add a local image message to the UI to indicate the image is being uploaded
         mBinding?.messageListViewV2?.addLocalImageMessage(requestId, file.absolutePath)
-
-        mLoginViewModel.uploadImage(
-            token = SSOUserManager.getToken(),
-            requestId = requestId,
-            channelName = CovAgentManager.channelName,
-            imageFile = file,
-            onResult = { result ->
-                result.onSuccess { uploadImage ->
-                    // 2. On successful upload, send the image message (with CDN URL) via IConversationalAIAPI.
-                    //    The UI will be updated when the server confirms the message delivery.
-                    viewModel.sendImageMessage(requestId, uploadImage.img_url, completion = { error ->
-                        if (error != null) {
-                            mBinding?.messageListViewV2?.updateLocalImageMessage(
-                                requestId, CovMessageListView.UploadStatus.FAILED
-                            )
-                        }
-                    })
-                }.onFailure {
-                    // 3. On upload failure, update the local image message status to FAILED for retry UI
-                    mBinding?.messageListViewV2?.updateLocalImageMessage(
-                        requestId, CovMessageListView.UploadStatus.FAILED
-                    )
-                }
-            }
-        )
+        uploadImageWithRequestId(requestId, file)
     }
 
     private fun replayUploadImage(requestId: String, file: File) {
-        // 1. Add a local image message to the UI to indicate the image is being uploaded
+        // Update local image message status to indicate uploading
         mBinding?.messageListViewV2?.updateLocalImageMessage(
             requestId, CovMessageListView.UploadStatus.UPLOADING
         )
+        uploadImageWithRequestId(requestId, file)
+    }
 
-        mLoginViewModel.uploadImage(
+    private fun uploadImageWithRequestId(requestId: String, file: File) {
+        userViewModel.uploadImage(
             token = SSOUserManager.getToken(),
             requestId = requestId,
             channelName = CovAgentManager.channelName,
             imageFile = file,
             onResult = { result ->
                 result.onSuccess { uploadImage ->
-                    // 2. On successful upload, send the image message (with CDN URL) via IConversationalAIAPI.
-                    //    The UI will be updated when the server confirms the message delivery.
+                    // On successful upload, send the image message (with CDN URL) via IConversationalAIAPI.
+                    // The UI will be updated when the server confirms the message delivery.
                     viewModel.sendImageMessage(requestId, uploadImage.img_url, completion = { error ->
                         if (error != null) {
                             mBinding?.messageListViewV2?.updateLocalImageMessage(
@@ -907,7 +886,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                         }
                     })
                 }.onFailure {
-                    // 3. On upload failure, update the local image message status to FAILED for retry UI
+                    // On upload failure, update the local image message status to FAILED for retry UI
                     mBinding?.messageListViewV2?.updateLocalImageMessage(
                         requestId, CovMessageListView.UploadStatus.FAILED
                     )
@@ -915,7 +894,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
         )
     }
-
     private fun showInfoDialog() {
         if (isFinishing || isDestroyed) return
         if (appInfoDialog?.dialog?.isShowing == true) return
