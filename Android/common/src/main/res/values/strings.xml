@@ -24,6 +24,7 @@
     <string name="common_close">Close</string>
     <string name="common_preview">Preview</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_cancel">Cancel</string>
 
     <string name="common_login_chat">Unlock \u221E Free Chat</string>
     <string name="common_login_chat_tips">""</string>
