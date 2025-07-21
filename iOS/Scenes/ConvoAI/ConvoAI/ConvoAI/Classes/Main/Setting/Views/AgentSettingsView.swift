@@ -137,16 +137,16 @@ class AgentSettingsView: UIView {
         view.titleLabel.attributedText = attributedString
         view.addtarget(self, action: #selector(onClickAiVad(_:)), for: .touchUpInside)
         if let manager = AppContext.preferenceManager(),
-           let language = manager.preference.preset,
-           let presetType = manager.preference.preset?.presetType
-        {
+           let language = manager.preference.language,
+           let presetType = manager.preference.preset?.presetType {
             if manager.information.agentState != .unload ||
-                presetType.contains("independent") {
+                presetType.contains("independent") ||
+                language.aivadSupported == false {
                 view.setEnable(false)
             } else {
                 view.setEnable(true)
             }
-            view.setOn(manager.preference.aiVad)
+            view.setOn(language.aivadEnabledByDefault)
         }
         view.bottomLine.isHidden = true
         view.updateLayout()
@@ -265,6 +265,13 @@ class AgentSettingsView: UIView {
     
     func updateLanguage(_ language: SupportLanguage) {
         languageItem.detailLabel.text = language.languageName
+        if (language.aivadSupported) {
+            aiVadItem.setEnable(true)
+            aiVadItem.setOn(language.aivadEnabledByDefault)
+        } else {
+            aiVadItem.setEnable(false)
+            aiVadItem.setOn(false)
+        }
     }
     
     func updateAiVadState(_ state: Bool) {

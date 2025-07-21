@@ -93,6 +93,7 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
     
     func updateLanguage(_ language: SupportLanguage) {
         preference.language = language
+        preference.aiVad = language.aivadEnabledByDefault
         notifyDelegates { $0.preferenceManager(self, languageDidUpdated: language) }
     }
     
