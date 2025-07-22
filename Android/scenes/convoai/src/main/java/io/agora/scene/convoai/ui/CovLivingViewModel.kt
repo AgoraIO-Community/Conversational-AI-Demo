@@ -110,6 +110,9 @@ class CovLivingViewModel : ViewModel() {
     val avatar: StateFlow<CovAvatar?> = _avatar.asStateFlow()
 
     fun setAvatar(avatar: CovAvatar?) {
+        if (avatar == null) {
+            CovAgentManager.avatar = null
+        }
         _avatar.value = avatar
     }
 
@@ -357,13 +360,13 @@ class CovLivingViewModel : ViewModel() {
     )
 
     // Send chat message (for debugging)
-    fun sendChatMessage(message: String? = null) {
+    fun sendTextMessage(message: String? = null) {
         if (_connectionState.value != AgentConnectionState.CONNECTED) {
             ToastUtil.show("Please connect to agent first")
             return
         }
 
-        val chatMessage = ChatMessage(
+        val textMessage = TextMessage(
             priority = Priority.INTERRUPT,
             responseInterruptable = true,
             text = message ?: randomMessages.random()
@@ -371,7 +374,7 @@ class CovLivingViewModel : ViewModel() {
 
         conversationalAIAPI?.chat(
             CovAgentManager.agentUID.toString(),
-            chatMessage
+            textMessage
         ) { error ->
             if (error != null) {
                 ToastUtil.show("Send message failed: ${error.message}")
@@ -382,7 +385,12 @@ class CovLivingViewModel : ViewModel() {
     }
 
     // Send image message
-    fun sendImageMessage(uuid: String, imageUrl: String, completion: (error: ConversationalAIAPIError?) -> Unit) {
+    fun sendImageMessage(
+        uuid: String,
+        imageUrl: String?,
+        imageBase64: String? = null,
+        completion: (error: ConversationalAIAPIError?) -> Unit
+    ) {
         if (_connectionState.value != AgentConnectionState.CONNECTED) {
             ToastUtil.show("Please connect to agent first")
             return
@@ -391,7 +399,12 @@ class CovLivingViewModel : ViewModel() {
         if ((resourceError is PictureError) && resourceError.uuid == uuid) {
             _resourceError.value = null
         }
-        conversationalAIAPI?.sendImage(CovAgentManager.agentUID.toString(), uuid, imageUrl, completion)
+        val imageMessage = ImageMessage(
+            uuid = uuid,
+            imageUrl = imageUrl,
+            imageBase64 = imageBase64
+        )
+        conversationalAIAPI?.chat(CovAgentManager.agentUID.toString(), imageMessage, completion)
     }
 
     // Interrupt Agent
@@ -437,6 +450,10 @@ class CovLivingViewModel : ViewModel() {
             }
 
             override fun onUserJoined(uid: Int, elapsed: Int) {
+                CovLogger.d(TAG, "RTC onUserJoined uid:$uid")
+
+                // 30903335
+                // 1000000002
                 viewModelScope.launch(Dispatchers.Main) {
                     if (uid == CovAgentManager.agentUID) {
                         CovLogger.d(TAG, "RTC onUserJoined agentUid:$uid")

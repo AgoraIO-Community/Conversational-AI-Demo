@@ -17,7 +17,6 @@ import io.agora.scene.common.ui.widget.LastItemDividerDecoration
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
 import io.agora.scene.common.util.getDistanceFromScreenEdges
-import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.AgentConnectionState
@@ -28,7 +27,6 @@ import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog.AvatarItem
 import kotlin.collections.indexOf
 import io.agora.scene.convoai.ui.CovLivingViewModel
 import kotlin.apply
-import kotlin.collections.indexOf
 import kotlin.collections.map
 import kotlin.collections.toTypedArray
 import kotlin.let
@@ -226,7 +224,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         CommonDialog.Builder()
             .setTitle(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_title))
             .setContent(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_content))
-            .setNegativeButton(getString(R.string.common_close)) {
+            .setNegativeButton(getString(R.string.common_cancel)) {
                 // User cancelled, no action needed
             }
             .setPositiveButtonWithReminder(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_confirm)) { dontShowAgain ->
@@ -364,7 +362,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         CommonDialog.Builder()
             .setTitle(getString(io.agora.scene.convoai.R.string.cov_language_change_dialog_title))
             .setContent(getString(io.agora.scene.convoai.R.string.cov_language_change_dialog_content))
-            .setNegativeButton(getString(R.string.common_close)) {
+            .setNegativeButton(getString(R.string.common_cancel)) {
                 // User cancelled, no action needed
             }
             .setPositiveButtonWithReminder(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_confirm)) { dontShowAgain ->

@@ -78,19 +78,39 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
    rtcEngine.joinChannel(token, channelName, null, userId)
    ```
 
-6. **(Optional) Send image messages**
+6. **(Optional) Send messages to AI agent**
 
+   **Send text messages:**
+   ```kotlin
+   // Basic text message
+   api.chat("agentUserId", TextMessage(text = "Hello, how are you?")) { error ->
+       if (error != null) {
+           Log.e("Chat", "Failed to send text: ${error.errorMessage}")
+       }
+   }
+   
+   // Text message with priority control
+   api.chat("agentUserId", TextMessage(
+       text = "Urgent question!",
+       priority = Priority.INTERRUPT,
+       responseInterruptable = true
+   )) { error ->
+       if (error != null) {
+           Log.e("Chat", "Failed to send text: ${error.errorMessage}")
+       }
+   }
+   ```
+
+   **Send image messages:**
    ```kotlin
    val uuid = "unique-image-id-123" // Generate unique image identifier
    val imageUrl = "https://example.com/image.jpg" // Image HTTP/HTTPS URL
    
-   api.sendImage("agentUserId", uuid, imageUrl) { error ->
+   api.chat("agentUserId", ImageMessage(uuid = uuid, imageUrl = imageUrl)) { error ->
        if (error != null) {
-           // Handle send error
-           Log.e("ImageSend", "Failed to send image: ${error.errorMessage}")
+           Log.e("Chat", "Failed to send image: ${error.errorMessage}")
        } else {
-           // Send request successful, waiting for receipt confirmation
-           Log.d("ImageSend", "Image send request successful")
+           Log.d("Chat", "Image send request successful")
        }
    }
    ```
@@ -109,23 +129,51 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
 
 ---
 
-## Sending Image Messages
+## Message Type Description
 
-### Send Images
+### Text Message (TextMessage)
 
-Use the `sendImage` interface to send image messages to AI agent:
+Text messages are suitable for natural language interaction:
 
 ```kotlin
-val uuid = "unique-image-id-123" // Generate unique image identifier
-val imageUrl = "https://example.com/image.jpg" // Image HTTP/HTTPS URL
+// Text message
+val textMessage = TextMessage(text = "Hello, how are you?")
+```
 
-api.sendImage("agentUserId", uuid, imageUrl) { error ->
+### Image Message (ImageMessage)
+
+Image messages are suitable for visual content processing, with status tracking via `uuid`:
+
+```kotlin
+// Using image URL
+val urlImageMessage = ImageMessage(
+    uuid = "img_123",
+    imageUrl = "https://example.com/image.jpg"
+)
+
+// Using Base64 encoding (note 32KB limit)
+val base64ImageMessage = ImageMessage(
+    uuid = "img_456",
+    imageBase64 = "data:image/jpeg;base64,..."
+)
+```
+
+### Send Messages
+
+Use the unified `chat` interface to send different types of messages:
+
+```kotlin
+// Send text message
+api.chat("agentUserId", TextMessage(text = "Hello, how are you?")) { error ->
     if (error != null) {
-        // Handle send error
-        Log.e("ImageSend", "Failed to send image: ${error.errorMessage}")
-    } else {
-        // Send request successful, waiting for receipt confirmation
-        Log.d("ImageSend", "Image send request successful")
+        Log.e("Chat", "Failed to send text: ${error.errorMessage}")
+    }
+}
+
+// Send image message
+api.chat("agentUserId", ImageMessage(uuid = "img_123", imageUrl = "https://...")) { error ->
+    if (error != null) {
+        Log.e("Chat", "Failed to send image: ${error.errorMessage}")
     }
 }
 ```
@@ -218,16 +266,18 @@ override fun onAgentError(agentUserId: String, error: ModuleError) {
 - **All event callbacks are on the main thread.**  
   You can safely update UI in your event handlers.
 
-- **Image Send Status Confirmation:**
-    - The completion callback of `sendImage` interface only indicates whether the send request was successful, not the actual image send status
-    - Actual send success is confirmed through the `onMessageReceiptUpdated` callback
-    - Actual send failure is confirmed through the `onAgentError` callback
-    - You need to parse the JSON message in the callback to get specific uuid and status information
+- **Message Send Status Confirmation:**
+    - The `chat` interface completion callback only indicates whether the send request was successful, not the actual message processing status
+    - Actual successful image message sending is confirmed through the `onMessageReceiptUpdated` callback (using uuid identifier)
+    - Image message send failures are confirmed through the `onAgentError` callback (using uuid identifier)
+    - JSON messages in callbacks need to be parsed to obtain specific identifiers and status information
 
-- **Image Message Parsing Steps:**
-    - **Success Callback**: You must first check `receipt.type == ModuleType.Context`, then check `resource_type == "picture"`
-    - **Failure Callback**: You must first check `error.type == ModuleType.Context`, then check `resource_type == "picture"`
-    - Only after meeting the above conditions can you confirm the specific image send status through the `uuid` field
+- **Image Message Status Tracking:**
+    - **Image messages**: Send status is confirmed through the `uuid` field in `onMessageReceiptUpdated` and `onAgentError` callbacks
+    - **Image message parsing steps**:
+        - **Success callback**: Must first check `receipt.type == ModuleType.Context`, then check `resource_type == "picture"`
+        - **Failure callback**: Must first check `error.type == ModuleType.Context`, then check `resource_type == "picture"`
+        - Only after meeting the above conditions can the specific image send status be confirmed through the `uuid` field
 
 ---
 
