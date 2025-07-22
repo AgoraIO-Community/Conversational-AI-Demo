@@ -110,6 +110,9 @@ class CovLivingViewModel : ViewModel() {
     val avatar: StateFlow<CovAvatar?> = _avatar.asStateFlow()
 
     fun setAvatar(avatar: CovAvatar?) {
+        if (avatar == null) {
+            CovAgentManager.avatar = null
+        }
         _avatar.value = avatar
     }
 
@@ -447,6 +450,10 @@ class CovLivingViewModel : ViewModel() {
             }
 
             override fun onUserJoined(uid: Int, elapsed: Int) {
+                CovLogger.d(TAG, "RTC onUserJoined uid:$uid")
+
+                // 30903335
+                // 1000000002
                 viewModelScope.launch(Dispatchers.Main) {
                     if (uid == CovAgentManager.agentUID) {
                         CovLogger.d(TAG, "RTC onUserJoined agentUid:$uid")
