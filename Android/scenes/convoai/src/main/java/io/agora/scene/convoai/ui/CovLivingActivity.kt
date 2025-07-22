@@ -617,7 +617,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             vDragSmallWindow.isVisible = newSmallContent != null
 
             agentSpeakingIndicator.isVisible = !showAvatar && showVideo && !showTranscription
-            val isLight = vDragBigWindow.isVisible && !showTranscription
+            val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscription
 
             updateLightBackground(isLight)
         }
@@ -697,7 +697,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     agentStateView.visibility = View.GONE
 
                     val showTranscription = viewModel.isShowMessageList.value
-                    val isLight = vDragBigWindow.isVisible && !showTranscription
+                    val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscription
                     updateLightBackground(isLight)
                 }
 
@@ -730,7 +730,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 )
             } else {
                 clBottomLogged.btnMic.setImageResource(io.agora.scene.common.R.drawable.agent_user_speaker)
-                val isLight = vDragBigWindow.isVisible && !viewModel.isShowMessageList.value
+                val isLight =  (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !viewModel.isShowMessageList.value
                 if (isLight) {
                     clBottomLogged.btnMic.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
                 } else {
