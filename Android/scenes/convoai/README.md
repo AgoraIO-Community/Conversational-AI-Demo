@@ -45,6 +45,11 @@ LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
 #----------- TTS -----------
 TTS_VENDOR=<TTS Vendor>
 TTS_PARAMS=<TTS Parameters>
+
+#----------- AVATAR -----------
+AVATAR_ENABLE=<Enable/Disable AVATAR>
+AVATAR_VENDOR=<AVATAR Vendor>
+AVATAR_PARAMS=<AVATAR Parameters>
 ```
 
 ## 🗂️ 2. Source Code Sitemap

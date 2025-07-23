@@ -878,7 +878,7 @@ class CovLivingViewModel : ViewModel() {
 
     private fun buildAvatarMap(): Map<String, Any?>? {
         var avatarMap: Map<String, Any?>? = null
-        if (BuildConfig.AVATAR_VENDOR.isNotEmpty()) {
+        if (BuildConfig.AVATAR_ENABLE) {
             avatarMap = mapOf(
                 "enable" to true,
                 "vendor" to BuildConfig.AVATAR_VENDOR.takeIf { it.isNotEmpty() },
