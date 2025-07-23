@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui.widget
 
 import android.content.Context
+import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -56,12 +57,13 @@ class CovMessageListView @JvmOverloads constructor(
      */
     var onImageErrorClickListener: ((Message) -> Unit)? = null
 
-    // Image preview click callback
     /**
      * Callback invoked when the user clicks on an image message.
      * Typically used to preview the image in full screen.
+     * @param Message The clicked message
+     * @param Rect The screen bounds of the clicked image view
      */
-    var onImagePreviewClickListener: ((Message) -> Unit)? = null
+    var onImagePreviewClickListener: ((Message, Rect) -> Unit)? = null
 
     init {
         setupRecyclerView()
@@ -309,9 +311,11 @@ class CovMessageListView @JvmOverloads constructor(
                     errorIcon.setOnClickListener {
                         onImageErrorClickListener?.invoke(message)
                     }
-                    // Image click for preview
+                    // Image click for preview with position
                     imageView.setOnClickListener {
-                        onImagePreviewClickListener?.invoke(message)
+                        val imageBounds = Rect()
+                        imageView.getGlobalVisibleRect(imageBounds)
+                        onImagePreviewClickListener?.invoke(message, imageBounds)
                     }
                 }
             }
@@ -356,7 +360,9 @@ class CovMessageListView @JvmOverloads constructor(
                         onImageErrorClickListener?.invoke(message)
                     }
                     imageView.setOnClickListener {
-                        onImagePreviewClickListener?.invoke(message)
+                        val imageBounds = Rect()
+                        imageView.getGlobalVisibleRect(imageBounds)
+                        onImagePreviewClickListener?.invoke(message, imageBounds)
                     }
                 }
             }
