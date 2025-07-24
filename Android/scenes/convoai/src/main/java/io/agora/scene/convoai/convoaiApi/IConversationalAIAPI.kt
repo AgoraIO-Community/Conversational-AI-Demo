@@ -15,7 +15,8 @@ const val ConversationalAIAPI_VERSION = "1.7.0"
  * val api = ConversationalAIAPI(config)
  * api.addHandler(object : IConversationalAIAPIEventHandler { ... })
  * api.subscribeMessage("channelName") { ... }
- * api.chat("agentUserId", ChatMessage(priority = Priority.INTERRUPT,responseInterruptable = true,text = "Hello!")) { ... }
+ * api.chat("agentUserId", TextMessage(priority = Priority.INTERRUPT, responseInterruptable = true, text = "Hello!")) { ... }
+ * api.chat("agentUserId", ImageMessage(uuid = "img_123", imageUrl = "https://example.com/image.jpg")) { ... }
  * // ...
  * api.destroy()
  */
@@ -89,7 +90,7 @@ data class TextMessage(
 ) : ChatMessage()
 
 /**
- * Image message data class for sending images to AI agents.
+ * Image message for sending visual content to AI agents.
  *
  * Supports two image formats:
  * - imageUrl: HTTP/HTTPS URL pointing to an image file (recommended for large images)
@@ -104,9 +105,9 @@ data class TextMessage(
  * - URL image: ImageMessage(uuid = "img_123", imageUrl = "https://example.com/image.jpg")
  * - Base64 image: ImageMessage(uuid = "img_456", imageBase64 = "data:image/jpeg;base64,...")
  *
- * @property uuid Unique identifier for the image message
- * @property imageUrl HTTP/HTTPS URL pointing to an image file (optional)
- * @property imageBase64 Base64 encoded image data (optional, limited to 32KB total message size)
+ * @property uuid Unique identifier for the image message (required)
+ * @property imageUrl HTTP/HTTPS URL pointing to an image file (optional, mutually exclusive with imageBase64)
+ * @property imageBase64 Base64 encoded image data (optional, mutually exclusive with imageUrl, limited to 32KB total message size)
  */
 data class ImageMessage(
     val uuid: String,
@@ -116,14 +117,14 @@ data class ImageMessage(
 
 /**
  * Message receipt data class, supports multiple media types via MediaInfo
- * @property type The module type (e.g., text, image, audio)
+ * @property type The module type (e.g., llm, mllm, tts, context)
  * @property turnId The turn ID of the message
- * @property message The message information, can be ImageInfo, AudioInfo, etc.
+ * @property message The message information, can be ImageInfo, etc.
  */
 data class MessageReceipt(
     val type: ModuleType,
     val turnId: Long,
-    var message: String
+    val message: String
 )
 
 /**
@@ -234,21 +235,6 @@ enum class ModuleType(val value: String) {
          */
         fun fromValue(value: String): ModuleType {
             return ModuleType.entries.find { it.value == value } ?: UNKNOWN
-        }
-    }
-}
-
-enum class ResourceType(val value: String) {
-    /** picture */
-    PICTURE("picture"),
-
-    /** Unknown type */
-    UNKNOWN("unknown");
-
-    companion object {
-
-        fun fromValue(value: String): ResourceType {
-            return ResourceType.entries.find { it.value == value } ?: UNKNOWN
         }
     }
 }
