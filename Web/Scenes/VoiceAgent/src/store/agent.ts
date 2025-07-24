@@ -1,12 +1,12 @@
+import type * as z from 'zod'
 import { create } from 'zustand'
-import * as z from 'zod'
 
 import {
-  agentBasicFormSchema,
-  agentPresetSchema,
+  type agentBasicFormSchema,
   agentPresetFallbackData,
-  EDefaultLanguage,
+  type agentPresetSchema,
   DEFAULT_CONVERSATION_DURATION,
+  EDefaultLanguage
 } from '@/constants'
 import { isCN } from '@/lib/utils'
 
@@ -32,7 +32,6 @@ const CUSTOM_TTS_VENDOR = process.env.NEXT_PUBLIC_CUSTOM_TTS_VENDOR || ''
 const CUSTOM_TTS_PARAMS = process.env.NEXT_PUBLIC_CUSTOM_TTS_PARAMS || null
 const CUSTOM_LLM_MODEL = process.env.NEXT_PUBLIC_CUSTOM_LLM_MODEL || ''
 
-
 const getLocalTTSParams = () => {
   if (CUSTOM_TTS_PARAMS) {
     try {
@@ -56,24 +55,24 @@ export const useAgentSettingsStore = create<IAgentSettings>((set) => ({
       api_key: CUSTOM_LLM_KEY,
       model: CUSTOM_LLM_MODEL,
       prompt: '',
-      style: undefined,
+      style: undefined
     },
     tts: {
       vendor: CUSTOM_TTS_VENDOR,
-      params: getLocalTTSParams(),
+      params: getLocalTTSParams()
     },
     asr: {
-      language: isCN ? EDefaultLanguage.ZH_CN : EDefaultLanguage.EN_US,
+      language: isCN ? EDefaultLanguage.ZH_CN : EDefaultLanguage.EN_US
     },
     advanced_features: {
       enable_bhvs: true,
-      enable_aivad: false,
+      enable_aivad: false
     },
     // !SPECIAL CASE[audio_scenario]
     parameters: {
-      audio_scenario: 'default',
+      audio_scenario: 'default'
     },
-    graph_id: undefined,
+    graph_id: undefined
   },
 
   updateSettings: <T>(settings: T) => {
@@ -109,18 +108,18 @@ export const useAgentSettingsStore = create<IAgentSettings>((set) => ({
             ...prev.settings.asr,
             language:
               newPresets[0]?.default_language_code ||
-              agentPresetFallbackData.default_language_code,
-          },
-        } as TAgentSettings,
+              agentPresetFallbackData.default_language_code
+          }
+        } as TAgentSettings
       }
     })
   },
   updateConversationDuration: (input?: number) => {
     set(() => ({
-      conversationDuration: input || DEFAULT_CONVERSATION_DURATION,
+      conversationDuration: input || DEFAULT_CONVERSATION_DURATION
     }))
   },
   setConversationTimerEndTimestamp: (endTimestamp: number | null) => {
     set(() => ({ conversationTimerEndTimestamp: endTimestamp }))
-  },
+  }
 }))

@@ -17,12 +17,12 @@ const ASCII_ART = `
 const packageMetaList = [
   {
     name: 'Name',
-    value: packageInfo.name,
+    value: packageInfo.name
   },
   {
     name: 'Version',
-    value: packageInfo.version,
-  },
+    value: packageInfo.version
+  }
 ]
 
 const separator = '\n--------------------------------\n'

@@ -1,6 +1,6 @@
-import * as React from 'react'
+import type * as React from 'react'
 
-import { Button, ButtonProps } from '@/components/ui/button'
+import { Button, type ButtonProps } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export const Card = (props: {
@@ -28,7 +28,7 @@ export const CardActions = (props: {
 }) => {
   const { className, children } = props
   return (
-    <div className={cn('absolute right-3 top-3 flex gap-3', className)}>
+    <div className={cn('absolute top-3 right-3 flex gap-3', className)}>
       {children}
     </div>
   )
@@ -47,7 +47,7 @@ export const CardTitle = (props: {
   return (
     <div
       className={cn(
-        'text-icontext flex h-9 items-center font-medium',
+        'flex h-9 items-center font-medium text-icontext',
         className
       )}
     >
@@ -62,7 +62,7 @@ export const CardContent = (props: {
 }) => {
   const { className, children } = props
   return (
-    <div className={cn('h-full overflow-y-auto p-3 relative', className)}>
+    <div className={cn('relative h-full overflow-y-auto p-3', className)}>
       {children}
     </div>
   )

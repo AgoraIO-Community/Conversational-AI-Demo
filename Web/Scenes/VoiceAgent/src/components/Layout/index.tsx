@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 
 import { Header } from '@/components/Layout/Header'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,7 @@ export const Layout = (props: {
       )}
     >
       <Header />
-      <main className="flex h-[var(--ag-main-min-height)] flex-col gap-[var(--ag-body-padding)] overflow-hidden">
+      <main className='flex h-[var(--ag-main-min-height)] flex-col gap-[var(--ag-body-padding)] overflow-hidden'>
         {children}
       </main>
     </div>

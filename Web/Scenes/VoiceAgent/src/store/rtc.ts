@@ -1,12 +1,12 @@
-import { create } from "zustand"
-import { EAgentState } from "@/conversational-ai-api/type"
-import { genAgentId, genChannelName, genUserId } from "@/lib/utils"
+import { create } from 'zustand'
+import { EAgentState } from '@/conversational-ai-api/type'
+import { genAgentId, genChannelName, genUserId } from '@/lib/utils'
 import {
   EAgentRunningStatus,
   EConnectionStatus,
   ENetworkStatus,
-  EUploadLogStatus,
-} from "@/type/rtc"
+  EUploadLogStatus
+} from '@/type/rtc'
 
 export type RTCStore = {
   network: ENetworkStatus
@@ -70,5 +70,5 @@ export const useRTCStore = create<IRTCStore>((set) => ({
   updateAgentUrl: (agentUrl: string) => set({ agent_url: agentUrl }),
   updateUploadLogStatus: (uploadLogStatus: EUploadLogStatus) =>
     set({ upload_log_status: uploadLogStatus }),
-  updateIsLocalMuted: (isLocalMuted: boolean) => set({ isLocalMuted }),
+  updateIsLocalMuted: (isLocalMuted: boolean) => set({ isLocalMuted })
 }))

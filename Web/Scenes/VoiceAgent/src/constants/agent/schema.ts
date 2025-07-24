@@ -7,17 +7,17 @@ export enum EAgentPresetMode {
   // !SPECIAL CASE[spoken_english_practice]
   SPOKEN_ENGLISH_PRACTICE = 'spoken_english_practice',
   // !SPECIAL CASE[ultra_low_latency_conversational_agent]
-  ULTRA_LOW_LATENCY_CONVERSATIONAL_AGENT = 'ultra_low_latency_conversational_agent',
+  ULTRA_LOW_LATENCY_CONVERSATIONAL_AGENT = 'ultra_low_latency_conversational_agent'
 }
 
 export enum EDefaultLanguage {
   EN_US = 'en-US',
-  ZH_CN = 'zh-CN',
+  ZH_CN = 'zh-CN'
 }
 
 export const DEFAULT_LANGUAGE_OPTIONS = [
   { transKey: 'language.enUS', value: EDefaultLanguage.EN_US },
-  { transKey: 'language.zhCN', value: EDefaultLanguage.ZH_CN },
+  { transKey: 'language.zhCN', value: EDefaultLanguage.ZH_CN }
 ]
 
 export const MAX_PROMPT_LENGTH = 4096
@@ -31,24 +31,24 @@ export const agentCustomLLMSchema = z.object({
   api_key: z.string().optional().describe('llm-api-key'),
   model: z.string().optional().describe('llm-model'),
   prompt: z.string().max(MAX_PROMPT_LENGTH).optional().describe('llm-prompt'),
-  style: isCN ? z.undefined().describe('llm-style') : agentCustomLLMStyleSchema,
+  style: isCN ? z.undefined().describe('llm-style') : agentCustomLLMStyleSchema
 })
 
 export const agentCustomTTSchema = z.object({
   vendor: z.string().optional().describe('tts-vendor'),
-  params: z.record(z.any()).optional().describe('tts-params'),
+  params: z.record(z.any()).optional().describe('tts-params')
 })
 
 export const agentBasicASRSchema = z
   .object({
     language: isCN
       ? z.string().default(EDefaultLanguage.ZH_CN).describe('asr-language')
-      : z.string().default(EDefaultLanguage.EN_US).describe('asr-language'),
+      : z.string().default(EDefaultLanguage.EN_US).describe('asr-language')
   })
   .describe('asr')
 
 export const agentASRSchema = agentBasicASRSchema.extend({
-  vendor: z.string().optional().describe('asr-vendor'),
+  vendor: z.string().optional().describe('asr-vendor')
 })
 
 export const agentVADSchema = z
@@ -62,14 +62,14 @@ export const agentVADSchema = z
       .number()
       .default(500)
       .describe('vad-silence-duration'),
-    threshold: z.number().min(0).max(1).default(0.5).describe('vad-threshold'),
+    threshold: z.number().min(0).max(1).default(0.5).describe('vad-threshold')
   })
   .describe('vad')
 
 export const agentAdvancedFeaturesSchema = z
   .object({
     enable_bhvs: z.boolean().default(true).describe('enable_bhvs'),
-    enable_aivad: z.boolean().default(false).describe('enable_aivad'),
+    enable_aivad: z.boolean().default(false).describe('enable_aivad')
   })
   .describe('advanced-features')
 
@@ -87,7 +87,7 @@ export const agentParametersSchema = z
     audio_scenario: z
       .enum(['default', 'chorus', 'aiserver'])
       .default('default')
-      .describe('audio_scenario'),
+      .describe('audio_scenario')
   })
   .describe('parameters')
 export const agentIdleTimeoutSchema = z
@@ -110,10 +110,10 @@ export const agentBasicFormSchema = z
         audio_scenario: z
           .enum(['default'])
           .default('default')
-          .describe('audio_scenario'),
+          .describe('audio_scenario')
       })
       .describe('parameters'),
-    graph_id: z.string().optional().describe('graph_id'),
+    graph_id: z.string().optional().describe('graph_id')
   })
   .or(
     z.object({
@@ -131,16 +131,16 @@ export const agentBasicFormSchema = z
           audio_scenario: z
             .enum(['default'])
             .default('default')
-            .describe('audio_scenario'),
+            .describe('audio_scenario')
         })
         .describe('parameters'),
-      graph_id: z.string().optional().describe('graph_id'),
+      graph_id: z.string().optional().describe('graph_id')
     })
   )
 export const agentBasicRTCSettingsSchema = z.object({
   channel_name: z.string().describe('channel-name'),
   agent_rtc_uid: z.coerce.string().describe('agent-rtc-uid'),
-  remote_rtc_uid: z.coerce.string().describe('remote-rtc-uid'),
+  remote_rtc_uid: z.coerce.string().describe('remote-rtc-uid')
 })
 export const agentBasicSettingsSchema = agentBasicFormSchema.and(
   agentBasicRTCSettingsSchema
@@ -154,7 +154,7 @@ export const agentSettingsFormSchema = z
       .min(1)
       .pipe(z.string().refine((val) => val !== EAgentPresetMode.CUSTOM)),
     asr: agentASRSchema,
-    advanced_features: agentAdvancedFeaturesSchema,
+    advanced_features: agentAdvancedFeaturesSchema
   })
   .or(
     z.object({
@@ -165,7 +165,7 @@ export const agentSettingsFormSchema = z
       vad: agentVADSchema,
       advanced_features: agentAdvancedFeaturesSchema,
       parameters: agentParametersSchema,
-      idle_timeout: agentIdleTimeoutSchema,
+      idle_timeout: agentIdleTimeoutSchema
     })
   )
 
@@ -176,7 +176,7 @@ export const agentSettingsSchema = agentSettingsFormSchema.and(
 export const agentPresetLLMStyleConfigSchema = z.object({
   display_name: z.string(),
   style: z.string().min(1),
-  default: z.boolean().optional(),
+  default: z.boolean().optional()
 })
 
 export const agentPresetSchema = z.object({
@@ -192,12 +192,12 @@ export const agentPresetSchema = z.object({
         language_code: z.string().optional(),
         language_name: z.string().optional(),
         aivad_supported: z.boolean().optional(),
-        aivad_enabled_by_default: z.boolean().optional(),
+        aivad_enabled_by_default: z.boolean().optional()
       })
     )
     .optional(),
   llm_style_configs: z.array(agentPresetLLMStyleConfigSchema).optional(),
-  call_time_limit_second: z.number().optional(),
+  call_time_limit_second: z.number().optional()
 })
 
 export const agentPresetFallbackData: z.infer<typeof agentPresetSchema> = {
@@ -210,11 +210,11 @@ export const agentPresetFallbackData: z.infer<typeof agentPresetSchema> = {
   support_languages: [
     {
       language_code: EDefaultLanguage.EN_US,
-      language_name: 'English',
+      language_name: 'English'
     },
     {
       language_code: EDefaultLanguage.ZH_CN,
-      language_name: 'Chinese',
-    },
-  ],
+      language_name: 'Chinese'
+    }
+  ]
 }

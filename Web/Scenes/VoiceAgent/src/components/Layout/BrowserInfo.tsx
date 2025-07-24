@@ -1,10 +1,9 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
 import { TriangleAlertIcon } from 'lucide-react'
-
-import { useGlobalStore } from '@/store/global'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useGlobalStore } from '@/store/global'
 
 export const BrowserInfo = () => {
   const tCompatibility = useTranslations('compatibility')
@@ -20,8 +19,8 @@ export const BrowserInfo = () => {
       )}
       onClick={() => setShowCompatibilityDialog(true)}
     >
-      <TriangleAlertIcon className="h-4 w-4 text-destructive" />
-      <p className="text-sm text-destructive">{tCompatibility('errorTitle')}</p>
+      <TriangleAlertIcon className='h-4 w-4 text-destructive' />
+      <p className='text-destructive text-sm'>{tCompatibility('errorTitle')}</p>
     </div>
   )
 }

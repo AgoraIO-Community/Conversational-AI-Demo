@@ -1,18 +1,25 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
 import AgoraRTC, {
-  type ConnectionState,
   type ConnectionDisconnectedReason,
+  type ConnectionState,
+  type IAgoraRTCRemoteUser,
   type IMicrophoneAudioTrack,
   type NetworkQuality,
-  type UID,
-  type IAgoraRTCRemoteUser,
-} from "agora-rtc-sdk-ng"
-import { toast } from "sonner"
-import { TriangleAlertIcon } from "lucide-react"
-
+  type UID
+} from 'agora-rtc-sdk-ng'
+import { TriangleAlertIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import { toast } from 'sonner'
+import {
+  AgentActionAudio,
+  AgentActionHangUp,
+  AgentActionStart,
+  AgentActionSubtitle,
+  AgentStateIndicator
+} from '@/components/Agent/Action'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -20,64 +27,55 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+  DialogTitle
+} from '@/components/ui/dialog'
 import {
-  AgentActionStart,
-  AgentActionSubtitle,
-  AgentActionHangUp,
-  AgentActionAudio,
-  AgentStateIndicator,
-} from "@/components/Agent/Action"
-import { RTCHelper } from "@/conversational-ai-api/helper/rtc"
-import { RTMHelper } from "@/conversational-ai-api/helper/rtm"
-import { ConversationalAIAPI } from "@/conversational-ai-api"
-import {
-  ERTCEvents,
-  ERTCCustomEvents,
-  EConversationalAIAPIEvents,
-  EAgentState,
-  type ISubtitleHelperItem,
-  type IUserTranscription,
-  type IAgentTranscription,
-  TStateChangeEvent,
-} from "@/conversational-ai-api/type"
-import {
-  useRTCStore,
-  useAgentSettingsStore,
-  useGlobalStore,
-  useChatStore,
-  useUserInfoStore,
-} from "@/store"
-import {
+  AGENT_RECONNECT_TIMEOUT,
   agentBasicFormSchema,
   agentBasicSettingsSchema,
-  HEARTBEAT_INTERVAL,
+  ERROR_MESSAGE,
   FIRST_START_TIMEOUT,
   FIRST_START_TIMEOUT_DEV,
-  AGENT_RECONNECT_TIMEOUT,
-  ERROR_MESSAGE,
-} from "@/constants"
+  HEARTBEAT_INTERVAL
+} from '@/constants'
+import { ConversationalAIAPI } from '@/conversational-ai-api'
+import { RTCHelper } from '@/conversational-ai-api/helper/rtc'
+import { RTMHelper } from '@/conversational-ai-api/helper/rtm'
+import {
+  EAgentState,
+  EConversationalAIAPIEvents,
+  ERTCCustomEvents,
+  ERTCEvents,
+  type IAgentTranscription,
+  type ISubtitleHelperItem,
+  type IUserTranscription,
+  type TStateChangeEvent
+} from '@/conversational-ai-api/type'
+import { logger } from '@/lib/logger'
+import { cn } from '@/lib/utils'
+import { pingAgent, startAgent, stopAgent } from '@/services/agent'
+import {
+  useAgentSettingsStore,
+  useChatStore,
+  useGlobalStore,
+  useRTCStore,
+  useUserInfoStore
+} from '@/store'
 import {
   EConnectionStatus,
-  type IUserTracks,
-  IRtcUser,
   ENetworkStatus,
-} from "@/type/rtc"
-import { startAgent, stopAgent, pingAgent } from "@/services/agent"
-import { cn } from "@/lib/utils"
-
-import { logger } from "@/lib/logger"
+  type IRtcUser,
+  type IUserTracks
+} from '@/type/rtc'
 
 export default function AgentControl() {
   const [audioTrack, setAudioTrack] = React.useState<IMicrophoneAudioTrack>()
   const [, setRemoteUser] = React.useState<IRtcUser>()
   const [disableHangUp, setDisableHangUp] = React.useState<boolean>(false)
 
-  const tAgent = useTranslations("agent")
-  const tCompatibility = useTranslations("compatibility")
-  const tLogin = useTranslations("login")
+  const tAgent = useTranslations('agent')
+  const tCompatibility = useTranslations('compatibility')
+  const tLogin = useTranslations('login')
 
   const {
     channel_name,
@@ -91,7 +89,7 @@ export default function AgentControl() {
     updateAgentStatus,
     updateNetwork,
     updateChannelName,
-    updateAgentState,
+    updateAgentState
   } = useRTCStore()
   const { settings, conversationDuration, setConversationTimerEndTimestamp } =
     useAgentSettingsStore()
@@ -101,7 +99,7 @@ export default function AgentControl() {
     setShowSubtitle,
     isDevMode,
     isRTCCompatible,
-    setShowLoginPanel,
+    setShowLoginPanel
   } = useGlobalStore()
   const { setHistory, clearHistory } = useChatStore()
   const { accountUid, clearUserInfo } = useUserInfoStore()
@@ -113,7 +111,7 @@ export default function AgentControl() {
   )
 
   const startCall = async () => {
-    logger.info("startCall")
+    logger.info('startCall')
 
     updateRoomStatus(EConnectionStatus.CONNECTING)
     updateAgentStatus(EConnectionStatus.CONNECTING)
@@ -121,25 +119,25 @@ export default function AgentControl() {
     setDisableHangUp(true)
 
     try {
-      logger.info("startCall try and subscribe events")
+      logger.info('startCall try and subscribe events')
 
       // init rtc helper
       const rtcHelper = RTCHelper.getInstance()
       await rtcHelper.retrieveToken(`${remote_rtc_uid}`, channel_name, false, {
-        devMode: isDevMode,
+        devMode: isDevMode
       })
       // init rtm helper
       const rtmHelper = RTMHelper.getInstance()
       rtmHelper.initClient({
         app_id: rtcHelper.appId as string,
-        user_id: `${remote_rtc_uid}`,
+        user_id: `${remote_rtc_uid}`
       })
       const rtmEngine = await rtmHelper.login(rtcHelper.token)
       // init conversational AI API
       const conversationalAIAPI = ConversationalAIAPI.init({
         rtcEngine: rtcHelper.client,
         rtmEngine,
-        enableLog: isDevMode || process.env.NODE_ENV === "development",
+        enableLog: isDevMode || process.env.NODE_ENV === 'development'
         // renderMode: ESubtitleHelperMode,
       })
 
@@ -169,8 +167,8 @@ export default function AgentControl() {
         channel: channel_name,
         userId: remote_rtc_uid,
         options: {
-          devMode: isDevMode,
-        },
+          devMode: isDevMode
+        }
       })
       await rtcHelper.publishTracks()
 
@@ -181,13 +179,13 @@ export default function AgentControl() {
       await startAgentService()
     } catch (error: unknown) {
       // Don't show error toast if aborted
-      if (error instanceof Error && error.name === "AbortError") {
-        logger.info("startCall aborted")
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.info('startCall aborted')
         await clearAndExit()
         return
       }
-      logger.error((error as Error)?.toString(), "startCall error")
-      toast.error(tAgent("errorTitle"))
+      logger.error((error as Error)?.toString(), 'startCall error')
+      toast.error(tAgent('errorTitle'))
       await clearAndExit()
     } finally {
       setDisableHangUp(false)
@@ -198,13 +196,13 @@ export default function AgentControl() {
     if (agentStartTimeoutRef.current) {
       return
     }
-    logger.info({ isFirstStart }, "set AgentConnectedTimeout start")
+    logger.info({ isFirstStart }, 'set AgentConnectedTimeout start')
     agentStartTimeoutRef.current = setTimeout(
       () => {
         toast.error(
           isFirstStart
-            ? tAgent("agentConnectedTimeout")
-            : tAgent("agentReconnectedTimeout")
+            ? tAgent('agentConnectedTimeout')
+            : tAgent('agentReconnectedTimeout')
         )
         updateAgentStatus(EConnectionStatus.ERROR)
         if (isFirstStart) {
@@ -223,22 +221,22 @@ export default function AgentControl() {
     if (!agentStartTimeoutRef.current) {
       return
     }
-    logger.info("clear AgentConnectedTimeout")
+    logger.info('clear AgentConnectedTimeout')
     clearTimeout(agentStartTimeoutRef.current)
     agentStartTimeoutRef.current = null
   }
 
   const startAgentService = async () => {
-    logger.info("startAgentService")
-    console.log("settings", settings)
+    logger.info('startAgentService')
+    console.log('settings', settings)
     try {
       const payload = agentBasicSettingsSchema.parse({
         ...settings,
         channel_name,
         agent_rtc_uid,
-        remote_rtc_uid,
+        remote_rtc_uid
       })
-      logger.info({ payload }, "startAgentService payload")
+      logger.info({ payload }, 'startAgentService payload')
       const abortController = new AbortController()
       startAgentAbortControllerRef.current = abortController
       const res = await startAgent(payload, abortController)
@@ -249,14 +247,14 @@ export default function AgentControl() {
       )
       setHeartBeat()
     } catch (error: unknown) {
-      logger.error({ error }, "startAgentService error")
-      console.log("startAgentService error", (error as Error).message)
+      logger.error({ error }, 'startAgentService error')
+      console.log('startAgentService error', (error as Error).message)
       setConversationTimerEndTimestamp(null)
       if (
         (error as Error).message === ERROR_MESSAGE.UNAUTHORIZED_ERROR_MESSAGE
       ) {
-        logger.log("startAgentService unauthorizedError")
-        toast.error(tLogin("unauthorizedError"))
+        logger.log('startAgentService unauthorizedError')
+        toast.error(tLogin('unauthorizedError'))
         clearAndExit()
         clearUserInfo()
         return
@@ -265,14 +263,14 @@ export default function AgentControl() {
         clearAndExit()
         return
       }
-      if (error instanceof Error && error.name === "AbortError") {
-        logger.info("startAgentService aborted")
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.info('startAgentService aborted')
         updateAgentStatus(EConnectionStatus.DISCONNECTED)
         updateRoomStatus(EConnectionStatus.DISCONNECTED)
         clearHeartBeat()
         return
       }
-      toast.error(tAgent("startAgentError"))
+      toast.error(tAgent('startAgentError'))
       updateAgentStatus(EConnectionStatus.DISCONNECTED)
       updateRoomStatus(EConnectionStatus.DISCONNECTED)
       clearHeartBeat()
@@ -280,7 +278,7 @@ export default function AgentControl() {
   }
 
   const setHeartBeat = () => {
-    logger.info("setHeartBeat")
+    logger.info('setHeartBeat')
     if (heartBeatRef.current) {
       clearInterval(heartBeatRef.current)
       heartBeatRef.current = null
@@ -290,31 +288,31 @@ export default function AgentControl() {
         const res = await pingAgent(
           {
             channel_name,
-            preset_name: settings.preset_name,
+            preset_name: settings.preset_name
           },
           {
-            devMode: isDevMode,
+            devMode: isDevMode
           }
         )
-        logger.info({ res }, "heartBeat")
+        logger.info({ res }, 'heartBeat')
       } catch (error) {
-        logger.error({ error }, "heartBeat")
+        logger.error({ error }, 'heartBeat')
         if (
           (error as Error).message === ERROR_MESSAGE.UNAUTHORIZED_ERROR_MESSAGE
         ) {
           clearUserInfo()
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new Event("stop-agent"))
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('stop-agent'))
           }
-          logger.log("heartBeat unauthorizedError")
-          toast.error(tLogin("unauthorizedError"))
+          logger.log('heartBeat unauthorizedError')
+          toast.error(tLogin('unauthorizedError'))
         }
       }
     }, HEARTBEAT_INTERVAL)
   }
 
   const clearHeartBeat = () => {
-    logger.info("clearHeartBeat")
+    logger.info('clearHeartBeat')
     if (heartBeatRef.current) {
       clearInterval(heartBeatRef.current)
       heartBeatRef.current = null
@@ -331,12 +329,12 @@ export default function AgentControl() {
   }
 
   const clearAndExit = async () => {
-    logger.info("clearAndExit")
+    logger.info('clearAndExit')
     // set conversation timer end timestamp to null
     setConversationTimerEndTimestamp(null)
     // abort start agent
     console.log(
-      "startAgentAbortControllerRef.current?.abort()",
+      'startAgentAbortControllerRef.current?.abort()',
       startAgentAbortControllerRef.current
     )
     startAgentAbortControllerRef.current?.abort()
@@ -362,57 +360,57 @@ export default function AgentControl() {
 
     // stop last agent
     try {
-      logger.info("clearAndExit stop agent")
+      logger.info('clearAndExit stop agent')
 
       if (agent_id) {
         stopAgent(
           {
             agent_id: agent_id,
             channel_name: prevChannelName,
-            preset_name: settings.preset_name,
+            preset_name: settings.preset_name
           },
           {
-            devMode: isDevMode,
+            devMode: isDevMode
           }
         )
       }
     } catch (error) {
-      logger.error({ error }, "clearAndExit stop agent")
+      logger.error({ error }, 'clearAndExit stop agent')
       if (
         (error as Error).message === ERROR_MESSAGE.UNAUTHORIZED_ERROR_MESSAGE
       ) {
         clearUserInfo()
-        logger.log("clearAndExit unauthorizedError")
-        toast.error(tLogin("unauthorizedError"))
+        logger.log('clearAndExit unauthorizedError')
+        toast.error(tLogin('unauthorizedError'))
       }
     }
   }
 
   const onLocalTracksChanged = (tracks: IUserTracks) => {
     const { audioTrack } = tracks
-    logger.info({ hasAudioTrack: !!audioTrack }, "onLocalTracksChanged")
+    logger.info({ hasAudioTrack: !!audioTrack }, 'onLocalTracksChanged')
     if (audioTrack) {
       setAudioTrack(audioTrack)
     }
   }
 
   const onRemoteUserJoined = (user: IRtcUser) => {
-    logger.info({ user }, "onRemoteUserJoined")
+    logger.info({ user }, 'onRemoteUserJoined')
     updateAgentStatus(EConnectionStatus.CONNECTED)
     clearAgentConnectedTimeout()
     // toast.success(tAgent('agentConnected'))
   }
 
   const onRemoteUserLeft = (data: { userId: UID; reason?: string }) => {
-    logger.info(data, "onRemoteUserLeft")
+    logger.info(data, 'onRemoteUserLeft')
     clearAndExit()
-    toast.error(tAgent("agentAborted"))
+    toast.error(tAgent('agentAborted'))
   }
 
   const onRemoteUserChanged = (user: IAgoraRTCRemoteUser) => {
-    logger.info({ user }, "onRemoteUserChanged")
+    logger.info({ user }, 'onRemoteUserChanged')
     setRemoteUser({
-      userId: user.uid,
+      userId: user.uid
     })
   }
 
@@ -422,35 +420,35 @@ export default function AgentControl() {
     reason?: ConnectionDisconnectedReason
     channel: string
   }) => {
-    console.log("onConnectionStateChange", data)
+    console.log('onConnectionStateChange', data)
     logger.info(
       {
         curState: data.curState,
         revState: data.revState,
         reason: data.reason,
-        channel: data.channel,
+        channel: data.channel
       },
-      "onConnectionStateChange"
+      'onConnectionStateChange'
     )
     // when chat is connected, agent is listening -> user is offline(due to network issue) temporarily
-    if (data.curState === "RECONNECTING" && data.revState === "CONNECTED") {
+    if (data.curState === 'RECONNECTING' && data.revState === 'CONNECTED') {
       logger.info(
-        "agent is listening -> user is offline(due to network issue) temporarily" +
-          "[onConnectionStateChange]"
+        'agent is listening -> user is offline(due to network issue) temporarily' +
+          '[onConnectionStateChange]'
       )
-      toast.warning(tAgent("tmpDisconnected"))
+      toast.warning(tAgent('tmpDisconnected'))
       updateAgentStatus(EConnectionStatus.RECONNECTING)
       updateRoomStatus(EConnectionStatus.RECONNECTING)
       setAgentConnectedTimeout()
       return
     }
     // when chat is reconnecting -> user is online again(in short time)
-    if (data.curState === "CONNECTED" && data.revState === "RECONNECTING") {
+    if (data.curState === 'CONNECTED' && data.revState === 'RECONNECTING') {
       logger.info(
-        "agent is listening -> user is online again(in short time)" +
-          "[onConnectionStateChange]"
+        'agent is listening -> user is online again(in short time)' +
+          '[onConnectionStateChange]'
       )
-      toast.success(tAgent("agentReconnected"))
+      toast.success(tAgent('agentReconnected'))
       updateAgentStatus(EConnectionStatus.CONNECTED)
       updateRoomStatus(EConnectionStatus.CONNECTED)
       clearAgentConnectedTimeout()
@@ -459,7 +457,7 @@ export default function AgentControl() {
   }
 
   const onNetworkQuality = (quality: NetworkQuality) => {
-    logger.info({ quality }, "onNetworkQuality")
+    logger.info({ quality }, 'onNetworkQuality')
     const level = quality?.uplinkNetworkQuality
     if (level === 0) {
       updateNetwork(ENetworkStatus.DISCONNECTED)
@@ -477,8 +475,8 @@ export default function AgentControl() {
       Partial<IUserTranscription | IAgentTranscription>
     >[]
   ) => {
-    logger.info({ history }, "onTextChanged")
-    console.log("[Agent/Control] onTextChanged", history)
+    logger.info({ history }, 'onTextChanged')
+    console.log('[Agent/Control] onTextChanged', history)
     setHistory(history)
   }
 
@@ -486,23 +484,23 @@ export default function AgentControl() {
     agentUserId: string,
     event: TStateChangeEvent
   ) => {
-    console.log("onAgentStateChanged", event)
+    console.log('onAgentStateChanged', event)
     if (event.state === agentState) {
-      logger.debug("onAgentStateChanged: no change", agentState)
+      logger.debug('onAgentStateChanged: no change', agentState)
       return
     }
-    logger.info("onAgentStateChanged", agentState, "->", event.state)
+    logger.info('onAgentStateChanged', agentState, '->', event.state)
     updateAgentState(event.state)
   }
 
   const handleInterrupt = async () => {
-    console.info("handleInterrupt")
+    console.info('handleInterrupt')
     const conversationalAIAPI = ConversationalAIAPI.getInstance()
     if (conversationalAIAPI) {
-      console.info("interrupting agent")
+      console.info('interrupting agent')
       await conversationalAIAPI.interrupt(`${agent_rtc_uid}`)
     } else {
-      console.error("ConversationalAIAPI instance not found")
+      console.error('ConversationalAIAPI instance not found')
     }
   }
 
@@ -514,9 +512,9 @@ export default function AgentControl() {
   }, [roomStatus])
 
   const isFormValid = React.useMemo(() => {
-    logger.info({ settings }, "settings")
+    logger.info({ settings }, 'settings')
     const res = agentBasicFormSchema.safeParse(settings)
-    logger.info({ res }, "settings res")
+    logger.info({ res }, 'settings res')
     return res.success
   }, [settings])
 
@@ -525,7 +523,7 @@ export default function AgentControl() {
     const init = async () => {
       const rtcHelper = RTCHelper.getInstance()
       await rtcHelper.retrieveToken(`${remote_rtc_uid}`, channel_name, false, {
-        devMode: isDevMode,
+        devMode: isDevMode
       })
     }
 
@@ -537,14 +535,14 @@ export default function AgentControl() {
   // listen to global events
   React.useEffect(() => {
     const handleStopAgent = () => {
-      console.log("[Agent/Control] global events")
+      console.log('[Agent/Control] global events')
       clearAndExit()
     }
 
-    window.addEventListener("stop-agent", handleStopAgent)
+    window.addEventListener('stop-agent', handleStopAgent)
 
     return () => {
-      window.removeEventListener("stop-agent", handleStopAgent)
+      window.removeEventListener('stop-agent', handleStopAgent)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -560,15 +558,15 @@ export default function AgentControl() {
       )} */}
 
       {/* Agent Control Content */}
-      <div className={cn("flex flex-col items-center gap-6")}>
+      <div className={cn('flex flex-col items-center gap-6')}>
         {!showActionMemo && (
           <AgentActionStart
-            disabled={!!accountUid ? !isFormValid : false}
+            disabled={accountUid ? !isFormValid : false}
             onClick={() => {
               if (!isRTCCompatible) {
-                toast.error(tCompatibility("errorTitle"), {
-                  description: tCompatibility("errorDescription"),
-                  duration: 10000,
+                toast.error(tCompatibility('errorTitle'), {
+                  description: tCompatibility('errorDescription'),
+                  duration: 10000
                 })
                 return
               }
@@ -578,19 +576,19 @@ export default function AgentControl() {
               }
               startCall()
             }}
-            className="relative"
+            className='relative'
           >
             {!accountUid && (
               <div
                 className={cn(
-                  "absolute -top-12 left-1/2 -translate-x-1/2",
-                  "flex h-9 w-fit items-center justify-center px-4",
-                  "rounded-xl bg-brand-light text-sm text-icontext-inverse",
-                  "after:absolute after:left-1/2 after:top-full after:-translate-x-1/2",
-                  "after:border-8 after:border-transparent after:border-t-brand-light"
+                  '-top-12 -translate-x-1/2 absolute left-1/2',
+                  'flex h-9 w-fit items-center justify-center px-4',
+                  'rounded-xl bg-brand-light text-icontext-inverse text-sm',
+                  'after:-translate-x-1/2 after:absolute after:top-full after:left-1/2',
+                  'after:border-8 after:border-transparent after:border-t-brand-light'
                 )}
               >
-                {tLogin("buttonTip2")}
+                {tLogin('buttonTip2')}
               </div>
             )}
           </AgentActionStart>
@@ -602,8 +600,8 @@ export default function AgentControl() {
 
             <div
               className={cn(
-                "flex items-center gap-3 md:gap-8",
-                "h-[var(--ag-action-height)]"
+                'flex items-center gap-3 md:gap-8',
+                'h-[var(--ag-action-height)]'
               )}
             >
               <AgentActionSubtitle
@@ -631,13 +629,13 @@ const CompatibilityCheck = () => {
   const {
     setIsRTCCompatible,
     showCompatibilityDialog,
-    setShowCompatibilityDialog,
+    setShowCompatibilityDialog
   } = useGlobalStore()
-  const tCompatibility = useTranslations("compatibility")
+  const tCompatibility = useTranslations('compatibility')
 
   React.useEffect(() => {
     const result = AgoraRTC.checkSystemRequirements()
-    logger.info({ result }, "AgoraRTC.checkSystemRequirements")
+    logger.info({ result }, 'AgoraRTC.checkSystemRequirements')
     setIsRTCCompatible(result)
     if (!result) {
       setShowCompatibilityDialog(true)
@@ -650,19 +648,19 @@ const CompatibilityCheck = () => {
       open={showCompatibilityDialog}
       onOpenChange={setShowCompatibilityDialog}
     >
-      <DialogContent className="w-8/12 rounded-lg md:max-w-md">
-        <DialogHeader className="space-y-6">
-          <DialogTitle className="flex w-fit items-center gap-2 text-xl font-bold text-destructive">
-            <TriangleAlertIcon className="h-5 w-5" />
-            {tCompatibility("errorTitle")}
+      <DialogContent className='w-8/12 rounded-lg md:max-w-md'>
+        <DialogHeader className='space-y-6'>
+          <DialogTitle className='flex w-fit items-center gap-2 font-bold text-destructive text-xl'>
+            <TriangleAlertIcon className='h-5 w-5' />
+            {tCompatibility('errorTitle')}
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {tCompatibility("errorDescription")}
+          <DialogDescription className='text-gray-600'>
+            {tCompatibility('errorDescription')}
           </DialogDescription>
-          <DialogFooter className="mt-6">
+          <DialogFooter className='mt-6'>
             <DialogClose asChild>
-              <Button className="w-full font-medium" variant="outline">
-                {tCompatibility("errorButton")}
+              <Button className='w-full font-medium' variant='outline'>
+                {tCompatibility('errorButton')}
               </Button>
             </DialogClose>
           </DialogFooter>

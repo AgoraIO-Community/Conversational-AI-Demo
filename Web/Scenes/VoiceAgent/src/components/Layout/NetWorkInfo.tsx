@@ -1,24 +1,23 @@
 'use client'
 
-import * as React from 'react'
 import { useTranslations } from 'next-intl'
-
-import { Button } from '@/components/ui/button'
+import * as React from 'react'
 import {
   NetworkDisconnectedIcon,
-  NetworkPoorIcon,
-  NetworkMediumIcon,
   NetworkExcellentIcon,
+  NetworkMediumIcon,
+  NetworkPoorIcon
 } from '@/components/Icons/network'
+import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 import { useRTCStore } from '@/store/rtc'
 import { ENetworkStatus } from '@/type/rtc'
-import { cn } from '@/lib/utils'
 
 export function NetWorkInfo() {
   const tStatus = useTranslations('status')
@@ -42,13 +41,13 @@ export function NetWorkInfo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="info" size="icon">
+          <Button variant='info' size='icon'>
             <NetworkIcon
               className={cn('h-4 w-4 text-icontext-disabled', {
                 ['text-brand-green']: network === ENetworkStatus.GOOD,
                 ['text-destructive']:
                   network === ENetworkStatus.DISCONNECTED ||
-                  network === ENetworkStatus.RECONNECTING,
+                  network === ENetworkStatus.RECONNECTING
               })}
             />
           </Button>

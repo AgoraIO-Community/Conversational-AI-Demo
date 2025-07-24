@@ -1,12 +1,12 @@
 export * from '@/constants/api/schema'
 
 export enum ERROR_CODE {
-  RESOURCE_LIMIT_EXCEEDED = 1412,
+  RESOURCE_LIMIT_EXCEEDED = 1412
 }
 
 export enum ERROR_MESSAGE {
   UNAUTHORIZED_ERROR_MESSAGE = 'Unauthorized',
-  RESOURCE_LIMIT_EXCEEDED = 'resource quota limit exceeded',
+  RESOURCE_LIMIT_EXCEEDED = 'resource quota limit exceeded'
 }
 // --- LOCAL API ---
 

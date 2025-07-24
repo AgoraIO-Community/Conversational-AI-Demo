@@ -1,9 +1,8 @@
 'use client'
 
 import * as React from 'react'
-
-import { calculateTimeLeft, cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
+import { calculateTimeLeft, cn } from '@/lib/utils'
 
 export interface ICountdownProps {
   endTimestamp: number
@@ -29,7 +28,7 @@ export function Countdown(props: ICountdownProps) {
       console.log('Countdown completed')
     },
     className,
-    children,
+    children
   } = props
 
   const [timeLeft, setTimeLeft] = React.useState(
@@ -37,7 +36,7 @@ export function Countdown(props: ICountdownProps) {
       displayDays,
       displayHours,
       displayMinutes,
-      displaySeconds,
+      displaySeconds
     })
   )
   const [isCompleted, setIsCompleted] = React.useState(false)
@@ -51,7 +50,7 @@ export function Countdown(props: ICountdownProps) {
           displayDays,
           displayHours,
           displayMinutes,
-          displaySeconds,
+          displaySeconds
         })
       )
       if (new Date().getTime() >= endTimestamp) {
@@ -84,7 +83,7 @@ export function Countdown(props: ICountdownProps) {
   return (
     <div className={cn(buttonVariants({ variant: 'info' }), className)}>
       {children}
-      <span className="text-sm font-medium">
+      <span className='font-medium text-sm'>
         {timeLeft.minutes}:{timeLeft.seconds}
       </span>
     </div>

@@ -38,5 +38,5 @@ export const useGlobalStore = create<IGlobalStore>((set) => ({
   setShowTimeoutDialog: (showTimeoutDialog: boolean) =>
     set({ showTimeoutDialog }),
   showLoginPanel: false,
-  setShowLoginPanel: (showLoginPanel: boolean) => set({ showLoginPanel }),
+  setShowLoginPanel: (showLoginPanel: boolean) => set({ showLoginPanel })
 }))

@@ -1,14 +1,13 @@
 'use client'
 
-import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-
-import { Button, ButtonProps } from '@/components/ui/button'
-import { useGlobalStore, useUserInfoStore } from '@/store'
-import { cn } from '@/lib/utils'
+import * as React from 'react'
 import { LoadingSpinner } from '@/components/Icons'
+import { Button, type ButtonProps } from '@/components/ui/button'
 import { LOGIN_URL, SIGNUP_URL } from '@/constants'
+import { cn } from '@/lib/utils'
+import { useGlobalStore, useUserInfoStore } from '@/store'
 
 export function LoginButton(
   props: ButtonProps & {
@@ -37,8 +36,8 @@ export function LoginButton(
 
   return (
     <Button
-      variant="info"
-      size="icon"
+      variant='info'
+      size='icon'
       onClick={(e) => {
         if (disabled) {
           return
@@ -59,7 +58,7 @@ export function LoginButton(
         'w-fit gap-0 px-4 py-2 [&_svg]:size-6',
         {
           'w-fit gap-0 border border-line-2 bg-fill px-4 py-2 text-icontext [&_svg]:size-6':
-            isSignup,
+            isSignup
         },
         className
       )}
@@ -83,8 +82,8 @@ export function LoginPanelButton(props: ButtonProps) {
 
   return (
     <Button
-      variant="info"
-      size="icon"
+      variant='info'
+      size='icon'
       onClick={handleClick}
       disabled={globalLoading}
       {...rest}

@@ -1,21 +1,20 @@
 'use client'
 
-import * as React from 'react'
-import { useTranslations } from 'next-intl'
 import { motion } from 'motion/react'
 import NextImage from 'next/image'
-
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import { Countdown } from '@/components/Countdown'
+import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
-import { useAgentSettingsStore, useGlobalStore } from '@/store'
-import { Countdown } from '@/components/Countdown'
 import { cn } from '@/lib/utils'
+import { useAgentSettingsStore, useGlobalStore } from '@/store'
 
 export const ConversationTimer = () => {
   const [showTip, setShowTip] = React.useState(true)
@@ -25,7 +24,7 @@ export const ConversationTimer = () => {
   const {
     conversationDuration,
     conversationTimerEndTimestamp,
-    setConversationTimerEndTimestamp,
+    setConversationTimerEndTimestamp
   } = useAgentSettingsStore()
   const { setShowTimeoutDialog } = useGlobalStore()
 
@@ -75,7 +74,7 @@ export const ConversationTimer = () => {
                 {showTip && (
                   <Tip>
                     {t('tip', {
-                      minutes: Math.floor(conversationDuration / 60),
+                      minutes: Math.floor(conversationDuration / 60)
                     })}
                   </Tip>
                 )}
@@ -105,13 +104,13 @@ function Tip({ children }: { children: React.ReactNode }) {
           'var(--ai_brand_main6)',
           'var(--ai_green6)',
           'var(--ai_brand_main6)',
-          'var(--ai_green6)',
+          'var(--ai_green6)'
         ],
         transition: {
           duration: 3,
           times: [0, 0.2, 0.4, 0.6, 0.8, 1],
-          ease: 'linear',
-        },
+          ease: 'linear'
+        }
       }}
     >
       {children}
@@ -126,21 +125,21 @@ function TimeoutDialog() {
 
   return (
     <Dialog open={showTimeoutDialog} onOpenChange={setShowTimeoutDialog}>
-      <DialogContent className="flex flex-col items-center gap-4 pt-0 text-center sm:max-w-[280px]">
+      <DialogContent className='flex flex-col items-center gap-4 pt-0 text-center sm:max-w-[280px]'>
         <NextImage
-          src="/img/sandglass-20250222.png"
-          alt="sandglass"
+          src='/img/sandglass-20250222.png'
+          alt='sandglass'
           width={240}
           height={140}
-          className="h-auto w-full"
+          className='h-auto w-full'
         />
-        <p className="text-center text-sm font-semibold">{t('title')}</p>
-        <p className="text-center text-sm">
+        <p className='text-center font-semibold text-sm'>{t('title')}</p>
+        <p className='text-center text-sm'>
           {t('description', { minutes: Math.floor(conversationDuration / 60) })}
         </p>
-        <DialogFooter className="w-full">
+        <DialogFooter className='w-full'>
           <Button
-            className="w-full bg-brand-main hover:bg-brand-main-7"
+            className='w-full bg-brand-main hover:bg-brand-main-7'
             onClick={() => {
               setShowTimeoutDialog(false)
             }}

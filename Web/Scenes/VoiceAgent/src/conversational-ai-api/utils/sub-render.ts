@@ -1,28 +1,28 @@
-import { RTMEvents } from 'agora-rtm'
+import type { RTMEvents } from 'agora-rtm'
 import _ from 'lodash'
 
 import {
+  type EAgentState,
+  type EConversationalAIAPIEvents,
   EMessageType,
-  TDataChunkMessageWord,
-  ETurnStatus,
-  ITranscriptionBase,
-  IUserTranscription,
-  IAgentTranscription,
-  IMessageInterrupt,
-  IMessageMetrics,
-  IMessageError,
   EModuleType,
-  IPresenceState,
   ESubtitleHelperMode,
-  TQueueItem,
-  TSubtitleHelperObjectWord,
-  ISubtitleHelperItem,
-  IConversationalAIAPIEventHandlers,
-  EConversationalAIAPIEvents,
-  EAgentState,
+  ETurnStatus,
+  type IAgentTranscription,
+  type IConversationalAIAPIEventHandlers,
+  type IMessageError,
+  type IMessageInterrupt,
+  type IMessageMetrics,
+  type IPresenceState,
+  type ISubtitleHelperItem,
+  type ITranscriptionBase,
+  type IUserTranscription,
+  type TDataChunkMessageWord,
+  type TQueueItem,
+  type TSubtitleHelperObjectWord
 } from '@/conversational-ai-api/type'
 import { factoryFormatLog } from '@/conversational-ai-api/utils'
-import { logger, ELoggerType } from '@/lib/logger'
+import { ELoggerType, logger } from '@/lib/logger'
 
 const TAG = 'CovSubRenderController'
 const CONSOLE_LOG_PREFIX = `[${TAG}]`
@@ -232,7 +232,7 @@ export class CovSubRenderController {
         _time: new Date().getTime(),
         text: '',
         status: queueItem.status,
-        metadata: queueItem,
+        metadata: queueItem
       }
       this._appendChatHistory(correspondingChatHistoryItem)
     }
@@ -389,7 +389,7 @@ export class CovSubRenderController {
         words: this.sortWordsWithStatus(data.words, data.status),
         status: data.status,
         stream_id: data.stream_id,
-        uid: data.uid,
+        uid: data.uid
       }
       this.callMessagePrint(
         ELoggerType.debug,
@@ -443,7 +443,7 @@ export class CovSubRenderController {
     const sortedWords: TSubtitleHelperObjectWord[] = words
       .map((word) => ({
         ...word,
-        word_status: ETurnStatus.IN_PROGRESS,
+        word_status: ETurnStatus.IN_PROGRESS
       }))
       .sort((a, b) => a.start_ms - b.start_ms)
       .reduce((acc, curr) => {
@@ -487,7 +487,7 @@ export class CovSubRenderController {
         _time: new Date().getTime(),
         text,
         status: turn_status,
-        metadata: message,
+        metadata: message
       })
     } else {
       // if found, update text and status
@@ -516,12 +516,12 @@ export class CovSubRenderController {
     const start_ms = message.start_ms
     this._interruptQueue({
       turn_id,
-      start_ms,
+      start_ms
     })
     this._mutateChatHistory()
     this.onAgentInterrupted?.(`${uid}`, {
       turnID: turn_id,
-      timestamp: start_ms,
+      timestamp: start_ms
     })
   }
 
@@ -545,7 +545,7 @@ export class CovSubRenderController {
       type: messageModule,
       name: metric_name,
       value: latency_ms,
-      timestamp: message.send_ts,
+      timestamp: message.send_ts
     })
   }
 
@@ -569,7 +569,7 @@ export class CovSubRenderController {
       type: messageModule,
       code: errorCode,
       message: errorMessage,
-      timestamp: message.timestamp,
+      timestamp: message.timestamp
     })
   }
 
@@ -618,13 +618,13 @@ export class CovSubRenderController {
     this._agentMessageState = {
       state: message.state,
       turn_id: message.turn_id,
-      timestamp: currentMsgTs,
+      timestamp: currentMsgTs
     }
     this.onAgentStateChanged?.(metadata.publisher, {
       state: message.state,
       turnID: _.toNumber(message.turn_id),
       timestamp: currentMsgTs,
-      reason: '',
+      reason: ''
     })
   }
 
@@ -668,7 +668,7 @@ export class CovSubRenderController {
       words,
       text,
       status: message.turn_status,
-      stream_id,
+      stream_id
     })
   }
 

@@ -1,12 +1,11 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
-import Typewriter, { type TypewriterClass } from "typewriter-effect"
-
-import { EConnectionStatus } from "@/type/rtc"
-import { useRTCStore } from "@/store"
-import { isCN } from "@/lib/utils"
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import Typewriter, { type TypewriterClass } from 'typewriter-effect'
+import { isCN } from '@/lib/utils'
+import { useRTCStore } from '@/store'
+import { EConnectionStatus } from '@/type/rtc'
 
 export function GreetingTypewriterCN() {
   const { agentStatus } = useRTCStore()
@@ -14,7 +13,7 @@ export function GreetingTypewriterCN() {
 
   const typewriterRef = React.useRef<TypewriterClass>(null)
 
-  const tAgentGreeting = useTranslations("agent.greeting")
+  const tAgentGreeting = useTranslations('agent.greeting')
 
   // const isUserSubtitleExistMemo = history.some(
   //   (item) => item.uid === remote_rtc_uid
@@ -92,23 +91,23 @@ export function GreetingTypewriterCN() {
   return (
     <>
       <Typewriter
-        options={{ cursor: "", delay: "natural" }}
+        options={{ cursor: '', delay: 'natural' }}
         onInit={(typewriter) => {
           typewriterRef.current = typewriter
           typewriter
-            .typeString(tAgentGreeting("hi"))
-            .typeString(tAgentGreeting("greeting1"))
+            .typeString(tAgentGreeting('hi'))
+            .typeString(tAgentGreeting('greeting1'))
             .pauseFor(3000)
             .deleteChars(2)
-            .typeString(tAgentGreeting("greeting2"))
+            .typeString(tAgentGreeting('greeting2'))
             .pauseFor(3000)
             .deleteAll(1)
-            .typeString(tAgentGreeting("greeting3"))
+            .typeString(tAgentGreeting('greeting3'))
             .pauseFor(3000)
             .deleteAll(1)
-            .typeString(tAgentGreeting("hi"))
+            .typeString(tAgentGreeting('hi'))
             .pauseFor(1000)
-            .typeString(tAgentGreeting("greeting1"))
+            .typeString(tAgentGreeting('greeting1'))
             .start()
         }}
       />
@@ -122,7 +121,7 @@ export function GreetingTypewriterEN() {
 
   const typewriterRef = React.useRef<TypewriterClass>(null)
 
-  const tAgentGreeting = useTranslations("agent.greeting")
+  const tAgentGreeting = useTranslations('agent.greeting')
 
   // const isUserSubtitleExistMemo = history.some(
   //   (item) => item.uid === remote_rtc_uid
@@ -197,20 +196,20 @@ export function GreetingTypewriterEN() {
   return (
     <>
       <Typewriter
-        options={{ cursor: "", delay: 20 }}
+        options={{ cursor: '', delay: 20 }}
         onInit={(typewriter) => {
           typewriterRef.current = typewriter
           typewriter
-            .typeString(tAgentGreeting("greeting1"))
+            .typeString(tAgentGreeting('greeting1'))
             .pauseFor(3000)
             .deleteAll(1)
-            .typeString(tAgentGreeting("greeting2"))
+            .typeString(tAgentGreeting('greeting2'))
             .pauseFor(3000)
             .deleteAll(1)
-            .typeString(tAgentGreeting("greeting3"))
+            .typeString(tAgentGreeting('greeting3'))
             .pauseFor(3000)
             .deleteAll(1)
-            .typeString(tAgentGreeting("greeting1"))
+            .typeString(tAgentGreeting('greeting1'))
             .start()
         }}
       />

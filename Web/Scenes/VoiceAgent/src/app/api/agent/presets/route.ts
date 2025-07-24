@@ -1,19 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server'
+import _ from 'lodash'
+import { type NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
-
+import { getEndpointFromNextRequest } from '@/app/api/_utils'
 import {
+  agentPresetFallbackData,
   agentPresetSchema,
   basicRemoteResSchema,
-  REMOTE_CONVOAI_AGENT_PRESETS,
-  agentPresetFallbackData,
+  REMOTE_CONVOAI_AGENT_PRESETS
 } from '@/constants'
-import { getEndpointFromNextRequest } from '@/app/api/_utils'
-
 import { logger } from '@/lib/logger'
-import _ from 'lodash'
 
 const remoteResSchema = basicRemoteResSchema.extend({
-  data: z.array(agentPresetSchema),
+  data: z.array(agentPresetSchema)
 })
 
 const getAgentPresets = async (request: NextRequest) => {
@@ -37,11 +35,11 @@ const getAgentPresets = async (request: NextRequest) => {
     cache: 'no-store',
     method: 'POST',
     body: JSON.stringify({
-      app_id: appId,
+      app_id: appId
     }),
     headers: {
-      ...(authorizationHeader && { Authorization: authorizationHeader }),
-    },
+      ...(authorizationHeader && { Authorization: authorizationHeader })
+    }
   })
   if (res.status === 401) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })

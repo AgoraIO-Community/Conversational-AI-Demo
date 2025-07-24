@@ -1,10 +1,10 @@
-import { create } from "zustand"
+import { create } from 'zustand'
 
 import type {
   IAgentTranscription,
   ISubtitleHelperItem,
-  IUserTranscription,
-} from "@/conversational-ai-api/type"
+  IUserTranscription
+} from '@/conversational-ai-api/type'
 
 export interface IChatStore {
   history: ISubtitleHelperItem<
@@ -21,5 +21,5 @@ export interface IChatStore {
 export const useChatStore = create<IChatStore>((set) => ({
   history: [],
   setHistory: (history) => set({ history }),
-  clearHistory: () => set({ history: [] }),
+  clearHistory: () => set({ history: [] })
 }))

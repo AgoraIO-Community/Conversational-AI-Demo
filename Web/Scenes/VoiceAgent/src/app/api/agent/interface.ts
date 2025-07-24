@@ -1,4 +1,4 @@
-import * as z from "zod"
+import * as z from 'zod'
 
 const convoaiBodySchema = z.object({
   graph_id: z.string().optional(),
@@ -16,7 +16,7 @@ const convoaiBodySchema = z.object({
       .object({
         enable_aivad: z.boolean().optional(),
         enable_bhvs: z.boolean().optional(),
-        enable_rtm: z.boolean().optional(),
+        enable_rtm: z.boolean().optional()
       })
       .optional(),
 
@@ -24,7 +24,7 @@ const convoaiBodySchema = z.object({
       .object({
         language: z.string().optional(),
         vendor: z.string().optional(),
-        vendor_model: z.string().optional(),
+        vendor_model: z.string().optional()
       })
       .optional(),
 
@@ -39,7 +39,7 @@ const convoaiBodySchema = z.object({
         ignore_empty: z.boolean().optional(),
         input_modalities: z.array(z.string()).optional(),
         output_modalities: z.array(z.string()).optional(),
-        failure_message: z.string().optional(),
+        failure_message: z.string().optional()
       })
       .optional(),
 
@@ -47,7 +47,7 @@ const convoaiBodySchema = z.object({
       .object({
         vendor: z.string(),
         params: z.record(z.unknown()),
-        adjust_volume: z.number().optional(),
+        adjust_volume: z.number().optional()
       })
       .optional(),
 
@@ -56,7 +56,7 @@ const convoaiBodySchema = z.object({
         interrupt_duration_ms: z.number().optional(),
         prefix_padding_ms: z.number().optional(),
         silence_duration_ms: z.number().optional(),
-        threshold: z.number().optional(),
+        threshold: z.number().optional()
       })
       .optional(),
 
@@ -72,11 +72,11 @@ const convoaiBodySchema = z.object({
             enable: z.boolean().optional(),
             enable_words: z.boolean().optional(),
             protocol_version: z.string().optional(),
-            redundant: z.boolean().optional(),
+            redundant: z.boolean().optional()
           })
           .optional(),
         data_channel: z.string().optional(),
-        enable_error_message: z.boolean().optional(),
+        enable_error_message: z.boolean().optional()
       })
       .optional(),
 
@@ -85,11 +85,11 @@ const convoaiBodySchema = z.object({
         sessCtrlStartSniffWordGapInMs: z.string().optional(),
         sessCtrlTimeOutInMs: z.string().optional(),
         sessCtrlWordGapLenVolumeThr: z.string().optional(),
-        sessCtrlWordGapLenInMs: z.string().optional(),
+        sessCtrlWordGapLenInMs: z.string().optional()
       })
       .optional(),
-    custom_parameter: z.any().optional(),
-  }),
+    custom_parameter: z.any().optional()
+  })
 })
 
 export const startAgentRequestBodySchema = z.object({
@@ -98,5 +98,5 @@ export const startAgentRequestBodySchema = z.object({
   basic_auth_username: z.string().optional(),
   basic_auth_password: z.string().optional(),
   preset_name: z.string().optional(),
-  convoai_body: convoaiBodySchema,
+  convoai_body: convoaiBodySchema
 })

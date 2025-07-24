@@ -1,34 +1,32 @@
-import * as z from 'zod'
 import Cookies from 'js-cookie'
-
-import { useCancelableSWR } from '@/lib/request'
+import { toast } from 'sonner'
+import * as z from 'zod'
+import { loginResSchema } from '@/app/api/sso/login/_utils'
+import { localResSchema } from '@/app/api/token/utils'
 import {
+  API_AGENT,
+  API_AGENT_PING,
+  API_AGENT_PRESETS,
+  API_AGENT_STOP,
+  API_AUTH_TOKEN,
+  API_TOKEN,
+  API_UPLOAD_LOG,
+  API_USER_INFO,
   agentBasicSettingsSchema,
   agentSettingsSchema,
   basicRemoteResSchema,
-  remoteAgentStartRespDataSchema,
-  remoteAgentStopSettingsSchema,
-  remoteAgentPingReqSchema,
-  remoteAgentStartRespDataDevSchema,
-  API_AGENT_PING,
-  API_AGENT_PRESETS,
-  API_TOKEN,
-  API_AGENT,
-  API_AGENT_STOP,
-  API_AUTH_TOKEN,
-  API_UPLOAD_LOG,
-  API_USER_INFO,
   ERROR_CODE,
   ERROR_MESSAGE,
+  remoteAgentPingReqSchema,
+  remoteAgentStartRespDataDevSchema,
+  remoteAgentStartRespDataSchema,
+  remoteAgentStopSettingsSchema
 } from '@/constants'
+import { generateDevModeQuery } from '@/lib/dev'
+import { useCancelableSWR } from '@/lib/request'
 import { genUUID } from '@/lib/utils'
-import { localResSchema } from '@/app/api/token/utils'
-
 import type { IAgentPreset, IUploadLogInput } from '@/type/agent'
 import type { TDevModeQuery } from '@/type/dev'
-import { generateDevModeQuery } from '@/lib/dev'
-import { loginResSchema } from '@/app/api/sso/login/_utils'
-import { toast } from 'sonner'
 
 const DEFAULT_FETCH_TIMEOUT = 10000
 
@@ -40,14 +38,14 @@ export const useAgentPresets = (options?: TDevModeQuery) => {
     accountUid ? url : null,
     {
       revalidateOnFocus: false,
-      refreshInterval: 0,
+      refreshInterval: 0
     }
   )
 
   return {
     data,
     isLoading,
-    error,
+    error
   }
 }
 
@@ -89,7 +87,7 @@ export const fetchWithTimeout = async (
 
     const resp = await fetch(url, {
       ...fetchOptions,
-      signal: fetchSignal,
+      signal: fetchSignal
     })
     const handledResp = await handleUnauthorizedError(resp)
     if (!handledResp) {
@@ -111,8 +109,8 @@ export const login = async (code: string) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${Cookies.get('token')}`,
-    },
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
   })
   const respData = await resp?.json()
   const resData = loginResSchema.parse(respData)
@@ -127,8 +125,8 @@ export const getUserInfo = async () => {
   const resp = await fetchWithTimeout(url, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   })
   const respData = await resp?.json()
   const resData = basicRemoteResSchema.parse(respData)
@@ -146,8 +144,8 @@ export const uploadLog = async ({ content, file }: IUploadLogInput) => {
     method: 'POST',
     body: formData,
     headers: {
-      Authorization: `Bearer ${Cookies.get('token')}`,
-    },
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
   })
   const respData = await resp?.json()
   // const resData = localUploadLogResSchema.parse(respData)
@@ -165,15 +163,15 @@ export const getAgentToken = async (
   const data = {
     request_id: genUUID(),
     uid: userId ? `${userId}` : undefined,
-    channel_name: channel ?? '',
+    channel_name: channel ?? ''
   }
 
   const resp = await fetchWithTimeout(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   })
   const respData = await resp?.json()
   const resData = localResSchema.parse(respData)
@@ -193,17 +191,17 @@ export const startAgent = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Cookies.get('token')}`,
+        Authorization: `Bearer ${Cookies.get('token')}`
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     },
     {
-      abortController,
+      abortController
     }
   )
   const respData = await resp?.json()
   const remoteRespSchema = basicRemoteResSchema.extend({
-    data: remoteAgentStartRespDataSchema,
+    data: remoteAgentStartRespDataSchema
   })
   if (respData.code === ERROR_CODE.RESOURCE_LIMIT_EXCEEDED) {
     toast.error('resource quota limit exceeded')
@@ -229,17 +227,17 @@ export const startAgentDev = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Cookies.get('token')}`,
+        Authorization: `Bearer ${Cookies.get('token')}`
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     },
     {
-      abortController,
+      abortController
     }
   )
   const respData = await resp?.json()
   const remoteRespSchema = basicRemoteResSchema.extend({
-    data: remoteAgentStartRespDataDevSchema,
+    data: remoteAgentStartRespDataDevSchema
   })
   const remoteResp = remoteRespSchema.parse(respData)
   return remoteResp.data
@@ -257,13 +255,13 @@ export const stopAgent = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${Cookies.get('token')}`,
+      Authorization: `Bearer ${Cookies.get('token')}`
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   })
   const respData = await resp?.json()
   const remoteRespSchema = basicRemoteResSchema.extend({
-    data: z.any().optional(),
+    data: z.any().optional()
   })
   const remoteResp = remoteRespSchema.parse(respData)
   return remoteResp
@@ -282,13 +280,13 @@ export const pingAgent = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${Cookies.get('token')}`,
+      Authorization: `Bearer ${Cookies.get('token')}`
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   })
   const respData = await resp?.json()
   const remoteRespSchema = basicRemoteResSchema.extend({
-    data: z.any().optional(),
+    data: z.any().optional()
   })
   const remoteResp = remoteRespSchema.parse(respData)
   return remoteResp.data

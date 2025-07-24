@@ -1,13 +1,13 @@
 'use client'
 
-import * as React from 'react'
+import type * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
 export const InfoLabel = (props: { children?: React.ReactNode }) => {
   const { children } = props
   return (
-    <div className="text-xs font-semibold text-icontext-disabled">
+    <div className='font-semibold text-icontext-disabled text-xs'>
       {children}
     </div>
   )
@@ -17,7 +17,7 @@ export const InfoContent = (props: { children?: React.ReactNode }) => {
   const { children } = props
 
   return (
-    <div className="min-w-52 max-w-[calc(90vw)] space-y-2 rounded-md bg-fill-popover px-4 py-4 text-sm">
+    <div className='min-w-52 max-w-[calc(90vw)] space-y-2 rounded-md bg-fill-popover px-4 py-4 text-sm'>
       {children}
     </div>
   )
@@ -26,7 +26,7 @@ export const InfoContent = (props: { children?: React.ReactNode }) => {
 export const InfoBlock = (props: { children?: React.ReactNode }) => {
   const { children } = props
 
-  return <div className="flex flex-col gap-2">{children}</div>
+  return <div className='flex flex-col gap-2'>{children}</div>
 }
 
 export const InfoItem = (props: {
@@ -48,7 +48,9 @@ export const InfoItemLabel = (props: {
 }) => {
   const { children, className } = props
 
-  return <div className={cn('text-icontext text-nowrap', className)}>{children}</div>
+  return (
+    <div className={cn('text-nowrap text-icontext', className)}>{children}</div>
+  )
 }
 
 export const InfoItemValue = (props: {

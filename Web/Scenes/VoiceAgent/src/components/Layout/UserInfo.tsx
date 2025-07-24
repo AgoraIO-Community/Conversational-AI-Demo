@@ -1,11 +1,12 @@
 'use client'
 
-import * as React from 'react'
-import { useTranslations } from 'next-intl'
-import { LogOutIcon } from 'lucide-react'
 import Cookies from 'js-cookie'
+import { LogOutIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
-
+import * as React from 'react'
+import { LoginPanelButton } from '@/components/Button/LoginButton'
+import { DropdownIcon, UserIcon } from '@/components/Icons'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,13 +14,11 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { UserIcon, DropdownIcon } from '@/components/Icons'
-import { LoginPanelButton } from '@/components/Button/LoginButton'
-import { useUserInfoStore } from '@/store'
 import { SSO_LOGIN_ID, SSO_STATE, SSO_TOKEN } from '@/constants'
 import { getUserInfo, login } from '@/services/agent'
+import { useUserInfoStore } from '@/store'
 
 export function UserInfo() {
   const [code] = useQueryState(SSO_TOKEN, parseAsString)
@@ -30,9 +29,8 @@ export function UserInfo() {
     displayName,
     clearUserInfo,
     updateUserInfo,
-    updateGlobalLoading,
+    updateGlobalLoading
   } = useUserInfoStore()
-
 
   const handleLogout = () => {
     clearUserInfo()
@@ -46,12 +44,12 @@ export function UserInfo() {
     try {
       updateGlobalLoading(true)
       let authToken = Cookies.get('token')
-      if (!!accountUid) {
+      if (accountUid) {
         return
       }
       if (code) {
         const {
-          data: { token },
+          data: { token }
         } = await login(code)
         const url = new URL(window.location.href)
         url.searchParams.delete(SSO_TOKEN)
@@ -86,18 +84,18 @@ export function UserInfo() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="info"
-          size="icon"
-          className="w-fit gap-0 p-1 [&_svg]:size-6 hidden md:inline-flex"
+          variant='info'
+          size='icon'
+          className='hidden w-fit gap-0 p-1 md:inline-flex [&_svg]:size-6'
         >
-          <UserIcon className="size-7 text-icontext" />
-          <DropdownIcon className="size-7 text-icontext-hover" />
+          <UserIcon className='size-7 text-icontext' />
+          <DropdownIcon className='size-7 text-icontext-hover' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-background">
+      <DropdownMenuContent className='bg-background'>
         <DropdownMenuLabel>{displayName}</DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+        <DropdownMenuSeparator className='bg-border' />
+        <DropdownMenuItem className='cursor-pointer' onClick={handleLogout}>
           <LogOutIcon />
           <span>{tUserInfo('logout')}</span>
         </DropdownMenuItem>

@@ -12,7 +12,10 @@ body {
     --ag-header-height: 40px;
     --ag-body-padding: 20px;
     --ag-main-min-height: calc(
-      100dvh - var(--ag-header-height) - var(--ag-body-padding) * 3
+      100dvh -
+      var(--ag-header-height) -
+      var(--ag-body-padding) *
+      3
     );
     --ag-sidebar-width: 340px;
     --ag-action-height: 76px;
@@ -382,7 +385,6 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--muted) transparent;
 }
-
 
 .nextjs-toast {
   display: none !important;

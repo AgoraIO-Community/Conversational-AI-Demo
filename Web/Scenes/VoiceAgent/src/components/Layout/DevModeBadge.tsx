@@ -1,26 +1,25 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { useTranslations } from "next-intl"
-import { BugPlayIcon } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { CopyButton } from "@/components/Button/Copy"
+import { BugPlayIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import { CopyButton } from '@/components/Button/Copy'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { useRTCStore, useChatStore, useGlobalStore } from "@/store"
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Separator } from '@/components/ui/separator'
+import { useChatStore, useGlobalStore, useRTCStore } from '@/store'
 
 export const DevModeBadge = () => {
-  const t = useTranslations("devMode")
+  const t = useTranslations('devMode')
   const { isDevMode } = useGlobalStore()
   const { agent_url, remote_rtc_uid } = useRTCStore()
   const { history } = useChatStore()
@@ -34,26 +33,26 @@ export const DevModeBadge = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Badge className="select-none bg-brand-main text-icontext">
-          {t("title")}
-          <BugPlayIcon className="ms-1 size-4" />
+        <Badge className='select-none bg-brand-main text-icontext'>
+          {t('title')}
+          <BugPlayIcon className='ms-1 size-4' />
         </Badge>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            {t("title")}
-            <BugPlayIcon className="ms-1 size-4" />
+          <DialogTitle className='flex items-center'>
+            {t('title')}
+            <BugPlayIcon className='ms-1 size-4' />
           </DialogTitle>
-          <DialogDescription>{t("description")}</DialogDescription>
-          <div className="flex flex-col divide-y p-2">
+          <DialogDescription>{t('description')}</DialogDescription>
+          <div className='flex flex-col divide-y p-2'>
             {/* convoAI endpoint */}
-            <div className="flex items-center gap-4 py-3">
-              <div className="w-24 text-sm font-medium text-muted-foreground">
-                {t("endpoint")}
+            <div className='flex items-center gap-4 py-3'>
+              <div className='w-24 font-medium text-muted-foreground text-sm'>
+                {t('endpoint')}
               </div>
-              <div className="flex flex-1 items-center gap-2">
-                <div className="flex-1 overflow-auto text-sm">
+              <div className='flex flex-1 items-center gap-2'>
+                <div className='flex-1 overflow-auto text-sm'>
                   {`${process.env.NEXT_PUBLIC_DEMO_SERVER_URL}`}
                 </div>
                 <CopyButton
@@ -63,33 +62,33 @@ export const DevModeBadge = () => {
             </div>
             <Separator />
             {/* agent URL */}
-            <div className="flex items-center gap-4 py-3">
-              <div className="w-24 text-sm font-medium text-muted-foreground">
-                {t("agentUrl")}
+            <div className='flex items-center gap-4 py-3'>
+              <div className='w-24 font-medium text-muted-foreground text-sm'>
+                {t('agentUrl')}
               </div>
-              <div className="flex flex-1 items-center gap-2">
-                <div className="flex-1 truncate text-sm">
-                  {agent_url || t("unknown")}
+              <div className='flex flex-1 items-center gap-2'>
+                <div className='flex-1 truncate text-sm'>
+                  {agent_url || t('unknown')}
                 </div>
-                <CopyButton text={agent_url || ""} disabled={!agent_url} />
+                <CopyButton text={agent_url || ''} disabled={!agent_url} />
               </div>
             </div>
             <Separator />
             {/* user chat history */}
-            <div className="flex items-center gap-4 py-3">
-              <div className="w-24 text-sm font-medium text-muted-foreground">
-                {t("userChatHistory")}
+            <div className='flex items-center gap-4 py-3'>
+              <div className='w-24 font-medium text-muted-foreground text-sm'>
+                {t('userChatHistory')}
               </div>
-              <div className="flex flex-1 items-center gap-2">
-                <div className="flex-1 truncate text-sm">
-                  {t("historyNumber", {
-                    sum: `${userChatHistoryListMemo.length}`,
+              <div className='flex flex-1 items-center gap-2'>
+                <div className='flex-1 truncate text-sm'>
+                  {t('historyNumber', {
+                    sum: `${userChatHistoryListMemo.length}`
                   })}
                 </div>
                 <CopyButton
                   text={userChatHistoryListMemo
                     .map((item) => item.text)
-                    .join("\n")}
+                    .join('\n')}
                   disabled={userChatHistoryListMemo.length === 0}
                 />
               </div>
@@ -98,9 +97,9 @@ export const DevModeBadge = () => {
         </DialogHeader>
         <DialogFooter>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={() => {
-              window.location.href = "/"
+              window.location.href = '/'
             }}
           >
             Exit Dev Mode

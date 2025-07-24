@@ -1,25 +1,24 @@
 'use client'
 
-import * as React from 'react'
-import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
-
-import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
 import { BrandLogo } from '@/components/Icons'
-import { RoomInfo } from '@/components/Layout/RoomInfo'
 import { BrowserInfo } from '@/components/Layout/BrowserInfo'
-import { DevModeBadge } from '@/components/Layout/DevModeBadge'
-import { NetWorkInfo } from '@/components/Layout/NetWorkInfo'
-import { UserInfo } from '@/components/Layout/UserInfo'
 import { ConversationTimer } from '@/components/Layout/ConversationTimer'
-import { useRTCStore, useUserInfoStore } from '@/store'
-import { More } from '@/components/Layout/More'
+import { DevModeBadge } from '@/components/Layout/DevModeBadge'
 import { LoginPanel } from '@/components/Layout/LoginPanel'
+import { More } from '@/components/Layout/More'
+import { NetWorkInfo } from '@/components/Layout/NetWorkInfo'
+import { RoomInfo } from '@/components/Layout/RoomInfo'
+import { UserInfo } from '@/components/Layout/UserInfo'
+import { cn } from '@/lib/utils'
+import { useRTCStore, useUserInfoStore } from '@/store'
 
 const UploadLogButtonDynamic = dynamic(
   () => import('@/components/Button/UploadLog'),
   {
-    ssr: false,
+    ssr: false
   }
 )
 
@@ -28,7 +27,7 @@ export const Header = (props: { className?: string }) => {
 
   const t = useTranslations('homePage')
   const { accountUid } = useUserInfoStore()
-  const {agent_id}=useRTCStore()
+  const { agent_id } = useRTCStore()
 
   return (
     <header
@@ -38,15 +37,15 @@ export const Header = (props: { className?: string }) => {
       )}
     >
       {/* Left Side */}
-      <div className="flex items-center gap-2">
-        <BrandLogo className="h-7 w-7 text-brand-main" />
-        <h1 className="hidden text-base font-semibold leading-none md:block">
+      <div className='flex items-center gap-2'>
+        <BrandLogo className='h-7 w-7 text-brand-main' />
+        <h1 className='hidden font-semibold text-base leading-none md:block'>
           {t('title')}
         </h1>
         <DevModeBadge />
       </div>
       {/* Right Side */}
-      <div className="flex items-center gap-2">
+      <div className='flex items-center gap-2'>
         {accountUid && (
           <>
             <ConversationTimer />

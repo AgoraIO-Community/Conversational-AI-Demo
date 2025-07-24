@@ -4,9 +4,9 @@ import { Settings2Icon } from 'lucide-react'
 
 import {
   Card,
-  CardActions,
   CardAction,
-  CardContent,
+  CardActions,
+  CardContent
 } from '@/components/Card/SimpleCard'
 import { cn } from '@/lib/utils'
 import { useGlobalStore, useUserInfoStore } from '@/store'
@@ -25,20 +25,20 @@ export function AgentCard(props: {
       className={cn(
         'w-full',
         {
-          ['md:mr-3 md:w-[calc(100%-var(--ag-sidebar-width))]']: showSidebar,
+          ['md:mr-3 md:w-[calc(100%-var(--ag-sidebar-width))]']: showSidebar
         },
         className
       )}
     >
       <CardActions className={cn('z-50', { ['hidden']: !accountUid })}>
         <CardAction
-          variant="outline"
-          size="icon"
+          variant='outline'
+          size='icon'
           onClick={onClickSidebar}
-          className="bg-card"
+          className='bg-card'
           disabled={!accountUid}
         >
-          <Settings2Icon className="size-4" />
+          <Settings2Icon className='size-4' />
         </CardAction>
       </CardActions>
       {children}

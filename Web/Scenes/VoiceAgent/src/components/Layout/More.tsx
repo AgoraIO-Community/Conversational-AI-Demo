@@ -1,37 +1,36 @@
 'use client'
 
-import * as React from 'react'
-import { LogOutIcon, XIcon } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import dynamic from 'next/dynamic'
 import Cookies from 'js-cookie'
-
+import { LogOutIcon, XIcon } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import {
+  InfoBlock,
+  InfoContent,
+  InfoItem,
+  InfoItemLabel,
+  InfoLabel
+} from '@/components/Card/InfoCard'
+import { MoreIcon } from '@/components/Icons'
+import { RoomInfoBlock } from '@/components/Layout/RoomInfo'
 import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 } from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
-import {
-  InfoLabel,
-  InfoContent,
-  InfoBlock,
-  InfoItem,
-  InfoItemLabel,
-} from '@/components/Card/InfoCard'
-import { MoreIcon } from '@/components/Icons'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { RoomInfoBlock } from '@/components/Layout/RoomInfo'
-import { useUserInfoStore, useRTCStore } from '@/store'
+import { useRTCStore, useUserInfoStore } from '@/store'
 import { EUploadLogStatus } from '@/type/rtc'
 
 const UploadLogButtonDynamic = dynamic(
   () => import('@/components/Button/UploadLog'),
   {
-    ssr: false,
+    ssr: false
   }
 )
 
@@ -57,26 +56,26 @@ export const More = (props: { children?: React.ReactNode }) => {
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="info" size="icon" onClick={() => setIsOpen(true)}>
-          <MoreIcon className="h-4 w-4" />
+        <Button variant='info' size='icon' onClick={() => setIsOpen(true)}>
+          <MoreIcon className='h-4 w-4' />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="flex items-center justify-between text-sm font-semibold text-icontext">
+          <SheetTitle className='flex items-center justify-between font-semibold text-icontext text-sm'>
             {tMore('title')}
             <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full items-center justify-end ring-0 focus-visible:ring-0 hover:bg-transparent bg-transparent"
+              variant='ghost'
+              size='icon'
+              className='items-center justify-end rounded-full bg-transparent ring-0 hover:bg-transparent focus-visible:ring-0'
               disabled={upload_log_status === EUploadLogStatus.UPLOADING}
               onClick={() => setIsOpen(false)}
             >
-              <XIcon className="h-4 w-4" />
+              <XIcon className='h-4 w-4' />
             </Button>
           </SheetTitle>
         </SheetHeader>
-        <div className="my-6 w-full space-y-6">
+        <div className='my-6 w-full space-y-6'>
           <RoomInfoBlock />
           <MoreBlock />
         </div>
@@ -89,8 +88,7 @@ const MoreBlock = () => {
   const tMore = useTranslations('moreInfo')
   const tUserInfo = useTranslations('userInfo')
   const { clearUserInfo } = useUserInfoStore()
-  const {  agent_id } =
-    useRTCStore()
+  const { agent_id } = useRTCStore()
 
   const handleLogout = () => {
     clearUserInfo()
@@ -103,15 +101,15 @@ const MoreBlock = () => {
       <InfoContent>
         <InfoItem>
           {agent_id && (
-            <UploadLogButtonDynamic className="h-5 w-full justify-between border-none p-0" />
+            <UploadLogButtonDynamic className='h-5 w-full justify-between border-none p-0' />
           )}
         </InfoItem>
         <Separator />
         <InfoItem>
           <Button
-            variant="ghost"
+            variant='ghost'
             onClick={handleLogout}
-            className="h-5 w-full justify-between border-none p-0"
+            className='h-5 w-full justify-between border-none p-0'
           >
             <InfoItemLabel>{tUserInfo('logout')}</InfoItemLabel>
             <LogOutIcon />

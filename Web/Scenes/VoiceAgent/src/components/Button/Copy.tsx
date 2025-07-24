@@ -1,10 +1,10 @@
 'use client'
 
-import * as React from 'react'
 import copy from 'copy-to-clipboard'
-import { CopyIcon, CheckIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon } from 'lucide-react'
+import * as React from 'react'
 
-import { Button, ButtonProps } from '@/components/ui/button'
+import { Button, type ButtonProps } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 interface ICopyButtonProps extends ButtonProps {
@@ -39,15 +39,15 @@ export const CopyButton = ({
   return (
     <Button
       onClick={handleCopy}
-      variant="outline"
-      size="icon"
+      variant='outline'
+      size='icon'
       {...rest}
       className={cn('transition-all duration-200', className)}
     >
       {copied ? (
-        <CheckIconComponent className="size-4" />
+        <CheckIconComponent className='size-4' />
       ) : (
-        <CopyIconComponent className="size-4" />
+        <CopyIconComponent className='size-4' />
       )}
       {children}
     </Button>

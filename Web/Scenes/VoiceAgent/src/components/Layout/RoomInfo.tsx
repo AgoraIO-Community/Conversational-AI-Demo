@@ -1,33 +1,32 @@
 'use client'
 
-import * as React from 'react'
 import { useTranslations } from 'next-intl'
-
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import * as React from 'react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  InfoLabel,
-  InfoContent,
   InfoBlock,
+  InfoContent,
   InfoItem,
   InfoItemLabel,
   InfoItemValue,
+  InfoLabel
 } from '@/components/Card/InfoCard'
 import { WebInfo } from '@/components/Icons'
-import { useRTCStore } from '@/store/rtc'
-import { EConnectionStatus } from '@/type/rtc'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
+import { useRTCStore } from '@/store/rtc'
+import { EConnectionStatus } from '@/type/rtc'
 
 export function RoomInfo() {
   const tRoomInfo = useTranslations('roomInfo')
@@ -38,7 +37,7 @@ export function RoomInfo() {
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="info" size="icon">
+                <Button variant='info' size='icon'>
                   <WebInfo />
                 </Button>
               </DropdownMenuTrigger>
@@ -48,7 +47,7 @@ export function RoomInfo() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <DropdownMenuContent className="w-fit space-y-6 rounded-lg bg-background px-4 py-8">
+        <DropdownMenuContent className='w-fit space-y-6 rounded-lg bg-background px-4 py-8'>
           <RoomInfoBlock />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -82,7 +81,7 @@ export const RoomInfoBlock = () => {
                   agentStatus === EConnectionStatus.DISCONNECTED ||
                   agentStatus === EConnectionStatus.RECONNECTING,
                 ['text-brand-green']:
-                  agentStatus === EConnectionStatus.CONNECTED,
+                  agentStatus === EConnectionStatus.CONNECTED
               })}
             >
               {tStatus(agentStatus)}
@@ -103,8 +102,7 @@ export const RoomInfoBlock = () => {
                 ['text-destructive']:
                   roomStatus === EConnectionStatus.DISCONNECTED ||
                   roomStatus === EConnectionStatus.RECONNECTING,
-                ['text-brand-green']:
-                  roomStatus === EConnectionStatus.CONNECTED,
+                ['text-brand-green']: roomStatus === EConnectionStatus.CONNECTED
               })}
             >
               {tStatus(roomStatus)}

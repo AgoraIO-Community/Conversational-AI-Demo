@@ -1,80 +1,77 @@
 'use client'
 
-import * as React from 'react'
-import { useTranslations } from 'next-intl'
-import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
 import { CircleHelpIcon, XIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
-
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import type * as z from 'zod'
+import {
+  Card,
+  CardAction,
+  CardActions,
+  CardContent,
+  CardTitle
+} from '@/components/Card/SimpleCard'
+import { LoadingSpinner } from '@/components/Icons'
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
-  DrawerTitle,
+  DrawerTitle
 } from '@/components/ui/drawer'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '@/components/ui/form'
-import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
-import { LoadingSpinner } from '@/components/Icons'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
-import {
-  Card,
-  CardActions,
-  CardAction,
-  CardContent,
-  CardTitle,
-} from '@/components/Card/SimpleCard'
 import {
   agentBasicFormSchema,
   agentPresetFallbackData,
-  EAgentPresetMode,
-  EDefaultLanguage,
-  MAX_PROMPT_LENGTH,
-  CONSOLE_URL,
+  CONSOLE_IMG_HEIGHT,
   CONSOLE_IMG_URL,
   CONSOLE_IMG_WIDTH,
-  CONSOLE_IMG_HEIGHT,
+  CONSOLE_URL,
+  EAgentPresetMode,
+  type EDefaultLanguage,
+  MAX_PROMPT_LENGTH
 } from '@/constants'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { logger } from '@/lib/logger'
+import { cn, isCN } from '@/lib/utils'
 import { useAgentPresets } from '@/services/agent'
 import {
   useAgentSettingsStore,
   useGlobalStore,
-  useUserInfoStore,
+  useUserInfoStore
 } from '@/store'
-import { TAgentSettings } from '@/store/agent'
-import { cn } from '@/lib/utils'
+import type { TAgentSettings } from '@/store/agent'
 import { useRTCStore } from '@/store/rtc'
 import { EConnectionStatus } from '@/type/rtc'
-import { useIsMobile } from '@/hooks/use-mobile'
-import { isCN } from '@/lib/utils'
-
-import { logger } from '@/lib/logger'
 
 function AgentSettingsForm() {
   const { settings, updateSettings, updateConversationDuration } =
@@ -84,9 +81,9 @@ function AgentSettingsForm() {
   const {
     data: remotePresets = [],
     isLoading,
-    error,
+    error
   } = useAgentPresets({
-    accountUid,
+    accountUid
   })
   const { roomStatus } = useRTCStore()
 
@@ -94,7 +91,7 @@ function AgentSettingsForm() {
 
   const settingsForm = useForm<z.infer<typeof agentBasicFormSchema>>({
     resolver: zodResolver(agentBasicFormSchema),
-    defaultValues: settings,
+    defaultValues: settings
   })
 
   const disableFormMemo = React.useMemo(() => {
@@ -117,7 +114,7 @@ function AgentSettingsForm() {
     aivad_supported,
     aivad_enabled_by_default,
     aivad_target_preset,
-    aivad_target_language,
+    aivad_target_language
   ] = React.useMemo(() => {
     // TODO: tmp solution for en-US
     if (process.env.NEXT_PUBLIC_LOCALE !== 'en-US') {
@@ -135,7 +132,7 @@ function AgentSettingsForm() {
       aivad_supported,
       aivad_enabled_by_default,
       targetPreset,
-      targetlanguage,
+      targetlanguage
     ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -144,7 +141,7 @@ function AgentSettingsForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     settingsForm.watch('asr.language'),
     remotePresets,
-    process.env.NEXT_PUBLIC_LOCALE,
+    process.env.NEXT_PUBLIC_LOCALE
   ])
 
   // init form with remote presets
@@ -173,7 +170,7 @@ function AgentSettingsForm() {
     if (error) {
       settingsForm.setValue('preset_name', agentPresetFallbackData.name)
       toast.error(t('options.error'), {
-        description: error.message,
+        description: error.message
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,36 +259,36 @@ function AgentSettingsForm() {
     aivad_target_preset,
     aivad_target_language,
     remotePresets,
-    process.env.NEXT_PUBLIC_LOCALE,
+    process.env.NEXT_PUBLIC_LOCALE
   ])
 
   return (
     <>
       <Form {...settingsForm}>
-        <form className="space-y-6">
+        <form className='space-y-6'>
           <InnerCard>
             <FormField
               control={settingsForm.control}
-              name="preset_name"
+              name='preset_name'
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between gap-3">
-                    <Label className="w-1/3">{t('options.preset')}</Label>
+                  <div className='flex items-center justify-between gap-3'>
+                    <Label className='w-1/3'>{t('options.preset')}</Label>
                     <Select
                       value={field.value ?? undefined}
                       onValueChange={field.onChange}
                       disabled={isLoading || disableFormMemo}
                     >
-                      <SelectTrigger className="w-2/3 text-left">
+                      <SelectTrigger className='w-2/3 text-left'>
                         <SelectValue
                           placeholder={
                             <>
-                              {isLoading && <LoadingSpinner className="mx-0" />}
+                              {isLoading && <LoadingSpinner className='mx-0' />}
                             </>
                           }
                         />
                         {field.value && isLoading && (
-                          <LoadingSpinner className="mx-0" />
+                          <LoadingSpinner className='mx-0' />
                         )}
                       </SelectTrigger>
                       <SelectContent>
@@ -318,14 +315,14 @@ function AgentSettingsForm() {
             />
             <FormField
               control={settingsForm.control}
-              name="asr.language"
+              name='asr.language'
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between gap-3">
-                    <Label className="w-1/3">{t('asr.language')}</Label>
+                  <div className='flex items-center justify-between gap-3'>
+                    <Label className='w-1/3'>{t('asr.language')}</Label>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
-                        className="w-2/3"
+                        className='w-2/3'
                         disabled={disableFormMemo}
                       >
                         <SelectValue placeholder={t('asr.language')} />
@@ -356,16 +353,16 @@ function AgentSettingsForm() {
             <div
               className={cn('hidden space-y-3', {
                 ['block']:
-                  settingsForm.watch('preset_name') === EAgentPresetMode.CUSTOM,
+                  settingsForm.watch('preset_name') === EAgentPresetMode.CUSTOM
               })}
             >
               <Separator />
 
-              <div className="space-y-6">
+              <div className='space-y-6'>
                 {!isCN && (
                   <FormField
                     control={settingsForm.control}
-                    name="custom_llm.style"
+                    name='custom_llm.style'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('custom_llm.style')}</FormLabel>
@@ -405,7 +402,7 @@ function AgentSettingsForm() {
                 )}
                 <FormField
                   control={settingsForm.control}
-                  name="custom_llm.url"
+                  name='custom_llm.url'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('custom_llm.url')}</FormLabel>
@@ -422,17 +419,17 @@ function AgentSettingsForm() {
                 />
                 <FormField
                   control={settingsForm.control}
-                  name="custom_llm.api_key"
+                  name='custom_llm.api_key'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        <span className="">{t('custom_llm.api_key')}</span>
+                      <FormLabel className='flex items-center gap-1'>
+                        <span className=''>{t('custom_llm.api_key')}</span>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <CircleHelpIcon
                                 className={cn('inline h-3 w-3 cursor-pointer', {
-                                  hidden: !field.value,
+                                  hidden: !field.value
                                 })}
                               />
                             </TooltipTrigger>
@@ -446,7 +443,7 @@ function AgentSettingsForm() {
                         <Input
                           value={field.value}
                           onChange={field.onChange}
-                          type="password"
+                          type='password'
                           disabled={disableFormMemo}
                         />
                       </FormControl>
@@ -456,7 +453,7 @@ function AgentSettingsForm() {
                 />
                 <FormField
                   control={settingsForm.control}
-                  name="custom_llm.model"
+                  name='custom_llm.model'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('custom_llm.model')}</FormLabel>
@@ -473,7 +470,7 @@ function AgentSettingsForm() {
                 />
                 <FormField
                   control={settingsForm.control}
-                  name="custom_llm.prompt"
+                  name='custom_llm.prompt'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('custom_llm.prompt')}</FormLabel>
@@ -487,11 +484,11 @@ function AgentSettingsForm() {
                       </FormControl>
                       <div
                         className={cn(
-                          'select-none text-right text-xs text-muted-foreground',
+                          'select-none text-right text-muted-foreground text-xs',
                           {
                             ['text-red-500']:
                               field.value?.length &&
-                              field.value?.length > MAX_PROMPT_LENGTH,
+                              field.value?.length > MAX_PROMPT_LENGTH
                           }
                         )}
                       >
@@ -506,14 +503,14 @@ function AgentSettingsForm() {
           </InnerCard>
 
           <InnerCard>
-            <h3 className="">{t('advanced_features.title')}</h3>
+            <h3 className=''>{t('advanced_features.title')}</h3>
             <Separator />
             <FormField
               control={settingsForm.control}
-              name="advanced_features.enable_aivad"
+              name='advanced_features.enable_aivad'
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between gap-2">
+                  <div className='flex items-center justify-between gap-2'>
                     <FormLabel
                       className={cn(
                         'flex items-center gap-1',
@@ -522,8 +519,8 @@ function AgentSettingsForm() {
                     >
                       {t.rich('advanced_features.enable_aivad.title', {
                         label: (chunks) => (
-                          <span className="text-icontext">{chunks}</span>
-                        ),
+                          <span className='text-icontext'>{chunks}</span>
+                        )
                       })}
                     </FormLabel>
                     <FormControl>
@@ -544,13 +541,13 @@ function AgentSettingsForm() {
             />
           </InnerCard>
 
-          <NextLink href={CONSOLE_URL} target="_blank">
+          <NextLink href={CONSOLE_URL} target='_blank'>
             <NextImage
               src={CONSOLE_IMG_URL}
-              alt="console-img"
+              alt='console-img'
               width={CONSOLE_IMG_WIDTH}
               height={CONSOLE_IMG_HEIGHT}
-              className="mt-6 h-fit w-full rounded-lg"
+              className='mt-6 h-fit w-full rounded-lg'
             />
           </NextLink>
         </form>
@@ -562,9 +559,9 @@ function AgentSettingsForm() {
 const InnerCard = (props: { children: React.ReactNode; label?: string }) => {
   const { label, children } = props
   return (
-    <Card className="h-fit bg-block-5 text-icontext">
-      <CardContent className="flex h-fit flex-col gap-3">
-        {label && <h3 className="">{label}</h3>}
+    <Card className='h-fit bg-block-5 text-icontext'>
+      <CardContent className='flex h-fit flex-col gap-3'>
+        {label && <h3 className=''>{label}</h3>}
         {children}
       </CardContent>
     </Card>
@@ -588,19 +585,19 @@ function AgentSettingsWrapper(props: { children?: React.ReactNode }) {
           repositionInputs={false}
         >
           <DrawerContent>
-            <DrawerHeader className="hidden">
+            <DrawerHeader className='hidden'>
               <DrawerTitle>{t('title')}</DrawerTitle>
             </DrawerHeader>
-            <div className="relative h-full max-h-[calc(80vh)] w-full overflow-y-auto">
-              <CardContent className="flex flex-col gap-3">
-                <CardTitle className="flex items-center justify-between">
+            <div className='relative h-full max-h-[calc(80vh)] w-full overflow-y-auto'>
+              <CardContent className='flex flex-col gap-3'>
+                <CardTitle className='flex items-center justify-between'>
                   {t('title')}
                   <CardAction
-                    variant="ghost"
-                    size="icon"
+                    variant='ghost'
+                    size='icon'
                     onClick={() => setShowSidebar(false)}
                   >
-                    <XIcon className="size-4" />
+                    <XIcon className='size-4' />
                   </CardAction>
                 </CardTitle>
                 {children}
@@ -622,16 +619,16 @@ function AgentSettingsWrapper(props: { children?: React.ReactNode }) {
             : 'w-0 overflow-hidden opacity-0'
         )}
       >
-        <CardActions className="z-50">
+        <CardActions className='z-50'>
           <CardAction
-            variant="ghost"
-            size="icon"
+            variant='ghost'
+            size='icon'
             onClick={() => setShowSidebar(false)}
           >
-            <XIcon className="size-4" />
+            <XIcon className='size-4' />
           </CardAction>
         </CardActions>
-        <CardContent className="flex flex-col gap-3">
+        <CardContent className='flex flex-col gap-3'>
           <CardTitle>{t('title')}</CardTitle>
           {children}
         </CardContent>
@@ -646,12 +643,12 @@ export function AgentSettings() {
     settings,
     updatePresets,
     updateSettings,
-    updateConversationDuration,
+    updateConversationDuration
   } = useAgentSettingsStore()
   const { accountUid } = useUserInfoStore()
   const { data: remotePresets = [] } = useAgentPresets({
     devMode: isDevMode,
-    accountUid,
+    accountUid
   })
 
   // init form with remote presets
@@ -674,7 +671,7 @@ export function AgentSettings() {
       if (!settings.preset_name) {
         updateSettings({
           ...settings,
-          preset_name: defaultPreset.name,
+          preset_name: defaultPreset.name
         })
       }
       if (
@@ -688,8 +685,8 @@ export function AgentSettings() {
           asr: {
             ...settings.asr,
             language:
-              settings.asr.language || (defaultLanguage as EDefaultLanguage),
-          },
+              settings.asr.language || (defaultLanguage as EDefaultLanguage)
+          }
         })
       }
     }

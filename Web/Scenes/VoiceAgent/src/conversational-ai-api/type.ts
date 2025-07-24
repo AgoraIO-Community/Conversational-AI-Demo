@@ -1,58 +1,58 @@
-import type { RTMEvents } from "agora-rtm"
 import type {
-  IMicrophoneAudioTrack,
-  UID,
-  NetworkQuality,
-  IAgoraRTCRemoteUser,
-  ConnectionState,
-  ICameraVideoTrack,
   ConnectionDisconnectedReason,
-} from "agora-rtc-sdk-ng"
+  ConnectionState,
+  IAgoraRTCRemoteUser,
+  ICameraVideoTrack,
+  IMicrophoneAudioTrack,
+  NetworkQuality,
+  UID
+} from 'agora-rtc-sdk-ng'
+import type { RTMEvents } from 'agora-rtm'
 
 export enum ESubtitleHelperMode {
-  TEXT = "text",
-  WORD = "word",
-  UNKNOWN = "unknown",
+  TEXT = 'text',
+  WORD = 'word',
+  UNKNOWN = 'unknown'
 }
 
 export enum EMessageType {
-  USER_TRANSCRIPTION = "user.transcription",
-  AGENT_TRANSCRIPTION = "assistant.transcription",
-  MSG_INTERRUPTED = "message.interrupt",
-  MSG_METRICS = "message.metrics",
-  MSG_ERROR = "message.error",
+  USER_TRANSCRIPTION = 'user.transcription',
+  AGENT_TRANSCRIPTION = 'assistant.transcription',
+  MSG_INTERRUPTED = 'message.interrupt',
+  MSG_METRICS = 'message.metrics',
+  MSG_ERROR = 'message.error',
   /** @deprecated */
-  MSG_STATE = "message.state",
+  MSG_STATE = 'message.state'
 }
 
 export enum ERTMEvents {
-  MESSAGE = "message",
-  PRESENCE = "presence",
+  MESSAGE = 'message',
+  PRESENCE = 'presence',
   // TOPIC = 'topic',
   // STORAGE = 'storage',
   // LOCK = 'lock',
-  STATUS = "status",
+  STATUS = 'status'
   // LINK_STATE = 'linkState',
   // TOKEN_PRIVILEGE_WILL_EXPIRE = 'tokenPrivilegeWillExpire',
 }
 
 export enum ERTCEvents {
-  NETWORK_QUALITY = "network-quality",
-  USER_PUBLISHED = "user-published",
-  USER_UNPUBLISHED = "user-unpublished",
-  STREAM_MESSAGE = "stream-message",
-  USER_JOINED = "user-joined",
-  USER_LEFT = "user-left",
-  CONNECTION_STATE_CHANGE = "connection-state-change",
-  AUDIO_METADATA = "audio-metadata",
+  NETWORK_QUALITY = 'network-quality',
+  USER_PUBLISHED = 'user-published',
+  USER_UNPUBLISHED = 'user-unpublished',
+  STREAM_MESSAGE = 'stream-message',
+  USER_JOINED = 'user-joined',
+  USER_LEFT = 'user-left',
+  CONNECTION_STATE_CHANGE = 'connection-state-change',
+  AUDIO_METADATA = 'audio-metadata'
 }
 
 export enum ERTCCustomEvents {
-  MICROPHONE_CHANGED = "microphone-changed",
-  REMOTE_USER_CHANGED = "remote-user-changed",
-  REMOTE_USER_JOINED = "remote-user-joined",
-  REMOTE_USER_LEFT = "remote-user-left",
-  LOCAL_TRACKS_CHANGED = "local-tracks-changed",
+  MICROPHONE_CHANGED = 'microphone-changed',
+  REMOTE_USER_CHANGED = 'remote-user-changed',
+  REMOTE_USER_JOINED = 'remote-user-joined',
+  REMOTE_USER_LEFT = 'remote-user-left',
+  LOCAL_TRACKS_CHANGED = 'local-tracks-changed'
 }
 
 /**
@@ -69,12 +69,12 @@ export enum ERTCCustomEvents {
  * @since 1.6.0
  */
 export enum EConversationalAIAPIEvents {
-  AGENT_STATE_CHANGED = "agent-state-changed",
-  AGENT_INTERRUPTED = "agent-interrupted",
-  AGENT_METRICS = "agent-metrics",
-  AGENT_ERROR = "agent-error",
-  TRANSCRIPTION_UPDATED = "transcription-updated",
-  DEBUG_LOG = "debug-log",
+  AGENT_STATE_CHANGED = 'agent-state-changed',
+  AGENT_INTERRUPTED = 'agent-interrupted',
+  AGENT_METRICS = 'agent-metrics',
+  AGENT_ERROR = 'agent-error',
+  TRANSCRIPTION_UPDATED = 'transcription-updated',
+  DEBUG_LOG = 'debug-log'
 }
 
 /**
@@ -95,10 +95,10 @@ export enum EConversationalAIAPIEvents {
  * @since 1.6.0
  */
 export enum EModuleType {
-  LLM = "llm",
-  MLLM = "mllm",
-  TTS = "tts",
-  UNKNOWN = "unknown",
+  LLM = 'llm',
+  MLLM = 'mllm',
+  TTS = 'tts',
+  UNKNOWN = 'unknown'
 }
 
 /**
@@ -248,11 +248,11 @@ export interface IHelperRTCEvents {
   [ERTCEvents.NETWORK_QUALITY]: (quality: NetworkQuality) => void
   [ERTCEvents.USER_PUBLISHED]: (
     user: IAgoraRTCRemoteUser,
-    mediaType: "audio" | "video"
+    mediaType: 'audio' | 'video'
   ) => void
   [ERTCEvents.USER_UNPUBLISHED]: (
     user: IAgoraRTCRemoteUser,
-    mediaType: "audio" | "video"
+    mediaType: 'audio' | 'video'
   ) => void
   [ERTCEvents.USER_JOINED]: (user: IAgoraRTCRemoteUser) => void
   [ERTCEvents.USER_LEFT]: (user: IAgoraRTCRemoteUser, reason?: string) => void
@@ -269,7 +269,7 @@ export interface IHelperRTCEvents {
 export class NotFoundError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = "NotFoundError"
+    this.name = 'NotFoundError'
   }
 }
 
@@ -288,7 +288,7 @@ export type TSubtitleHelperObjectWord = TDataChunkMessageWord & {
 export enum ETurnStatus {
   IN_PROGRESS = 0,
   END = 1,
-  INTERRUPTED = 2,
+  INTERRUPTED = 2
 }
 
 /**
@@ -314,11 +314,11 @@ export enum ETurnStatus {
  * @since 1.6.0
  */
 export enum EAgentState {
-  IDLE = "idle",
-  LISTENING = "listening",
-  THINKING = "thinking",
-  SPEAKING = "speaking",
-  SILENT = "silent",
+  IDLE = 'idle',
+  LISTENING = 'listening',
+  THINKING = 'thinking',
+  SPEAKING = 'speaking',
+  SILENT = 'silent'
 }
 
 export interface ITranscriptionBase {
@@ -348,7 +348,7 @@ export interface IAgentTranscription extends ITranscriptionBase {
 export interface IMessageInterrupt {
   object: EMessageType.MSG_INTERRUPTED // "message.interrupt"
   message_id: string
-  data_type: "message"
+  data_type: 'message'
   turn_id: number
   start_ms: number
   send_ts: number
@@ -373,7 +373,7 @@ export interface IMessageError {
 }
 
 export interface IPresenceState
-  extends Omit<RTMEvents.PresenceEvent, "stateChanged"> {
+  extends Omit<RTMEvents.PresenceEvent, 'stateChanged'> {
   stateChanged: {
     state: EAgentState
     turn_id: string

@@ -1,17 +1,16 @@
 'use client'
 
+import { parseAsBoolean, useQueryState } from 'nuqs'
 import * as React from 'react'
-import { useQueryState, parseAsBoolean } from 'nuqs'
-
-import { AgentSettings } from '@/components/Agent/AgentSettings'
-import { useGlobalStore } from '@/store'
-import { DEV_MODE_QUERY_KEY } from '@/constants'
 import { AgentBlock } from '@/components/Agent'
+import { AgentSettings } from '@/components/Agent/AgentSettings'
+import { DEV_MODE_QUERY_KEY } from '@/constants'
+import { useGlobalStore } from '@/store'
 
 export const HomePageContent = () => {
   return (
     <>
-      <div className="flex h-[var(--ag-main-min-height)] w-full justify-center">
+      <div className='flex h-[var(--ag-main-min-height)] w-full justify-center'>
         <AgentBlock />
         <AgentSettings />
       </div>
