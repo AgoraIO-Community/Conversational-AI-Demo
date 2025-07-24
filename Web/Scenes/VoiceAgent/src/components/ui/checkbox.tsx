@@ -12,7 +12,7 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      'peer h-4 w-4 shrink-0 rounded-sm border border-primary bg-white ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-brand-light-7 data-[state=checked]:text-icontext-inverse',
+      'peer h-4 w-4 shrink-0 rounded-sm border border-primary bg-white ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-brand-light-7 data-[state=checked]:text-icontext-inverse',
       className
     )}
     {...props}
@@ -27,7 +27,6 @@ const Checkbox = React.forwardRef<
         viewBox='0 0 10 8'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
-        className='text-icontext-inverse'
       >
         <path
           fillRule='evenodd'

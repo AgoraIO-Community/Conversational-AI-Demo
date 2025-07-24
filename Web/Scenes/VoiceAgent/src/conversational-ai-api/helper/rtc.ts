@@ -25,7 +25,10 @@ import { getAgentToken } from '@/services/agent'
 export class RTCHelper extends EventHelper<
   IHelperRTCEvents & {
     [ERTCCustomEvents.MICROPHONE_CHANGED]: (info: DeviceInfo) => void
-    [ERTCCustomEvents.REMOTE_USER_CHANGED]: (user: IAgoraRTCRemoteUser) => void
+    [ERTCCustomEvents.REMOTE_USER_CHANGED]: (data: {
+      user: IAgoraRTCRemoteUser
+      mediaType?: 'audio' | 'video'
+    }) => void
     [ERTCCustomEvents.REMOTE_USER_JOINED]: (user: { userId: UID }) => void
     [ERTCCustomEvents.REMOTE_USER_LEFT]: (user: {
       userId: UID
@@ -49,7 +52,6 @@ export class RTCHelper extends EventHelper<
   public channelName: string | null = null
   public userId: string | null = null
   private processor: IAIDenoiserProcessor | null = null
-  private _messageServiceMode: 'default' | 'legacy' = 'default'
 
   constructor() {
     super()
@@ -58,6 +60,8 @@ export class RTCHelper extends EventHelper<
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(AgoraRTC as any).setParameter('ENABLE_AUDIO_PTS_METADATA', true)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(AgoraRTC as any).setParameter('{"rtc.log_external_input": true}')
     // // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // ;(AgoraRTC as any).setParameter('ENABLE_AUDIO_RED', true)
     // // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -194,7 +198,7 @@ export class RTCHelper extends EventHelper<
 
   public async disableDenoiserProcessor() {
     console.log('[DenoiserProcessor]', 'prev', this.processor?.enabled)
-    if (this.processor && this.processor.enabled) {
+    if (this.processor?.enabled) {
       await this.processor.disable()
     }
   }
@@ -378,7 +382,7 @@ export class RTCHelper extends EventHelper<
       user.audioTrack.play()
     }
     // emit event
-    this.emit(ERTCCustomEvents.REMOTE_USER_CHANGED, user)
+    this.emit(ERTCCustomEvents.REMOTE_USER_CHANGED, { user, mediaType })
   }
 
   private async _eHandleUserUnpublished(

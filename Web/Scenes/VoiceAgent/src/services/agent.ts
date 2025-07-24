@@ -10,13 +10,14 @@ import {
   API_AGENT_STOP,
   API_AUTH_TOKEN,
   API_TOKEN,
+  API_UPLOAD_IMAGE,
   API_UPLOAD_LOG,
   API_USER_INFO,
-  agentBasicSettingsSchema,
-  agentSettingsSchema,
   basicRemoteResSchema,
   ERROR_CODE,
   ERROR_MESSAGE,
+  localOpensourceStartAgentPropertiesSchema,
+  localStartAgentPropertiesSchema,
   remoteAgentPingReqSchema,
   remoteAgentStartRespDataDevSchema,
   remoteAgentStartRespDataSchema,
@@ -29,6 +30,16 @@ import type { IAgentPreset, IUploadLogInput } from '@/type/agent'
 import type { TDevModeQuery } from '@/type/dev'
 
 const DEFAULT_FETCH_TIMEOUT = 10000
+
+export class ResourceLimitError extends Error {
+  public readonly code: ERROR_CODE
+
+  constructor(code: ERROR_CODE, message?: string) {
+    super(message)
+    this.name = 'ResourceLimitError'
+    this.code = code
+  }
+}
 
 export const useAgentPresets = (options?: TDevModeQuery) => {
   const { devMode, accountUid } = options ?? {}
@@ -179,12 +190,45 @@ export const getAgentToken = async (
 }
 
 export const startAgent = async (
-  payload: z.infer<typeof agentBasicSettingsSchema>,
+  payload: z.infer<
+    | typeof localStartAgentPropertiesSchema
+    | typeof localOpensourceStartAgentPropertiesSchema
+  >,
   abortController?: AbortController
 ) => {
   const url = API_AGENT
-  const data = agentBasicSettingsSchema.parse(payload)
-  console.log('settings startAgent', payload, data)
+  const data = (payload as z.infer<typeof localStartAgentPropertiesSchema>)
+    ?.preset_name
+    ? localStartAgentPropertiesSchema.parse(payload)
+    : localOpensourceStartAgentPropertiesSchema.parse(payload)
+
+  try {
+    const opensourceData = data as z.infer<
+      typeof localOpensourceStartAgentPropertiesSchema
+    >
+    const llm_system_messages = opensourceData.llm?.system_messages?.trim()
+      ? JSON.parse(opensourceData.llm.system_messages)
+      : undefined
+    if (llm_system_messages) {
+      opensourceData.llm.system_messages = llm_system_messages
+    }
+    const llm_params = opensourceData?.llm.params?.trim()
+      ? JSON.parse(opensourceData.llm.params.trim())
+      : undefined
+    if (llm_params) {
+      opensourceData.llm.params = llm_params
+    }
+    const tts_params = opensourceData?.tts?.params?.trim()
+      ? JSON.parse(opensourceData.tts.params.trim())
+      : undefined
+    if (tts_params) {
+      opensourceData.tts.params = tts_params
+    }
+  } catch (error) {
+    console.error(error, '[FullAgentSettingsForm] JSON parse error')
+    throw new Error('JSON parse error in agent settings')
+  }
+
   const resp = await fetchWithTimeout(
     url,
     {
@@ -199,28 +243,37 @@ export const startAgent = async (
       abortController
     }
   )
+
   const respData = await resp?.json()
   const remoteRespSchema = basicRemoteResSchema.extend({
     data: remoteAgentStartRespDataSchema
   })
   if (respData.code === ERROR_CODE.RESOURCE_LIMIT_EXCEEDED) {
     toast.error('resource quota limit exceeded')
-    throw new Error(ERROR_MESSAGE.RESOURCE_LIMIT_EXCEEDED)
+    throw new ResourceLimitError(
+      ERROR_CODE.RESOURCE_LIMIT_EXCEEDED,
+      ERROR_MESSAGE.RESOURCE_LIMIT_EXCEEDED
+    )
+  } else if (respData.code === ERROR_CODE.AVATAR_LIMIT_EXCEEDED) {
+    // toast.error('Avatar limit exceeded')
+    throw new ResourceLimitError(
+      ERROR_CODE.AVATAR_LIMIT_EXCEEDED,
+      'Agent start failed'
+    )
   }
   const remoteResp = remoteRespSchema.parse(respData)
-
   return remoteResp.data
 }
 
 export const startAgentDev = async (
-  payload: z.infer<typeof agentSettingsSchema>,
+  payload: z.infer<typeof localStartAgentPropertiesSchema>,
   options?: TDevModeQuery,
   abortController?: AbortController
 ) => {
   const { devMode } = options ?? {}
   const query = generateDevModeQuery({ devMode })
   const url = `${API_AGENT}${query}`
-  const data = agentSettingsSchema.parse(payload)
+  const data = localStartAgentPropertiesSchema.parse(payload)
   const resp = await fetchWithTimeout(
     url,
     {
@@ -290,4 +343,34 @@ export const pingAgent = async (
   })
   const remoteResp = remoteRespSchema.parse(respData)
   return remoteResp.data
+}
+
+export const uploadImage = async ({
+  image,
+  channel_name
+}: {
+  image: File
+  channel_name: string
+}) => {
+  const formData = new FormData()
+  if (!image || !channel_name) {
+    throw new Error('Image and channel_name are required')
+  }
+  const imageName = encodeURIComponent(image.name)
+  formData.append('image', image, imageName)
+  formData.append('channel_name', channel_name)
+  formData.append('request_id', genUUID())
+  const resp = await fetchWithTimeout(API_UPLOAD_IMAGE, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
+  })
+  const respData = await resp?.json()
+  const imgObjectStorageUrl = respData?.data?.img_url as string
+  if (!imgObjectStorageUrl) {
+    throw new Error('Image upload failed')
+  }
+  return imgObjectStorageUrl
 }

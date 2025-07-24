@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import { type AbstractIntlMessages, NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { MOTD } from '@/components/Layout/MOTD'
+import { MOTD } from '@/components/layout/motd'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 

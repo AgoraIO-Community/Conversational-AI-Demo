@@ -138,3 +138,21 @@ export const calculateTimeLeft = (
 
   return timeLeft
 }
+
+export async function getImageDimensions(
+  file: File
+): Promise<{ width: number; height: number; type: string }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.src = URL.createObjectURL(file)
+
+    img.onload = () => {
+      resolve({ width: img.width, height: img.height, type: file.type })
+      URL.revokeObjectURL(img.src) // Clean up the object URL
+    }
+
+    img.onerror = (err) => {
+      reject(err)
+    }
+  })
+}

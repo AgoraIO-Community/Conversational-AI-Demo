@@ -1,9 +1,8 @@
-import _ from 'lodash'
+// import _ from 'lodash'
 import { type NextRequest, NextResponse } from 'next/server'
 import z from 'zod'
 import { getEndpointFromNextRequest } from '@/app/api/_utils'
 import {
-  agentPresetFallbackData,
   agentPresetSchema,
   basicRemoteResSchema,
   REMOTE_CONVOAI_AGENT_PRESETS
@@ -56,10 +55,10 @@ export const revalidate = 60
 
 export async function GET(request: NextRequest) {
   const presets = await getAgentPresets(request)
-  if (_.isArray(presets) && presets.length === 0) {
-    logger.info('No presets found, returning fallback data')
-    return NextResponse.json([agentPresetFallbackData])
-  }
+  // if (_.isArray(presets) && presets.length === 0) {
+  //   logger.info('No presets found, returning fallback data')
+  //   return NextResponse.json([agentPresetFallbackData])
+  // }
 
   return NextResponse.json(presets)
 }

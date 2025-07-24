@@ -1,6 +1,5 @@
 import type { RTMEvents } from 'agora-rtm'
 import _ from 'lodash'
-
 import {
   type EAgentState,
   type EConversationalAIAPIEvents,
@@ -18,6 +17,7 @@ import {
   type ITranscriptionBase,
   type IUserTranscription,
   type TDataChunkMessageWord,
+  type TMessageReceipt,
   type TQueueItem,
   type TSubtitleHelperObjectWord
 } from '@/conversational-ai-api/type'
@@ -86,6 +86,9 @@ export class CovSubRenderController {
   public onAgentError:
     | IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.AGENT_ERROR]
     | null = null
+  public onMessageReceipt:
+    | IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]
+    | null = null
 
   constructor(
     options: {
@@ -97,6 +100,7 @@ export class CovSubRenderController {
       onDebugLog?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.DEBUG_LOG]
       onAgentMetrics?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.AGENT_METRICS]
       onAgentError?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.AGENT_ERROR]
+      onMessageReceipt?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]
     } = {}
   ) {
     this.callMessagePrint = (
@@ -117,6 +121,7 @@ export class CovSubRenderController {
     this.onDebugLog = options.onDebugLog ?? null
     this.onAgentMetrics = options.onAgentMetrics ?? null
     this.onAgentError = options.onAgentError ?? null
+    this.onMessageReceipt = options.onMessageReceipt ?? null
   }
 
   private _setupInterval() {
@@ -270,7 +275,7 @@ export class CovSubRenderController {
     }
     // if restWords is not empty, update correspondingChatHistoryItem.text
     const validWordsText = validWords
-      .filter((word) => word.word_status === ETurnStatus.IN_PROGRESS)
+      .filter((word) => word.start_ms <= this._pts)
       .map((word) => word.word)
       .join('')
     correspondingChatHistoryItem.text = validWordsText
@@ -347,6 +352,10 @@ export class CovSubRenderController {
     } else {
       // if leftWords is not empty, set leftWords[leftWords.length - 1].word_status to interrupted
       leftWords[leftWords.length - 1].word_status = ETurnStatus.INTERRUPTED
+      // workaround: pts < interrupt.start_ms, and interrupt will be ignored
+      if (leftWords?.[leftWords.length - 2]) {
+        leftWords[leftWords.length - 2].word_status = ETurnStatus.INTERRUPTED
+      }
       // and all right words to interrupted
       rightWords.forEach((word) => {
         word.word_status = ETurnStatus.INTERRUPTED
@@ -513,7 +522,8 @@ export class CovSubRenderController {
       message
     )
     const turn_id = message.turn_id
-    const start_ms = message.start_ms
+    // workaround: pts < interrupt.start_ms, and interrupt will be ignored
+    const start_ms = _.min([message.start_ms, this._pts]) || message.start_ms
     this._interruptQueue({
       turn_id,
       start_ms
@@ -571,6 +581,15 @@ export class CovSubRenderController {
       message: errorMessage,
       timestamp: message.timestamp
     })
+  }
+
+  protected handleMessageInfo(uid: string, message: Record<string, unknown>) {
+    const payload: TMessageReceipt = {
+      type: message?.module as EModuleType,
+      message: message?.message as string,
+      turnId: message?.turn_id as number
+    }
+    this.onMessageReceipt?.(uid, payload)
   }
 
   public handleAgentStatus(metadata: IPresenceState) {
@@ -717,6 +736,7 @@ export class CovSubRenderController {
     const isMessageMetrics = message.object === EMessageType.MSG_METRICS
     const isMessageError = message.object === EMessageType.MSG_ERROR
     // const isMessageState = message.object === EMessageType.MSG_STATE
+    const isMessageInfo = message.object === EMessageType.MESSAGE_INFO
 
     // set mode (only once)
     if (isAgentMessage && this._mode === ESubtitleHelperMode.UNKNOWN) {
@@ -764,6 +784,13 @@ export class CovSubRenderController {
     //   this.handleAgentStatus(message as unknown as IMessageState)
     //   return
     // }
+    if (isMessageInfo) {
+      this.handleMessageInfo(
+        options.publisher,
+        message as unknown as Record<string, unknown>
+      )
+      return
+    }
     if (isMessageMetrics) {
       this.handleMessageMetrics(
         options.publisher,

@@ -22,7 +22,9 @@ export enum EMessageType {
   MSG_METRICS = 'message.metrics',
   MSG_ERROR = 'message.error',
   /** @deprecated */
-  MSG_STATE = 'message.state'
+  MSG_STATE = 'message.state',
+  IMAGE_UPLOAD = 'image.upload',
+  MESSAGE_INFO = 'message.info'
 }
 
 export enum ERTMEvents {
@@ -60,7 +62,7 @@ export enum ERTCCustomEvents {
  *
  * @description
  * Defines the event types that can be emitted by the Conversational AI API.
- * Contains events for agent state changes, interruptions, metrics, errors, transcription updates, and debug logs.
+ * Contains events for agent state changes, interruptions, metrics, errors, transcription updates, debug logs, and message receipt updates.
  *
  * @remarks
  * - All events are string literals and can be used with event listeners
@@ -74,7 +76,8 @@ export enum EConversationalAIAPIEvents {
   AGENT_METRICS = 'agent-metrics',
   AGENT_ERROR = 'agent-error',
   TRANSCRIPTION_UPDATED = 'transcription-updated',
-  DEBUG_LOG = 'debug-log'
+  DEBUG_LOG = 'debug-log',
+  MESSAGE_RECEIPT_UPDATED = 'message-receipt-updated'
 }
 
 /**
@@ -90,6 +93,7 @@ export enum EConversationalAIAPIEvents {
  * - LLM: Language Learning Model
  * - MLLM: Multimodal Language Learning Model
  * - TTS: Text-to-Speech
+ * - CONTEXT: Context management module
  * - UNKNOWN: Unknown module type
  *
  * @since 1.6.0
@@ -98,6 +102,7 @@ export enum EModuleType {
   LLM = 'llm',
   MLLM = 'mllm',
   TTS = 'tts',
+  CONTEXT = 'context',
   UNKNOWN = 'unknown'
 }
 
@@ -119,6 +124,24 @@ export type TAgentMetric = {
   name: string
   value: number
   timestamp: number
+}
+
+/**
+ * Message receipt type definition
+ *
+ * @description
+ * Represents a message receipt from the AI module, including type, message content and turn ID
+ *
+ * @param type - The module type that sent the message {@link EModuleType}
+ * @param message - The content of the message
+ * @param turnId - Unique identifier for the conversation turn
+ *
+ * @since 1.7.0
+ */
+export type TMessageReceipt = {
+  type: EModuleType
+  message: string
+  turnId: number
 }
 
 /**
@@ -234,6 +257,10 @@ export interface IConversationalAIAPIEventHandlers {
     >[]
   ) => void
   [EConversationalAIAPIEvents.DEBUG_LOG]: (message: string) => void
+  [EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]: (
+    agentUserId: string,
+    messageReceipt: TMessageReceipt
+  ) => void
 }
 
 // export interface IHelperRTMEvents {
@@ -423,4 +450,56 @@ export interface ISubtitleHelperItem<T> {
 export interface IUserTracks {
   videoTrack?: ICameraVideoTrack
   audioTrack?: IMicrophoneAudioTrack
+}
+
+// --- rtm ---
+export enum EChatMessagePriority {
+  INTERRUPTED = 'interrupted',
+  APPEND = 'append',
+  IGNORE = 'ignore'
+}
+
+export enum EChatMessageType {
+  TEXT = 'text',
+  IMAGE = 'image'
+}
+
+export interface IChatMessageBase {
+  messageType: EChatMessageType
+}
+
+export interface IChatMessageText extends IChatMessageBase {
+  messageType: EChatMessageType.TEXT
+  priority: EChatMessagePriority
+  responseInterruptable: boolean
+  text?: string
+}
+
+export interface IChatMessageImage extends IChatMessageBase {
+  messageType: EChatMessageType.IMAGE
+  uuid: string
+  url?: string
+  base64?: string
+}
+
+// --- local ---
+export enum ELocalTranscriptStatus {
+  PENDING = 'pending',
+  SENT = 'sent',
+  FAILED = 'failed'
+}
+
+export interface ILocalTranscriptionBase {
+  id: string
+  uid: string
+  _time: number
+  status: ELocalTranscriptStatus
+}
+export interface ILocalImageTranscription extends ILocalTranscriptionBase {
+  localImage: File
+  imageDimensions: {
+    width: number
+    height: number
+  }
+  image_url?: string
 }

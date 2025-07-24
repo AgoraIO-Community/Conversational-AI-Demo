@@ -16,12 +16,14 @@ export type RTCStore = {
   roomStatus: EConnectionStatus
   channel_name: string
   agent_rtc_uid: number
+  avatar_rtc_uid: number
   remote_rtc_uid: number
   agent_id?: string
   agent_url?: string
   upload_log_status: EUploadLogStatus
   agentState: EAgentState
   isLocalMuted: boolean
+  isAvatarPlaying: boolean
 }
 
 export interface IRTCStore extends RTCStore {
@@ -38,6 +40,7 @@ export interface IRTCStore extends RTCStore {
   updateUploadLogStatus: (uploadLogStatus: EUploadLogStatus) => void
   updateAgentState: (agentState: EAgentState) => void
   updateIsLocalMuted: (isLocalMuted: boolean) => void
+  updateIsAvatarPlaying: (isAvatarPlaying: boolean) => void
 }
 
 export const useRTCStore = create<IRTCStore>((set) => ({
@@ -46,6 +49,7 @@ export const useRTCStore = create<IRTCStore>((set) => ({
   roomStatus: EConnectionStatus.DISCONNECTED,
   channel_name: genChannelName(),
   agent_rtc_uid: genAgentId(),
+  avatar_rtc_uid: genAgentId(),
   remote_rtc_uid: genUserId(),
   agent_id: undefined,
   /** @deprecated use agentState */
@@ -53,6 +57,7 @@ export const useRTCStore = create<IRTCStore>((set) => ({
   agentState: EAgentState.IDLE,
   upload_log_status: EUploadLogStatus.IDLE,
   isLocalMuted: false,
+  isAvatarPlaying: false,
   updateNetwork: (network: ENetworkStatus) => set({ network }),
   updateAgentStatus: (agentStatus: EConnectionStatus) => set({ agentStatus }),
   updateRoomStatus: (roomStatus: EConnectionStatus) => set({ roomStatus }),
@@ -60,6 +65,8 @@ export const useRTCStore = create<IRTCStore>((set) => ({
     set({ channel_name: channelName || genChannelName() }),
   updateAgentRtcUid: (agentRtcUid: number) =>
     set({ agent_rtc_uid: agentRtcUid }),
+  updateAvatarRtcUid: (avatarRtcUid: number) =>
+    set({ avatar_rtc_uid: avatarRtcUid }),
   updateRemoteRtcUid: (remoteRtcUid: number) =>
     set({ remote_rtc_uid: remoteRtcUid }),
   updateAgentId: (agentId: string) => set({ agent_id: agentId }),
@@ -70,5 +77,6 @@ export const useRTCStore = create<IRTCStore>((set) => ({
   updateAgentUrl: (agentUrl: string) => set({ agent_url: agentUrl }),
   updateUploadLogStatus: (uploadLogStatus: EUploadLogStatus) =>
     set({ upload_log_status: uploadLogStatus }),
-  updateIsLocalMuted: (isLocalMuted: boolean) => set({ isLocalMuted })
+  updateIsLocalMuted: (isLocalMuted: boolean) => set({ isLocalMuted }),
+  updateIsAvatarPlaying: (isAvatarPlaying: boolean) => set({ isAvatarPlaying })
 }))

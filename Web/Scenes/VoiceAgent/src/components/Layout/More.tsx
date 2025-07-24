@@ -11,9 +11,9 @@ import {
   InfoItem,
   InfoItemLabel,
   InfoLabel
-} from '@/components/Card/InfoCard'
-import { MoreIcon } from '@/components/Icons'
-import { RoomInfoBlock } from '@/components/Layout/RoomInfo'
+} from '@/components/card/info'
+import { MoreIcon } from '@/components/icon'
+import { RoomInfoBlock } from '@/components/layout/room-info'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -28,7 +28,7 @@ import { useRTCStore, useUserInfoStore } from '@/store'
 import { EUploadLogStatus } from '@/type/rtc'
 
 const UploadLogButtonDynamic = dynamic(
-  () => import('@/components/Button/UploadLog'),
+  () => import('@/components/button/upload-log-button'),
   {
     ssr: false
   }
@@ -97,7 +97,7 @@ const MoreBlock = () => {
 
   return (
     <InfoBlock>
-      <InfoLabel>{tMore('title')}</InfoLabel>
+      <InfoLabel>{tMore('moreAction')}</InfoLabel>
       <InfoContent>
         <InfoItem>
           {agent_id && (

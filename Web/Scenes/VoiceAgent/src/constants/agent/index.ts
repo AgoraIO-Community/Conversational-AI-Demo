@@ -23,3 +23,5 @@ export const POLICY_LINK = isCN
   : 'https://www.agora.io/en/privacy-policy/'
 
 export * from '@/constants/agent/schema'
+
+export const DEFAULT_AVATAR_DOM_ID = 'agent-avatar-player'

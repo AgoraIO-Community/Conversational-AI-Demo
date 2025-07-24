@@ -22,6 +22,14 @@ const packageMetaList = [
   {
     name: 'Version',
     value: packageInfo.version
+  },
+  {
+    name: 'agora-rtc-sdk-ng',
+    value: packageInfo?.dependencies?.['agora-rtc-sdk-ng']
+  },
+  {
+    name: 'agora-conversational-ai-denoiser',
+    value: packageInfo?.dependencies?.['agora-conversational-ai-denoiser']
   }
 ]
 
