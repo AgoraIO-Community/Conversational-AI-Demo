@@ -60,6 +60,8 @@ enum class Priority {
 sealed class ChatMessage
 
 /**
+ * @technical preview
+ *
  * Text message for sending natural language content to AI agents.
  *
  * Text messages support priority control and interruptable response settings,
@@ -569,14 +571,15 @@ interface IConversationalAIAPI {
      * Send a message to the AI agent.
      *
      * Supports different message types through the ChatMessage sealed class hierarchy:
-     * - TextMessage: For natural language communication with priority control
-     * - ImageMessage: For visual content processing (atomic operation)
+     * - TextMessage: For text message
+     * - ImageMessage: For image message
      *
      * @param agentUserId Agent user ID
      * @param message Message object (TextMessage or ImageMessage)
      * @param completion Callback, error is null on success, non-null on failure
      */
     fun chat(agentUserId: String, message: ChatMessage, completion: (error: ConversationalAIAPIError?) -> Unit)
+
 
     /**
      * Interrupt the AI agent's speaking.
