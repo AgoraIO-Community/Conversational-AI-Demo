@@ -337,7 +337,7 @@ export default function AgentControl() {
       }
       if (error instanceof ResourceLimitError) {
         if (error.code === ERROR_CODE.AVATAR_LIMIT_EXCEEDED) {
-          toast.error(tAgentAction('agent-action.avatar-busy-error'))
+          toast.error(tAgentAction('avatar-busy-error'))
         }
         clearAndExit()
         return
