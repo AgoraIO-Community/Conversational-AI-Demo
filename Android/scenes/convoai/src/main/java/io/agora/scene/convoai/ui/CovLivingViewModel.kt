@@ -276,7 +276,17 @@ class CovLivingViewModel : ViewModel() {
 
                 // Configure audio settings
                 val isIndependent = CovAgentManager.getPreset()?.isIndependent() == true
-                conversationalAIAPI?.loadAudioSettings(if (isIndependent) Constants.AUDIO_SCENARIO_CHORUS else Constants.AUDIO_SCENARIO_AI_CLIENT)
+                val scenario = if (CovAgentManager.isEnableAvatar()) {
+                    // If digital avatar is enabled, use AUDIO_SCENARIO_DEFAULT for better audio mixing
+                    Constants.AUDIO_SCENARIO_DEFAULT
+                } else {
+                    if (isIndependent) {
+                        Constants.AUDIO_SCENARIO_CHORUS
+                    } else {
+                        Constants.AUDIO_SCENARIO_AI_CLIENT
+                    }
+                }
+                conversationalAIAPI?.loadAudioSettings(scenario)
 
                 // Join RTC channel
                 CovRtcManager.joinChannel(integratedToken ?: "", CovAgentManager.channelName, CovAgentManager.uid)
@@ -878,7 +888,7 @@ class CovLivingViewModel : ViewModel() {
 
     private fun buildAvatarMap(): Map<String, Any?>? {
         var avatarMap: Map<String, Any?>? = null
-        if (BuildConfig.AVATAR_VENDOR.isNotEmpty()) {
+        if (BuildConfig.AVATAR_ENABLE) {
             avatarMap = mapOf(
                 "enable" to true,
                 "vendor" to BuildConfig.AVATAR_VENDOR.takeIf { it.isNotEmpty() },

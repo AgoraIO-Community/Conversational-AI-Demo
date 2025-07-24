@@ -15,7 +15,8 @@ const val ConversationalAIAPI_VERSION = "1.7.0"
  * val api = ConversationalAIAPI(config)
  * api.addHandler(object : IConversationalAIAPIEventHandler { ... })
  * api.subscribeMessage("channelName") { ... }
- * api.chat("agentUserId", ChatMessage(priority = Priority.INTERRUPT,responseInterruptable = true,text = "Hello!")) { ... }
+ * api.chat("agentUserId", TextMessage(priority = Priority.INTERRUPT, responseInterruptable = true, text = "Hello!")) { ... }
+ * api.chat("agentUserId", ImageMessage(uuid = "img_123", imageUrl = "https://example.com/image.jpg")) { ... }
  * // ...
  * api.destroy()
  */
@@ -59,6 +60,8 @@ enum class Priority {
 sealed class ChatMessage
 
 /**
+ * @technical preview
+ *
  * Text message for sending natural language content to AI agents.
  *
  * Text messages support priority control and interruptable response settings,
@@ -89,7 +92,7 @@ data class TextMessage(
 ) : ChatMessage()
 
 /**
- * Image message data class for sending images to AI agents.
+ * Image message for sending visual content to AI agents.
  *
  * Supports two image formats:
  * - imageUrl: HTTP/HTTPS URL pointing to an image file (recommended for large images)
@@ -104,9 +107,9 @@ data class TextMessage(
  * - URL image: ImageMessage(uuid = "img_123", imageUrl = "https://example.com/image.jpg")
  * - Base64 image: ImageMessage(uuid = "img_456", imageBase64 = "data:image/jpeg;base64,...")
  *
- * @property uuid Unique identifier for the image message
- * @property imageUrl HTTP/HTTPS URL pointing to an image file (optional)
- * @property imageBase64 Base64 encoded image data (optional, limited to 32KB total message size)
+ * @property uuid Unique identifier for the image message (required)
+ * @property imageUrl HTTP/HTTPS URL pointing to an image file (optional, mutually exclusive with imageBase64)
+ * @property imageBase64 Base64 encoded image data (optional, mutually exclusive with imageUrl, limited to 32KB total message size)
  */
 data class ImageMessage(
     val uuid: String,
@@ -116,14 +119,14 @@ data class ImageMessage(
 
 /**
  * Message receipt data class, supports multiple media types via MediaInfo
- * @property type The module type (e.g., text, image, audio)
+ * @property type The module type (e.g., llm, mllm, tts, context)
  * @property turnId The turn ID of the message
- * @property message The message information, can be ImageInfo, AudioInfo, etc.
+ * @property message The message information, can be ImageInfo, etc.
  */
 data class MessageReceipt(
     val type: ModuleType,
     val turnId: Long,
-    var message: String
+    val message: String
 )
 
 /**
@@ -234,21 +237,6 @@ enum class ModuleType(val value: String) {
          */
         fun fromValue(value: String): ModuleType {
             return ModuleType.entries.find { it.value == value } ?: UNKNOWN
-        }
-    }
-}
-
-enum class ResourceType(val value: String) {
-    /** picture */
-    PICTURE("picture"),
-
-    /** Unknown type */
-    UNKNOWN("unknown");
-
-    companion object {
-
-        fun fromValue(value: String): ResourceType {
-            return ResourceType.entries.find { it.value == value } ?: UNKNOWN
         }
     }
 }
@@ -583,14 +571,15 @@ interface IConversationalAIAPI {
      * Send a message to the AI agent.
      *
      * Supports different message types through the ChatMessage sealed class hierarchy:
-     * - TextMessage: For natural language communication with priority control
-     * - ImageMessage: For visual content processing (atomic operation)
+     * - TextMessage: For text message
+     * - ImageMessage: For image message
      *
      * @param agentUserId Agent user ID
      * @param message Message object (TextMessage or ImageMessage)
      * @param completion Callback, error is null on success, non-null on failure
      */
     fun chat(agentUserId: String, message: ChatMessage, completion: (error: ConversationalAIAPIError?) -> Unit)
+
 
     /**
      * Interrupt the AI agent's speaking.
@@ -605,7 +594,7 @@ interface IConversationalAIAPI {
      * WARNING: This method MUST be called BEFORE rtcEngine.joinChannel().
      * If you do not call loadAudioSettings before joining the RTC channel, the audio quality for AI conversation may be suboptimal or incorrect.
      *
-     * @param scenario Audio scenario, default is AUDIO_SCENARIO_AI_CLIENT
+     * @param scenario Audio scenario, default is AUDIO_SCENARIO_AI_CLIENT. If user enables avatar, please set scenario to AUDIO_SCENARIO_DEFAULT for better audio mixing.
      * @note This method must be called before each joinChannel call to ensure best audio quality.
      * @example
      * val api = ConversationalAIAPI(config)
