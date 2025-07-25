@@ -453,21 +453,64 @@ export interface IUserTracks {
 }
 
 // --- rtm ---
+
+/**
+ * Enumeration defining chat message priority levels for handling message processing.
+ *
+ * Specifies how incoming chat messages should be handled when they arrive during
+ * ongoing conversation processing, providing control over message queue behavior
+ * and user experience during real-time interactions.
+ *
+ * @remarks
+ * - Used to determine message processing behavior in conversational AI systems
+ * - Helps manage message flow during concurrent or overlapping conversations
+ * - Critical for maintaining proper conversation context and user experience
+ *
+ * @enum {string}
+ *
+ * @since 1.7.0
+ */
 export enum EChatMessagePriority {
   INTERRUPTED = 'interrupted',
   APPEND = 'append',
   IGNORE = 'ignore'
 }
 
+/**
+ * Enumeration defining the different types of chat messages supported in the conversational AI system.
+ *
+ * @enum {string}
+ *
+ *  @since 1.7.0
+ */
 export enum EChatMessageType {
   TEXT = 'text',
   IMAGE = 'image'
 }
 
+/**
+ * Base interface for chat messages containing the fundamental message type property.
+ * This interface serves as the foundation for all chat message types in the system.
+ *
+ * @since 1.7.0
+ */
 export interface IChatMessageBase {
   messageType: EChatMessageType
 }
 
+/**
+ * Represents a text-based chat message with priority and interruption settings.
+ *
+ * @interface IChatMessageText
+ * @extends IChatMessageBase
+ *
+ * @property messageType - The type of message, must be TEXT
+ * @property priority - The priority level of the chat message
+ * @property responseInterruptable - Whether the response can be interrupted
+ * @property text - The optional text content of the message
+ *
+ * @since 1.7.0
+ */
 export interface IChatMessageText extends IChatMessageBase {
   messageType: EChatMessageType.TEXT
   priority: EChatMessagePriority
@@ -475,6 +518,17 @@ export interface IChatMessageText extends IChatMessageBase {
   text?: string
 }
 
+/**
+ * Represents an image-based chat message that can contain either a URL or base64 encoded image data.
+ *
+ * @interface IChatMessageImage
+ * @extends IChatMessageBase
+ *
+ * @property messageType - The type of message, must be IMAGE
+ * @property uuid - Unique identifier for the image message
+ * @property url - Optional URL pointing to the image resource
+ * @property base64 - Optional base64 encoded image data
+ */
 export interface IChatMessageImage extends IChatMessageBase {
   messageType: EChatMessageType.IMAGE
   uuid: string
