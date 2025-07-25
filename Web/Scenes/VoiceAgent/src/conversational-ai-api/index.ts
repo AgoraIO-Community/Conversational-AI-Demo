@@ -316,14 +316,17 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
    * // Send a text message
    * const textMessage: IChatMessageText = {
    *   messageType: EChatMessageType.TEXT,
-   *   content: "Hello, how are you?"
+   *   priority: EChatMessagePriority.HIGH,
+   *   responseInterruptable: true,
+   *   text: "Hello, how are you?"
    * };
    * await api.chat("user123", textMessage);
    *
    * // Send an image message
    * const imageMessage: IChatMessageImage = {
    *   messageType: EChatMessageType.IMAGE,
-   *   imageData: base64ImageData
+   *   uuid: "msg-456",
+   *   url: "https://example.com/image.jpg"
    * };
    * await api.chat("user123", imageMessage);
    * ```
