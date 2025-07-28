@@ -2,6 +2,7 @@ import type { RTMEvents } from 'agora-rtm'
 import _ from 'lodash'
 import {
   type EAgentState,
+  EChatMessageType,
   type EConversationalAIAPIEvents,
   EMessageType,
   EModuleType,
@@ -17,7 +18,6 @@ import {
   type ITranscriptionBase,
   type IUserTranscription,
   type TDataChunkMessageWord,
-  type TMessageReceipt,
   type TQueueItem,
   type TSubtitleHelperObjectWord
 } from '@/conversational-ai-api/type'
@@ -89,6 +89,9 @@ export class CovSubRenderController {
   public onMessageReceipt:
     | IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]
     | null = null
+  public onMessageError:
+    | IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_ERROR]
+    | null = null
 
   constructor(
     options: {
@@ -101,6 +104,7 @@ export class CovSubRenderController {
       onAgentMetrics?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.AGENT_METRICS]
       onAgentError?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.AGENT_ERROR]
       onMessageReceipt?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]
+      onMessageError?: IConversationalAIAPIEventHandlers[EConversationalAIAPIEvents.MESSAGE_ERROR]
     } = {}
   ) {
     this.callMessagePrint = (
@@ -122,6 +126,7 @@ export class CovSubRenderController {
     this.onAgentMetrics = options.onAgentMetrics ?? null
     this.onAgentError = options.onAgentError ?? null
     this.onMessageReceipt = options.onMessageReceipt ?? null
+    this.onMessageError = options.onMessageError ?? null
   }
 
   private _setupInterval() {
@@ -566,7 +571,7 @@ export class CovSubRenderController {
     //   `pts: ${this._pts}, uid: ${uid}`,
     //   message
     // )
-    const errorCode = message.code
+    const errorCode = message.code || -1
     const errorMessage = message.message
     const messageModule = message.module
 
@@ -575,21 +580,72 @@ export class CovSubRenderController {
       return
     }
 
+    if (messageModule === EModuleType.CONTEXT) {
+      try {
+        const messageData = JSON.parse(errorMessage)
+        const errorPayload = {
+          type:
+            messageData?.module === 'picture'
+              ? EChatMessageType.IMAGE
+              : EChatMessageType.UNKNOWN,
+          code: errorCode,
+          message: errorMessage,
+          timestamp: (message?.send_ts as number) || Date.now()
+        }
+        this.onMessageError?.(`${uid}`, errorPayload)
+      } catch (error: unknown) {
+        this.callMessagePrint(
+          ELoggerType.error,
+          'Failed to parse context error message',
+          error,
+          message
+        )
+      }
+    }
+
     this.onAgentError?.(`${uid}`, {
       type: messageModule,
       code: errorCode,
       message: errorMessage,
-      timestamp: message.timestamp
+      timestamp: (message?.send_ts as number) || Date.now()
     })
   }
 
+  // current only used for image messages
   protected handleMessageInfo(uid: string, message: Record<string, unknown>) {
-    const payload: TMessageReceipt = {
-      type: message?.module as EModuleType,
-      message: message?.message as string,
-      turnId: message?.turn_id as number
+    try {
+      const messageStr = (message?.message as string) || ''
+      const messageObj = JSON.parse(messageStr)
+      const moduleType = message?.module as EModuleType
+      const turnId = message?.turn_id as number
+      if (!messageStr || !messageObj || !moduleType || !turnId) {
+        this.callMessagePrint(
+          ELoggerType.error,
+          'handleMessageInfo',
+          'Invalid message object',
+          message
+        )
+        return
+      }
+      const messageType =
+        message?.resource_type === 'picture'
+          ? EChatMessageType.IMAGE
+          : EChatMessageType.UNKNOWN
+      this.onMessageReceipt?.(uid, {
+        moduleType,
+        messageType,
+        message: messageStr,
+        turnId
+      })
+    } catch (error: unknown) {
+      this.callMessagePrint(
+        ELoggerType.debug,
+        'handleMessageInfo',
+        'Failed to parse message string from image info message',
+        error,
+        message
+      )
     }
-    this.onMessageReceipt?.(uid, payload)
   }
 
   public handleAgentStatus(metadata: IPresenceState) {

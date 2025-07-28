@@ -77,7 +77,8 @@ export enum EConversationalAIAPIEvents {
   AGENT_ERROR = 'agent-error',
   TRANSCRIPTION_UPDATED = 'transcription-updated',
   DEBUG_LOG = 'debug-log',
-  MESSAGE_RECEIPT_UPDATED = 'message-receipt-updated'
+  MESSAGE_RECEIPT_UPDATED = 'message-receipt-updated',
+  MESSAGE_ERROR = 'message-error'
 }
 
 /**
@@ -139,7 +140,8 @@ export type TAgentMetric = {
  * @since 1.7.0
  */
 export type TMessageReceipt = {
-  type: EModuleType
+  moduleType: EModuleType
+  messageType: EChatMessageType
   message: string
   turnId: number
 }
@@ -224,12 +226,16 @@ export type TStateChangeEvent = {
  * @param error - Error information when agent encounters issues
  * @param transcription - Array of transcription items containing user and agent dialogue
  * @param message - Debug log message string
+ * @param messageReceipt - Updated message receipt information
+ * @param messageError - Error information related to a specific message
  *
  * @see {@link EConversationalAIAPIEvents} for all available event types
  * @see {@link TStateChangeEvent} for state change event structure
  * @see {@link TAgentMetric} for agent metrics structure
  * @see {@link TModuleError} for error structure
  * @see {@link ISubtitleHelperItem} for transcription item structure
+ * @see {@link TMessageReceipt} for message receipt structure
+ * @see {@link EChatMessageType} for message type enumeration
  */
 export interface IConversationalAIAPIEventHandlers {
   [EConversationalAIAPIEvents.AGENT_STATE_CHANGED]: (
@@ -260,6 +266,15 @@ export interface IConversationalAIAPIEventHandlers {
   [EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED]: (
     agentUserId: string,
     messageReceipt: TMessageReceipt
+  ) => void
+  [EConversationalAIAPIEvents.MESSAGE_ERROR]: (
+    agentUserId: string,
+    error: {
+      type: EChatMessageType
+      code: number
+      message: string
+      timestamp: number
+    }
   ) => void
 }
 
@@ -396,7 +411,8 @@ export interface IMessageError {
   code: number
   message: string
   turn_id: number
-  timestamp: number
+  send_ts: number
+  [x: string]: unknown // Allow additional properties
 }
 
 export interface IPresenceState
@@ -485,7 +501,8 @@ export enum EChatMessagePriority {
  */
 export enum EChatMessageType {
   TEXT = 'text',
-  IMAGE = 'image'
+  IMAGE = 'image',
+  UNKNOWN = 'unknown'
 }
 
 /**

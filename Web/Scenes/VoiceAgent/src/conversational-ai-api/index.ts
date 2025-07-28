@@ -109,6 +109,10 @@ export interface IConversationalAIAPIConfig {
  *  console.log(`Message receipt updated for agent ${agentUserId}:`, messageReceipt);
  * });
  *
+ * conversationalAIAPI.on(EConversationalAIAPIEvents.MESSAGE_ERROR, (agentUserId, error) => {
+ *  console.error(`Message error for agent ${agentUserId}:`, error);
+ * });
+ *
  * // Unsubscribe from events using off() method
  * conversationalAIAPI.off(EConversationalAIAPIEvents.AGENT_STATE_CHANGED, handleAgentStateChanged);
  * conversationalAIAPI.off(EConversationalAIAPIEvents.TRANSCRIPTION_UPDATED, handleTranscriptionUpdated);
@@ -117,6 +121,7 @@ export interface IConversationalAIAPIConfig {
  * conversationalAIAPI.off(EConversationalAIAPIEvents.AGENT_ERROR, handleAgentError);
  * conversationalAIAPI.off(EConversationalAIAPIEvents.DEBUG_LOG, handleDebugLog);
  * conversationalAIAPI.off(EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED, handleMessageReceiptUpdated);
+ * conversationalAIAPI.off(EConversationalAIAPIEvents.MESSAGE_ERROR, handleMessageError);
  * ```
  *
  * @fires {@link EConversationalAIAPIEvents.TRANSCRIPTION_UPDATED} When chat history is updated
@@ -126,6 +131,7 @@ export interface IConversationalAIAPIConfig {
  * @fires {@link EConversationalAIAPIEvents.AGENT_ERROR} When an error occurs
  * @fires {@link EConversationalAIAPIEvents.DEBUG_LOG} When debug logs are generated
  * @fires {@link EConversationalAIAPIEvents.MESSAGE_RECEIPT_UPDATED} When message receipt is updated
+ * @fires {@link EConversationalAIAPIEvents.MESSAGE_ERROR} When message error occurs
  *
  * @since 1.7.0
  */
@@ -167,7 +173,8 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       onDebugLog: this.onDebugLog.bind(this),
       onAgentMetrics: this.onAgentMetrics.bind(this),
       onAgentError: this.onAgentError.bind(this),
-      onMessageReceipt: this.onMessageReceiptUpdated.bind(this)
+      onMessageReceipt: this.onMessageReceiptUpdated.bind(this),
+      onMessageError: this.onMessageError.bind(this)
     })
   }
 
@@ -193,7 +200,7 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
     return ConversationalAIAPI._instance
   }
 
-  protected getCfg() {
+  public getCfg() {
     if (!this.rtcEngine || !this.rtmEngine) {
       throw new NotFoundError('ConversationalAIAPI is not initialized')
     }
@@ -612,6 +619,23 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       messageReceipt
     )
   }
+  private onMessageError(
+    agentUserId: string,
+    error: {
+      type: EChatMessageType
+      code: number
+      message: string
+      timestamp: number
+    }
+  ) {
+    this.callMessagePrint(
+      ELoggerType.error,
+      `>>> ${EConversationalAIAPIEvents.MESSAGE_ERROR}`,
+      agentUserId,
+      error
+    )
+    this.emit(EConversationalAIAPIEvents.MESSAGE_ERROR, agentUserId, error)
+  }
 
   private bindRtcEvents() {
     this.getCfg().rtcEngine.on(
@@ -665,14 +689,14 @@ export class ConversationalAIAPI extends EventHelper<IConversationalAIAPIEventHa
       const pts64 = Number(new DataView(metadata.buffer).getBigUint64(0, true))
       this.callMessagePrint(
         ELoggerType.debug,
-        `<<<< ${ERTCEvents.AUDIO_METADATA}`,
+        `<<< ${ERTCEvents.AUDIO_METADATA}`,
         pts64
       )
       this.covSubRenderController.setPts(pts64)
     } catch (error) {
       this.callMessagePrint(
         ELoggerType.error,
-        `<<<< ${ERTCEvents.AUDIO_METADATA}`,
+        `<<< ${ERTCEvents.AUDIO_METADATA}`,
         metadata,
         error
       )
