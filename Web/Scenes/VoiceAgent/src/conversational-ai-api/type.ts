@@ -68,6 +68,16 @@ export enum ERTCCustomEvents {
  * - All events are string literals and can be used with event listeners
  * - Events are case-sensitive
  *
+ * Values include:
+ * - AGENT_STATE_CHANGED: Agent state change events
+ * - AGENT_INTERRUPTED: Agent interruption events
+ * - AGENT_METRICS: Agent performance metrics
+ * - AGENT_ERROR: Agent error events
+ * - TRANSCRIPTION_UPDATED: Transcription update events
+ * - DEBUG_LOG: Debug logging events
+ * - MESSAGE_RECEIPT_UPDATED: Message receipt update events
+ * - MESSAGE_ERROR: Message error events
+ *
  * @since 1.6.0
  */
 export enum EConversationalAIAPIEvents {
@@ -133,7 +143,8 @@ export type TAgentMetric = {
  * @description
  * Represents a message receipt from the AI module, including type, message content and turn ID
  *
- * @param type - The module type that sent the message {@link EModuleType}
+ * @param moduleType - The module type that sent the message {@link EModuleType}
+ * @param messageType - The type of the message {@link EChatMessageType}
  * @param message - The content of the message
  * @param turnId - Unique identifier for the conversation turn
  *
@@ -478,9 +489,10 @@ export interface IUserTracks {
  * and user experience during real-time interactions.
  *
  * @remarks
- * - Used to determine message processing behavior in conversational AI systems
- * - Helps manage message flow during concurrent or overlapping conversations
- * - Critical for maintaining proper conversation context and user experience
+ * Values include:
+ * - INTERRUPTED: Interrupt current processing and handle immediately
+ * - APPEND: Add to processing queue for sequential handling
+ * - IGNORE: Discard the message without processing
  *
  * @enum {string}
  *
@@ -495,9 +507,15 @@ export enum EChatMessagePriority {
 /**
  * Enumeration defining the different types of chat messages supported in the conversational AI system.
  *
+ * @remarks
+ * Values include:
+ * - TEXT: Text-based message
+ * - IMAGE: Image-based message
+ * - UNKNOWN: Unknown message type
+ *
  * @enum {string}
  *
- *  @since 1.7.0
+ * @since 1.7.0
  */
 export enum EChatMessageType {
   TEXT = 'text',
@@ -566,6 +584,7 @@ export interface ILocalTranscriptionBase {
   _time: number
   status: ELocalTranscriptStatus
 }
+
 export interface ILocalImageTranscription extends ILocalTranscriptionBase {
   localImage: File
   imageDimensions: {
