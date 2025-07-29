@@ -54,6 +54,7 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
        override fun onAgentInterrupted(agentUserId: String, event: InterruptEvent) { /* ... */ }
        override fun onAgentMetrics(agentUserId: String, metric: Metric) { /* ... */ }
        override fun onAgentError(agentUserId: String, error: ModuleError) { /* ... */ }
+       override fun onMessageError(agentUserId: String, error: MessageError) { /* ... */ } 
        override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt) { /* ... */ }
        override fun onTranscriptionUpdated(agentUserId: String, transcription: Transcription) { /* ... */ }
        override fun onDebugLog(log: String) { /* ... */ }
@@ -186,30 +187,21 @@ The actual success or failure status of image sending is confirmed through the f
 
 When receiving the `onMessageReceiptUpdated` callback, follow these steps to parse and confirm the image send status:
 
-**Important: You must first check if `receipt.type` is `ModuleType.Context`, then check `resource_type`**
+**Important: Check `receipt.chatMessageType == ChatMessageType.Image` for image message status**
 
 ```kotlin
 override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt) {
-    // Step 1: Check if message type is Context
-    if (receipt.type == ModuleType.Context) {
+    if (receipt.chatMessageType == ChatMessageType.Image) {
         try {
-            // Step 2: Parse receipt.message as JSON object
-            val jsonObject = JSONObject(receipt.message)
-            
-            // Step 3: Check if resource_type is picture
-            if (jsonObject.has("resource_type") && 
-                jsonObject.getString("resource_type") == "picture") {
-                
-                // Step 4: Check if uuid field is included
-                if (jsonObject.has("uuid")) {
-                    val receivedUuid = jsonObject.getString("uuid")
-                    
-                    // If uuid matches, this image was sent successfully
-                    if (receivedUuid == "your-sent-uuid") {
-                        Log.d("ImageSend", "Image sent successfully: $receivedUuid")
-                        // Update UI to show send success status
-                    }
-                }
+            val json = JSONObject(receipt.message)
+            if (json.has("uuid")) {
+                val receivedUuid = json.getString("uuid")
+
+                 // If uuid matches, this image was sent successfully
+                 if (receivedUuid == "your-sent-uuid") {
+                     Log.d("ImageSend", "Image sent successfully: $receivedUuid")
+                     // Update UI to show send success status
+                 }
             }
         } catch (e: Exception) {
             Log.e("ImageSend", "Failed to parse message receipt: ${e.message}")
@@ -218,32 +210,23 @@ override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceip
 }
 ```
 
-#### 2. Image Send Failure - onAgentError
+#### 2. Image Send Failure - onMessageError
 
-When receiving the `onAgentError` callback and `error.type` is `ModuleType.Context`, parse `error.message` to confirm image send failure:
+When receiving the `onMessageError` callback, follow these steps to parse and confirm the image send failure:
 
 ```kotlin
-override fun onAgentError(agentUserId: String, error: ModuleError) {
-    // Check if it's a Context type error
-    if (error.type == ModuleType.Context) {
+override fun onMessageError(agentUserId: String, error: MessageError) {
+    if (error.chatMessageType == ChatMessageType.Image) {
         try {
-            // Parse error.message as JSON object
-            val jsonObject = JSONObject(error.message)
-            
-            // Check if resource_type is picture
-            if (jsonObject.has("resource_type") && 
-                jsonObject.getString("resource_type") == "picture") {
-                
-                // Check if uuid field is included
-                if (jsonObject.has("uuid")) {
-                    val failedUuid = jsonObject.getString("uuid")
-                    
-                    // If uuid matches, this image send failed
-                    if (failedUuid == "your-sent-uuid") {
-                        Log.e("ImageSend", "Image send failed: $failedUuid")
-                        // Update UI to show send failure status
-                    }
-                }
+            val json = JSONObject(error.message)
+            if (json.has("uuid")) {
+                val failedUuid = json.getString("uuid")
+
+                 // If uuid matches, this image send failed
+                 if (failedUuid == "your-sent-uuid") {
+                     Log.e("ImageSend", "Image send failed: $failedUuid")
+                     // Update UI to show send failure status
+                 }
             }
         } catch (e: Exception) {
             Log.e("ImageSend", "Failed to parse error message: ${e.message}")
@@ -268,16 +251,13 @@ override fun onAgentError(agentUserId: String, error: ModuleError) {
 
 - **Message Send Status Confirmation:**
     - The `chat` interface completion callback only indicates whether the send request was successful, not the actual message processing status
-    - Actual successful image message sending is confirmed through the `onMessageReceiptUpdated` callback (using uuid identifier)
-    - Image message send failures are confirmed through the `onAgentError` callback (using uuid identifier)
-    - JSON messages in callbacks need to be parsed to obtain specific identifiers and status information
+    - Actual successful image message sending is confirmed through the `onMessageReceiptUpdated` callback
+    - Image message send failures are confirmed through the `onMessageError` callback
+    - It's recommended to use the `chatMessageType` field for quick judgment, which provides better performance
 
 - **Image Message Status Tracking:**
-    - **Image messages**: Send status is confirmed through the `uuid` field in `onMessageReceiptUpdated` and `onAgentError` callbacks
-    - **Image message parsing steps**:
-        - **Success callback**: Must first check `receipt.type == ModuleType.Context`, then check `resource_type == "picture"`
-        - **Failure callback**: Must first check `error.type == ModuleType.Context`, then check `resource_type == "picture"`
-        - Only after meeting the above conditions can the specific image send status be confirmed through the `uuid` field
+    - Directly check `chatMessageType == ChatMessageType.Image`
+    - Confirm specific image send status by parsing the `uuid` field in JSON
 
 ---
 

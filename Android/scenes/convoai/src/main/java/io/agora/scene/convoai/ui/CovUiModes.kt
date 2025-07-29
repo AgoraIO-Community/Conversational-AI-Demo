@@ -1,21 +1,5 @@
 package io.agora.scene.convoai.ui
 
-enum class ResourceType(val value: String) {
-    /** picture */
-    PICTURE("picture"),
-
-    /** Unknown type */
-    UNKNOWN("unknown");
-
-    companion object {
-
-        fun fromValue(value: String): ResourceType {
-            return ResourceType.entries.find { it.value == value } ?: UNKNOWN
-        }
-    }
-}
-
-
 /**
  * Sealed base class for resource error types.
  * Extend this class to represent specific resource errors (e.g., picture, audio, etc.).

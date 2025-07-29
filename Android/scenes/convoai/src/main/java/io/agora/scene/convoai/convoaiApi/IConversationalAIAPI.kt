@@ -118,14 +118,55 @@ data class ImageMessage(
 ) : ChatMessage()
 
 /**
+ * Message type enumeration
+ * Used to distinguish different types of messages in the conversation system
+ */
+enum class ChatMessageType(val value: String) {
+    Text("text"),
+    Image("picture"),
+    UNKNOWN("unknown");
+
+    companion object {
+        /**
+         * Get the corresponding ChatMessageType from a string value.
+         * @param value The string value to match.
+         * @return The corresponding ChatMessageType, or UNKNOWN if not found.
+         */
+        fun fromValue(value: String): ChatMessageType {
+            return ChatMessageType.entries.find { it.value == value } ?: UNKNOWN
+        }
+    }
+}
+
+/**
+ * Message error information
+ * Data class for handling and reporting message errors. Contains error type, error code,
+ * error description and timestamp.
+ *
+ * @property chatMessageType Message error type
+ * @property code Specific error code for identifying particular error conditions
+ * @property message Error description message providing detailed error explanation
+ *                    Usually JSON string containing resource information
+ * @property timestamp Event occurrence timestamp (milliseconds since epoch, i.e., since January 1, 1970 UTC)
+ */
+data class MessageError(
+    val chatMessageType: ChatMessageType,
+    val code: Int,
+    val message: String,
+    val timestamp: Long,
+)
+
+/**
  * Message receipt data class
  * @property type The module type (e.g., llm, mllm, tts, context)
+ * @property chatMessageType Message error type
  * @property turnId The turn ID of the message
  * @property message The message information. Parse according to type:
  *                   - Context type: Usually JSON string containing resource information
  */
 data class MessageReceipt(
     val type: ModuleType,
+    val chatMessageType: ChatMessageType,
     val turnId: Long,
     val message: String
 )
@@ -505,6 +546,15 @@ interface IConversationalAIAPIEventHandler {
      * @param error AI error
      */
     fun onAgentError(agentUserId: String, error: ModuleError)
+
+    /**
+     *  Called when message error occurs
+     *  This method is called when message processing encounters errors,
+     *  For example, when the chat message is failed to send, the error message will be returned.
+     *  @param agentUserId Agent user ID
+     *  @param error Message error containing type, message
+     */
+    fun onMessageError(agentUserId: String, error: MessageError)
 
     /**
      * Called when message receipt is updated
