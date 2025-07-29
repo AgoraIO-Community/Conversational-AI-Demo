@@ -44,6 +44,11 @@ This section mainly describes how to quickly run the Conversational AI Demo.
     #----------- TTS -----------
     static let TTS_VENDOR: String = <TTS Vendor>
     static let TTS_PARAMS: [String : Any] = <TTS Parameters>
+
+    #----------- AVATAR -----------
+    static let AVATAR_ENABLE: Bool = <Enable AVATAR feature>
+    static let AVATAR_VENDOR: String = <AVATAR vendor>
+    static let AVATAR_PARAMS: [String: Any] = <AVATAR parameters>
 ```
 
 ## 🗂️ 2. Source Code Sitemap
@@ -60,12 +65,12 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 | [AgentInformationViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentInformationViewController.swift)  | Information dialog showing agent status         |
 | [AgentSettingViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentSettingViewController.swift)          | Settings dialog for agent configuration         |
 | [Utils/](ConvoAI/ConvoAI/Classes/Utils)                                                                               | Utility classes and helper functions            |
-| [SubRender/](ConvoAI/ConvoAI/Classes/Utils/SubRender)                                                                 | Subtitle rendering component                    |
+| [@/ConversationalAIAPI](ConvoAI/ConvoAI/Classes/ConversationalAIAPI)                                                  | Subtitle rendering component                    |
 
 ### 2.2 Real-time Subtitles
 
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- To implement this feature, you need to use the [Open Source Subtitle Processing Module](ConvoAI/ConvoAI/Classes/Utils/SubRender)
+- To implement this feature, you need to use the [Open Source Subtitle Processing Module](ConvoAI/ConvoAI/Classes/ConversationalAIAPI)
 - ⚠️ The Open Source subtitle processing module is developed in Swift. If your project is a pure OC project, you can refer to Apple's official documentation [Importing Swift into Objective-C](https://developer.apple.com/documentation/swift/importing-swift-into-objective-c) to integrate the corresponding files into your project
 
 
