@@ -360,7 +360,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         val activity = activity ?: return
 
         CommonDialog.Builder()
-            .setTitle(getString(io.agora.scene.convoai.R.string.cov_language_change_dialog_title))
+            .setTitle(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_title))
             .setContent(getString(io.agora.scene.convoai.R.string.cov_language_change_dialog_content))
             .setNegativeButton(getString(R.string.common_cancel)) {
                 // User cancelled, no action needed
