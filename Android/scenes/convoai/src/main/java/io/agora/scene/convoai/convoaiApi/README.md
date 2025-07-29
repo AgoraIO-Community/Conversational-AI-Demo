@@ -79,6 +79,14 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
    rtcEngine.joinChannel(token, channelName, null, userId)
    ```
 
+    **⚠️ Important: If Avatar is enabled, you must set the correct audio scenario:**
+
+   ```kotlin
+   // When enabling Avatar, use AUDIO_SCENARIO_DEFAULT for better audio mixing effects
+   api.loadAudioSettings(Constants.AUDIO_SCENARIO_DEFAULT)
+   rtcEngine.joinChannel(token, channelName, null, userId)
+   ```
+
 6. **(Optional) Send messages to AI agent**
 
    **Send text messages:**
@@ -245,6 +253,19 @@ override fun onMessageError(agentUserId: String, error: MessageError) {
   api.loadAudioSettings()
   rtcEngine.joinChannel(token, channelName, null, userId)
   ```
+
+- **Avatar Audio Settings:**
+  If Avatar functionality is enabled, you must use the `Constants.AUDIO_SCENARIO_DEFAULT` audio scenario to achieve optimal audio mixing effects:
+  ```kotlin
+  // Correct audio settings when enabling Avatar
+  api.loadAudioSettings(Constants.AUDIO_SCENARIO_DEFAULT)
+  rtcEngine.joinChannel(token, channelName, null, userId)
+  ```
+
+  Audio setting recommendations for different scenarios:
+    - **Avatar Mode**: `Constants.AUDIO_SCENARIO_DEFAULT` - Provides better audio mixing effects
+    - **Standard Mode**: `Constants.AUDIO_SCENARIO_AI_CLIENT` - Suitable for standard AI conversation scenarios
+
 
 - **All event callbacks are on the main thread.**  
   You can safely update UI in your event handlers.
