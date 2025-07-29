@@ -67,6 +67,9 @@ AVATAR_PARAMS=<AVATAR Parameters>
 | [CovLivingActivity.kt](src/main/java/io/agora/scene/convoai/ui/CovLivingActivity.kt)   | Main activity for AI conversation.               |
 | [CovSettingsDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovSettingsDialog.kt)   | Settings dialog for agent configuration.         |
 | [CovAgentInfoDialog.kt](src/main/java/io/agora/scene/convoai/ui/CovAgentInfoDialog.kt) | Information dialog showing agent status.         |
+| [CovAgentSettingsFragment.kt](src/main/java/io/agora/scene/convoai/ui/dialog/CovAgentSettingsFragment.kt) | Settings fragment for agent configuration.       |
+| [CovAgentInfoFragment.kt](src/main/java/io/agora/scene/convoai/ui/dialog/CovAgentInfoFragment.kt)         | Information fragment showing agent status.       |
+| [CovAvatarSelectorDialog.kt](src/main/java/io/agora/scene/convoai/ui/dialog/CovAvatarSelectorDialog.kt)         | Information dialog showing agent status.                                            |
 
 ### 2.2 Real-time Subtitles
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
