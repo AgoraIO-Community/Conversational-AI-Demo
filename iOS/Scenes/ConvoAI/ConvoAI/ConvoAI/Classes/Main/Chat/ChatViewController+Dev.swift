@@ -40,7 +40,7 @@ extension ChatViewController {
                     .joined(separator: "\n")
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = messageContents
-                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.DevMode.copy)
+                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.DevMode.copyQuestion)
             }
         DeveloperModeViewController.show(from: self)
     }

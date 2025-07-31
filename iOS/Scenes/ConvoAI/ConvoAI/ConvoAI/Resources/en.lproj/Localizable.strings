@@ -124,17 +124,21 @@
 "devmode.rtc" = "RTC Version";
 "devmode.rtm" = "RTM Version";
 "devmode.metric" = "Metrics";
-"devmode.host" = "ConvoAI Host";
 "devmode.dump" = "Audio Dump";
 "devmode.sessionLimit" = "Session Limit";
-"devmode.copy" = "Copy Mine Messages";
+"devmode.copy.click" = "Click to Copy";
 "devmode.close" = "Close Developer Mode";
 "devmode.graph" = "Graph id";
-"devmode.server" = "Server";
+"devmode.server.switch" = "Switch Environment";
 "devmode.sdk.params" = "SDK audio parameter config";
 "devmode.sc.config" = "Convo AI service Preset config";
-"devmode.text.view" = "View";
-"devmode.text.confirm" = "Confirm";
+"devmode.basic.settings" = "Basic Settings";
+"devmode.convoai.settings" = "ConvoAI Settings";
+"devmode.user.settings" = "User Settings";
+"devmode.overall.config" = "Overall Configuration";
+"devmode.copy.question" = "Copy Mine Messages";
+"devmode.caption.mode" = "Caption Rendering Mode";
+"devmode.user.settings.hint" = "Quick Settings for Current User";
 
 "iot.info.title" = "Conversational AI Device";
 "iot.info.device" = "%@ Devices";
