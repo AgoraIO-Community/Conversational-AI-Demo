@@ -1,6 +1,16 @@
 <resources>
     <string name="common_app_name">Convo AI</string>
     <string name="common_detail_message_list_you">You</string>
+    <string name="common_debug_base_config">Base Settings</string>
+    <string name="common_debug_cov_config">ConvoAI Settings</string>
+    <string name="common_debug_overall_config">Overall Config</string>
+    <string name="common_debug_user_config">User Config</string>
+    <string name="common_debug_quick_setting_for_current_user">Quick Setting for Current User</string>
+    <string name="common_debug_click_to_copy">Copy to Clipboard</string>
+    <string name="common_debug_transcription_render_mode">Transcription Render Mode</string>
+    <string name="common_debug_text_mode">Text</string>
+    <string name="common_debug_word_mode">Word</string>
+    <string name="common_debug_text_word_mode">Text-Word</string>
     <string name="common_debug_mode_enable">Debug Mode is On</string>
     <string name="common_debug_mode_disable">Debug Mode is Off</string>
     <string name="common_debug_setting">Debugging Settings</string>

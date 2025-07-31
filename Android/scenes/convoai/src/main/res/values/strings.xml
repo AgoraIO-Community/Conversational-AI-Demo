@@ -59,6 +59,7 @@
     <string name="cov_setting_bhvs">Enable BHVS</string>
     <string name="cov_setting_ai_vad"></string>
     <string name="cov_setting_ai_vad_high">Intelligent Interruption Handling</string>
+    <string name="cov_setting_ai_vad_high_desc">Elegant Interruption is an advanced interruption function independently developed by Agora. It enables the agent to temporarily stop logical reasoning to do the actual thing, and then return to allow the agent to continue according to the node before the interruption</string>
     <string name="cov_setting_network_error">Network Error!</string>
     <string name="cov_agent_connecting">Connecting…</string>
     <string name="cov_copy_succeed">Copied</string>

@@ -20,12 +20,11 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
-import io.agora.scene.common.constant.AgentScenes
 import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.debugMode.DebugButton
 import io.agora.scene.common.debugMode.DebugConfigSettings
-import io.agora.scene.common.debugMode.DebugDialog
-import io.agora.scene.common.debugMode.DebugDialogCallback
+import io.agora.scene.common.debugMode.DebugTabDialog
+import io.agora.scene.common.debugMode.RenderMode
 import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.LoginDialog
@@ -78,7 +77,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     // UI related
     private var appInfoDialog: CovAppInfoDialog? = null
     private var mLoginDialog: LoginDialog? = null
-    private var mDebugDialog: DebugDialog? = null
+    private var mDebugDialog: DebugTabDialog? = null
     private var appTabDialog: CovAgentTabDialog? = null
 
     private lateinit var activityResultLauncher: ActivityResultLauncher<Int>
@@ -219,10 +218,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 )
             }
             clTop.setOnSettingsClickListener {
-                showSettingDialogWithPresetCheck(1) // Agent Settings tab
+                showSettingDialogWithPresetCheck(CovAgentTabDialog.TAB_AGENT_SETTINGS) // Agent Settings tab
             }
             clTop.setOnWifiClickListener {
-                showSettingDialogWithPresetCheck(0) // Channel Info tab
+                showSettingDialogWithPresetCheck(CovAgentTabDialog.TAB_CHANNEL_INFO) // Channel Info tab
             }
             clTop.setOnInfoClickListener {
                 showInfoDialog()
@@ -504,6 +503,14 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
         }
+        lifecycleScope.launch {  // Observe transcription updates
+            viewModel.interruptEvent.collect { transcription ->
+                if (isSelfSubRender) return@collect
+                transcription?.let {
+                    mBinding?.messageListViewV2?.onAgentInterrupted(it)
+                }
+            }
+        }
         lifecycleScope.launch {  // Observe message receipt updates
             viewModel.mediaInfoUpdate.collect { messageInfo ->
                 if (isSelfSubRender) return@collect
@@ -658,6 +665,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             } else {
                 selfRenderController?.enable(false)
                 messageListViewV2.updateAgentName(CovAgentManager.getPreset()?.display_name ?: "")
+                messageListViewV2.setIsChinese(CovAgentManager.language?.isChinese == true)
             }
         }
 
@@ -784,7 +792,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         }
     }
 
-    private fun showSettingDialog(initialTab: Int = 1) {
+    private fun showSettingDialog(initialTab: Int) {
         appTabDialog = CovAgentTabDialog.newInstance(
             viewModel.connectionState.value,
             initialTab,
@@ -955,39 +963,79 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private fun showCovAiDebugDialog() {
         if (isFinishing || isDestroyed) return
         if (mDebugDialog?.dialog?.isShowing == true) return
-        mDebugDialog = DebugDialog(AgentScenes.ConvoAi)
-        mDebugDialog?.onDebugDialogCallback = object : DebugDialogCallback {
-            override fun onDialogDismiss() {
-                mDebugDialog = null
-            }
 
-            override fun getConvoAiHost(): String = CovAgentApiManager.currentHost ?: ""
-
-            override fun onAudioDumpEnable(enable: Boolean) {
-                CovRtcManager.onAudioDump(enable)
-            }
-
-            override fun onClickCopy() {
-                mBinding?.apply {
-                    val messageContents = if (isSelfSubRender) {
-                        messageListViewV1.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
-                    } else {
-                        messageListViewV2.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
-                    }
-                    this@CovLivingActivity.copyToClipboard(messageContents)
-                    ToastUtil.show(getString(R.string.cov_copy_succeed))
+        mDebugDialog = DebugTabDialog.newInstance(
+            onDebugCallback = object : DebugTabDialog.DebugCallback {
+                override fun onDialogDismiss() {
+                    mDebugDialog = null
                 }
-            }
 
-            override fun onEnvConfigChange() {
-                restartActivity()
-            }
+                override fun onRenderModeChange(mode: Int) {
+                    // Handle render mode change
+                    when (mode) {
+                        RenderMode.WORD -> {
+                            CovLogger.d(TAG, "Render mode changed to WORD")
+                            // Apply word rendering configuration
+                        }
 
-            override fun onAudioParameter(parameter: String) {
-                CovRtcManager.setParameter(parameter)
-            }
-        }
-        mDebugDialog?.show(supportFragmentManager, "debug_dialog")
+                        RenderMode.TEXT -> {
+                            CovLogger.d(TAG, "Render mode changed to TEXT")
+                            // Apply text rendering configuration
+                        }
+
+                    }
+                    val modeText = if (mode == RenderMode.TEXT) {
+                        "Text"
+                    } else {
+                        "Word"
+                    }
+                    ToastUtil.show("Render mode changed to: $modeText")
+                }
+
+                override fun getConvoAiHost(): String = CovAgentApiManager.currentHost ?: ""
+
+                override fun onAudioDumpEnable(enable: Boolean) {
+                    CovRtcManager.onAudioDump(enable)
+
+                    ToastUtil.show("onAudioDumpEnable: $enable")
+                }
+
+                override fun onSeamlessPlayMode(enable: Boolean) {
+                    // Handle seamless play mode toggle
+                    CovLogger.d(TAG, "Seamless play mode: $enable")
+
+                    ToastUtil.show("onSeamlessPlayMode: $enable")
+                }
+
+                override fun onMetricsEnable(enable: Boolean) {
+                    // Handle metrics toggle
+                    CovLogger.d(TAG, "Metrics enabled: $enable")
+
+                    ToastUtil.show("onMetricsEnable: $enable")
+                }
+
+                override fun onClickCopy() {
+                    mBinding?.apply {
+                        val messageContents = if (isSelfSubRender) {
+                            messageListViewV1.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
+                        } else {
+                            messageListViewV2.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
+                        }
+                        this@CovLivingActivity.copyToClipboard(messageContents)
+                        ToastUtil.show(getString(R.string.cov_copy_succeed))
+                    }
+                }
+
+                override fun onEnvConfigChange() {
+                    restartActivity()
+                }
+
+                override fun onAudioParameter(parameter: String) {
+                    CovRtcManager.setParameter(parameter)
+                }
+            },
+        )
+        mDebugDialog?.show(supportFragmentManager, "showDebugDialog")
     }
 
     private fun showRoomEndDialog() {

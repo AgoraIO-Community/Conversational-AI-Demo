@@ -1,6 +1,8 @@
 package io.agora.scene.convoai.constant
 
 import io.agora.scene.common.BuildConfig
+import io.agora.scene.common.debugMode.DebugConfigSettings
+import io.agora.scene.common.debugMode.RenderMode
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovAvatar
@@ -38,12 +40,12 @@ object CovAgentManager {
 
     // room expire time sec
     var roomExpireTime = 600L
-        get(){
-            return if (isEnableAvatar()){
+        get() {
+            return if (isEnableAvatar) {
                 // If call_time_limit_avatar_second is null or <= 0, use 300L as default
                 val limit = preset?.call_time_limit_avatar_second ?: 0L
                 if (limit > 0) limit else 300L
-            }else{
+            } else {
                 // If call_time_limit_second is null or <= 0, use 300L as default
                 val limit = preset?.call_time_limit_second ?: 0L
                 if (limit > 0) limit else 600L
@@ -80,9 +82,10 @@ object CovAgentManager {
         return preset?.getAvatarsForLang(language?.language_code) ?: emptyList()
     }
 
-    fun isEnableAvatar(): Boolean {
-        return avatar != null || BuildConfig.AVATAR_ENABLE
-    }
+    val isEnableAvatar: Boolean
+        get() {
+            return avatar != null || BuildConfig.AVATAR_ENABLE
+        }
 
     // Preset change reminder management methods
     fun shouldShowPresetChangeReminder(): Boolean {
@@ -92,6 +95,11 @@ object CovAgentManager {
     fun setShowPresetChangeReminder(show: Boolean) {
         showPresetChangeReminder = show
     }
+
+    val isTextRenderMode: Boolean
+        get() {
+            return isEnableAvatar || DebugConfigSettings.renderMode == RenderMode.TEXT
+        }
 
     fun resetData() {
         enableAiVad = false

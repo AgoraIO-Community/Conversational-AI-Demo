@@ -29,15 +29,23 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_message_content"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:maxLines="999"
-        android:textColor="@color/ai_icontext1"
-        android:textSize="16sp" />
+        android:orientation="horizontal"
+        android:gravity="start|center_vertical">
+
+        <io.agora.scene.convoai.ui.widget.TypingTextView
+            android:id="@+id/tv_message_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="999"
+            android:textColor="@color/ai_icontext1"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
     <!-- Add image message layout below text message layout -->
     <!-- Image message item for agent (hidden by default, shown for image messages) -->

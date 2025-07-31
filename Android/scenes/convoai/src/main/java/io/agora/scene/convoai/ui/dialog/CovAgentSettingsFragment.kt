@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import io.agora.scene.common.ui.widget.LastItemDividerDecoration
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
 import io.agora.scene.common.util.getDistanceFromScreenEdges
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.AgentConnectionState
@@ -111,6 +113,9 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     }
                 }
             })
+            btnAiVad.setOnClickListener {
+                ToastUtil.show(io.agora.scene.convoai.R.string.cov_setting_ai_vad_high_desc, Toast.LENGTH_LONG)
+            }
             clAvatar.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     onClickAvatar()

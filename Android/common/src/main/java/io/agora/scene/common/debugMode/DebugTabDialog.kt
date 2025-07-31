@@ -1,47 +1,70 @@
-package io.agora.scene.convoai.ui.dialog
+package io.agora.scene.common.debugMode
 
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
-import io.agora.scene.common.ui.BaseSheetDialog
-import io.agora.scene.convoai.R
-import io.agora.scene.convoai.constant.AgentConnectionState
-import io.agora.scene.convoai.databinding.CovAgentTabDialogBinding
+import io.agora.scene.common.AgentApp
+import io.agora.scene.common.R
+import io.agora.scene.common.constant.ServerConfig
+import io.agora.scene.common.databinding.CommonDebugTabDialogBinding
+import io.agora.scene.common.ui.BaseActivity.ImmersiveMode
+import io.agora.scene.common.ui.BaseDialogFragment
+import kotlin.apply
+import kotlin.collections.set
+import kotlin.let
+import kotlin.ranges.until
 
-/**
- * Bottom sheet dialog with tab switching functionality
- * Contains Channel Info and Agent Settings tabs
- */
-class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
+class DebugTabDialog : BaseDialogFragment<CommonDebugTabDialogBinding>() {
 
-    private var onDismissCallback: (() -> Unit)? = null
-    private var agentState: AgentConnectionState? = null
-    private var initialTab: Int = TAB_AGENT_SETTINGS
+    interface DebugCallback {
+        fun onDialogDismiss() = Unit
+
+        fun onClickCopy() = Unit
+
+        fun onAudioDumpEnable(enable: Boolean) = Unit
+
+        fun onSeamlessPlayMode(enable: Boolean) = Unit  // Default implementation
+
+        fun onMetricsEnable(enable: Boolean) = Unit  // Default implementation
+
+        fun onEnvConfigChange() = Unit  // Default implementation
+
+        fun getConvoAiHost(): String = ""
+
+        fun onAudioParameter(parameter: String) = Unit
+
+        /**
+         * Callback when render mode changes
+         * @param mode The new render mode value (RenderMode.TEXT or RenderMode.WORD)
+         */
+        fun onRenderModeChange(@RenderMode mode: Int) = Unit
+    }
+
+    var onDebugCallback: DebugCallback? = null
+    private var initialTab: Int = TAB_BASE_CONFIG
 
     companion object {
-        private const val TAG = "CovInfoTabDialog"
+        private const val TAG = "DebugTabDialog"
 
         // Tab indices
-        const val TAB_AGENT_SETTINGS = 0
-        const val TAB_CHANNEL_INFO = 1
+        private const val TAB_BASE_CONFIG = 0
+        private const val TAB_COV_CONFIG = 1
 
         fun newInstance(
-            agentState: AgentConnectionState?,
-            initialTab: Int = TAB_AGENT_SETTINGS,
-            onDismiss: (() -> Unit)? = null
-        ): CovAgentTabDialog {
-            return CovAgentTabDialog().apply {
-                this.onDismissCallback = onDismiss
-                this.agentState = agentState
+            initialTab: Int = TAB_BASE_CONFIG,
+            onDebugCallback: DebugCallback,
+        ): DebugTabDialog {
+            return DebugTabDialog().apply {
+                this.onDebugCallback = onDebugCallback
                 this.initialTab = initialTab
             }
         }
@@ -50,15 +73,32 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): CovAgentTabDialogBinding {
-        return CovAgentTabDialogBinding.inflate(inflater, container, false)
+    ): CommonDebugTabDialogBinding {
+        return CommonDebugTabDialogBinding.inflate(inflater, container, false)
+    }
+
+    override fun immersiveMode(): ImmersiveMode = ImmersiveMode.FULLY_IMMERSIVE
+
+    override fun onStart() {
+        super.onStart()
+        // Set full screen display - let BaseDialogFragment handle system UI
+        dialog?.window?.apply {
+            setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.apply {
-            setOnApplyWindowInsets(root)
+        isCancelable = false
+        mBinding?.apply {
+            ivBack.setOnClickListener {
+                dismiss()
+            }
+            btnCloseDebug.setOnClickListener {
+                onCloseDebug()
+                dismiss()
+            }
 
             // Setup ViewPager2 with fragments
             setupViewPager()
@@ -68,19 +108,32 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
         }
     }
 
-    override fun disableDragging(): Boolean {
-        // Disable swipe to dismiss
-        return true
+    private fun onCloseDebug() {
+        if (!ServerConfig.isBuildEnv) {
+            onDebugCallback?.onEnvConfigChange()
+            ServerConfig.reset()
+        }
+        onDebugCallback?.onAudioDumpEnable(false)
+        DebugButton.getInstance(AgentApp.instance()).hide()
+        DebugConfigSettings.reset()
+        onDebugCallback = null
+    }
+
+    /**
+     * Public method to dismiss dialog with callback
+     */
+    fun dismissWithCallback() {
+        onDebugCallback?.onDialogDismiss()
+        dismiss()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        onDismissCallback?.invoke()
     }
 
     private fun setupViewPager() {
-        binding?.apply {
-            val adapter = InfoTabPagerAdapter(this@CovAgentTabDialog)
+        mBinding?.apply {
+            val adapter = InfoTabPagerAdapter(this@DebugTabDialog)
             vpContent.adapter = adapter
 
             // Disable swiping for ViewPager2
@@ -92,7 +145,7 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
     }
 
     private fun setupTabLayout() {
-        binding?.apply {
+        mBinding?.apply {
             // Create custom tab layout with icons and text
             setupCustomTabs()
 
@@ -125,7 +178,7 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
     }
 
     private fun setupCustomTabs() {
-        binding?.apply {
+        mBinding?.apply {
             tabLayout.post {
                 val tabCount = 2
                 val tabWidth = tabLayout.width / tabCount
@@ -133,23 +186,15 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
                 val channelInfoTab = tabLayout.newTab()
                 val agentSettingsTab = tabLayout.newTab()
 
-                val channelInfoView = createTabView(
-                    io.agora.scene.common.R.drawable.scene_detail_wifi,
-                    getString(R.string.cov_channel_info_title),
-                    tabWidth
-                )
-                val agentSettingsView = createTabView(
-                    io.agora.scene.common.R.drawable.scene_detail_setting,
-                    getString(R.string.cov_setting_title),
-                    tabWidth
-                )
+                val channelInfoView = createTabView(getString(R.string.common_debug_base_config), tabWidth)
+                val agentSettingsView = createTabView(getString(R.string.common_debug_cov_config), tabWidth)
 
                 channelInfoTab.customView = channelInfoView
                 agentSettingsTab.customView = agentSettingsView
 
                 tabLayout.removeAllTabs()
-                tabLayout.addTab(agentSettingsTab)
                 tabLayout.addTab(channelInfoTab)
+                tabLayout.addTab(agentSettingsTab)
 
                 // Remove tab padding and minWidth for each tab
                 val tabStrip = tabLayout.getChildAt(0) as? LinearLayout
@@ -164,50 +209,35 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
         }
     }
 
-    private fun createTabView(iconRes: Int, text: String, width: Int): View {
-        val tabView = LayoutInflater.from(context).inflate(R.layout.cov_custom_tab_item, null)
+    private fun createTabView(text: String, width: Int): View {
+        val tabView = LayoutInflater.from(context).inflate(R.layout.common_debug_tab_item, null)
         tabView.layoutParams = ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT)
-        val iconView = tabView.findViewById<ImageView>(R.id.ivTabIcon)
         val textView = tabView.findViewById<TextView>(R.id.tvTabText)
-        iconView.setImageResource(iconRes)
         textView.text = text
         return tabView
     }
 
     private fun updateTabAppearance(selectedPosition: Int) {
-        binding?.apply {
+        mBinding?.apply {
             val context = context ?: return
             for (i in 0 until tabLayout.tabCount) {
                 val tab = tabLayout.getTabAt(i)
                 val isSelected = i == selectedPosition
 
                 tab?.customView?.let { tabView ->
-                    val iconView = tabView.findViewById<ImageView>(R.id.ivTabIcon)
                     val textView = tabView.findViewById<TextView>(R.id.tvTabText)
 
                     if (isSelected) {
                         // Selected state: blue rounded background, white text and icon
-                        tabView.setBackgroundResource(R.drawable.cov_tab_bg_selected)
+                        tabView.setBackgroundResource(R.drawable.common_tab_bg_selected)
                         textView.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                io.agora.scene.common.R.color.ai_brand_white10
-                            )
-                        )
-                        iconView.setColorFilter(
-                            ContextCompat.getColor(
-                                context,
-                                io.agora.scene.common.R.color.ai_brand_white10
-                            )
+                            ContextCompat.getColor(context, R.color.ai_brand_white10)
                         )
                     } else {
                         // Unselected state: transparent rounded background, semi-transparent white text and icon
-                        tabView.setBackgroundResource(R.drawable.cov_tab_bg_unselected)
+                        tabView.setBackgroundResource(R.drawable.common_tab_bg_unselected)
                         textView.setTextColor(
-                            ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_icontext2)
-                        )
-                        iconView.setColorFilter(
-                            ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_icontext2)
+                            ContextCompat.getColor(context, R.color.ai_icontext2)
                         )
                     }
                 }
@@ -215,24 +245,16 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
         }
     }
 
-    /**
-     * Get reference to Channel Info fragment
-     */
-    fun getChannelInfoFragment(): CovAgentInfoFragment? {
-        return (binding?.vpContent?.adapter as? InfoTabPagerAdapter)?.getFragmentAt(TAB_CHANNEL_INFO) as? CovAgentInfoFragment
+
+    fun getBaseConfigFragment(): DebugBaseConfigFragment? {
+        return (mBinding?.vpContent?.adapter as? InfoTabPagerAdapter)?.getFragmentAt(TAB_BASE_CONFIG) as? DebugBaseConfigFragment
     }
 
-    /**
-     * Get reference to Agent Settings fragment
-     */
-    fun getAgentSettingsFragment(): CovAgentSettingsFragment? {
-        return (binding?.vpContent?.adapter as? InfoTabPagerAdapter)?.getFragmentAt(TAB_AGENT_SETTINGS) as? CovAgentSettingsFragment
+
+    fun getAgentSettingsFragment(): DebugCovConfigFragment? {
+        return (mBinding?.vpContent?.adapter as? InfoTabPagerAdapter)?.getFragmentAt(TAB_COV_CONFIG) as? DebugCovConfigFragment
     }
 
-    fun updateConnectStatus(state: AgentConnectionState) {
-        getChannelInfoFragment()?.updateConnectStatus(state)
-        getAgentSettingsFragment()?.updateConnectStatus(state)
-    }
 
     /**
      * ViewPager2 adapter for tab fragments
@@ -245,8 +267,8 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = when (position) {
-                TAB_AGENT_SETTINGS -> CovAgentSettingsFragment.newInstance(agentState)
-                TAB_CHANNEL_INFO -> CovAgentInfoFragment.newInstance(agentState)
+                TAB_BASE_CONFIG -> DebugBaseConfigFragment.newInstance(onDebugCallback)
+                TAB_COV_CONFIG -> DebugCovConfigFragment.newInstance(onDebugCallback)
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }
             fragments[position] = fragment
