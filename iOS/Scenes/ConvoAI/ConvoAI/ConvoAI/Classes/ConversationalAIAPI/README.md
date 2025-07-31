@@ -99,6 +99,90 @@ Please follow these steps to quickly integrate and use the ConversationalAI API:
    ```
 ---
 
+## Send Image Message
+
+Use the sendImage interface to send an image message to the AI agent:
+```swift
+let uuid = UUID().uuidString
+let imageUrl = "https://example.com/image.jpg"
+let message = ImageMessage(uuid: uuid, url: imageUrl)
+self.convoAIAPI.chat(agentUserId: "\(agentUid)", message: message) { [weak self] error in
+    if let error = error {
+        print("send image failed, error: \(error.message)")
+    } else {
+        print("send image success")
+    }
+}
+```
+
+## Processing Image Sending Status
+
+The actual success or failure status of image sending is confirmed through the following two callbacks:
+
+1. **Image Sending Success - onMessageReceiptUpdated**
+When receiving the onMessageReceiptUpdated callback, follow these steps to confirm the image sending status:
+```swift
+struct PictureInfo: Codable {
+    let uuid: String
+}
+
+public func onMessageReceiptUpdated(agentUserId: String, messageReceipt: MessageReceipt) {
+      if messageReceipt.type == .context {
+          guard let messageData = messageReceipt.message.data(using: .utf8) else {
+              return
+          }
+          
+          do {
+              let imageInfo = try JSONDecoder().decode(PictureInfo.self, from: messageData)
+              let uuid = imageInfo.uuid
+              // Update UI
+              self.messageView.viewModel.updateImageMessage(uuid: uuid, state: .success)
+          } catch {
+              print("Failed to decode PictureInfo: \(error)")
+          }
+
+        print("Failed to parse message string from image info message")
+        return
+    }
+      
+  }
+```
+
+2. **Image Sending Failure - onMessageError**
+```swift
+struct ImageUploadError: Codable {
+    let code: Int
+    let message: String
+}
+
+struct ImageUploadErrorResponse: Codable {
+    let uuid: String
+    let success: Bool
+    let error: ImageUploadError?
+}
+
+public func onMessageError(agentUserId: String, error: MessageError) {
+    if let messageData = error.message.data(using: .utf8) {
+        do {
+            let errorResponse = try JSONDecoder().decode(ImageUploadErrorResponse.self, from: messageData)
+            if !errorResponse.success {
+                let errorMessage = errorResponse.error?.message ?? "Unknown error"
+                let errorCode = errorResponse.error?.code ?? 0
+                
+                addLog("<<< [ImageUploadError] Image upload failed: \(errorMessage) (code: \(errorCode))")
+                
+                // Update UI to show error state
+                DispatchQueue.main.async { [weak self] in
+                    self?.messageView.viewModel.updateImageMessage(uuid: errorResponse.uuid, state: .failed)
+                }
+            }
+        } catch {
+            addLog("<<< [onMessageError] Failed to parse error message JSON: \(error)")
+        }
+    }
+}
+```
+
 ## Notes
 - **Subscribe to Channel Messages**
  Call before starting a session:
@@ -127,6 +211,17 @@ Please follow these steps to quickly integrate and use the ConversationalAI API:
     convoAIAPI.loadAudioSettings()
     rtcEngine.joinChannel(rtcToken: token, channelName: channelName, uid: uid, isIndependent: independent)
   ```
+- **Avatar Audio Settings：**
+If the avatar feature is enabled, the `.default` audio scene must be used to achieve optimal audio mixing effects.：
+  ```swift
+    // Correct audio settings when enabling avatar
+    convoAIAPI.loadAudioSettings(secnario: .default)
+    rtcEngine.joinChannel(rtcToken: token, channelName: channelName, uid: uid, isIndependent: independent)
+  ```
+
+Audio settings recommendations for different scenarios:
+- **Avatar mode**：`.default` - Deliver better audio mixing results
+- **Standard Mode**：`.aiClient` - Applicable to standard AI dialogue scenarios
 
 - **All event callbacks are executed on the main thread.**
   You can safely update the UI directly in callbacks.

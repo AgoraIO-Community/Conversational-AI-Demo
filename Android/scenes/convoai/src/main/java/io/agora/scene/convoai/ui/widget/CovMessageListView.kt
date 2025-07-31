@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui.widget
 
 import android.content.Context
+import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -8,9 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.common.constant.ServerConfig
+import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.Transcription
 import io.agora.scene.convoai.convoaiApi.TranscriptionStatus
@@ -18,10 +22,13 @@ import io.agora.scene.convoai.convoaiApi.TranscriptionType
 import io.agora.scene.convoai.databinding.CovMessageAgentItemBinding
 import io.agora.scene.convoai.databinding.CovMessageListViewBinding
 import io.agora.scene.convoai.databinding.CovMessageMineItemBinding
+import java.util.UUID
 
 /**
- * Message list view for displaying conversation messages
- * Optimized scrolling behavior for streaming content updates
+ * CovMessageListView is a custom view for displaying a conversation message list.
+ * It supports both text and image messages, handles local image uploads (with temporary localId),
+ * and replaces local image messages with server-confirmed messages (with turnId) after upload.
+ * Provides methods for adding, updating, and replacing local image messages, as well as updating upload status.
  */
 class CovMessageListView @JvmOverloads constructor(
     context: Context,
@@ -42,6 +49,21 @@ class CovMessageListView @JvmOverloads constructor(
 
     // Runnable for scrolling to bottom
     private val scrollRunnable = Runnable { scrollToBottom() }
+
+    // Image error click callback
+    /**
+     * Callback invoked when the user clicks the error icon on an image message.
+     * Typically used to trigger a retry of the image upload.
+     */
+    var onImageErrorClickListener: ((Message) -> Unit)? = null
+
+    /**
+     * Callback invoked when the user clicks on an image message.
+     * Typically used to preview the image in full screen.
+     * @param Message The clicked message
+     * @param Rect The screen bounds of the clicked image view
+     */
+    var onImagePreviewClickListener: ((Message, Rect) -> Unit)? = null
 
     init {
         setupRecyclerView()
@@ -148,73 +170,18 @@ class CovMessageListView @JvmOverloads constructor(
      * Handle received subtitle messages - fix scrolling issues
      */
     private fun handleMessage(transcription: Transcription) {
-        val isNewMessage = messageAdapter.getMessageByTurnId(transcription.turnId, transcription.type == TranscriptionType.USER) == null
-
-        // Handle existing message updates
-        messageAdapter.getMessageByTurnId(transcription.turnId, transcription.type == TranscriptionType.USER)?.let { existingMessage ->
-            existingMessage.apply {
-                content = transcription.text
-                status = transcription.status
-            }
-            messageAdapter.updateMessage(existingMessage)
-
-            // Decide whether to scroll based on message position
-            // 1. For last message, handle scrolling logic
-            val index = messageAdapter.getMessageIndex(existingMessage)
-            if (index == messageAdapter.itemCount - 1 && autoScrollToBottom) {
-                scheduleScrollToBottom()
-            }
-            return
-        }
-
-        // Create new message
+        val isUser = transcription.type == TranscriptionType.USER
         val newMessage = Message(
-            isMe = transcription.type == TranscriptionType.USER,
+            isMe = isUser,
             turnId = transcription.turnId,
             content = transcription.text,
-            status = transcription.status
+            status = transcription.status,
+            localTurn = transcription.turnId
         )
-
-        // Unified message insertion position logic based on turnId and isMe
-        var insertPosition = -1
-        for (i in 0 until messageAdapter.itemCount) {
-            val message = messageAdapter.getMessageAt(i)
-
-            // Case 1: Insert before a message with greater turnId
-            if (message.turnId > newMessage.turnId) {
-                insertPosition = i
-                break
-            }
-
-            // Case 2: For same turnId, ensure user messages come before agent messages
-            if (message.turnId == newMessage.turnId) {
-                // If this is an agent message and we're inserting a user message, insert here
-                if (!message.isMe && newMessage.isMe) {
-                    insertPosition = i
-                    break
-                }
-
-                // If both are agent messages or both are user messages, continue to next message
-                // (this allows multiple user messages with same turnId to maintain their order)
-                // (and multiple agent messages with same turnId to maintain their order)
-                if (message.isMe == newMessage.isMe) {
-                    continue
-                }
-
-                // If this is a user message and we're inserting an agent message,
-                // continue to find the position after all user messages with this turnId
-            }
-        }
-
-        if (insertPosition != -1) {
-            // Found proper position
-            messageAdapter.insertMessage(insertPosition, newMessage)
-        } else {
-            // No proper position found, append to the end
-            messageAdapter.addMessage(newMessage)
-        }
-
-        // Handle scrolling logic in one place
+        messageAdapter.addOrUpdateMessage(newMessage)
+        // Determine if this is a new message (just inserted)
+        val isNewMessage =
+            messageAdapter.getAllMessages().count { it.turnId == transcription.turnId && it.isMe == isUser } == 1
         handleScrollAfterUpdate(isNewMessage)
     }
 
@@ -247,7 +214,7 @@ class CovMessageListView @JvmOverloads constructor(
     private fun showVisualCueForNewMessage() {
         if (!autoScrollToBottom) {
             binding.cvToBottom.apply {
-                if (visibility == VISIBLE) {
+                if (isVisible) {
                     // Create "bounce" effect to indicate new message
                     animate().scaleX(1.2f).scaleY(1.2f).setDuration(150).withEndAction {
                         animate().scaleX(1f).scaleY(1f).setDuration(150)
@@ -263,13 +230,31 @@ class CovMessageListView @JvmOverloads constructor(
     }
 
     /**
-     * Message data class
+     * Message type enum
      */
-    data class Message(
+    enum class MessageType {
+        TEXT, IMAGE
+    }
+
+    /**
+     * Upload status enum for image messages
+     */
+    enum class UploadStatus {
+        NONE, UPLOADING, SUCCESS, FAILED
+    }
+
+    /**
+     * Message data class (content is text or image path/url)
+     */
+    data class Message constructor(
         val isMe: Boolean,
         val turnId: Long,
-        var content: String,
-        var status: TranscriptionStatus
+        var content: String, // For text: text content; for image: local path
+        var status: TranscriptionStatus? = null, // Only for text messages, null for image
+        val type: MessageType = MessageType.TEXT,
+        val uuid: String? = null, // Unique local ID for local image messages
+        val localTurn: Long = 0L,
+        var uploadStatus: UploadStatus = UploadStatus.NONE, // For image
     )
 
     /**
@@ -285,38 +270,112 @@ class CovMessageListView @JvmOverloads constructor(
             abstract fun bind(message: Message)
         }
 
+        // ViewHolder for user text message
         inner class UserMessageViewHolder(private val binding: CovMessageMineItemBinding) :
             MessageViewHolder(binding.root) {
             override fun bind(message: Message) {
-                binding.tvMessageContent.text = message.content
+                if (message.type == MessageType.TEXT) {
+                    binding.tvMessageContent.isVisible = true
+                    binding.layoutImageMessage.isVisible = false
+                    binding.tvMessageContent.text = message.content
+                } else if (message.type == MessageType.IMAGE) {
+                    binding.tvMessageContent.isVisible = false
+                    binding.layoutImageMessage.isVisible = true
+                    // Load image
+                    val imageView = binding.ivImageMessage
+                    val progressBar = binding.progressUpload
+                    val errorIcon = binding.ivUploadError
+                    // Set image size according to rules
+                    setImageViewSize(imageView, message)
+                    // Loading state
+                    when (message.uploadStatus) {
+                        UploadStatus.UPLOADING -> {
+                            progressBar.isVisible = true
+                            errorIcon.isVisible = false
+                        }
+
+                        UploadStatus.FAILED -> {
+                            progressBar.isVisible = false
+                            errorIcon.isVisible = true
+                        }
+
+                        else -> {
+                            progressBar.isVisible = false
+                            errorIcon.isVisible = false
+                        }
+                    }
+                    // Load image (local or remote)
+                    val imgPath = message.content
+                    io.agora.scene.common.util.GlideImageLoader.load(imageView, imgPath)
+                    // Error icon click for retry
+                    errorIcon.setOnClickListener {
+                        onImageErrorClickListener?.invoke(message)
+                    }
+                    // Image click for preview with position
+                    imageView.setOnClickListener {
+                        val imageBounds = Rect()
+                        imageView.getGlobalVisibleRect(imageBounds)
+                        onImagePreviewClickListener?.invoke(message, imageBounds)
+                    }
+                }
             }
         }
 
+        // ViewHolder for agent text message
         inner class AgentMessageViewHolder(private val binding: CovMessageAgentItemBinding) :
             MessageViewHolder(binding.root) {
             override fun bind(message: Message) {
-                binding.tvMessageTitle.text = agentName
-                binding.tvMessageContent.text = message.content
-                binding.layoutMessageInterrupt.isVisible = message.status == TranscriptionStatus.INTERRUPTED
+                if (message.type == MessageType.TEXT) {
+                    binding.tvMessageTitle.text = agentName
+                    binding.tvMessageContent.isVisible = true
+                    binding.layoutImageMessage.isVisible = false
+                    binding.tvMessageContent.text = message.content
+                    binding.layoutMessageInterrupt.isVisible = message.status == TranscriptionStatus.INTERRUPTED
+                } else if (message.type == MessageType.IMAGE) {
+                    binding.tvMessageContent.isVisible = false
+                    binding.layoutImageMessage.isVisible = true
+                    val imageView = binding.ivImageMessage
+                    val progressBar = binding.progressUpload
+                    val errorIcon = binding.ivUploadError
+                    setImageViewSize(imageView, message)
+                    when (message.uploadStatus) {
+                        UploadStatus.UPLOADING -> {
+                            progressBar.isVisible = true
+                            errorIcon.isVisible = false
+                        }
+
+                        UploadStatus.FAILED -> {
+                            progressBar.isVisible = false
+                            errorIcon.isVisible = true
+                        }
+
+                        else -> {
+                            progressBar.isVisible = false
+                            errorIcon.isVisible = false
+                        }
+                    }
+                    val imgPath = message.content
+                    io.agora.scene.common.util.GlideImageLoader.load(imageView, imgPath)
+                    errorIcon.setOnClickListener {
+                        onImageErrorClickListener?.invoke(message)
+                    }
+                    imageView.setOnClickListener {
+                        val imageBounds = Rect()
+                        imageView.getGlobalVisibleRect(imageBounds)
+                        onImagePreviewClickListener?.invoke(message, imageBounds)
+                    }
+                }
             }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
             return if (viewType == 0) {
                 UserMessageViewHolder(
-                    CovMessageMineItemBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
+                    CovMessageMineItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             } else {
                 AgentMessageViewHolder(
-                    CovMessageAgentItemBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
+                    CovMessageAgentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
         }
@@ -332,19 +391,66 @@ class CovMessageListView @JvmOverloads constructor(
         }
 
         /**
-         * Add message to end
+         * Add a local image message (without turnId) to the end of the list.
+         * The message will have turnId = -1 and a unique localId.
+         * @param message The local image message to add.
          */
-        fun addMessage(message: Message) {
+        fun addLocalImageMessage(message: Message) {
             messages.add(message)
             notifyItemInserted(messages.size - 1)
+            handleScrollAfterUpdate(true)
+        }
+
+        fun updateLocalImageMessage(uuid: String,status:UploadStatus){
+            val idx = messages.indexOfFirst { it.uuid == uuid }
+            if (idx != -1) {
+                val message = messages[idx].copy().apply {
+                    uploadStatus = status
+                }
+                messages[idx] = message
+                notifyItemChanged(idx)
+            }
         }
 
         /**
-         * Insert message at specified position
+         * Add or update a message in the list (only for messages with valid turnId).
+         * Ensures uniqueness by (turnId + isMe):
+         *   - If a message with the same turnId and isMe exists, update its content and status.
+         *   - Otherwise, insert the new message.
+         * After insertion, the list is sorted by:
+         *   - turnId ascending
+         *   - For the same turnId, user messages (isMe == true) come before agent messages (isMe == false)
+         * Notifies the adapter of changes accordingly.
+         * @param message The message to add or update.
          */
-        fun insertMessage(index: Int, message: Message) {
-            messages.add(index, message)
-            notifyItemInserted(index)
+        fun addOrUpdateMessage(message: Message) {
+            val existIndex = messages.indexOfFirst { it.turnId == message.turnId && it.isMe == message.isMe }
+            if (existIndex != -1) {
+                messages[existIndex] = message
+                notifyItemChanged(existIndex)
+            } else {
+                messages.add(message)
+                // Sorting rules:
+                // 1. Sort by localTurn ascending
+                // 2. For the same localTurn, server messages (turnId >= 0) come before local messages (turnId < 0)
+                // 3. For server messages: user messages (isMe==true) come before agent messages (isMe==false)
+                // 4. For local messages: smaller absolute value of turnId comes first (-1, -2, -3...)
+                messages.sortWith(
+                    compareBy<Message> { it.localTurn }
+                        .thenByDescending { if (it.turnId >= 0) 1 else 0 } // Server messages first
+                        .thenBy {
+                            if (it.turnId >= 0) {
+                                if (it.isMe) 0 else 1 // For server: user first
+                            } else {
+                                0 // For local messages, isMe is not considered
+                            }
+                        }
+                        .thenBy {
+                            if (it.turnId < 0) it.turnId else 0 // For local: -1, -2, -3... ascending
+                        }
+                )
+                notifyDataSetChanged()
+            }
         }
 
         /**
@@ -364,51 +470,6 @@ class CovMessageListView @JvmOverloads constructor(
         }
 
         /**
-         * Find message by turnId and sender
-         */
-        fun getMessageByTurnId(turnId: Long, isMe: Boolean): Message? {
-            return messages.lastOrNull { it.turnId == turnId && it.isMe == isMe }
-        }
-
-        /**
-         * Get message index in list
-         */
-        fun getMessageIndex(message: Message): Int {
-            return messages.indexOfFirst {
-                it.turnId == message.turnId && it.isMe == message.isMe
-            }
-        }
-
-        /**
-         * Update existing message - stable implementation
-         */
-        fun updateMessage(message: Message) {
-            val index = getMessageIndex(message)
-            if (index != -1) {
-                // Record old content length to decide whether to scroll
-                val oldContentLength = messages[index].content.length
-                val newContentLength = message.content.length
-
-                // Update message
-                messages[index] = message
-                notifyItemChanged(index)
-
-                // Only handle scrolling for significantly grown messages at the end
-                if (newContentLength > oldContentLength + 50 &&
-                    index == messages.size - 1 &&
-                    autoScrollToBottom) {
-
-                    // Use more reliable scrolling method to avoid flickering
-                    binding.rvMessages.post {
-                        scrollToBottom()
-                    }
-                }
-            } else {
-                addMessage(message)
-            }
-        }
-
-        /**
          * Update agent name
          */
         fun updateAgentName(name: String) {
@@ -416,14 +477,47 @@ class CovMessageListView @JvmOverloads constructor(
             notifyDataSetChanged()
         }
 
-        /**
-         * Get message at specific position
-         */
-        fun getMessageAt(position: Int): Message {
-            return messages[position]
+        // Set image view size according to rules
+        private fun setImageViewSize(imageView: ImageView, message: Message) {
+            // Get screen width
+            val metrics = imageView.context.resources.displayMetrics
+            val maxWidth = (metrics.widthPixels * 0.6f).toInt()
+            val minSize = 120.dp.toInt()
+
+            val imgPath = message.content
+            if (imgPath.isEmpty()) {
+                val params = imageView.layoutParams
+                params.width = minSize
+                params.height = minSize
+                imageView.layoutParams = params
+                return
+            }
+            // Use GlideImageLoader with callback to get real size
+            io.agora.scene.common.util.GlideImageLoader.loadWithSizeCallback(imageView, imgPath, { bitmap, w, h ->
+                var targetW = minSize
+                var targetH = minSize
+                if (w > h) {
+                    // Wide image
+                    targetW = maxWidth
+                    targetH = (h * (maxWidth.toFloat() / w)).toInt().coerceAtLeast(minSize)
+                } else {
+                    // Tall image
+                    targetH = maxWidth
+                    targetW = (w * (maxWidth.toFloat() / h)).toInt().coerceAtLeast(minSize)
+                }
+                val params = imageView.layoutParams
+                params.width = targetW
+                params.height = targetH
+                imageView.layoutParams = params
+            })
         }
     }
 
+    /**
+     * Called when a new transcription is received or updated.
+     * Handles both user and agent messages, and triggers scroll logic if needed.
+     * @param transcription The incoming transcription data.
+     */
     fun onTranscriptionUpdated(transcription: Transcription) {
         // Transcription for other users
         if (transcription.type == TranscriptionType.USER && transcription.userId != CovAgentManager.uid.toString()) {
@@ -432,10 +526,33 @@ class CovMessageListView @JvmOverloads constructor(
         handleMessage(transcription)
     }
 
-    // Schedule scrolling to bottom with debouncing
-    private fun scheduleScrollToBottom(delayMs: Long = 100) {
-        scrollHandler.removeCallbacks(scrollRunnable)
-        scrollHandler.postDelayed(scrollRunnable, delayMs)
+    /**
+     * Add a local image message to the message list.
+     * Generates a unique localId for the message, sets upload status to UPLOADING,
+     * and inserts it at the end of the list. Used before the image is uploaded to the server.
+     * @param localImagePath The local file path of the image to be uploaded.
+     */
+    fun addLocalImageMessage(uuid: String, localImagePath: String) {
+
+        // The latest text turnId.
+        val lastTextTurnId = messageAdapter.getAllMessages().findLast { it.type == MessageType.TEXT }?.turnId ?: 0L
+        // The latest image turnId.
+        val lastImageTurnId = messageAdapter.getAllMessages().findLast { it.type == MessageType.IMAGE }?.turnId ?: 0L
+
+        val localMsg = Message(
+            isMe = true,
+            turnId = lastImageTurnId - 1,
+            content = localImagePath,
+            type = MessageType.IMAGE,
+            uploadStatus = UploadStatus.UPLOADING,
+            uuid = uuid,
+            localTurn = lastTextTurnId,
+        )
+        messageAdapter.addLocalImageMessage(localMsg)
+    }
+
+    fun updateLocalImageMessage(uuid: String,uploadStatus:UploadStatus){
+        messageAdapter.updateLocalImageMessage(uuid,uploadStatus)
     }
 
     /**

@@ -24,15 +24,16 @@
     <string name="common_close">Close</string>
     <string name="common_preview">Preview</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_cancel">Cancel</string>
 
     <string name="common_login_chat">Unlock \u221E Free Chat</string>
     <string name="common_login_chat_tips">""</string>
     <string name="common_login_with_agora_sso">Log in with Agora account</string>
     <string name="common_sign_up_for_free">Sign up for free</string>
-    <string name="common_acceept">I accept the&#160;</string>
-    <string name="common_terms_of_services"><u>Terms of Services</u></string>
-    <string name="common_and">&#160;and&#160;</string>
-    <string name="common_privacy_policy"><u>Privacy Policy.</u></string>
+    <string name="common_acceept">I accept the</string>
+    <string name="common_terms_of_services">Terms of Services</string>
+    <string name="common_and">and</string>
+    <string name="common_privacy_policy">Privacy Policy.</string>
     <string name="common_terms_tips">Read me first</string>
 
     <string name="common_logout_confirm_title">You will be logged out</string>
@@ -49,4 +50,5 @@
     <string name="common_login_typing_text3">Have you ever questioned the nature of your reality?</string>
     <string name="common_app_version">v%1s</string>
     <string name="common_app_build_no">Build %1s</string>
+    <string name="common_app_no_more_reminder">Don\'t show again</string>
 </resources>

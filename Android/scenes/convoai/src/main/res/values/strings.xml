@@ -23,6 +23,7 @@
     <string name="cov_detail_update_token_error">Failed to retrieve token.</string>
     <string name="cov_detail_llm_error">LLM exception</string>
     <string name="cov_detail_tts_error">TTS exception</string>
+    <string name="cov_detail_start_agent_avatar_limit_error">All avatars are busy now. Please try again later.</string>
 
     <string name="cov_info_dialog_title">INFO</string>
     <string name="cov_channel_info_title">Channel Info</string>
@@ -50,6 +51,7 @@
     <string name="cov_setting_voice">Voice</string>
     <string name="cov_setting_model">Model</string>
     <string name="cov_setting_language">Language</string>
+    <string name="cov_setting_avatar">AI Avatar</string>
     <string name="cov_setting_device">DEVICE</string>
     <string name="cov_setting_advanced_settings">Advanced Settings</string>
     <string name="cov_setting_microphone">Microphone</string>
@@ -77,14 +79,40 @@
 
     <string name="cov_permission_required">Permission Required</string>
     <string name="cov_mic_permission_required_content">Microphone permission is required for voice chat. Please grant the permission to continue.</string>
+    <string name="cov_camera_permission_required_content">Video streaming requires camera permission. Please grant the permission to proceed.</string>
     <string name="cov_notifications_enable_tip">Please turn on notification permission to prevent background recording from being interrupted.</string>
     <string name="cov_setting">Settings</string>
     <string name="cov_retry">Retry</string>
     <string name="cov_exit">Exit</string>
     <string name="cov_notification_content">Tap here to return to the app.</string>
 
+    <!-- avatar -->
+    <string name="cov_preset_change_dialog_title">AI Avatar Will Be Reset</string>
+    <string name="cov_preset_change_dialog_content">Reconfigure AI avatar after changing preset.</string>
+    <string name="cov_language_change_dialog_content">Reconfigure AI avatar after changing language.</string>
+    <string name="cov_preset_change_dialog_confirm">Confirm</string>
+    <string name="cov_captions">CC</string>
+
     <!-- IOT  -->
     <string name="cov_iot_title">Conversational AI Device</string>
     <string name="cov_iot_devices_num">%d Devices</string>
     <string name="cov_my_device">My Devices</string>
+
+    <!-- vision -->
+    <string name="cov_preset_not_support_vision">This preset does not support vision-related features. Please click the settings button in the upper right corner to select another preset.</string>
+    <string name="cov_vision_connect_and_try_again">Please connect and try again!</string>
+
+    <!-- photo -->
+    <string name="cov_photo_format_tips">Only JPG, PNG, WEBP, and JPEG image formats are supported.</string>
+    <string name="cov_photo_type_photo">Photo</string>
+    <string name="cov_photo_type_camera">Camera</string>
+    <string name="cov_photo_edit_done">Done</string>
+    <string name="cov_photo_permission_storage_gallery">We need access to your photo library to select images. Please enable photo access permission in Settings.</string>
+    <string name="cov_photo_permission_camera">We need access to your camera to take photos. Please enable camera access permission in Settings.</string>
+    <string name="cov_photo_permission_storage_camera">Photo access permission allows preview of recent photos on the camera page. You can choose to skip this permission.</string>
+    <string name="cov_photo_permission_skip">Skip</string>
+    <string name="cov_photo_permission_enable">Enable Permission</string>
+    <string name="cov_photo_permission_go_settings">Settings</string>
+    <string name="cov_photo_permission_cancel">Cancel</string>
+
 </resources>

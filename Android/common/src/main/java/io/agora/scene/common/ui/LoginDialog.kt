@@ -1,7 +1,6 @@
 package io.agora.scene.common.ui
 
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -14,9 +13,9 @@ import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.agora.scene.common.R
-import io.agora.scene.common.constant.ServerConfig
 import io.agora.scene.common.databinding.CommonLoginDialogBinding
 
 interface LoginDialogCallback {
@@ -63,8 +62,8 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
                 }
             }
             cbTerms.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
-                if (tvCheckTips.visibility == View.VISIBLE) {
-                    tvCheckTips.visibility = View.INVISIBLE
+                if (tvCheckTips.isVisible) {
+                    tvCheckTips.isInvisible = true
                 }
                 onLoginDialogCallback?.onPrivacyChecked(isChecked)
             }
@@ -73,37 +72,48 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
     }
     
     private fun setupRichTextTerms(textView: TextView) {
+        // Get strings directly
         val acceptText = getString(R.string.common_acceept)
         val termsText = getString(R.string.common_terms_of_services)
         val andText = getString(R.string.common_and)
         val privacyText = getString(R.string.common_privacy_policy)
         
-        val fullText = acceptText + termsText + andText + privacyText
-                        
-        val htmlText = Html.fromHtml(fullText, Html.FROM_HTML_MODE_COMPACT)
+        // Build full text with proper spacing
+        val fullText = StringBuilder().apply {
+            append(acceptText)
+            append(" ") // Add space after "I accept the"
+            append(termsText)
+            append(" ") // Add space before "and"
+            append(andText)
+            append(" ") // Add space before "Privacy Policy"
+            append(privacyText)
+        }.toString()
         
-        val spannable = SpannableString(htmlText)
+        val spannable = SpannableString(fullText)
         
         val acceptStart = 0
         val acceptEnd = acceptText.length
         
-        val termsOfServicesStart = acceptEnd
+        val termsOfServicesStart = acceptEnd + 1 // +1 for the space we added
         val termsOfServicesEnd = termsOfServicesStart + termsText.length
         
-        val privacyPolicyStart = termsOfServicesEnd + andText.length
+        val privacyPolicyStart = termsOfServicesEnd + 1 + andText.length + 1 // +1 for spaces before and after "and"
         val privacyPolicyEnd = privacyPolicyStart + privacyText.length
         
+        // Accept text span - clickable to toggle checkbox
         spannable.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
-                binding?.cbTerms?.isChecked = !(binding?.cbTerms?.isChecked ?: false)
+                binding?.cbTerms?.isChecked = binding?.cbTerms?.isChecked != true
             }
             
             override fun updateDrawState(ds: TextPaint) {
                 ds.color = textView.currentTextColor
                 ds.isUnderlineText = false
+                ds.letterSpacing = 0.0f // Explicitly set letter spacing
             }
         }, acceptStart, acceptEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         
+        // Terms of services span
         spannable.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 onLoginDialogCallback?.onTermsOfServices()
@@ -111,9 +121,11 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
             override fun updateDrawState(ds: TextPaint) {
                 ds.color = textView.currentTextColor
                 ds.isUnderlineText = true
+                ds.letterSpacing = 0.0f // Explicitly set letter spacing
             }
         }, termsOfServicesStart, termsOfServicesEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         
+        // Privacy policy span
         spannable.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 onLoginDialogCallback?.onPrivacyPolicy()
@@ -121,6 +133,7 @@ class LoginDialog constructor() : BaseSheetDialog<CommonLoginDialogBinding>() {
             override fun updateDrawState(ds: TextPaint) {
                 ds.color = textView.currentTextColor
                 ds.isUnderlineText = true
+                ds.letterSpacing = 0.0f // Explicitly set letter spacing
             }
         }, privacyPolicyStart, privacyPolicyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         

@@ -93,7 +93,8 @@
             app:cornerRadius="12dp"
             android:gravity="center"
             android:paddingHorizontal="0dp"
-            app:rippleColor="#803e3e4d" />
+            app:rippleColor="#803e3e4d"
+            android:letterSpacing="0.0" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSignUp"
@@ -112,7 +113,8 @@
             app:cornerRadius="12dp"
             android:gravity="center"
             android:paddingHorizontal="0dp"
-            app:rippleColor="#80FFFFFF" />
+            app:rippleColor="#80FFFFFF"
+            android:letterSpacing="0.0" />
     </LinearLayout>
 
 
@@ -134,13 +136,16 @@
     <LinearLayout
         android:id="@+id/layoutAgreeTerms"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tvCheckTips"
-        app:layout_constraintStart_toStartOf="@+id/layoutSSO"
-        app:layout_constraintEnd_toEndOf="@+id/layoutSSO">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <CheckBox
             android:id="@+id/cb_terms"
@@ -153,14 +158,14 @@
         <TextView
             android:id="@+id/tv_terms_rich_text"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/common_acceept"
-            android:breakStrategy="high_quality"
+            android:breakStrategy="simple"
+            android:letterSpacing="0.0"
             android:hyphenationFrequency="none"
-            android:justificationMode="inter_word"
             android:textColor="@color/ai_icontext1"
             android:textSize="14sp"
-            android:lineSpacingExtra="2dp"/>
+            android:lineSpacingExtra="2dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
