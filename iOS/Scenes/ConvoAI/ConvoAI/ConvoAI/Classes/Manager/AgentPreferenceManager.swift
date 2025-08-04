@@ -14,8 +14,10 @@ protocol AgentPreferenceManagerDelegate: AnyObject {
     func preferenceManager(_ manager: AgentPreferenceManager, languageDidUpdated language: SupportLanguage)
     func preferenceManager(_ manager: AgentPreferenceManager, avatarDidUpdated avatar: Avatar?)
     func preferenceManager(_ manager: AgentPreferenceManager, aiVadStateDidUpdated state: Bool)
+    func preferenceManager(_ manager: AgentPreferenceManager, transcriptModeDidUpdated mode: TranscriptDisplayMode)
     func preferenceManager(_ manager: AgentPreferenceManager, bhvsStateDidUpdated state: Bool)
     func preferenceManager(_ manager: AgentPreferenceManager, loginStateDidUpdated state: Bool)
+
 
     func preferenceManager(_ manager: AgentPreferenceManager, networkDidUpdated networkState: NetworkStatus)
     func preferenceManager(_ manager: AgentPreferenceManager, agentStateDidUpdated agentState: ConnectionStatus)
@@ -40,6 +42,7 @@ protocol AgentPreferenceManagerProtocol {
     func updateAvatar(_ avatar: Avatar?)
 
     func updateAiVadState(_ state: Bool)
+    func updateTranscriptMode(_ mode: TranscriptDisplayMode)
     func updateForceThresholdState(_ state: Bool)
     
     // Information Updates
@@ -103,6 +106,11 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
     func updateAiVadState(_ state: Bool) {
         preference.aiVad = state
         notifyDelegates { $0.preferenceManager(self, aiVadStateDidUpdated: state) }
+    }
+    
+    func updateTranscriptMode(_ mode: TranscriptDisplayMode) {
+        preference.transcriptMode = mode
+        notifyDelegates { $0.preferenceManager(self, transcriptModeDidUpdated: mode)}
     }
     
     func updateForceThresholdState(_ state: Bool) {
@@ -286,6 +294,7 @@ class AgentPreference {
     var avatar: Avatar?
     var aiVad = false
     var bhvs = true
+    var transcriptMode: TranscriptDisplayMode = .words
 }
 
 class AgentInfomation {
@@ -298,11 +307,42 @@ class AgentInfomation {
     var targetServer: String = ""
 }
 
+enum TranscriptDisplayMode: CaseIterable {
+    case words
+    case text
+    case preText
+    
+    var renderMode: TranscriptionRenderMode {
+        if self == .words {
+            return .words
+        }
+        
+        return .text
+    }
+    
+    var renderDisplayName: String {
+        if self == .words {
+            return ResourceManager.L10n.Settings.transcriptRenderWordMode
+        }
+        
+        if self == .text {
+            return ResourceManager.L10n.Settings.transcriptRenderTextMode
+        }
+        
+        if self == .preText {
+            return ResourceManager.L10n.Settings.transcriptRenderPretextMode
+        }
+        
+        return "" // Should not happen
+    }
+}
+
 extension AgentPreferenceManagerDelegate {
     func preferenceManager(_ manager: AgentPreferenceManager, presetDidUpdated preset: AgentPreset) {}
     func preferenceManager(_ manager: AgentPreferenceManager, languageDidUpdated language: SupportLanguage) {}
     func preferenceManager(_ manager: AgentPreferenceManager, avatarDidUpdated avatar: Avatar?) {}
     func preferenceManager(_ manager: AgentPreferenceManager, aiVadStateDidUpdated state: Bool) {}
+    func preferenceManager(_ manager: AgentPreferenceManager, transcriptModeDidUpdated mode: TranscriptDisplayMode) {}
     func preferenceManager(_ manager: AgentPreferenceManager, bhvsStateDidUpdated state: Bool) {}
     func preferenceManager(_ manager: AgentPreferenceManager, loginStateDidUpdated state: Bool) {}
 

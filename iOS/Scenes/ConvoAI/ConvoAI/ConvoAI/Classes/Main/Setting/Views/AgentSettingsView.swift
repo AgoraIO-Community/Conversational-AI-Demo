@@ -9,10 +9,10 @@ import UIKit
 import Common
 
 protocol AgentSettingsViewDelegate: AnyObject {
-    func agentSettingsViewDidTapPreset(_ view: AgentSettingsView, sender: UIButton)
     func agentSettingsViewDidTapLanguage(_ view: AgentSettingsView, sender: UIButton)
     func agentSettingsViewDidTapDigitalHuman(_ view: AgentSettingsView, sender: UIButton)
     func agentSettingsViewDidToggleAiVad(_ view: AgentSettingsView, isOn: Bool)
+    func agentSettingsViewDidTapTranscriptRender(_ view: AgentSettingsView, sender: UIButton)
 }
 
 class AgentSettingsView: UIView {
@@ -28,16 +28,6 @@ class AgentSettingsView: UIView {
         view.layerCornerRadius = 10
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.themColor(named: "ai_line1").cgColor
-        return view
-    }()
-    
-    private lazy var presetItem: AgentSettingTableItemView = {
-        let view = AgentSettingTableItemView(frame: .zero)
-        view.titleLabel.text = ResourceManager.L10n.Settings.preset
-        if let manager = AppContext.preferenceManager() {
-            view.detailLabel.text = manager.preference.preset?.displayName ?? ""
-        }
-        view.button.addTarget(self, action: #selector(onClickPreset(_:)), for: .touchUpInside)
         return view
     }()
     
@@ -148,8 +138,19 @@ class AgentSettingsView: UIView {
             }
             view.setOn(language.aivadEnabledByDefault)
         }
-        view.bottomLine.isHidden = true
         view.updateLayout()
+        return view
+    }()
+    
+    private lazy var transcriptRenderItem: AgentSettingTableItemView = {
+        let view = AgentSettingTableItemView(frame: .zero)
+        view.titleLabel.text = ResourceManager.L10n.Settings.transcriptRenderMode
+        if let manager = AppContext.preferenceManager() {
+            let transcriptMode = manager.preference.transcriptMode
+            view.detailLabel.text = transcriptMode.renderDisplayName
+        }
+        view.button.addTarget(self, action: #selector(onClickTranscriptRender(_:)), for: .touchUpInside)
+        view.bottomLine.isHidden = true
         return view
     }()
     
@@ -173,8 +174,8 @@ class AgentSettingsView: UIView {
     private func setupViews() {
         backgroundColor = .clear
         
-        basicSettingItems = [presetItem, languageItem]
-        advancedSettingItems = [aiVadItem]
+        basicSettingItems = [languageItem]
+        advancedSettingItems = [aiVadItem, transcriptRenderItem]
         
         addSubview(basicSettingView)
         addSubview(digitalHumanView)
@@ -197,7 +198,7 @@ class AgentSettingsView: UIView {
         for (index, item) in basicSettingItems.enumerated() {
             item.snp.makeConstraints { make in
                 make.left.right.equalToSuperview()
-                make.height.equalTo(50)
+                make.height.equalTo(62)
                 
                 if index == 0 {
                     make.top.equalToSuperview()
@@ -253,9 +254,7 @@ class AgentSettingsView: UIView {
     }
     
     // MARK: - Public Methods
-    func updatePreset(_ preset: AgentPreset) {
-        presetItem.detailLabel.text = preset.displayName
-        
+    func updatePreset(_ preset: AgentPreset) {        
         if preset.presetType.contains("independent") {
             aiVadItem.setEnable(false)
         } else {
@@ -272,6 +271,10 @@ class AgentSettingsView: UIView {
             aiVadItem.setEnable(false)
             aiVadItem.setOn(false)
         }
+    }
+    
+    func updateTranscriptMode(_ mode: TranscriptDisplayMode) {
+        transcriptRenderItem.detailLabel.text = mode.renderDisplayName
     }
     
     func updateAiVadState(_ state: Bool) {
@@ -310,8 +313,8 @@ class AgentSettingsView: UIView {
     }
     
     // MARK: - Action Methods
-    @objc private func onClickPreset(_ sender: UIButton) {
-        delegate?.agentSettingsViewDidTapPreset(self, sender: sender)
+    @objc private func onClickTranscriptRender(_ sender: UIButton) {
+        delegate?.agentSettingsViewDidTapTranscriptRender(self, sender: sender)
     }
     
     @objc private func onClickLanguage(_ sender: UIButton) {

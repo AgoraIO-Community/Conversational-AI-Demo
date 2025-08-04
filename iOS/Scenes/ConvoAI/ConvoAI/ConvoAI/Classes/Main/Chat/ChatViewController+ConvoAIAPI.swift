@@ -115,7 +115,8 @@ extension ChatViewController: ConversationalAIAPIEventHandler {
     }
     
     public func onAgentInterrupted(agentUserId: String, event: InterruptEvent) {
-        
+        addLog("<<< [onAgentInterrupted]")
+        messageView.viewModel.reduceLLMInterrupt()
     }
     
     public func onAgentMetrics(agentUserId: String, metrics: Metric) {
@@ -133,6 +134,7 @@ extension ChatViewController: ConversationalAIAPIEventHandler {
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            print("receive transcription: \(transcription.status)")
             self.messageView.viewModel.reduceStandardMessage(turnId: transcription.turnId, message: transcription.text, timestamp: 0, owner: transcription.type, isInterrupted: transcription.status == .interrupted)
         }
     }

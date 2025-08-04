@@ -1,11 +1,10 @@
-// MARK: - Message Model
-
 import Common
-
 
 // MARK: - ChatMessageCell
 class ChatMessageCell: UITableViewCell {
     static let identifier = "ChatMessageCell"
+    
+    private static let dotAttachment = DotTextAttachment(data: nil, ofType: nil)
     
     // MARK: - UI Components
     private lazy var avatarView: UIView = {
@@ -69,13 +68,14 @@ class ChatMessageCell: UITableViewCell {
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         setupViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+        
     // MARK: - Setup
     private func setupViews() {
         backgroundColor = .clear
@@ -112,8 +112,18 @@ class ChatMessageCell: UITableViewCell {
         let attributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: paragraphStyle
         ]
-        let attributedString = NSAttributedString(string: message.content, attributes: attributes)
-        messageLabel.attributedText = attributedString
+        
+        let messageString = NSMutableAttributedString(
+            string: message.content,
+            attributes: attributes
+        )
+        
+        if !message.isMine && !message.isInterrupted && !message.isFinal {
+            messageString.append(NSAttributedString(string: " "))
+            messageString.append(NSAttributedString(attachment: ChatMessageCell.dotAttachment))
+        }
+        
+        messageLabel.attributedText = messageString
         
         let detector = NSLinguisticTagger(tagSchemes: [.language], options: 0)
         detector.string = message.content
@@ -125,7 +135,9 @@ class ChatMessageCell: UITableViewCell {
         }
         
         interruptButton.isHidden = !message.isInterrupted
+        
     }
+
     
     private func setupUserLayout() {
         nameLabel.snp.remakeConstraints { make in
@@ -647,3 +659,4 @@ extension ChatView: ChatMessageViewModelDelegate {
         scrollToBottom()
     }
 }
+

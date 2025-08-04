@@ -86,7 +86,7 @@ extension ChatViewController {
                     "audio_scenario": nil,
                     "transcript": [
                         "enable": true,
-                        "enable_words": !isEnableAvatar(),
+                        "enable_words": enableWords(),
                         "protocol_version": "v2",
 //                        "redundant": nil,
                     ],

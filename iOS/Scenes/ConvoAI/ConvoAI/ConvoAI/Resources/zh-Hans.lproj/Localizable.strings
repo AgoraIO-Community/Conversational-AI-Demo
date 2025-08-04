@@ -66,6 +66,10 @@
 "settings.noise.cancellation" = "噪声取消";
 "settings.noise.aiVad.nomal" = "启用 ";
 "settings.noise.aiVad.highlight" = "优雅打断";
+"settings.transcript.render.mode" = "字幕渲染模式";
+"settings.transcript.render.word.mode" = "Word 模式";
+"settings.transcript.render.text.mode" = "Text - 同步模式";
+"settings.transcript.render.pretext.mode" = "Text - 字幕先出模式";
 "settings.noise.forceResponse" = "Force Response";
 "settings.noise.bhvs" = "启用 对话人声锁定";
 "settings.digital.human" = "数字人";
