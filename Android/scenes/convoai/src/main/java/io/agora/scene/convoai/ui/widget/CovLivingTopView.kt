@@ -30,7 +30,7 @@ class CovLivingTopView @JvmOverloads constructor(
     private val binding: CovActivityLivingTopBinding =
         CovActivityLivingTopBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var onInfoClick: (() -> Unit)? = null
+    private var onbackClick: (() -> Unit)? = null
     private var onWifiClick: (() -> Unit)? = null
     private var onSettingsClick: (() -> Unit)? = null
     private var onIvTopClick: (() -> Unit)? = null
@@ -48,7 +48,7 @@ class CovLivingTopView @JvmOverloads constructor(
     private var isPublishCamera: Boolean = false
 
     init {
-        binding.btnInfo.setOnClickListener { onInfoClick?.invoke() }
+        binding.btnBack.setOnClickListener { onbackClick?.invoke() }
         binding.btnNet.setOnClickListener { onWifiClick?.invoke() }
         binding.btnSettings.setOnClickListener { onSettingsClick?.invoke() }
         binding.ivTop.setOnClickListener { onIvTopClick?.invoke() }
@@ -79,10 +79,10 @@ class CovLivingTopView @JvmOverloads constructor(
     val btnAddPic: ImageButton get() = binding.btnAddPic
 
     /**
-     * Set callback for info button click.
+     * Set callback for back button click.
      */
-    fun setOnInfoClickListener(listener: (() -> Unit)?) {
-        onInfoClick = listener
+    fun setOnBackClickListener(listener: (() -> Unit)?) {
+        onbackClick = listener
     }
 
     /**
@@ -193,12 +193,12 @@ class CovLivingTopView @JvmOverloads constructor(
     private fun updateViewVisible() {
         if (isLogin) {
             if (connectionState == AgentConnectionState.IDLE) {
-                binding.btnInfo.isVisible = true
+                binding.btnBack.isVisible = true
                 binding.cvAddPic.isVisible = false
                 binding.cvSwitchCamera.isVisible = false
                 binding.cvCc.isVisible = false
             } else {
-                binding.btnInfo.isVisible = false
+                binding.btnBack.isVisible = false
                 if (isPublishCamera) {
                     binding.cvSwitchCamera.isVisible = true
                     binding.cvAddPic.isVisible = false
@@ -208,7 +208,7 @@ class CovLivingTopView @JvmOverloads constructor(
                 }
             }
         } else {
-            binding.btnInfo.isVisible = false
+            binding.btnBack.isVisible = false
             binding.cvAddPic.isVisible = false
             binding.cvSwitchCamera.isVisible = false
         }
@@ -223,10 +223,10 @@ class CovLivingTopView @JvmOverloads constructor(
         binding.apply {
             if (isLogin) {
                 btnSettings.isVisible = true
-                btnInfo.isVisible = true
+                btnBack.isVisible = true
             } else {
                 btnSettings.isVisible = false
-                btnInfo.isVisible = false
+                btnBack.isVisible = false
                 cvAddPic.isVisible = false
                 cvSwitchCamera.isVisible = false
             }
