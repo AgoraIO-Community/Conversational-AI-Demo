@@ -356,7 +356,7 @@
             android:id="@+id/tv_render_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/common_debug_transcription_render_mode"
+            android:text="@string/common_debug_transcript_render_mode"
             android:textColor="@color/ai_icontext1"
             android:textSize="14sp"
             android:layout_marginTop="10dp"

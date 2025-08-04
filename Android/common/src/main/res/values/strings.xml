@@ -7,7 +7,7 @@
     <string name="common_debug_user_config">User Config</string>
     <string name="common_debug_quick_setting_for_current_user">Quick Setting for Current User</string>
     <string name="common_debug_click_to_copy">Copy to Clipboard</string>
-    <string name="common_debug_transcription_render_mode">Transcription Render Mode</string>
+    <string name="common_debug_transcript_render_mode">Transcript Render Mode</string>
     <string name="common_debug_text_mode">Text</string>
     <string name="common_debug_word_mode">Word</string>
     <string name="common_debug_text_word_mode">Text-Word</string>

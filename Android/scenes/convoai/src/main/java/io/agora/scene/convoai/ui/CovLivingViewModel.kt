@@ -94,9 +94,9 @@ class CovLivingViewModel : ViewModel() {
     private val _interruptEvent = MutableStateFlow<InterruptEvent?>(null)
     val interruptEvent: StateFlow<InterruptEvent?> = _interruptEvent.asStateFlow()
 
-    // Transcription state
-    private val _transcriptionUpdate = MutableStateFlow<Transcription?>(null)
-    val transcriptionUpdate: StateFlow<Transcription?> = _transcriptionUpdate.asStateFlow()
+    // Transcript state
+    private val _transcriptUpdate = MutableStateFlow<Transcript?>(null)
+    val transcriptUpdate: StateFlow<Transcript?> = _transcriptUpdate.asStateFlow()
 
     // Media info
     private val _mediaInfoUpdate = MutableStateFlow<MediaInfo?>(null)
@@ -187,9 +187,9 @@ class CovLivingViewModel : ViewModel() {
                 }
             }
         }
-        override fun onTranscriptionUpdated(agentUserId: String, transcription: Transcription) {
-            // Update transcription state to notify Activity
-            _transcriptionUpdate.value = transcription
+        override fun onTranscriptUpdated(agentUserId: String, transcript: Transcript) {
+            // Update transcript state to notify Activity
+            _transcriptUpdate.value = transcript
         }
 
         override fun onMessageReceiptUpdated(agentUserId: String, messageReceipt: MessageReceipt) {
@@ -786,7 +786,7 @@ class CovLivingViewModel : ViewModel() {
         _isUserJoinedRtc.value = false
         _isAgentJoinedRtc.value = false
         _isAvatarJoinedRtc.value = false
-        _transcriptionUpdate.value = null
+        _transcriptUpdate.value = null
         _mediaInfoUpdate.value = null
         _resourceError.value = null
         _interruptEvent.value = null

@@ -34,7 +34,7 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
    val config = ConversationalAIAPIConfig(
        rtcEngine = rtcEngineInstance,
        rtmClient = rtmClientInstance,
-       renderMode = TranscriptionRenderMode.Word, // or TranscriptionRenderMode.Text
+       renderMode = TranscriptRenderMode.Word, // or TranscriptRenderMode.Text
        enableLog = true
    )
    ```
@@ -47,7 +47,7 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
 
 3. **Register an event handler**
 
-   Implement and add your event handler to receive agent events and transcriptions:
+   Implement and add your event handler to receive agent events and transcripts:
    ```kotlin
    api.addHandler(object : IConversationalAIAPIEventHandler {
        override fun onAgentStateChanged(agentUserId: String, event: StateChangeEvent) { /* ... */ }
@@ -56,7 +56,7 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
        override fun onAgentError(agentUserId: String, error: ModuleError) { /* ... */ }
        override fun onMessageError(agentUserId: String, error: MessageError) { /* ... */ } 
        override fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt) { /* ... */ }
-       override fun onTranscriptionUpdated(agentUserId: String, transcription: Transcription) { /* ... */ }
+       override fun onTranscriptUpdated(agentUserId: String, transcript: Transcript) { /* ... */ }
        override fun onDebugLog(log: String) { /* ... */ }
    })
    ```
@@ -288,8 +288,8 @@ override fun onMessageError(agentUserId: String, error: MessageError) {
 - [ConversationalAIAPIImpl.kt](./ConversationalAIAPIImpl.kt) — Main implementation of the ConversationalAI API logic
 - [ConversationalAIUtils.kt](./ConversationalAIUtils.kt) — Utility functions and event handler management
 - [subRender/](./subRender/) 
-    - [v3/](./subRender/v3/) — Transcription module
-        - [TranscriptionController.kt](./subRender/v3/TranscriptionController.kt)
+    - [v3/](./subRender/v3/) — transcript module
+        - [TranscriptController.kt](./subRender/v3/TranscriptController.kt)
         - [MessageParser.kt](./subRender/v3/MessageParser.kt) 
 
 > The above files and folders are all you need to integrate the ConversationalAI API. No other files are required.

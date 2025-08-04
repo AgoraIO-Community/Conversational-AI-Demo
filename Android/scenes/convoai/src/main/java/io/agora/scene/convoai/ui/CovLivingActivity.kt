@@ -1,7 +1,5 @@
 package io.agora.scene.convoai.ui
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
@@ -243,7 +241,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             }
 
             vDragSmallWindow.setOnViewClick {
-                // Hide transcription when small window is clicked while transcription is visible
+                // Hide transcript when small window is clicked while transcript is visible
                 if (viewModel.isShowMessageList.value) {
                     viewModel.toggleMessageList()
                 }
@@ -454,18 +452,18 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
         }
-        lifecycleScope.launch {  // Observe transcription updates
-            viewModel.transcriptionUpdate.collect { transcription ->
+        lifecycleScope.launch {  // Observe transcript updates
+            viewModel.transcriptUpdate.collect { transcript ->
                 if (isSelfSubRender) return@collect
-                transcription?.let {
-                    mBinding?.messageListViewV2?.onTranscriptionUpdated(it)
+                transcript?.let {
+                    mBinding?.messageListViewV2?.onTranscriptUpdated(it)
                 }
             }
         }
-        lifecycleScope.launch {  // Observe transcription updates
-            viewModel.interruptEvent.collect { transcription ->
+        lifecycleScope.launch {  // Observe interrupt event updates
+            viewModel.interruptEvent.collect { interruptEvent ->
                 if (isSelfSubRender) return@collect
-                transcription?.let {
+                interruptEvent?.let {
                     mBinding?.messageListViewV2?.onAgentInterrupted(it)
                 }
             }
@@ -534,12 +532,12 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private fun updateWindowContent() {
         val showAvatar = viewModel.isAvatarJoinedRtc.value
         val showVideo = viewModel.isPublishVideo.value
-        val showTranscription = viewModel.isShowMessageList.value
+        val showTranscript = viewModel.isShowMessageList.value
         mBinding?.apply {
             var newBigContent: View? = null
             var newSmallContent: View? = null
 
-            if (showTranscription) {
+            if (showTranscript) {
                 if (showAvatar && showVideo) {
                     newBigContent = remoteAvatarView
                     newSmallContent = localVisionView
@@ -583,8 +581,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             vDragBigWindow.isVisible = newBigContent != null
             vDragSmallWindow.isVisible = newSmallContent != null
 
-            agentSpeakingIndicator.isVisible = !showAvatar && showVideo && !showTranscription
-            val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscription
+            agentSpeakingIndicator.isVisible = !showAvatar && showVideo && !showTranscript
+            val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscript
 
             updateLightBackground(isLight)
         }
@@ -664,8 +662,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     vConnecting.visibility = View.VISIBLE
                     agentStateView.visibility = View.GONE
 
-                    val showTranscription = viewModel.isShowMessageList.value
-                    val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscription
+                    val showTranscript = viewModel.isShowMessageList.value
+                    val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscript
                     updateLightBackground(isLight)
                 }
 

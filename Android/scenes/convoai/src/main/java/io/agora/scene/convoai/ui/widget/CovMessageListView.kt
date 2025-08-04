@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.InterruptEvent
-import io.agora.scene.convoai.convoaiApi.Transcription
-import io.agora.scene.convoai.convoaiApi.TranscriptionStatus
-import io.agora.scene.convoai.convoaiApi.TranscriptionType
+import io.agora.scene.convoai.convoaiApi.Transcript
+import io.agora.scene.convoai.convoaiApi.TranscriptStatus
+import io.agora.scene.convoai.convoaiApi.TranscriptType
 import io.agora.scene.convoai.databinding.CovMessageAgentItemBinding
 import io.agora.scene.convoai.databinding.CovMessageListViewBinding
 import io.agora.scene.convoai.databinding.CovMessageMineItemBinding
@@ -167,7 +167,7 @@ class CovMessageListView @JvmOverloads constructor(
                     isMe = false,
                     turnId = currentTypingTurnId,
                     content = displayText,
-                    status = TranscriptionStatus.IN_PROGRESS,
+                    status = TranscriptStatus.IN_PROGRESS,
                     localTurn = currentTypingTurnId
                 )
 
@@ -186,7 +186,7 @@ class CovMessageListView @JvmOverloads constructor(
                         isMe = false,
                         turnId = currentTypingTurnId,
                         content = currentTypingText,
-                        status = TranscriptionStatus.END,
+                        status = TranscriptStatus.END,
                         localTurn = currentTypingTurnId
                     )
                     messageAdapter.addOrUpdateMessage(finalMessage)
@@ -318,19 +318,19 @@ class CovMessageListView @JvmOverloads constructor(
     /**
      * Handle received subtitle messages - fix scrolling issues
      */
-    private fun handleMessage(transcription: Transcription) {
-        val isUser = transcription.type == TranscriptionType.USER
+    private fun handleMessage(transcript: Transcript) {
+        val isUser = transcript.type == TranscriptType.USER
         val newMessage = Message(
             isMe = isUser,
-            turnId = transcription.turnId,
-            content = transcription.text,
-            status = transcription.status,
-            localTurn = transcription.turnId
+            turnId = transcript.turnId,
+            content = transcript.text,
+            status = transcript.status,
+            localTurn = transcript.turnId
         )
         messageAdapter.addOrUpdateMessage(newMessage)
         // Determine if this is a new message (just inserted)
         val isNewMessage =
-            messageAdapter.getAllMessages().count { it.turnId == transcription.turnId && it.isMe == isUser } == 1
+            messageAdapter.getAllMessages().count { it.turnId == transcript.turnId && it.isMe == isUser } == 1
         handleScrollAfterUpdate(isNewMessage)
     }
 
@@ -399,7 +399,7 @@ class CovMessageListView @JvmOverloads constructor(
         val isMe: Boolean,
         val turnId: Long,
         var content: String, // For text: text content; for image: local path
-        var status: TranscriptionStatus? = null, // Only for text messages, null for image
+        var status: TranscriptStatus? = null, // Only for text messages, null for image
         val type: MessageType = MessageType.TEXT,
         val uuid: String? = null, // Unique local ID for local image messages
         val localTurn: Long = 0L,
@@ -486,13 +486,13 @@ class CovMessageListView @JvmOverloads constructor(
                     binding.tvMessageContent.text = message.content
 
                     // Show/hide typing dots based on message status
-                    if (message.status == TranscriptionStatus.IN_PROGRESS) {
+                    if (message.status == TranscriptStatus.IN_PROGRESS) {
                         binding.tvMessageContent.setShowTypingDots(true)
                     } else {
                         binding.tvMessageContent.setShowTypingDots(false)
                     }
 
-                    binding.layoutMessageInterrupt.isVisible = message.status == TranscriptionStatus.INTERRUPTED
+                    binding.layoutMessageInterrupt.isVisible = message.status == TranscriptStatus.INTERRUPTED
                 } else if (message.type == MessageType.IMAGE) {
                     binding.tvMessageContent.isVisible = false
                     binding.layoutImageMessage.isVisible = true
@@ -679,26 +679,26 @@ class CovMessageListView @JvmOverloads constructor(
     }
 
     /**
-     * Called when a new transcription is received or updated.
+     * Called when a new transcript is received or updated.
      * Handles both user and agent messages, and triggers scroll logic if needed.
-     * @param transcription The incoming transcription data.
+     * @param transcript The incoming transcript data.
      * @param showAnimation Whether to show typing animation (default: false)
      */
-    fun onTranscriptionUpdated(transcription: Transcription, showAnimation: Boolean = false) {
-        // Transcription for other users
-        if (transcription.type == TranscriptionType.USER && transcription.userId != CovAgentManager.uid.toString()) {
+    fun onTranscriptUpdated(transcript: Transcript, showAnimation: Boolean = false) {
+        // transcript for other users
+        if (transcript.type == TranscriptType.USER && transcript.userId != CovAgentManager.uid.toString()) {
             return
         }
 
         if (showAnimation) {
-            if (transcription.type == TranscriptionType.USER) {
+            if (transcript.type == TranscriptType.USER) {
                 stopTypingAnimation()
-                handleMessage(transcription)
+                handleMessage(transcript)
             } else {
-                startTypingAnimation(transcription)
+                startTypingAnimation(transcript)
             }
         } else {
-            handleMessage(transcription)
+            handleMessage(transcript)
         }
     }
 
@@ -741,11 +741,11 @@ class CovMessageListView @JvmOverloads constructor(
      * Start typing animation for agent messages
      * Renders text character by character at 10 characters per second
      */
-    private fun startTypingAnimation(transcription: Transcription) {
-        val newText = transcription.text
+    private fun startTypingAnimation(transcript: Transcript) {
+        val newText = transcript.text
 
         // Handle same turn updates
-        if (currentTypingTurnId == transcription.turnId) {
+        if (currentTypingTurnId == transcript.turnId) {
             // Skip if no text change
             if (newText == currentTypingText) {
                 return
@@ -762,17 +762,17 @@ class CovMessageListView @JvmOverloads constructor(
             // New turn, stop previous animation and restart
             stopTypingAnimation()
 
-            currentTypingTurnId = transcription.turnId
+            currentTypingTurnId = transcript.turnId
             currentTypingText = newText
             typingProgress = 0
 
             // Create initial empty message to show typing dots
             val initialMessage = Message(
                 isMe = false,
-                turnId = transcription.turnId,
+                turnId = transcript.turnId,
                 content = "",
-                status = TranscriptionStatus.IN_PROGRESS,
-                localTurn = transcription.turnId
+                status = TranscriptStatus.IN_PROGRESS,
+                localTurn = transcript.turnId
             )
             messageAdapter.addOrUpdateMessage(initialMessage)
             handleScrollAfterUpdate(true)
@@ -800,7 +800,7 @@ class CovMessageListView @JvmOverloads constructor(
                 isMe = false,
                 turnId = currentTypingTurnId,
                 content = displayText,
-                status = TranscriptionStatus.END,
+                status = TranscriptStatus.END,
                 localTurn = currentTypingTurnId
             )
             messageAdapter.addOrUpdateMessage(finalMessage)
