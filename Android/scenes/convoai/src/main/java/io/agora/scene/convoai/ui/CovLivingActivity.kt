@@ -85,8 +85,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         // Initialize ViewModel
         viewModel.initializeAPIs(rtcEngine, rtmClient)
 
-        userViewModel.checkLogin()
-
         // v1 Subtitle Rendering Controller
         selfRenderController = SelfSubRenderController(SelfRenderConfig(rtcEngine, mBinding?.messageListViewV1))
 

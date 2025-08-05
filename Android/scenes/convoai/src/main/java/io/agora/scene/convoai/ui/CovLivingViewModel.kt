@@ -239,7 +239,6 @@ class CovLivingViewModel : ViewModel() {
             val deferreds = listOf(
                 async { updateTokenAsync() },
                 async { fetchPresetsAsync() },
-                async { fetchIotPresetsAsync() }
             )
             deferreds.awaitAll()
         }
@@ -670,17 +669,6 @@ class CovLivingViewModel : ViewModel() {
             if (err == null) {
                 CovAgentManager.setPresetList(presets)
                 setAgentPreset(CovAgentManager.getPreset())
-                cont.resume(true)
-            } else {
-                cont.resume(false)
-            }
-        }
-    }
-
-    suspend fun fetchIotPresetsAsync(): Boolean = suspendCoroutine { cont ->
-        CovIotApiManager.fetchPresets { err, presets ->
-            if (err == null) {
-                CovIotPresetManager.setPresetList(presets)
                 cont.resume(true)
             } else {
                 cont.resume(false)

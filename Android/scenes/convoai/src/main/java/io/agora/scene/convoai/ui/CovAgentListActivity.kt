@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import io.agora.scene.common.ui.BaseActivity
@@ -19,24 +18,16 @@ import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.vm.LoginState
 import io.agora.scene.common.ui.vm.UserViewModel
 import io.agora.scene.common.util.dp
-import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.databinding.CovActivityAgentListBinding
-import io.agora.scene.convoai.iot.manager.CovIotPresetManager
 import io.agora.scene.convoai.iot.ui.CovIotDeviceListActivity
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.ui.dialog.CovAppInfoDialog
-import io.agora.scene.convoai.ui.fragment.OfficialAgentFragment
-import io.agora.scene.convoai.ui.fragment.CustomAgentFragment
+import io.agora.scene.convoai.ui.fragment.CovOfficialAgentFragment
+import io.agora.scene.convoai.ui.fragment.CovCustomAgentFragment
 import kotlinx.coroutines.launch
-import kotlin.apply
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.set
 import kotlin.getValue
-import kotlin.jvm.java
-import kotlin.let
 import kotlin.math.abs
-import kotlin.ranges.until
 
 class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
@@ -50,7 +41,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
     // ViewModel instances
     private val viewModel: CovLivingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
-    
+
     // State tracking to avoid frequent calls
     private var isCollapsed: Boolean = false
 
@@ -67,19 +58,17 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
     override fun getViewBinding(): CovActivityAgentListBinding = CovActivityAgentListBinding.inflate(layoutInflater)
 
-    override fun immersiveMode(): ImmersiveMode = ImmersiveMode.FULLY_IMMERSIVE
-
     override fun initView() {
         mBinding?.apply {
             btnInfo.setOnClickListener {
                 showInfoDialog()
             }
         }
-        
+
         // Check user login status first
         // Show loading immediately when starting login check
         showLoadingState()
-        
+
         userViewModel.checkLogin()
 
         lifecycleScope.launch {
@@ -102,7 +91,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
             }
         }
     }
-    
+
 
     private fun initializeFragments() {
         setupAppBarScrollListener()
@@ -110,7 +99,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
         setupTabLayout()
         hideLoadingState()
     }
-    
+
     private fun showLoadingState() {
         mBinding?.apply {
             // Show loading indicator and hide main content
@@ -119,7 +108,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
             tabContainer.visibility = View.INVISIBLE
         }
     }
-    
+
     private fun hideLoadingState() {
         mBinding?.apply {
             // Hide loading indicator and show main content
@@ -128,7 +117,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
             tabContainer.visibility = View.VISIBLE
         }
     }
-    
+
     private fun setupAppBarScrollListener() {
         mBinding?.appBarLayout?.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
             override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
@@ -136,7 +125,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
                 if (scrollRange > 0) {
                     val scrollProgress = abs(verticalOffset.toFloat() / scrollRange)
                     val shouldCollapse = scrollProgress > SCROLL_THRESHOLD
-                    
+
                     // Only trigger state change if it's actually different
                     if (shouldCollapse && !isCollapsed) {
                         showCollapsedState()
@@ -150,7 +139,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
     private fun showCollapsedState() {
         if (isCollapsed) return // Already collapsed, no need to do anything
-        
+
         mBinding?.apply {
             // Hide title
             llTopTitle.visibility = View.GONE
@@ -177,7 +166,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
     private fun showExpandedState() {
         if (!isCollapsed) return // Already expanded, no need to do anything
-        
+
         mBinding?.apply {
             // Show title
             llTopTitle.visibility = View.VISIBLE
@@ -202,9 +191,9 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
     }
 
 
-    fun getCustomAgentFragment(): CustomAgentFragment? {
+    fun getCustomAgentFragment(): CovCustomAgentFragment? {
         val fragment =
-            (mBinding?.vpContent?.adapter as? AgentPagerAdapter)?.getFragmentAt(TAB_CUSTOM_AGENT) as? CustomAgentFragment
+            (mBinding?.vpContent?.adapter as? AgentPagerAdapter)?.getFragmentAt(TAB_CUSTOM_AGENT) as? CovCustomAgentFragment
         // Only return fragment if it's still alive
         return if (fragment?.isAdded == true && !fragment.isDetached) fragment else null
     }
@@ -237,9 +226,9 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
             } else {
                 initialTab // fallback to initial tab
             }
-            
+
             // Only update position if ViewPager2 is not currently scrolling
-            if (vpContent.scrollState == ViewPager2.SCROLL_STATE_IDLE) {
+            if (vpContent.scrollState == androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE) {
                 val indicatorX = currentSelectedPosition * newTabWidth.toFloat()
                 vTabIndicator.translationX = indicatorX
             }
@@ -423,7 +412,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
             // Add page change callback to sync with tab indicator
             vpContent.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
+                androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     // Sync TabLayout selection
@@ -441,7 +430,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
                         // Add scale effect during swipe: shrink when in the middle, normal at edges
                         // positionOffset ranges from 0 to 1, we want minimum scale at 0.5
-                        val scaleProgress = abs(positionOffset - 0.5f) * 2f // 0 at middle, 1 at edges
+                        val scaleProgress = kotlin.math.abs(positionOffset - 0.5f) * 2f // 0 at middle, 1 at edges
                         val minScale = 0.6f
                         val scale = minScale + (1f - minScale) * scaleProgress
                         vTabIndicator.scaleX = scale
@@ -470,18 +459,7 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
                 }
             },
             onIotDeviceClick = {
-                if (CovIotPresetManager.getPresetList().isNullOrEmpty()) {
-                    lifecycleScope.launch {
-                        val success = viewModel.fetchIotPresetsAsync()
-                        if (success) {
-                            CovIotDeviceListActivity.startActivity(this@CovAgentListActivity)
-                        } else {
-                            ToastUtil.show(getString(io.agora.scene.convoai.iot.R.string.cov_detail_net_state_error))
-                        }
-                    }
-                } else {
-                    CovIotDeviceListActivity.startActivity(this@CovAgentListActivity)
-                }
+                CovIotDeviceListActivity.startActivity(this@CovAgentListActivity)
             }
         )
         appInfoDialog?.show(supportFragmentManager, "info_dialog")
@@ -513,8 +491,8 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = when (position) {
-                TAB_OFFICIAL_AGENT -> OfficialAgentFragment()
-                TAB_CUSTOM_AGENT -> CustomAgentFragment()
+                TAB_OFFICIAL_AGENT -> CovOfficialAgentFragment()
+                TAB_CUSTOM_AGENT -> CovCustomAgentFragment()
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }
             fragments[position] = fragment

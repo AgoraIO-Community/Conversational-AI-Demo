@@ -103,6 +103,7 @@
 
         <!-- Input Container -->
         <LinearLayout
+            android:id="@+id/llInputContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -111,15 +112,21 @@
             android:orientation="horizontal"
             android:padding="9dp">
 
-            <TextView
+            <EditText
+                android:id="@+id/et_agent_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/cov_custom_agent_input_tip"
+                android:hint="@string/cov_custom_agent_input_tip"
                 android:textColor="@color/ai_icontext2"
                 android:textColorHint="@color/ai_icontext3"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:background="@null"
+                android:inputType="number"
+                android:maxLength="8"
+                android:digits="0123456789"
+                android:textCursorDrawable="@drawable/custom_agent_cursor" />
 
             <TextView
                 android:id="@+id/tv_count"
@@ -128,6 +135,7 @@
                 android:paddingHorizontal="12dp"
                 android:textColor="@color/ai_icontext2"
                 android:textSize="14sp"
+                android:text="8"
                 tools:text="8" />
 
             <com.google.android.material.button.MaterialButton

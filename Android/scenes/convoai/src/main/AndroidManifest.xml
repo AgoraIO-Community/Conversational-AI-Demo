@@ -15,7 +15,8 @@
             android:configChanges="locale|layoutDirection"
             android:exported="false"
             android:keepScreenOn="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name="io.agora.scene.convoai.ui.CovLivingActivity"

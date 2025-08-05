@@ -16,6 +16,8 @@ import io.agora.scene.common.ui.BaseSheetDialog
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.databinding.CovAgentTabDialogBinding
+import io.agora.scene.convoai.ui.fragment.CovAgentInfoFragment
+import io.agora.scene.convoai.ui.fragment.CovAgentSettingsFragment
 
 /**
  * Bottom sheet dialog with tab switching functionality

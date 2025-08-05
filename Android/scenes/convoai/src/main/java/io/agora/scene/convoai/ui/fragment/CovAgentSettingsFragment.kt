@@ -1,4 +1,4 @@
-package io.agora.scene.convoai.ui.dialog
+package io.agora.scene.convoai.ui.fragment
 
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -25,15 +25,9 @@ import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovAgentSettingsFragmentBinding
 import io.agora.scene.convoai.databinding.CovSettingOptionItemBinding
-import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog.AvatarItem
-import kotlin.collections.indexOf
 import io.agora.scene.convoai.ui.CovLivingViewModel
-import kotlin.apply
-import kotlin.collections.map
-import kotlin.collections.toTypedArray
-import kotlin.let
-import kotlin.ranges.coerceAtLeast
-import kotlin.ranges.coerceIn
+import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog
+import kotlin.collections.indexOf
 
 /**
  * Fragment for Agent Settings tab
@@ -399,7 +393,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     private fun onClickAvatar() {
         val activity = activity ?: return
 
-        val avatarSelectorDialog = CovAvatarSelectorDialog.newInstance(
+        val avatarSelectorDialog = CovAvatarSelectorDialog.Companion.newInstance(
             currentAvatar = CovAgentManager.avatar,
             onDismiss = {
                 // Handle dialog closure
@@ -416,7 +410,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     /**
      * Handle avatar selection result
      */
-    private fun handleAvatarSelection(selectedAvatar: AvatarItem) {
+    private fun handleAvatarSelection(selectedAvatar: CovAvatarSelectorDialog.AvatarItem) {
         val avatar = if (selectedAvatar.isClose) null else selectedAvatar.covAvatar
         CovAgentManager.avatar = avatar
         livingViewModel.setAvatar(avatar)
@@ -485,4 +479,4 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             }
         }
     }
-} 
+}

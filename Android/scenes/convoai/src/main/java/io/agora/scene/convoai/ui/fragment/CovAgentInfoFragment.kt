@@ -1,4 +1,4 @@
-package io.agora.scene.convoai.ui.dialog
+package io.agora.scene.convoai.ui.fragment
 
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -18,8 +18,6 @@ import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovAgentInfoFragmentBinding
 import io.agora.scene.convoai.rtc.CovRtcManager
-import kotlin.apply
-import kotlin.let
 
 /**
  * Fragment for Channel Info tab
@@ -212,4 +210,4 @@ class CovAgentInfoFragment : BaseFragment<CovAgentInfoFragmentBinding>() {
             // This method can be called when data changes
         }
     }
-} 
+}
