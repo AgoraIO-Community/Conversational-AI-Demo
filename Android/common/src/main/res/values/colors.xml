@@ -61,6 +61,7 @@
     <color name="ai_mask3">#cc292a2d</color>
 
     <color name="ai_block1_50">#80acacef</color>
+    <color name="ai_brand_white1_50">#80ffffff</color>
 
     <array name="gradient_border_default_colors">
         <item>#FF00C2FF</item>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ai_fill7"
-    android:paddingTop="25dp">
+    android:paddingTop="32dp">
 
     <!-- Fixed info button that doesn't scroll -->
     <ImageButton

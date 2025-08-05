@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
+import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.vm.LoginState
@@ -62,6 +63,9 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
         mBinding?.apply {
             btnInfo.setOnClickListener {
                 showInfoDialog()
+            }
+            ivTop.setOnClickListener {
+                DebugConfigSettings.checkClickDebug()
             }
         }
 

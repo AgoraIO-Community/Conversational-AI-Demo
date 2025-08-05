@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentPreset
@@ -75,14 +76,10 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                 val currentLength = it?.length ?: 0
                 val remainingLength = 8 - currentLength
                 tvCount.text = remainingLength.toString()
-
-                // Update button state based on input
-                btnGetAgent.isEnabled = currentLength > 0
             }
 
             // Initialize character count display (show remaining characters)
             tvCount.text = "8"
-            btnGetAgent.isEnabled = false
         }
     }
 
@@ -146,8 +143,13 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
     private fun onGetAgentClicked() {
         CovLogger.d("CustomAgentFragment", "Get agent button clicked")
-        // TODO: Implement get agent functionality
-        // This could open a dialog to input agent ID or navigate to another screen
+        mBinding?.apply {
+            if (etAgentId.text.toString().isEmpty()) {
+                ToastUtil.show(R.string.cov_custom_agent_input_tip)
+            } else {
+                ToastUtil.show("Get agent ID: ${etAgentId.text}")
+            }
+        }
     }
 
     private fun setupKeyboardListener() {

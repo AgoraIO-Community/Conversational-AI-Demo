@@ -123,5 +123,5 @@
     <string name="cov_custom_agent_acquire_tip">Please contact Agora to get your custom agent ID</string>
     <string name="cov_custom_agent_input_tip">Enter your custom agent ID to get</string>
     <string name="cov_custom_agent_get">Get</string>
-
+    <string name="cov_voiceprint_lock">Voice print</string>
 </resources>
