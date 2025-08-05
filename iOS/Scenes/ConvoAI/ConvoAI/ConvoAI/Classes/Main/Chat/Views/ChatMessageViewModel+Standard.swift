@@ -8,10 +8,11 @@
 import Foundation
 
 protocol MessageStandard {
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool, isFinal: Bool)
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptType, isInterrupted: Bool, isFinal: Bool)
     func addImageMessage(uuid: String, image: UIImage)
     func updateImageMessage(uuid: String, state: ImageState)
     func reduceLLMInterrupt(turnId: Int)
+    func userInterruptActively()
 }
 
 extension ChatMessageViewModel: MessageStandard {
@@ -54,7 +55,7 @@ extension ChatMessageViewModel: MessageStandard {
         updateImageContent(uuid: uuid, isMine: false, state: state)
     }
     
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool, isFinal: Bool) {
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptType, isInterrupted: Bool, isFinal: Bool) {
         let isMine = owner == .user
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         let messageObj = messageMapTable[key]
@@ -77,12 +78,23 @@ extension ChatMessageViewModel: MessageStandard {
         }
     }
     
+    func userInterruptActively() {
+        if displayMode == .text {
+            stopTimer()
+            lastMessage?.isFinal = true
+        } else if displayMode == .words {
+            //do nothing now
+        } else if displayMode == .chunk {
+            //do nothing now
+        }
+    }
+
     func reduceLLMInterrupt(turnId: Int) {
         if displayMode == .text {
             stopTimer()
             let key = generateMessageKey(turnId: turnId, isMine: false)
             let message = messageMapTable[key]
-            message?.isInterrupted = true
+            message?.isFinal = true
         } else if displayMode == .words {
             //do nothing now
         } else if displayMode == .chunk {

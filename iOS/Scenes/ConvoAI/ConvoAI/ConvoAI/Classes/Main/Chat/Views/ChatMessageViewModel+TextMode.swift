@@ -37,7 +37,7 @@ extension ChatMessageViewModel {
         
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         let message = messageMapTable[key]
-                
+        lastMessage = message
         if isMine {
             message?.content = content
             message?.turn_id = turnId

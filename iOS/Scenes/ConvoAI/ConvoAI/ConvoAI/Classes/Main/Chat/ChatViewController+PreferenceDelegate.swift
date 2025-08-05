@@ -17,7 +17,7 @@ extension ChatViewController: AgentPreferenceManagerDelegate {
         }
     }
     
-    private func getTranscriptRenderMode() -> TranscriptionRenderMode {
+    private func getTranscriptRenderMode() -> TranscriptRenderMode {
         let isEnableAvatar = isEnableAvatar()
         if isEnableAvatar {
             return .text

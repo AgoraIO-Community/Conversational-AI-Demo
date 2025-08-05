@@ -60,6 +60,13 @@ extension ChatViewController: AgentControlToolbarDelegate {
 }
 
 extension ChatViewController {
+    @objc internal func onClickStopSpeakingButton(_ sender: UIButton) {
+        convoAIAPI.interrupt(agentUserId: "\(agentUid)") { error in
+        }
+        
+        messageView.viewModel.userInterruptActively()
+    }
+    
     private func clickTheCloseButton() {
         addLog("[Call] clickTheCloseButton()")
         if AppContext.preferenceManager()?.information.agentState == .connected {

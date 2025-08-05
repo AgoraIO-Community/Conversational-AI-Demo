@@ -43,6 +43,7 @@ protocol ChatMessageViewModelDelegate: AnyObject {
 class ChatMessageViewModel: NSObject {
     var messages: [Message] = []
     var messageMapTable: [String : Message] = [:]
+    var lastMessage: Message?
     weak var delegate: ChatMessageViewModelDelegate?
     var timer: Timer?
     var displayMode: TranscriptDisplayMode = .words

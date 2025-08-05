@@ -117,7 +117,7 @@ class AgentInformationViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18)
         label.textColor = UIColor.themColor(named: "ai_icontext3")
-        let version = TranscriptionController.version
+        let version = TranscriptController.version
         label.text = "V\(version)"
         return label
     }()

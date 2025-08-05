@@ -127,15 +127,15 @@ extension ChatViewController: ConversationalAIAPIEventHandler {
         addLog("<<< [onAgentError] error: \(error)")
     }
     
-    public func onTranscriptionUpdated(agentUserId: String, transcription: Transcription) {
+    public func onTranscriptUpdated(agentUserId: String, transcript: Transcript) {
         if isSelfSubRender {
             return
         }
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            print("receive transcription: \(transcription.status)")
-            self.messageView.viewModel.reduceStandardMessage(turnId: transcription.turnId, message: transcription.text, timestamp: 0, owner: transcription.type, isInterrupted: transcription.status == .interrupted, isFinal: transcription.status == .end)
+            print("receive transcription: \(transcript.status)")
+            self.messageView.viewModel.reduceStandardMessage(turnId: transcript.turnId, message: transcript.text, timestamp: 0, owner: transcript.type, isInterrupted: transcript.status == .interrupted, isFinal: transcript.status == .end)
         }
     }
     

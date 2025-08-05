@@ -68,12 +68,6 @@ extension ChatViewController {
         showTranscription(state: sender.isSelected)
     }
     
-    @objc internal func onClickStopSpeakingButton(_ sender: UIButton) {
-        convoAIAPI.interrupt(agentUserId: "\(agentUid)") { error in
-            
-        }
-    }
-    
     @objc internal func onClickLogo(_ sender: UIButton) {
         let currentTime = Date()
         if let lastTime = lastClickTime, currentTime.timeIntervalSince(lastTime) > 1.0 {
