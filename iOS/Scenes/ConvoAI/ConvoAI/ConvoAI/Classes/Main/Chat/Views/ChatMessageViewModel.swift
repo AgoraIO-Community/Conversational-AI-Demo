@@ -18,11 +18,6 @@ class ImageSource {
     var imageState: ImageState = .sending
 }
 
-class StreamingState {
-    var index: Int = 0
-    var content: String?
-}
-
 class Message {
     var content: String = ""
     var imageSource: ImageSource? = nil
@@ -32,7 +27,8 @@ class Message {
     var timestamp: Int64 = 0
     var turn_id: Int = -100
     var local_turn: Int = 0
-    var streamingState: StreamingState? = nil
+    var index: Int = 0
+    var transcript: String = ""
 
     var isImage: Bool {
         return imageSource != nil
@@ -40,7 +36,6 @@ class Message {
 }
 
 protocol ChatMessageViewModelDelegate: AnyObject {
-    func startNewMessage()
     func messageUpdated()
     func messageFinished()
 }

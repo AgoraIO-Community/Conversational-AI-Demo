@@ -14,7 +14,7 @@ class DotTextAttachment: NSTextAttachment {
     private var displayLink: CADisplayLink?
     private var currentDotIndex = 0
     private var lastUpdateTime: TimeInterval = 0
-    private let animationDuration: TimeInterval = 0.6
+    private let animationDuration: TimeInterval = 0.4 
     
     private enum Constants {
         static let minAlpha: CGFloat = 0.3
@@ -41,13 +41,13 @@ class DotTextAttachment: NSTextAttachment {
     private func startAnimating() {
         stopAnimating()
         displayLink = CADisplayLink(target: self, selector: #selector(updateAnimation))
-        displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
+        displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 60, maximum: 60, preferred: 60)
         displayLink?.add(to: .main, forMode: .common)
         lastUpdateTime = CACurrentMediaTime()
         updateImage()
     }
     
-    private func stopAnimating() {
+    func stopAnimating() {
         displayLink?.invalidate()
         displayLink = nil
     }

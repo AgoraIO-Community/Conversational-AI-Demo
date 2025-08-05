@@ -8,14 +8,14 @@
 import Foundation
 
 protocol MessageStandard {
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool)
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool, isFinal: Bool)
     func addImageMessage(uuid: String, image: UIImage)
     func updateImageMessage(uuid: String, state: ImageState)
-    func reduceLLMInterrupt()
+    func reduceLLMInterrupt(turnId: Int)
 }
 
 extension ChatMessageViewModel: MessageStandard {
-    private func generateMessageKey(turnId: Int, isMine: Bool) -> String {
+    internal func generateMessageKey(turnId: Int, isMine: Bool) -> String {
         let key = isMine ? "agent_\(turnId)" : "mine_\(turnId)"
         return key
     }
@@ -47,157 +47,47 @@ extension ChatMessageViewModel: MessageStandard {
         messages.append(message)
         sortMessages()
         
-        delegate?.startNewMessage()
+        delegate?.messageUpdated()
     }
     
     func updateImageMessage(uuid: String, state: ImageState) {
         updateImageContent(uuid: uuid, isMine: false, state: state)
     }
     
-    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool) {
+    func reduceStandardMessage(turnId: Int, message: String, timestamp: Int64, owner: TranscriptionType, isInterrupted: Bool, isFinal: Bool) {
         let isMine = owner == .user
         let key = generateMessageKey(turnId: turnId, isMine: isMine)
         let messageObj = messageMapTable[key]
         if messageObj != nil {
-            if displayMode == .preText {
-                updateContentWithPreTextMode(content: message, turnId: turnId, isMine: isMine, isInterrupted: isInterrupted)
-            } else {
-                updateContent(content: message, turnId: turnId, isMine: isMine, isInterrupted: isInterrupted)
+            if displayMode == .text {
+                updateMessageForTextMode(content: message, turnId: turnId, isMine: isMine, isInterrupted: isInterrupted, isFinal: isFinal)
+            } else if displayMode == .words {
+                updateMessageForWordsMode(content: message, turnId: turnId, isMine: isMine, isInterrupted: isInterrupted, isFinal: isFinal)
+            } else if displayMode == .chunk {
+                updateMessageForChunkMode(content: message, turnId: turnId, isMine: isMine, isInterrupted: isInterrupted, isFinal: isFinal)
             }
         } else {
-            if displayMode == .preText {
-                startNewMessageWithPreTextMode(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId)
-            } else {
-                startNewMessage(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId)
+            if displayMode == .text {
+                createNewMessageForTextMode(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId, isInterrupted: isInterrupted, isFinal: isFinal)
+            } else if displayMode == .words {
+                createNewMessageForWordsMode(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId, isInterrupted: isInterrupted, isFinal: isFinal)
+            } else if displayMode == .chunk {
+                createNewMessageForChunkMode(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId, isInterrupted: isInterrupted, isFinal: isFinal)
             }
         }
     }
     
-    func reduceLLMInterrupt() {
-        stopTimer()
-    }
-    
-    private func startNewMessage(content: String, timestamp: Int64, isMine: Bool, turnId: Int) {
-        let message = Message()
-        message.content = content
-        message.isMine = isMine
-        message.isFinal = false
-        message.turn_id = turnId
-        message.timestamp = timestamp
-        
-        let key = generateMessageKey(turnId: turnId, isMine: isMine)
-        messageMapTable[key] = message
-        messages.append(message)
-        sortMessages()
-        
-        delegate?.startNewMessage()
-    }
-    
-    private func startNewMessageWithPreTextMode(content: String, timestamp: Int64, isMine: Bool, turnId: Int) {
-        if timer != nil {
+    func reduceLLMInterrupt(turnId: Int) {
+        if displayMode == .text {
             stopTimer()
+            let key = generateMessageKey(turnId: turnId, isMine: false)
+            let message = messageMapTable[key]
+            message?.isInterrupted = true
+        } else if displayMode == .words {
+            //do nothing now
+        } else if displayMode == .chunk {
+            //do nothing now
         }
-        
-        for message in messageMapTable.values {
-            if message.streamingState != nil {
-                message.streamingState = nil
-            }
-        }
-        
-        let message = Message()
-        message.content = content
-        message.isMine = isMine
-        message.isFinal = false
-        message.turn_id = turnId
-        message.timestamp = timestamp
-        
-        let key = generateMessageKey(turnId: turnId, isMine: isMine)
-        messageMapTable[key] = message
-        messages.append(message)
-        sortMessages()
-        
-        delegate?.startNewMessage()
-    }
-    
-    private func updateContentWithPreTextMode(content: String, turnId: Int, isMine: Bool, isInterrupted: Bool) {
-        if isInterrupted {
-            self.timer?.invalidate()
-            self.timer = nil
-            return
-        }
-        
-        let key = generateMessageKey(turnId: turnId, isMine: isMine)
-        let message = messageMapTable[key]
-                
-        if isMine {
-            message?.content = content
-            message?.turn_id = turnId
-            message?.isInterrupted = isInterrupted
-            delegate?.messageUpdated()
-        } else {
-            // Initialize streaming display status
-            if message?.streamingState == nil {
-                message?.streamingState = StreamingState()
-                message?.streamingState?.index = 0
-                message?.streamingState?.content = content
-            } else {
-                // If the streaming state already exists, update the starting index and content.
-                let currentDisplayedContent = message?.content ?? ""
-                let startIndex = currentDisplayedContent.count
-                message?.streamingState?.index = startIndex
-                message?.streamingState?.content = content
-            }
-            
-            if timer == nil {
-                let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { [weak self] timer in
-                    guard let self = self,
-                          let streamingState = message?.streamingState,
-                          let targetContent = streamingState.content else {
-                        self?.stopTimer()
-                        return
-                    }
-                    
-                    // Take one character at a time
-                    let charactersPerStep = 1
-                    let nextIndex = min(streamingState.index + charactersPerStep, targetContent.count)
-                    
-                    // Extract the currently displayed content
-                    let startIndex = targetContent.startIndex
-                    let endIndex = targetContent.index(startIndex, offsetBy: nextIndex)
-                    let displayContent = String(targetContent[startIndex..<endIndex])
-                                        
-                    // Update message content
-                    message?.content = displayContent
-                    message?.turn_id = turnId
-                    message?.isInterrupted = isInterrupted
-                    
-                    // Update index
-                    streamingState.index = nextIndex
-                    
-                    // Refresh UI
-                    delegate?.messageUpdated()
-                    
-                    // If all content has been displayed, stop the timer.
-                    if nextIndex >= targetContent.count {
-                        self.stopTimer()
-                        // Clear status
-                        message?.streamingState = nil
-                    }
-                })
-                self.timer = timer
-                RunLoop.main.add(timer, forMode: .common)
-            }
-        }
-    }
-    
-    private func updateContent(content: String, turnId: Int, isMine: Bool, isInterrupted: Bool) {
-        let key = generateMessageKey(turnId: turnId, isMine: isMine)
-        let message = messageMapTable[key]
-        message?.content = content
-        message?.turn_id = turnId
-        message?.isInterrupted = isInterrupted
-        
-        delegate?.messageUpdated()
     }
     
     private func updateImageContent(uuid: String, isMine: Bool, state: ImageState) {
@@ -209,7 +99,7 @@ extension ChatMessageViewModel: MessageStandard {
         delegate?.messageUpdated()
     }
     
-    private func sortMessages() {
+    internal func sortMessages() {
         messages.sort { m1, m2 in
             let turn1 = m1.turn_id >= 0 ? m1.turn_id : m1.local_turn
             let turn2 = m2.turn_id >= 0 ? m2.turn_id : m2.local_turn
@@ -231,6 +121,7 @@ extension ChatMessageViewModel: MessageStandard {
     func stopTimer() {
         timer?.invalidate()
         timer = nil
+        delegate?.messageFinished()
     }
     
 }
