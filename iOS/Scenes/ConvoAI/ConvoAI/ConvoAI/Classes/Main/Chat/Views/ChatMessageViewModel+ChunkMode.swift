@@ -6,6 +6,7 @@
 //
 
 import Foundation
+/// Chunk mode, transcript display all content at once.
 extension ChatMessageViewModel {
     internal func createNewMessageForChunkMode(content: String, timestamp: Int64, isMine: Bool, turnId: Int, isInterrupted: Bool, isFinal: Bool) {
         let message = Message()

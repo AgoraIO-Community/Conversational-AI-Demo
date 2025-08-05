@@ -70,6 +70,9 @@
 "settings.transcript.render.word.mode" = "Word 模式";
 "settings.transcript.render.text.mode" = "Text - 同步模式";
 "settings.transcript.render.pretext.mode" = "Text - 字幕先出模式";
+"settings.transcript.render.word.mode.description" = "逐字渲染，字幕和音频同步";
+"settings.transcript.render.pretext.mode.description" = "字幕和语音同步展示的Text模式";
+"settings.transcript.render.text.mode.description" = "字幕一次性渲染";
 "settings.noise.forceResponse" = "Force Response";
 "settings.noise.bhvs" = "启用 对话人声锁定";
 "settings.digital.human" = "数字人";

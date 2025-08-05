@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+/// Words mode, transcript and audio display in sync.
 extension ChatMessageViewModel {
     internal func createNewMessageForWordsMode(content: String, timestamp: Int64, isMine: Bool, turnId: Int, isInterrupted: Bool, isFinal: Bool) {
         let message = Message()

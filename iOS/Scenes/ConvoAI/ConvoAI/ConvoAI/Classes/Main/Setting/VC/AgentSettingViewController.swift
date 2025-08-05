@@ -236,7 +236,7 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
         guard let currentLanguage = AppContext.preferenceManager()?.preference.language else { return }
         
         let currentIndex = allLanguages.firstIndex { $0.languageName == currentLanguage.languageName } ?? 0
-        let table = AgentSelectTableView(items: allLanguages.map { $0.languageName }) { index in
+        let table = AgentSelectTableView(items: allLanguages.map { AgentSelectTableItem(title: $0.languageName, subTitle: "") }) { index in
             let selected = allLanguages[index]
             if currentLanguage.languageCode == selected.languageCode { return }
             self.onClickHideTable(nil)
@@ -295,7 +295,7 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
         let allModes = TranscriptDisplayMode.allCases
         let currentIndex = allModes.firstIndex { $0 == currentMode } ?? 0
         
-        let table = AgentSelectTableView(items: allModes.map { $0.renderDisplayName }) { index in
+        let table = AgentSelectTableView(items: allModes.map { AgentSelectTableItem(title: $0.renderDisplayName, subTitle: $0.renderSubtitle) }) { index in
             let selected = allModes[index]
             if currentMode == selected { return }
             self.onClickHideTable(nil)

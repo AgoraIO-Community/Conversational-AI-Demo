@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Text display mode processing logic, text transcript appear first mode, 10 characters per second.
 extension ChatMessageViewModel {
     internal func createNewMessageForTextMode(content: String, timestamp: Int64, isMine: Bool, turnId: Int, isInterrupted: Bool, isFinal: Bool) {
         if timer != nil {

@@ -338,6 +338,22 @@ enum TranscriptDisplayMode: CaseIterable {
         
         return "" // Should not happen
     }
+
+    var renderSubtitle: String {
+        if self == .words {
+            return ResourceManager.L10n.Settings.transcriptRenderWordModeDescription
+        }
+        
+        if self == .chunk {
+            return ResourceManager.L10n.Settings.transcriptRenderTextModeDescription
+        }
+        
+        if self == .text {
+            return ResourceManager.L10n.Settings.transcriptRenderPretextModeDescription
+        }
+        
+        return ""
+    }
 }
 
 extension AgentPreferenceManagerDelegate {
