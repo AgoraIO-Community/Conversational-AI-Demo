@@ -52,6 +52,7 @@ class CovLoginActivity : BaseActivity<CovActivityLoginBinding>() {
 
     override fun getViewBinding(): CovActivityLoginBinding = CovActivityLoginBinding.inflate(layoutInflater)
 
+    override fun supportOnBackPressed(): Boolean = false
 
     override fun initView() {
 

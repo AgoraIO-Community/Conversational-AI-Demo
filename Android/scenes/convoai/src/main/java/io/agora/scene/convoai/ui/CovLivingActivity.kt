@@ -76,6 +76,8 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     override fun getViewBinding(): CovActivityLivingBinding = CovActivityLivingBinding.inflate(layoutInflater)
 
+    override fun supportOnBackPressed(): Boolean = false
+
     override fun initView() {
         setupView()
         // Create RTC and RTM engines
@@ -92,10 +94,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         observeViewModelStates()
 
         viewModel.getPresetTokenConfig()
-    }
-
-    override fun onHandleOnBackPressed() {
-
     }
 
     override fun finish() {

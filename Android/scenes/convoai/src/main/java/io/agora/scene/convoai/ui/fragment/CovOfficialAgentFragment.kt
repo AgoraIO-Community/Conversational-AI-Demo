@@ -9,13 +9,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
+import io.agora.scene.common.ui.OnFastClickListener
+import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.convoai.CovLogger
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.CovAgentManager
+import io.agora.scene.convoai.databinding.CovAvatarSelectorCloseItemBinding
 import io.agora.scene.convoai.databinding.CovFragmentOfficialAgentBinding
+import io.agora.scene.convoai.databinding.CovItemOfficialAgentBinding
 import io.agora.scene.convoai.ui.CovLivingActivity
+import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog.AvatarItem
 
 class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>() {
 
@@ -34,7 +39,6 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
         setupAdapter()
         loadPresets()
     }
-
 
 
     private fun initViews() {
@@ -106,7 +110,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
 
     inner class OfficialAgentAdapter(
         private val onItemClick: (CovAgentPreset) -> Unit
-    ) : RecyclerView.Adapter<OfficialAgentAdapter.ViewHolder>() {
+    ) : RecyclerView.Adapter<OfficialAgentAdapter.OfficialAgentViewHolder>() {
 
         private var presets: List<CovAgentPreset> = emptyList()
 
@@ -115,37 +119,43 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             notifyDataSetChanged()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.cov_item_official_agent, parent, false)
-            return ViewHolder(view)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfficialAgentViewHolder {
+            return OfficialAgentViewHolder(
+                CovItemOfficialAgentBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
         }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: OfficialAgentViewHolder, position: Int) {
             holder.bind(presets[position])
         }
 
         override fun getItemCount(): Int = presets.size
 
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val ivAvatar: ImageView = itemView.findViewById(R.id.ivAvatar)
-            private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
-            private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
-
-            init {
-                itemView.setOnClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        onItemClick(presets[position])
-                    }
-                }
-            }
+        inner class OfficialAgentViewHolder(private val binding: CovItemOfficialAgentBinding) : RecyclerView.ViewHolder
+            (binding.root) {
 
             fun bind(preset: CovAgentPreset) {
-                tvTitle.text = preset.display_name
-                tvDescription.text = preset.display_name
-                // For now, using default avatar
-                ivAvatar.setImageResource(R.drawable.cov_default_avatar)
+                binding.apply {
+                    tvTitle.text = preset.display_name
+                    tvDescription.text = preset.display_name
+                    // For now, using default avatar
+                    GlideImageLoader.load(
+                        ivAvatar,
+                        "xxx",
+                        io.agora.scene.common.R.drawable.common_default_agent,
+                        io.agora.scene.common.R.drawable.common_default_agent
+                    )
+                    rootView.setOnClickListener {
+                        val position = adapterPosition
+                        if (position != RecyclerView.NO_POSITION) {
+                            onItemClick(presets[position])
+                        }
+                    }
+                }
             }
         }
     }

@@ -27,9 +27,9 @@ class WelcomeActivity : BaseActivity<WelcomeActivityBinding>() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun immersiveMode(): ImmersiveMode {
-        return ImmersiveMode.FULLY_IMMERSIVE
-    }
+    override fun immersiveMode(): ImmersiveMode  = ImmersiveMode.FULLY_IMMERSIVE
+
+    override fun supportOnBackPressed(): Boolean = false
 
     override fun initView() {
     }

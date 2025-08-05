@@ -59,6 +59,8 @@ class CovAgentListActivity : BaseActivity<CovActivityAgentListBinding>() {
 
     override fun getViewBinding(): CovActivityAgentListBinding = CovActivityAgentListBinding.inflate(layoutInflater)
 
+    override fun supportOnBackPressed(): Boolean = false
+
     override fun initView() {
         mBinding?.apply {
             btnInfo.setOnClickListener {
