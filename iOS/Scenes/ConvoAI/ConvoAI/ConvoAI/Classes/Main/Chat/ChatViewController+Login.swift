@@ -68,43 +68,7 @@ extension ChatViewController: LoginManagerDelegate {
         }
         
         await MainActor.run {
-//            let loginVC = LoginViewController()
-//            loginVC.modalPresentationStyle = .overFullScreen
-//            loginVC.loginAction = { [weak self] in
-//                let baseUrl = AppContext.shared.baseServerUrl
-//                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
-//            }
-//            loginVC.signupAction = { [weak self] in
-//                SSOWebViewController.clearWebViewCache()
-//                let baseUrl = AppContext.shared.baseServerUrl
-//                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
-//            }
-//            self.present(loginVC, animated: false)
+            LoginViewController.start(from: self)
         }
-    }
-    
-    private func goToSSO(urlString: String) {
-        let ssoWebVC = SSOWebViewController()
-        ssoWebVC.urlString = urlString
-        ssoWebVC.completionHandler = { [weak self] token in
-            guard let self = self else { return }
-            if let token = token {
-                self.addLog("SSO token: \(token)")
-                let model = LoginModel()
-                model.token = token
-                AppContext.loginManager()?.updateUserInfo(userInfo: model)
-                let localToken = UserCenter.user?.token ?? ""
-                self.addLog("local token: \(localToken)")
-                self.bottomBar.startLoadingAnimation()
-                LoginApiService.getUserInfo { [weak self] error in
-                    self?.bottomBar.stopLoadingAnimation()
-                    if let err = error {
-                        AppContext.loginManager()?.logout(reason: .sessionExpired)
-                        SVProgressHUD.showInfo(withStatus: err.localizedDescription)
-                    }
-                }
-            }
-        }
-        self.navigationController?.pushViewController(ssoWebVC, animated: false)
     }
 }

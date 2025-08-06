@@ -214,7 +214,7 @@ extension ResourceManager {
             public static let permissionCameraTitle = ResourceManager.localizedString("photo.permission.camera.title")
             public static let permissionCameraMessage = ResourceManager.localizedString("photo.permission.camera.message")
         }
-        
+
         public enum AgentList {
             public static let contact = ResourceManager.localizedString("agent.list.contact")
             public static let input = ResourceManager.localizedString("agent.list.input")
