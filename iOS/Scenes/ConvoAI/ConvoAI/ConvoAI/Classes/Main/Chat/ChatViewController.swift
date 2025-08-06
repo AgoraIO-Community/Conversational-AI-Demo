@@ -112,13 +112,6 @@ public class ChatViewController: UIViewController {
         return view
     }()
     
-    internal lazy var welcomeMessageView: TypewriterLabel = {
-        let view = TypewriterLabel()
-        view.font = UIFont.boldSystemFont(ofSize: 20)
-        view.startAnimation()
-        return view
-    }()
-    
     internal lazy var animateContentView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.themColor(named: "ai_fill4")

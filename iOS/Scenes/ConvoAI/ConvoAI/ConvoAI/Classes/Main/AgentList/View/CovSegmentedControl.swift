@@ -1,0 +1,134 @@
+//
+//  CovSegmentedControl.swift
+//  ConvoAI
+//
+//  Created by HeZhengQing on 2024/07/25.
+//
+
+import UIKit
+import SnapKit
+import Common
+
+protocol CovSegmentedControlDelegate: AnyObject {
+    func didChange(to index: Int)
+}
+
+class CovSegmentedControl: UIView {
+
+    private var buttonTitles: [String]!
+    private var buttons: [UIButton] = []
+    private var selectorView: UIView!
+    private var stackView: UIStackView!
+
+    weak var delegate: CovSegmentedControlDelegate?
+
+    var textColor = UIColor.themColor(named: "ai_toast")
+    var selectorTextColor = UIColor.themColor(named: "ai_icontext_inverse1")
+
+    var selectedIndex: Int = 0 {
+        didSet {
+            if oldValue != selectedIndex {
+                updateViewForSelectedIndex()
+            }
+        }
+    }
+
+    convenience init(frame: CGRect, buttonTitles: [String]) {
+        self.init(frame: frame)
+        self.buttonTitles = buttonTitles
+        setupUI()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.height * 0.5
+        selectorView?.layer.cornerRadius = bounds.height * 0.5
+    }
+
+    func setButtonTitles(buttonTitles: [String]) {
+        self.buttonTitles = buttonTitles
+        updateButtons()
+    }
+
+    private func setupUI() {
+        self.backgroundColor = UIColor.themColor(named: "ai_fill2")
+        selectorView = UIView()
+        selectorView.backgroundColor = UIColor.themColor(named: "ai_toast")
+        addSubview(selectorView)
+        configStackView()
+        updateButtons()
+        
+        selectorView.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.height.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(1.0 / CGFloat(buttons.count))
+            make.leading.equalToSuperview()
+        }
+    }
+
+    private func updateButtons() {
+        createButtons()
+        updateViewForSelectedIndex()
+    }
+
+    private func configStackView() {
+        stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+
+    private func createButtons() {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        buttons.removeAll()
+
+        for buttonTitle in buttonTitles {
+            let button = UIButton(type: .system)
+            button.setTitle(buttonTitle, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+            button.addTarget(self, action: #selector(buttonAction(sender:)), for: .touchUpInside)
+            buttons.append(button)
+            stackView.addArrangedSubview(button)
+        }
+    }
+
+    @objc func buttonAction(sender: UIButton) {
+        guard let index = buttons.firstIndex(of: sender) else { return }
+        if selectedIndex != index {
+            selectedIndex = index
+            delegate?.didChange(to: index)
+        }
+    }
+
+    private func updateViewForSelectedIndex() {
+        updateSelectorPosition()
+        updateButtonColors()
+    }
+
+    private func updateSelectorPosition() {
+        guard !buttons.isEmpty else { return }
+        let selectedButton = buttons[selectedIndex]
+
+        selectorView.snp.remakeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.height.equalToSuperview()
+            make.width.equalTo(selectedButton.snp.width)
+            make.centerX.equalTo(selectedButton.snp.centerX)
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.layoutIfNeeded()
+        }
+    }
+
+    private func updateButtonColors() {
+        for (buttonIndex, btn) in buttons.enumerated() {
+            let isSelected = (buttonIndex == selectedIndex)
+            btn.setTitleColor(isSelected ? selectorTextColor : textColor, for: .normal)
+        }
+    }
+}

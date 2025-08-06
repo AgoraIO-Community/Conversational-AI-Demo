@@ -11,62 +11,73 @@ import SnapKit
 import SVProgressHUD
 
 class LoginViewController: UIViewController {
-    var loginAction: (() -> ())?
-    var signupAction: (() -> ())?
     
-    private lazy var containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_fill5")
-        view.layer.cornerRadius = 16
-        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    static func start(from presentingVC: UIViewController) {
+        let nav = UINavigationController(rootViewController: LoginViewController())
+        nav.modalPresentationStyle = .overCurrentContext
+        presentingVC.present(nav, animated: true)
+    }
+    
+    var completion: (() -> Void)?
+    
+    internal lazy var welcomeMessageView: TypewriterLabel = {
+        let view = TypewriterLabel()
+        view.font = UIFont.boldSystemFont(ofSize: 20)
+        view.startAnimation()
         return view
     }()
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Login.title
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.textColor = UIColor.themColor(named: "ai_icontext1")
-        return label
+    private lazy var centerImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage.ag_named("img_login_bg")
+        return imageView
     }()
     
-    private lazy var subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Login.description
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.numberOfLines = 0
-        label.textColor = UIColor.themColor(named: "ai_icontext1")
-        label.isHidden = true
-        return label
-    }()
-    
-    private lazy var logoView: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage.ag_named("ic_login_logo")
-        return view
-    }()
+    private var gradientLayer: CAGradientLayer?
     
     private lazy var phoneLoginButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.themColor(named: "ai_icontext1")
-        button.layer.cornerRadius = 12
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        let button = UIButton(type: .custom)
         button.setTitle(ResourceManager.L10n.Login.buttonTitle, for: .normal)
-        button.setTitleColor(UIColor.themColor(named: "ai_icontext_inverse1"), for: .normal)
-        button.addTarget(self, action: #selector(phoneLoginTapped), for: .touchUpInside)
+        button.titleLabel?.font = .systemFont(ofSize: 18)
+        button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
+        button.layer.cornerRadius = 20
+        button.clipsToBounds = true
+        button.addTarget(self, action: #selector(onClickLogin), for: .touchUpInside)
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor(hexString: "#17C5FF")?.cgColor as Any,
+            UIColor(hexString: "#315DFF")?.cgColor as Any,
+            UIColor(hexString: "#446CFF")?.cgColor as Any
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        button.layer.insertSublayer(gradientLayer, at: 0)
+        self.gradientLayer = gradientLayer
+        
         return button
     }()
     
-    private lazy var signUpButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.clear
-        button.layer.cornerRadius = 12
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.themColor(named: "ai_line2").cgColor
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18)
-        button.setTitle(ResourceManager.L10n.Login.signup, for: .normal)
-        button.setTitleColor(UIColor.themColor(named: "ai_icontext1"), for: .normal)
-        button.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
+    private lazy var registerButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("海外的按钮2", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 20
+        button.layer.borderWidth = 0.5
+        button.layer.borderColor = UIColor(white: 1.0, alpha: 0.2).cgColor
+        button.clipsToBounds = true
+        button.addTarget(self, action: #selector(onClickRegister), for: .touchUpInside)
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor(hexString: "#181818")?.cgColor as Any,
+            UIColor(hexString: "#131313")?.cgColor as Any
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
+        button.layer.insertSublayer(gradientLayer, at: 0)
         return button
     }()
     
@@ -156,123 +167,81 @@ class LoginViewController: UIViewController {
         return label
     }()
     
-    private lazy var closeButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage.ag_named("ic_login_close"), for: .normal)
-        button.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
-        button.tintColor = UIColor.themColor(named: "ai_icontext4")
-        return button
-    }()
-    
-    private let backgroundView = UIView()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        
+        SSOWebViewController.clearWebViewCache()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        animateIn()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        gradientLayer?.frame = phoneLoginButton.bounds
+        if let registerGradient = registerButton.layer.sublayers?.first as? CAGradientLayer {
+            registerGradient.frame = registerButton.bounds
+        }
+        CATransaction.commit()
+    }
+    
+    private func goToSSOViewController() {
+        let ssoWebVC = SSOWebViewController()
+        let baseUrl = AppContext.shared.baseServerUrl
+        ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/login"
+        self.navigationController?.pushViewController(ssoWebVC, animated: true)
+    }
+    
+    func addLog(_ txt: String) {
+        ConvoAILogger.info(txt)
     }
     
     private func setupUI() {
-        backgroundView.backgroundColor = UIColor.themColor(named: "ai_mask1")
-        backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backgroundTapped)))
-        
-        view.addSubview(backgroundView)
-        view.addSubview(containerView)
-        
-        containerView.addSubview(titleLabel)
-        containerView.addSubview(subtitleLabel)
-        containerView.addSubview(logoView)
-        containerView.addSubview(phoneLoginButton)
-        containerView.addSubview(signUpButton)
-        containerView.addSubview(warningButton)
-        containerView.addSubview(termsCheckbox)
-        containerView.addSubview(termsTextLabel)
-        containerView.addSubview(closeButton)
+        view.backgroundColor = UIColor(hex: "#0A0A0A")
+        view.addSubview(centerImageView)
+        view.addSubview(welcomeMessageView)
+        view.addSubview(phoneLoginButton)
+        view.addSubview(registerButton)
+        view.addSubview(termsCheckbox)
+        view.addSubview(termsTextLabel)
+        view.addSubview(warningButton)
     }
     
     private func setupConstraints() {
-        backgroundView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        centerImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(100)
         }
-        
-        containerView.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
-            make.height.equalTo(395)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(30)
-            make.right.equalTo(logoView.snp.left).offset(-10)
-            make.centerY.equalTo(logoView)
-        }
-        
-        subtitleLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(logoView.snp.bottom).offset(-1)
-            make.left.right.equalTo(titleLabel)
-        }
-        
-        logoView.snp.makeConstraints { make in
-            make.top.equalTo(40)
-            make.right.equalTo(-33)
-            make.width.height.equalTo(64)
-        }
-        
-        phoneLoginButton.snp.makeConstraints { make in
-            make.top.equalTo(logoView.snp.bottom).offset(46)
-            make.left.equalTo(30)
-            make.right.equalTo(-30)
-            make.height.equalTo(58)
-        }
-        
-        signUpButton.snp.makeConstraints { make in
-            make.top.equalTo(phoneLoginButton.snp.bottom).offset(20)
-            make.left.equalTo(30)
-            make.right.equalTo(-30)
-            make.height.equalTo(58)
-        }
-        
         termsCheckbox.snp.makeConstraints { make in
-            make.top.equalTo(signUpButton.snp.bottom).offset(30)
-            make.left.equalTo(titleLabel)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-40)
+            make.left.equalTo(phoneLoginButton.snp.left)
             make.width.height.equalTo(20)
         }
-        
         termsTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(termsCheckbox)
+            make.centerY.equalTo(termsCheckbox)
             make.left.equalTo(termsCheckbox.snp.right).offset(8)
-            make.right.equalTo(-30)
+            make.right.equalTo(phoneLoginButton.snp.right)
         }
-        
         warningButton.snp.makeConstraints { make in
             make.left.equalTo(termsCheckbox.snp.left).offset(-5)
             make.bottom.equalTo(termsCheckbox.snp.top).offset(-3)
         }
-        
-        closeButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(10)
-            make.right.equalToSuperview().offset(-10)
-            make.width.height.equalTo(24)
+        registerButton.snp.makeConstraints { make in
+            make.bottom.equalTo(termsCheckbox.snp.top).offset(-50)
+            make.left.equalToSuperview().offset(30)
+            make.right.equalToSuperview().offset(-30)
+            make.height.equalTo(58)
         }
-    }
-    
-    private func animateIn() {
-        containerView.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
-        UIView.animate(withDuration: 0.3) {
-            self.containerView.transform = .identity
+        phoneLoginButton.snp.makeConstraints { make in
+            make.bottom.equalTo(registerButton.snp.top).offset(-15)
+            make.left.right.equalTo(registerButton)
+            make.height.equalTo(58)
         }
-    }
-    
-    private func animateOut(completion: @escaping () -> Void) {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.containerView.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
-            self.backgroundView.alpha = 0
-        }) { _ in
-            completion()
+        welcomeMessageView.snp.makeConstraints { make in
+            make.bottom.equalTo(phoneLoginButton.snp.top).offset(-40)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview()
         }
     }
     
@@ -284,26 +253,18 @@ class LoginViewController: UIViewController {
         warningButton.layer.add(animation, forKey: "shake")
     }
     
-    @objc private func phoneLoginTapped() {
-        if !termsCheckbox.isSelected {
-            warningButton.isHidden = false
-            shakeWarningLabel()
-            return
-        }
-        
-        loginAction?()
-        self.dismiss()
+    @objc private func onClickRegister() {
+        // TODO: Handle register action
+        print("Register button tapped")
     }
     
-    @objc private func signUpTapped() {
+    @objc private func onClickLogin() {
         if !termsCheckbox.isSelected {
             warningButton.isHidden = false
             shakeWarningLabel()
             return
         }
-        
-        signupAction?()
-        self.dismiss()
+        goToSSOViewController()
     }
     
     @objc private func termsCheckboxTapped() {
@@ -326,8 +287,8 @@ class LoginViewController: UIViewController {
         
         let locationOfTouchInLabel = gesture.location(in: label)
         let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInLabel,
-                                                          in: textContainer,
-                                                          fractionOfDistanceBetweenInsertionPoints: nil)
+                                                            in: textContainer,
+                                                            fractionOfDistanceBetweenInsertionPoints: nil)
         
         text.enumerateAttribute(.init(rawValue: "LinkType"), in: NSRange(location: 0, length: text.length)) { value, range, _ in
             if range.contains(indexOfCharacter) {
@@ -363,17 +324,7 @@ class LoginViewController: UIViewController {
         self.present(termsServiceVC, animated: true)
     }
     
-    @objc private func backgroundTapped() {
-        dismiss()
-    }
-    
-    @objc private func closeTapped() {
-        dismiss()
-    }
-    
     private func dismiss() {
-        animateOut { [weak self] in
-            self?.dismiss(animated: false)
-        }
+        self.dismiss(animated: false)
     }
 }

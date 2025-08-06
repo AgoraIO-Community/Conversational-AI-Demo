@@ -11,7 +11,6 @@ import SVProgressHUD
 
 extension ChatViewController: LoginManagerDelegate {
     func loginManager(_ manager: LoginManager, userInfoDidChange userInfo: LoginModel?, loginState: Bool) {
-        welcomeMessageView.isHidden = loginState
         topBar.updateButtonVisible(loginState)
         if loginState {
             // setup presets
@@ -34,7 +33,6 @@ extension ChatViewController: LoginManagerDelegate {
     
     func userLoginSessionExpired() {
         addLog("[Call] userLoginSessionExpired")
-        welcomeMessageView.isHidden = false
         topBar.updateButtonVisible(false)
         SSOWebViewController.clearWebViewCache()
         stopLoading()
@@ -70,18 +68,18 @@ extension ChatViewController: LoginManagerDelegate {
         }
         
         await MainActor.run {
-            let loginVC = LoginViewController()
-            loginVC.modalPresentationStyle = .overFullScreen
-            loginVC.loginAction = { [weak self] in
-                let baseUrl = AppContext.shared.baseServerUrl
-                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
-            }
-            loginVC.signupAction = { [weak self] in
-                SSOWebViewController.clearWebViewCache()
-                let baseUrl = AppContext.shared.baseServerUrl
-                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
-            }
-            self.present(loginVC, animated: false)
+//            let loginVC = LoginViewController()
+//            loginVC.modalPresentationStyle = .overFullScreen
+//            loginVC.loginAction = { [weak self] in
+//                let baseUrl = AppContext.shared.baseServerUrl
+//                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/login")
+//            }
+//            loginVC.signupAction = { [weak self] in
+//                SSOWebViewController.clearWebViewCache()
+//                let baseUrl = AppContext.shared.baseServerUrl
+//                self?.goToSSO(urlString: "\(baseUrl)/v1/convoai/sso/signup")
+//            }
+//            self.present(loginVC, animated: false)
         }
     }
     
@@ -101,7 +99,7 @@ extension ChatViewController: LoginManagerDelegate {
                 LoginApiService.getUserInfo { [weak self] error in
                     self?.bottomBar.stopLoadingAnimation()
                     if let err = error {
-                        AppContext.loginManager()?.logout()
+                        AppContext.loginManager()?.logout(reason: .sessionExpired)
                         SVProgressHUD.showInfo(withStatus: err.localizedDescription)
                     }
                 }

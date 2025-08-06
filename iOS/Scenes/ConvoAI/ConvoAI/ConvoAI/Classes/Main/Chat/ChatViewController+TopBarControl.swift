@@ -11,7 +11,7 @@ import SVProgressHUD
 
 extension ChatViewController {
     @objc internal func onClickInformationButton() {
-        AgentInformationViewController.show(in: self, rtcManager: rtcManager)
+        AgentInformationViewController.show(in: self)
     }
     
     @objc internal func onClickWifiInfoButton() {

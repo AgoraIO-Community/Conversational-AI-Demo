@@ -27,7 +27,7 @@ class ChatWindowState {
 extension ChatViewController {
     internal func setupViews() {
         view.backgroundColor = .black
-        [animateContentView, fullSizeContainerView, upperBackgroundView, lowerBackgroundView, messageMaskView, messageView, smallSizeContainerView, agentStateView, topBar, welcomeMessageView, bottomBar, volumeAnimateView, annotationView, devModeButton, sendMessageButton].forEach { view.addSubview($0) }
+        [animateContentView, fullSizeContainerView, upperBackgroundView, lowerBackgroundView, messageMaskView, messageView, smallSizeContainerView, agentStateView, topBar, bottomBar, volumeAnimateView, annotationView, devModeButton, sendMessageButton].forEach { view.addSubview($0) }
         [miniView].forEach { smallSizeContainerView.addSubview($0) }
         [remoteAvatarView].forEach { miniView.addSubview($0) }
         [localVideoView].forEach { fullSizeContainerView.addSubview($0) }
@@ -99,13 +99,6 @@ extension ChatViewController {
             make.left.right.equalTo(0)
             make.height.equalTo(44)
         }
-                
-        welcomeMessageView.snp.makeConstraints { make in
-            make.left.equalTo(29)
-            make.right.equalTo(-29)
-            make.height.equalTo(60)
-            make.bottom.equalTo(bottomBar.snp.top).offset(-41)
-        }
         
         devModeButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -164,7 +157,6 @@ extension ChatViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
 
         let isLogin = UserCenter.shared.isLogin()
-        welcomeMessageView.isHidden = isLogin
         topBar.updateButtonVisible(isLogin)
     }
         

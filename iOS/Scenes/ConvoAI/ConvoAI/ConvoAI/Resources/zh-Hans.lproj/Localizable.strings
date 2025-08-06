@@ -155,3 +155,11 @@
 "photo.permission.settings" = "去设置";
 "photo.permission.skip" = "跳过";
 "photo.permission.enable" = "开启权限";
+
+// agent list
+"agent.list.contact" = "请联系声网员工获取自定义智能体ID";
+"agent.list.input" = "输入智能体ID获取";
+"agent.list.custom" = "自定义智能体";
+"agent.list.official" = "官方智能体";
+"agent.list.get" = "获取";
+"agent.list.get.agent" = "获取你的智能助手";
