@@ -203,6 +203,19 @@ class ConversationalAIAPIImpl(val config: ConversationalAIAPIConfig) : IConversa
                     }
                 }
 
+                /**
+                 * {object=message.sal_status, status=VP_REGISTER_SUCCESS, timestamp=18400, data_type=message, message_id=44aff975, send_ts=1754466757510}
+                 */
+                MessageType.VOICE_PRINT -> {
+                    val status = msg["status"] as? String ?: "Unknown"
+
+                    val agentUserId = publisherId
+                    callMessagePrint(TAG, "<<< [onAgentVoicePrint] $agentUserId $status")
+                    conversationalAIHandlerHelper.notifyEventHandlers {
+                        it.onAgentVoicePrint(agentUserId, status)
+                    }
+                }
+
                 else -> return
             }
         }

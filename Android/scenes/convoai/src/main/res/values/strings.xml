@@ -124,6 +124,7 @@
     <string name="cov_custom_agent_input_tip">Enter your custom agent ID to get</string>
     <string name="cov_custom_agent_get">Get</string>
     <string name="cov_voiceprint_lock">Voice print</string>
+    <string name="cov_voiceprint_lock_success">The engine will learn your voice print to filter out other people\'s voices and background noise.</string>
     <string name="cov_word_mode">Word-by-Word</string>
     <string name="cov_word_mode_tips">The transcript appears one word at a time, synchronized with the AI\'s speech.</string>
     <string name="cov_text_first_mode">Streaming Text</string>

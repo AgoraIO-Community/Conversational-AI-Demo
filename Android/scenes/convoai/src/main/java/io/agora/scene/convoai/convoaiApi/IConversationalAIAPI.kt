@@ -361,6 +361,9 @@ enum class MessageType(val value: String) {
     /** Message receipt*/
     MESSAGE_RECEIPT("message.info"),
 
+    /**voice print register*/
+    VOICE_PRINT("message.sal_status"),
+
     /** Unknown type */
     UNKNOWN("unknown");
 
@@ -562,6 +565,13 @@ interface IConversationalAIAPIEventHandler {
      * @param receipt message receipt info
      */
     fun onMessageReceiptUpdated(agentUserId: String, receipt: MessageReceipt)
+
+    /**
+     * Called when message receipt is updated
+     * @param agentUserId Agent User ID
+     * @param state voice print state
+     */
+    fun onAgentVoicePrint(agentUserId: String, state: String)
 
     /**
      * Called when transcript content is updated.

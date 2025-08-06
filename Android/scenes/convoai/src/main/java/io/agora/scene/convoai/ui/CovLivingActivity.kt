@@ -514,6 +514,17 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 }
             }
         }
+        lifecycleScope.launch {  // Observe voice print updates
+            viewModel.voicePrint.collect { voicePrint ->
+                if (isSelfSubRender) return@collect
+                if (voicePrint == "VP_REGISTER_SUCCESS") {
+                    mBinding?.clTop?.showVoicePrint()
+                    ToastUtil.show(R.string.cov_voiceprint_lock_success, Toast.LENGTH_LONG)
+                } else {
+                    mBinding?.clTop?.hideVoicePrint()
+                }
+            }
+        }
     }
 
     // vision video view

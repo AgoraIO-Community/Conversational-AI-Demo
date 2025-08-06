@@ -1,8 +1,11 @@
 package io.agora.scene.convoai.ui.widget
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.agora.rtc2.Constants
 import io.agora.scene.convoai.databinding.CovActivityLivingTopBinding
@@ -263,6 +266,35 @@ class CovLivingTopView @JvmOverloads constructor(
         countDownJob?.cancel()
         countDownJob = null
     }
+
+    fun showVoicePrint() {
+        binding.cvVoicePrint.apply {
+            // Set initial state: invisible, scaled down and transparent
+            alpha = 0f
+            scaleX = 0.3f
+            scaleY = 0.3f
+            isVisible = true
+
+            // Create scale animations
+            val scaleXAnimator = ObjectAnimator.ofFloat(this, "scaleX", 0.3f, 1.0f)
+            val scaleYAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0.3f, 1.0f)
+            val alphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 0f, 1f)
+
+            // Create animator set and configure
+            val animatorSet = AnimatorSet().apply {
+                playTogether(scaleXAnimator, scaleYAnimator, alphaAnimator)
+                duration = 300 // 300ms animation
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+
+            animatorSet.start()
+        }
+    }
+
+    fun hideVoicePrint() {
+        binding.cvVoicePrint.isVisible = false
+    }
+
 
     /**
      * Update timer text and color based on time and mode.
