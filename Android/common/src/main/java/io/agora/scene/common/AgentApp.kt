@@ -21,6 +21,7 @@ import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.LocaleManager
 import android.content.Context
 import androidx.multidex.MultiDex
+import io.agora.scene.common.debugMode.DebugManager
 
 class AgentApp : Application() {
 
@@ -59,12 +60,13 @@ class AgentApp : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
-        
-        // 不在这里初始化Firebase，让用户同意隐私协议后再初始化
-        
+
         AgoraLogger.initXLog(this)
         initMMKV()
         DebugConfigSettings.init(this)
+
+        // Initialize unified debug manager
+        DebugManager.initialize(this)
 
         try {
             extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
@@ -88,12 +90,16 @@ class AgentApp : Application() {
                 when (event) {
                     Lifecycle.Event.ON_START -> {
                         // App comes to foreground
-                        DebugButton.getInstance(applicationContext).restoreVisibility()
+                        if (DebugConfigSettings.isDebug) {
+                            DebugManager.showDebugButton()
+                        }
                     }
 
                     Lifecycle.Event.ON_STOP -> {
                         // App goes to background
-                        DebugButton.getInstance(applicationContext).temporaryHide()
+                        if (DebugConfigSettings.isDebug) {
+                            DebugManager.hideDebugButton()
+                        }
                     }
 
                     else -> {}

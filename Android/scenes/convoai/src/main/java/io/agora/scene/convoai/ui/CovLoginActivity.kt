@@ -20,7 +20,9 @@ import androidx.core.view.isVisible
 import io.agora.scene.common.R
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.constant.ServerConfig
-import io.agora.scene.common.ui.BaseActivity
+import io.agora.scene.common.debugMode.DebugConfigSettings
+import io.agora.scene.common.debugMode.DebugSupportActivity
+import io.agora.scene.common.debugMode.DebugTabDialog
 import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.ui.SSOWebViewActivity
 import io.agora.scene.common.ui.TermsActivity
@@ -28,7 +30,7 @@ import io.agora.scene.convoai.databinding.CovActivityLoginBinding
 import kotlin.apply
 import kotlin.jvm.java
 
-class CovLoginActivity : BaseActivity<CovActivityLoginBinding>() {
+class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
 
     private val TAG = "CovLoginActivity"
 
@@ -92,20 +94,27 @@ class CovLoginActivity : BaseActivity<CovActivityLoginBinding>() {
                     tvCheckTips.isInvisible = true
                 }
             }
+            ivAgentSample.setOnClickListener {
+                DebugConfigSettings.checkClickDebug()
+            }
         }
     }
 
     private fun setupRichTextTerms(textView: TextView) {
+        // Get strings directly
         val acceptText = getString(R.string.common_acceept)
         val termsText = getString(R.string.common_terms_of_services)
         val andText = getString(R.string.common_and)
         val privacyText = getString(R.string.common_privacy_policy)
 
-        // Use StringBuilder to avoid string concatenation issues
+        // Build full text with proper spacing
         val fullText = StringBuilder().apply {
             append(acceptText)
+            append(" ") // Add space after "I accept the"
             append(termsText)
+            append(" ") // Add space before "and"
             append(andText)
+            append(" ") // Add space before "Privacy Policy"
             append(privacyText)
         }.toString()
 
@@ -114,10 +123,10 @@ class CovLoginActivity : BaseActivity<CovActivityLoginBinding>() {
         val acceptStart = 0
         val acceptEnd = acceptText.length
 
-        val termsOfServicesStart = acceptEnd
+        val termsOfServicesStart = acceptEnd + 1 // +1 for the space we added
         val termsOfServicesEnd = termsOfServicesStart + termsText.length
 
-        val privacyPolicyStart = termsOfServicesEnd + andText.length
+        val privacyPolicyStart = termsOfServicesEnd + 1 + andText.length + 1 // +1 for spaces before and after "and"
         val privacyPolicyEnd = privacyPolicyStart + privacyText.length
 
         // Accept text span - clickable to toggle checkbox
@@ -175,5 +184,19 @@ class CovLoginActivity : BaseActivity<CovActivityLoginBinding>() {
             tvCheckTips.clearAnimation()
             tvCheckTips.startAnimation(animation)
         }
+    }
+
+    // Override debug callback to provide custom behavior for login screen
+    override fun createDefaultDebugCallback(): DebugTabDialog.DebugCallback {
+        return object : DebugTabDialog.DebugCallback {
+            override fun onEnvConfigChange() {
+                handleEnvironmentChange()
+            }
+        }
+    }
+
+    override fun handleEnvironmentChange() {
+        // Already on login page, just recreate activity to refresh environment
+        recreate()
     }
 }

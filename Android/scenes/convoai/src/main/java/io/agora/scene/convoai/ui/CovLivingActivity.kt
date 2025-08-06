@@ -16,10 +16,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
-import io.agora.scene.common.debugMode.DebugButton
 import io.agora.scene.common.debugMode.DebugConfigSettings
+import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
-import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.ui.vm.LoginState
@@ -53,7 +52,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.UUID
 
-class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
+class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     private val TAG = "CovLivingActivity"
 
@@ -62,7 +61,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
     private val userViewModel: UserViewModel by viewModels()
 
     // UI related
-    private var mDebugDialog: DebugTabDialog? = null
     private var appTabDialog: CovAgentTabDialog? = null
 
     private lateinit var mPermissionHelp: PermissionHelp
@@ -107,17 +105,11 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     override fun onPause() {
         super.onPause()
-        // Clear debug callback when activity is paused
-        DebugButton.setDebugCallback(null)
         startRecordingService()
     }
 
     override fun onResume() {
         super.onResume()
-        // Set debug callback when page is resumed
-        DebugButton.setDebugCallback {
-            showCovAiDebugDialog()
-        }
         stopRecordingService()
     }
 
@@ -892,62 +884,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         )
     }
 
-    private fun showCovAiDebugDialog() {
-        if (isFinishing || isDestroyed) return
-        if (mDebugDialog?.dialog?.isShowing == true) return
-
-        mDebugDialog = DebugTabDialog.newInstance(
-            onDebugCallback = object : DebugTabDialog.DebugCallback {
-                override fun onDialogDismiss() {
-                    mDebugDialog = null
-                }
-
-                override fun getConvoAiHost(): String = CovAgentApiManager.currentHost ?: ""
-
-                override fun onAudioDumpEnable(enable: Boolean) {
-                    CovRtcManager.onAudioDump(enable)
-
-                    ToastUtil.show("onAudioDumpEnable: $enable")
-                }
-
-                override fun onSeamlessPlayMode(enable: Boolean) {
-                    // Handle seamless play mode toggle
-                    CovLogger.d(TAG, "Seamless play mode: $enable")
-
-                    ToastUtil.show("onSeamlessPlayMode: $enable")
-                }
-
-                override fun onMetricsEnable(enable: Boolean) {
-                    // Handle metrics toggle
-                    CovLogger.d(TAG, "Metrics enabled: $enable")
-
-                    ToastUtil.show("onMetricsEnable: $enable")
-                }
-
-                override fun onClickCopy() {
-                    mBinding?.apply {
-                        val messageContents = if (isSelfSubRender) {
-                            messageListViewV1.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
-                        } else {
-                            messageListViewV2.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
-                        }
-                        this@CovLivingActivity.copyToClipboard(messageContents)
-                        ToastUtil.show(getString(R.string.cov_copy_succeed))
-                    }
-                }
-
-                override fun onEnvConfigChange() {
-                    restartActivity()
-                }
-
-                override fun onAudioParameter(parameter: String) {
-                    CovRtcManager.setParameter(parameter)
-                }
-            },
-        )
-        mDebugDialog?.show(supportFragmentManager, "showDebugDialog")
-    }
-
     private fun showRoomEndDialog() {
         if (isFinishing || isDestroyed) return
         val mins: String = (CovAgentManager.roomExpireTime / 60).toInt().toString()
@@ -1096,7 +1032,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
 
     /**
      * Safely release all resources, supports multiple calls (idempotent)
-     * Can be safely called in both restartActivity() and finish()
+     * Can be safely called finish()
      */
     private fun release() {
         synchronized(releaseLock) {
@@ -1119,5 +1055,67 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 CovLogger.w(TAG, "Release failed: ${e.message}")
             }
         }
+    }
+
+    // Override debug callback to provide custom behavior
+    override fun createDefaultDebugCallback(): DebugTabDialog.DebugCallback {
+        return object : DebugTabDialog.DebugCallback {
+
+            override fun getConvoAiHost(): String = CovAgentApiManager.currentHost ?: ""
+
+            override fun onAudioDumpEnable(enable: Boolean) {
+                CovRtcManager.onAudioDump(enable)
+                ToastUtil.show("onAudioDumpEnable: $enable")
+            }
+
+            override fun onSeamlessPlayMode(enable: Boolean) {
+                // Handle seamless play mode toggle
+                CovLogger.d(TAG, "Seamless play mode: $enable")
+
+                ToastUtil.show("onSeamlessPlayMode: $enable")
+            }
+
+            override fun onMetricsEnable(enable: Boolean) {
+                // Handle metrics toggle
+                CovLogger.d(TAG, "Metrics enabled: $enable")
+
+                ToastUtil.show("onMetricsEnable: $enable")
+            }
+
+            override fun onClickCopy() {
+                mBinding?.apply {
+                    val messageContents = if (isSelfSubRender) {
+                        messageListViewV1.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
+                    } else {
+                        messageListViewV2.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
+                    }
+                    this@CovLivingActivity.copyToClipboard(messageContents)
+                    ToastUtil.show(getString(R.string.cov_copy_succeed))
+                }
+            }
+
+            override fun onEnvConfigChange() {
+                handleEnvironmentChange()
+            }
+
+            override fun onAudioParameter(parameter: String) {
+                CovRtcManager.setParameter(parameter)
+            }
+        }
+    }
+
+    override fun handleEnvironmentChange() {
+        // Clean up current session and navigate to login
+        viewModel.stopAgentAndLeaveChannel()
+        userViewModel.logout()
+        release()
+        navigateToLogin()
+    }
+
+    private fun navigateToLogin() {
+        val intent = Intent(this, CovLoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
