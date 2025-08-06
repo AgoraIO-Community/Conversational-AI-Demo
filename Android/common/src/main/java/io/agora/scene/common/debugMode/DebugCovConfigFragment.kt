@@ -13,7 +13,6 @@ import io.agora.scene.common.debugMode.DebugTabDialog.DebugCallback
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.util.toast.ToastUtil
-import io.agora.scene.common.R
 import kotlin.apply
 import kotlin.collections.forEach
 import kotlin.collections.isNotEmpty
@@ -146,35 +145,6 @@ class DebugCovConfigFragment : BaseFragment<CommonDebugCovConfigFragmentBinding>
 
             // Setup keyboard visibility listener
             setupKeyboardVisibilityListener(view)
-
-            // Setup render mode selection
-            setupRenderModeSelection()
-        }
-    }
-
-    private fun setupRenderModeSelection() {
-        mBinding?.apply {
-            // Set default selection based on saved preference
-            val currentRenderMode = DebugConfigSettings.renderMode
-            when (currentRenderMode) {
-                RenderMode.WORD -> rbWordMode.isChecked = true
-                RenderMode.TEXT -> rbTextMode.isChecked = true
-                else -> rbWordMode.isChecked = true // Default to Word mode
-            }
-
-            // Handle radio button selection changes
-            rgRenderMode.setOnCheckedChangeListener { _, checkedId ->
-                val newMode = when (checkedId) {
-                    R.id.rb_word_mode -> RenderMode.WORD
-                    R.id.rb_text_mode -> RenderMode.TEXT
-                    else -> RenderMode.WORD
-                }
-
-                if (newMode != currentRenderMode) {
-                    DebugConfigSettings.renderMode = newMode
-                    onDebugCallback?.onRenderModeChange(newMode)
-                }
-            }
         }
     }
 

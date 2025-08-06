@@ -19,7 +19,6 @@ import io.agora.rtc2.video.VideoCanvas
 import io.agora.scene.common.debugMode.DebugButton
 import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.debugMode.DebugTabDialog
-import io.agora.scene.common.debugMode.RenderMode
 import io.agora.scene.common.ui.BaseActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.OnFastClickListener
@@ -136,6 +135,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             val layoutParams = clTop.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.topMargin = statusBarHeight
             clTop.layoutParams = layoutParams
+            updateTitle()
             agentStateView.configureStateTexts(
                 silent = getString(R.string.cov_agent_silent),
                 listening = getString(R.string.cov_agent_listening),
@@ -143,6 +143,9 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 speaking = getString(R.string.cov_agent_speaking),
                 mute = getString(R.string.cov_user_muted),
             )
+
+            clBottomLogged.btnCamera.alpha = if (viewModel.isVisionSupported) 1.0f else 0.5f
+            clBottomLogged.btnImageContainer.alpha = if (viewModel.isVisionSupported) 1.0f else 0.5f
 
             clBottomLogged.btnEndCall.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
@@ -161,7 +164,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 )
             }
             clBottomLogged.btnCamera.setOnClickListener {
-                if (!viewModel.isVisionSupported.value){
+                if (!viewModel.isVisionSupported){
                     CovLogger.d(TAG, "click add pic: This preset does not support vision-related features.")
                     ToastUtil.show(R.string.cov_preset_not_support_vision, Toast.LENGTH_LONG)
                     return@setOnClickListener
@@ -182,10 +185,10 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 )
             }
             clTop.setOnSettingsClickListener {
-                showSettingDialogWithPresetCheck(CovAgentTabDialog.TAB_AGENT_SETTINGS) // Agent Settings tab
+                showSettingDialog(CovAgentTabDialog.TAB_AGENT_SETTINGS) // Agent Settings tab
             }
             clTop.setOnWifiClickListener {
-                showSettingDialogWithPresetCheck(CovAgentTabDialog.TAB_CHANNEL_INFO) // Channel Info tab
+                showSettingDialog(CovAgentTabDialog.TAB_CHANNEL_INFO) // Channel Info tab
             }
             clTop.setOnBackClickListener {
                 finish()
@@ -201,7 +204,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     viewModel.switchCamera()
                 } else {
                     // Camera is off - add picture
-                    if (!viewModel.isVisionSupported.value) {
+                    if (!viewModel.isVisionSupported) {
                         CovLogger.d(TAG, "click add pic: This preset does not support vision-related features.")
                         ToastUtil.show(R.string.cov_preset_not_support_vision, Toast.LENGTH_LONG)
                         return@setOnClickListener
@@ -257,6 +260,22 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                 message.uuid?.let { uuid->
                     replayUploadImage(uuid, File(message.content))
                 }
+            }
+        }
+    }
+
+    private fun updateTitle() {
+        mBinding?.apply {
+            if (CovAgentManager.isEnableAvatar) {
+                clTop.updateTitleName(
+                    CovAgentManager.avatar?.avatar_name ?: "",
+                    CovAgentManager.avatar?.thumb_img_url ?: ""
+                )
+            } else {
+                clTop.updateTitleName(
+                    CovAgentManager.getPreset()?.display_name ?: "",
+                    "xxx"
+                )
             }
         }
     }
@@ -460,9 +479,7 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         lifecycleScope.launch {  // Observe interrupt event updates
             viewModel.interruptEvent.collect { interruptEvent ->
                 if (isSelfSubRender) return@collect
-                interruptEvent?.let {
-                    mBinding?.messageListViewV2?.onAgentInterrupted(it)
-                }
+                // nothing
             }
         }
         lifecycleScope.launch {  // Observe message receipt updates
@@ -494,14 +511,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
                     null -> {
                         // nothing
                     }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.isVisionSupported.collect { supported ->
-                mBinding?.apply {
-                    clBottomLogged.btnCamera.alpha = if (supported) 1.0f else 0.5f
-                    clBottomLogged.btnImageContainer.alpha = if (supported) 1.0f else 0.5f
                 }
             }
         }
@@ -621,7 +630,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             } else {
                 selfRenderController?.enable(false)
                 messageListViewV2.updateAgentName(CovAgentManager.getPreset()?.display_name ?: "")
-                messageListViewV2.setIsChinese(CovAgentManager.language?.isChinese == true)
             }
         }
 
@@ -803,21 +811,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
         }
     }
 
-    private fun showSettingDialogWithPresetCheck(initialTab: Int) {
-        if (CovAgentManager.getPresetList().isNullOrEmpty()) {
-            lifecycleScope.launch {
-                val success = viewModel.fetchPresetsAsync()
-                if (success) {
-                    showSettingDialog(initialTab)
-                } else {
-                    ToastUtil.show(getString(R.string.cov_detail_net_state_error))
-                }
-            }
-        } else {
-            showSettingDialog(initialTab)
-        }
-    }
-
     private fun showSettingDialog(initialTab: Int) {
         appTabDialog = CovAgentTabDialog.newInstance(
             viewModel.connectionState.value,
@@ -896,28 +889,6 @@ class CovLivingActivity : BaseActivity<CovActivityLivingBinding>() {
             onDebugCallback = object : DebugTabDialog.DebugCallback {
                 override fun onDialogDismiss() {
                     mDebugDialog = null
-                }
-
-                override fun onRenderModeChange(mode: Int) {
-                    // Handle render mode change
-                    when (mode) {
-                        RenderMode.WORD -> {
-                            CovLogger.d(TAG, "Render mode changed to WORD")
-                            // Apply word rendering configuration
-                        }
-
-                        RenderMode.TEXT -> {
-                            CovLogger.d(TAG, "Render mode changed to TEXT")
-                            // Apply text rendering configuration
-                        }
-
-                    }
-                    val modeText = if (mode == RenderMode.TEXT) {
-                        "Text"
-                    } else {
-                        "Word"
-                    }
-                    ToastUtil.show("Render mode changed to: $modeText")
                 }
 
                 override fun getConvoAiHost(): String = CovAgentApiManager.currentHost ?: ""

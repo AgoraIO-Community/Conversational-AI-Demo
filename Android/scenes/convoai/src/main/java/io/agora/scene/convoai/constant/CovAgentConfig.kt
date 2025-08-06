@@ -2,10 +2,10 @@ package io.agora.scene.convoai.constant
 
 import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.debugMode.DebugConfigSettings
-import io.agora.scene.common.debugMode.RenderMode
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovAvatar
+import io.agora.scene.convoai.ui.CovRenderMode
 import kotlin.random.Random
 
 enum class AgentConnectionState() {
@@ -21,10 +21,10 @@ object CovAgentManager {
     private val TAG = "CovAgentManager"
 
     // Settings
-    private var presetList: List<CovAgentPreset>? = null
     private var preset: CovAgentPreset? = null
     var language: CovAgentLanguage? = null
     var avatar: CovAvatar? = null
+    var renderMode: Int = CovRenderMode.WORD
 
     var enableAiVad = false
     val enableBHVS = true
@@ -51,15 +51,6 @@ object CovAgentManager {
                 if (limit > 0) limit else 600L
             }
         }
-
-    fun setPresetList(l: List<CovAgentPreset>) {
-        presetList = l.filter { it.preset_type != "custom" }
-        setPreset(presetList?.firstOrNull())
-    }
-
-    fun getPresetList(): List<CovAgentPreset>? {
-        return presetList
-    }
 
     fun setPreset(p: CovAgentPreset?) {
         preset = p
@@ -96,14 +87,13 @@ object CovAgentManager {
         showPresetChangeReminder = show
     }
 
-    val isTextRenderMode: Boolean
+    val isWordRenderMode: Boolean
         get() {
-            return isEnableAvatar || DebugConfigSettings.renderMode == RenderMode.TEXT
+            return renderMode == CovRenderMode.WORD && !isEnableAvatar
         }
 
     fun resetData() {
         enableAiVad = false
-        presetList = null
         preset = null
         language = null
         avatar = null

@@ -2,8 +2,6 @@ package io.agora.scene.convoai.ui.widget
 
 import android.content.Context
 import android.graphics.Rect
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -15,117 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.constant.CovAgentManager
-import io.agora.scene.convoai.convoaiApi.InterruptEvent
 import io.agora.scene.convoai.convoaiApi.Transcript
 import io.agora.scene.convoai.convoaiApi.TranscriptStatus
 import io.agora.scene.convoai.convoaiApi.TranscriptType
 import io.agora.scene.convoai.databinding.CovMessageAgentItemBinding
 import io.agora.scene.convoai.databinding.CovMessageListViewBinding
 import io.agora.scene.convoai.databinding.CovMessageMineItemBinding
-import android.graphics.Color
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.animation.ValueAnimator
-import android.view.animation.LinearInterpolator
-
-/**
- * Custom TextView that can display typing dots at the end of the last line
- * Handles multi-line text properly by calculating the last line position
- */
-class TypingTextView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
-
-    private val paint = Paint().apply {
-        isAntiAlias = true
-        color = Color.WHITE
-    }
-
-    private val dotRadius = 2.dp.toFloat()
-    private val dotSpacing = 4.dp.toFloat()
-    private val animationDuration = 1200L
-
-    private var currentPhase = 0f
-    private var animator: ValueAnimator? = null
-    private var showTypingDots = false
-
-    init {
-        startAnimation()
-    }
-
-    private fun startAnimation() {
-        animator?.cancel()
-        animator = ValueAnimator.ofFloat(0f, 3f).apply {
-            duration = animationDuration
-            interpolator = LinearInterpolator()
-            repeatCount = ValueAnimator.INFINITE
-            addUpdateListener { animation ->
-                currentPhase = animation.animatedValue as Float
-                if (showTypingDots) {
-                    invalidate()
-                }
-            }
-        }
-        animator?.start()
-    }
-
-    fun setShowTypingDots(show: Boolean) {
-        showTypingDots = show
-        if (show) {
-            invalidate()
-        }
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        if (!showTypingDots) return
-
-        // Get the layout for text positioning
-        val layout = layout ?: return
-
-        // Find the last line
-        val lastLine = layout.lineCount - 1
-        if (lastLine < 0) return
-
-        // Get the end position of the last line
-        val lastLineEnd = layout.getLineEnd(lastLine)
-
-        // Calculate the position for dots (end of last line)
-        val lastLineBottom = layout.getLineBottom(lastLine)
-        val lastLineEndX = layout.getPrimaryHorizontal(lastLineEnd)
-
-        // Draw dots at the end of the last line
-        val dotsStartX = lastLineEndX + 8.dp.toFloat() // Small gap after text
-
-        for (i in 0..2) {
-            val x = dotsStartX + i * (dotRadius * 2 + dotSpacing)
-            val phase = (currentPhase + i) % 3f
-            val alpha = when {
-                phase < 1f -> phase
-                phase < 2f -> 1f
-                else -> 3f - phase
-            }.coerceIn(0f, 1f)
-
-            paint.alpha = (alpha * 255).toInt()
-            // Move dots up by 2dp from the line bottom
-            val dotY = lastLineBottom - dotRadius - 6.dp.toFloat()
-            canvas.drawCircle(x + dotRadius, dotY, dotRadius, paint)
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        startAnimation()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        animator?.cancel()
-    }
-}
 
 /**
  * CovMessageListView is a custom view for displaying a conversation message list.
@@ -146,58 +39,6 @@ class CovMessageListView @JvmOverloads constructor(
     private var autoScrollToBottom = true
 
     private var isScrollBottom = false
-
-    // Typing animation related properties
-    private var currentTypingTurnId: Long = -1
-    private var currentTypingText: String = ""
-    private var typingProgress: Int = 0
-    private var isCN: Boolean = true // Control typing speed for Chinese vs non-Chinese
-
-    // Use Handler for typing animation instead of Timer
-    private val typingHandler = Handler(Looper.getMainLooper())
-    private var isTypingAnimationRunning = false
-    private val typingRunnable = object : Runnable {
-        override fun run() {
-            if (typingProgress < currentTypingText.length && currentTypingTurnId != -1L) {
-                // Calculate current display text
-                val displayText = currentTypingText.substring(0, typingProgress + 1)
-
-                // Update message content
-                val updatedMessage = Message(
-                    isMe = false,
-                    turnId = currentTypingTurnId,
-                    content = displayText,
-                    status = TranscriptStatus.IN_PROGRESS,
-                    localTurn = currentTypingTurnId
-                )
-
-                messageAdapter.addOrUpdateMessage(updatedMessage)
-                handleScrollAfterUpdate(false)
-
-                typingProgress++
-
-                // Schedule next character with dynamic speed
-                val typingSpeed = if (isCN) 100L else 50L // Chinese: 100ms, Non-Chinese: 50ms
-                typingHandler.postDelayed(this, typingSpeed)
-            } else {
-                // Animation complete, show full text
-                if (currentTypingText.isNotEmpty()) {
-                    val finalMessage = Message(
-                        isMe = false,
-                        turnId = currentTypingTurnId,
-                        content = currentTypingText,
-                        status = TranscriptStatus.END,
-                        localTurn = currentTypingTurnId
-                    )
-                    messageAdapter.addOrUpdateMessage(finalMessage)
-                    handleScrollAfterUpdate(false)
-                }
-
-                // Clean up state
-                isTypingAnimationRunning = false
-            }
-        }
-    }
 
     /**
      * Callback invoked when the user clicks the error icon on an image message.
@@ -295,7 +136,6 @@ class CovMessageListView @JvmOverloads constructor(
      * Clear all messages
      */
     fun clearMessages() {
-        stopTypingAnimation()
         autoScrollToBottom = true
         binding.cvToBottom.visibility = INVISIBLE
         messageAdapter.clearMessages()
@@ -682,30 +522,13 @@ class CovMessageListView @JvmOverloads constructor(
      * Called when a new transcript is received or updated.
      * Handles both user and agent messages, and triggers scroll logic if needed.
      * @param transcript The incoming transcript data.
-     * @param showAnimation Whether to show typing animation (default: false)
      */
-    fun onTranscriptUpdated(transcript: Transcript, showAnimation: Boolean = false) {
+    fun onTranscriptUpdated(transcript: Transcript) {
         // transcript for other users
         if (transcript.type == TranscriptType.USER && transcript.userId != CovAgentManager.uid.toString()) {
             return
         }
-
-        if (showAnimation) {
-            if (transcript.type == TranscriptType.USER) {
-                stopTypingAnimation()
-                handleMessage(transcript)
-            } else {
-                startTypingAnimation(transcript)
-            }
-        } else {
-            handleMessage(transcript)
-        }
-    }
-
-    fun onAgentInterrupted(interruptEvent: InterruptEvent) {
-        if (interruptEvent.turnId == currentTypingTurnId) {
-            stopTypingAnimation()
-        }
+        handleMessage(transcript)
     }
 
     /**
@@ -735,83 +558,6 @@ class CovMessageListView @JvmOverloads constructor(
 
     fun updateLocalImageMessage(uuid: String, uploadStatus: UploadStatus) {
         messageAdapter.updateLocalImageMessage(uuid, uploadStatus)
-    }
-
-    /**
-     * Start typing animation for agent messages
-     * Renders text character by character at 10 characters per second
-     */
-    private fun startTypingAnimation(transcript: Transcript) {
-        val newText = transcript.text
-
-        // Handle same turn updates
-        if (currentTypingTurnId == transcript.turnId) {
-            // Skip if no text change
-            if (newText == currentTypingText) {
-                return
-            }
-
-            // Skip if new text is a prefix of current (truncated content)
-            if (currentTypingText.startsWith(newText)) {
-                return
-            }
-
-            // Update text and continue from current position
-            currentTypingText = newText
-        } else {
-            // New turn, stop previous animation and restart
-            stopTypingAnimation()
-
-            currentTypingTurnId = transcript.turnId
-            currentTypingText = newText
-            typingProgress = 0
-
-            // Create initial empty message to show typing dots
-            val initialMessage = Message(
-                isMe = false,
-                turnId = transcript.turnId,
-                content = "",
-                status = TranscriptStatus.IN_PROGRESS,
-                localTurn = transcript.turnId
-            )
-            messageAdapter.addOrUpdateMessage(initialMessage)
-            handleScrollAfterUpdate(true)
-        }
-
-        // Start animation if not already running
-        if (!isTypingAnimationRunning) {
-            isTypingAnimationRunning = true
-            // Start text animation
-            typingHandler.post(typingRunnable)
-        }
-    }
-
-    /**
-     * Stop typing animation and clean up resources
-     */
-    private fun stopTypingAnimation() {
-        // Remove pending callbacks
-        typingHandler.removeCallbacks(typingRunnable)
-
-        // Update current message to remove dots if it exists
-        if (currentTypingTurnId != -1L && currentTypingText.isNotEmpty() && typingProgress > 0) {
-            val displayText = currentTypingText.substring(0, typingProgress)
-            val finalMessage = Message(
-                isMe = false,
-                turnId = currentTypingTurnId,
-                content = displayText,
-                status = TranscriptStatus.END,
-                localTurn = currentTypingTurnId
-            )
-            messageAdapter.addOrUpdateMessage(finalMessage)
-            handleScrollAfterUpdate(false)
-        }
-
-        // Clean up state
-        currentTypingTurnId = -1
-        currentTypingText = ""
-        typingProgress = 0
-        isTypingAnimationRunning = false
     }
 
     /**
@@ -848,25 +594,8 @@ class CovMessageListView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Set whether the current language is Chinese
-     * @param isChinese True for Chinese (100ms per character), false for non-Chinese (50ms per character)
-     */
-    fun setIsChinese(isChinese: Boolean) {
-        isCN = isChinese
-    }
-
-    /**
-     * Get current language setting
-     * @return True if Chinese, false if non-Chinese
-     */
-    fun isChinese(): Boolean {
-        return isCN
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         // Stop typing animation to prevent memory leaks
-        stopTypingAnimation()
     }
 }

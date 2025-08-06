@@ -20,12 +20,14 @@ import io.agora.scene.common.util.dp
 import io.agora.scene.common.util.getDistanceFromScreenEdges
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.api.CovAgentLanguage
-import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovAgentSettingsFragmentBinding
+import io.agora.scene.convoai.databinding.CovSettingOptionItem2Binding
 import io.agora.scene.convoai.databinding.CovSettingOptionItemBinding
 import io.agora.scene.convoai.ui.CovLivingViewModel
+import io.agora.scene.convoai.ui.CovRenderMode
+import io.agora.scene.convoai.ui.CovTranscriptRender
 import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog
 import kotlin.collections.indexOf
 
@@ -49,6 +51,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     }
 
     private val optionsAdapter = OptionsAdapter()
+    private val optionsAdapter2 = Options2Adapter()
     private val livingViewModel: CovLivingViewModel by activityViewModels()
 
     override fun getViewBinding(
@@ -84,11 +87,6 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                 rcOptions.addItemDecoration(LastItemDividerDecoration(it))
             }
 
-            clPreset.setOnClickListener(object : OnFastClickListener() {
-                override fun onClickJacking(view: View) {
-                    onClickPreset()
-                }
-            })
             clLanguage.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     onClickLanguage()
@@ -115,6 +113,11 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     onClickAvatar()
                 }
             })
+            clRenderMode.setOnClickListener(object : OnFastClickListener() {
+                override fun onClickJacking(view: View) {
+                    onClickRenderMode()
+                }
+            })
         }
         updatePageEnable()
         updateBaseSettings()
@@ -123,11 +126,17 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         updateAvatarSettings()
     }
 
-
     private fun updateBaseSettings() {
         mBinding?.apply {
-            tvPresetDetail.text = CovAgentManager.getPreset()?.display_name
             tvLanguageDetail.text = CovAgentManager.language?.language_name
+            when (CovAgentManager.renderMode) {
+                CovRenderMode.WORD -> {
+                    tvRenderDetail.text = getString(io.agora.scene.convoai.R.string.cov_word_mode)
+                }
+                CovRenderMode.TEXT -> {
+                    tvRenderDetail.text = getString(io.agora.scene.convoai.R.string.cov_text_first_mode)
+                }
+            }
         }
     }
 
@@ -165,16 +174,16 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         val context = context ?: return
         if (isIdle) {
             mBinding?.apply {
-                tvPresetDetail.setTextColor(context.getColor(R.color.ai_icontext1))
                 tvLanguageDetail.setTextColor(context.getColor(R.color.ai_icontext1))
-                ivPresetArrow.setColorFilter(
-                    context.getColor(R.color.ai_icontext1), PorterDuff.Mode.SRC_IN
-                )
                 ivLanguageArrow.setColorFilter(
                     context.getColor(R.color.ai_icontext1), PorterDuff.Mode.SRC_IN
                 )
-                clPreset.isEnabled = true
+                tvRenderDetail.setTextColor(context.getColor(R.color.ai_icontext1))
+                ivRenderArrow.setColorFilter(
+                    context.getColor(R.color.ai_icontext1), PorterDuff.Mode.SRC_IN
+                )
                 clLanguage.isEnabled = true
+                cbAiVad.isEnabled = true
                 cbAiVad.isEnabled = true
 
                 clAvatar.isEnabled = true
@@ -185,18 +194,16 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             }
         } else {
             mBinding?.apply {
-                tvPresetDetail.setTextColor(context.getColor(R.color.ai_icontext4))
                 tvLanguageDetail.setTextColor(context.getColor(R.color.ai_icontext4))
-                ivPresetArrow.setColorFilter(
-                    context.getColor(R.color.ai_icontext4),
-                    PorterDuff.Mode.SRC_IN
-                )
                 ivLanguageArrow.setColorFilter(
-                    context.getColor(R.color.ai_icontext4),
-                    PorterDuff.Mode.SRC_IN
+                    context.getColor(R.color.ai_icontext4), PorterDuff.Mode.SRC_IN
                 )
-                clPreset.isEnabled = false
+                tvRenderDetail.setTextColor(context.getColor(R.color.ai_icontext4))
+                ivRenderArrow.setColorFilter(
+                    context.getColor(R.color.ai_icontext4), PorterDuff.Mode.SRC_IN
+                )
                 clLanguage.isEnabled = false
+                cbAiVad.isEnabled = false
                 cbAiVad.isEnabled = false
 
                 clAvatar.isEnabled = false
@@ -208,104 +215,11 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         }
     }
 
-    private fun onClickPreset() {
-        val presets = CovAgentManager.getPresetList() ?: return
-        if (presets.isEmpty()) return
-        showPresetSelectionOptions(presets)
-    }
-
-    /**
-     * Show preset change reminder dialog
-     */
-    private fun showPresetChangeDialog(preset: CovAgentPreset) {
-        val activity = activity ?: return
-
-        CommonDialog.Builder()
-            .setTitle(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_title))
-            .setContent(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_content))
-            .setNegativeButton(getString(R.string.common_cancel)) {
-                // User cancelled, no action needed
-            }
-            .setPositiveButtonWithReminder(getString(io.agora.scene.convoai.R.string.cov_preset_change_dialog_confirm)) { dontShowAgain ->
-                // User confirmed switch
-                if (dontShowAgain) {
-                    // User checked "Don't show again", save preference
-                    CovAgentManager.setShowPresetChangeReminder(false)
-                }
-                updatePreset(preset)
-            }
-            .showNoMoreReminder() // Show checkbox, default unchecked
-            .hideTopImage()
-            .build()
-            .show(activity.supportFragmentManager, "PresetChangeDialog")
-    }
-
-    /**
-     * Show preset selection options
-     */
-    private fun showPresetSelectionOptions(presets: List<CovAgentPreset>) {
-        mBinding?.apply {
-            vOptionsMask.visibility = View.VISIBLE
-
-            // Calculate popup position using getDistanceFromScreenEdges
-            val itemDistances = clPreset.getDistanceFromScreenEdges()
-            val maskDistances = vOptionsMask.getDistanceFromScreenEdges()
-            val targetY = itemDistances.top - maskDistances.top + 30.dp
-            cvOptions.x = vOptionsMask.width - 250.dp
-            cvOptions.y = targetY
-
-            // Calculate height with constraints
-            val params = cvOptions.layoutParams
-            val itemHeight = 56.dp.toInt()
-            // Ensure maxHeight is at least one item height
-            val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
-            val finalHeight = (itemHeight * presets.size).coerceIn(itemHeight, finalMaxHeight)
-
-            params.height = finalHeight
-            cvOptions.layoutParams = params
-
-            // Update options and handle selection
-            optionsAdapter.updateOptions(
-                presets.map { it.display_name }.toTypedArray(),
-                presets.indexOf(CovAgentManager.getPreset())
-            ) { index ->
-                val preset = presets[index]
-                if (preset == CovAgentManager.getPreset()) {
-                    return@updateOptions
-                }
-
-                if (CovAgentManager.avatar != null) {
-                    // Check if user selected "Don't show again"
-                    if (CovAgentManager.shouldShowPresetChangeReminder()) {
-                        // Show reminder dialog
-                        showPresetChangeDialog(preset)
-                    } else {
-                        // User selected "Don't show again", show options directly
-                        updatePreset(preset)
-                    }
-                } else {
-                    updatePreset(preset)
-                }
-            }
-        }
-    }
-
-    private fun updatePreset(preset: CovAgentPreset) {
-        CovAgentManager.setPreset(preset)
-        livingViewModel.setAgentPreset(CovAgentManager.getPreset())
-        CovAgentManager.avatar = null
-        livingViewModel.setAvatar(null)
-        updateBaseSettings()
-        setAiVadBySelectLanguage(true)
-        mBinding?.vOptionsMask?.visibility = View.INVISIBLE
-        // Update avatar settings display
-        updateAvatarSettings()
-    }
-
     private fun onClickLanguage() {
         val languages = CovAgentManager.getLanguages() ?: return
         if (languages.isEmpty()) return
         mBinding?.apply {
+            rcOptions.adapter = optionsAdapter
             vOptionsMask.visibility = View.VISIBLE
 
             // Calculate popup position using getDistanceFromScreenEdges
@@ -390,6 +304,59 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         updateAvatarSettings()
     }
 
+    private fun onClickRenderMode() {
+        val transcriptRenders = mutableListOf<CovTranscriptRender>()
+        transcriptRenders.add(
+            CovTranscriptRender(
+                CovRenderMode.WORD,
+                getString(io.agora.scene.convoai.R.string.cov_word_mode),
+                getString(io.agora.scene.convoai.R.string.cov_word_mode_tips)
+            )
+        )
+        transcriptRenders.add(
+            CovTranscriptRender(
+                CovRenderMode.TEXT,
+                getString(io.agora.scene.convoai.R.string.cov_text_first_mode),
+                getString(io.agora.scene.convoai.R.string.cov_text_first_mode_tips)
+            )
+        )
+        mBinding?.apply {
+            rcOptions.adapter = optionsAdapter2
+            vOptionsMask.visibility = View.VISIBLE
+
+            // Calculate popup position using getDistanceFromScreenEdges
+            val itemDistances = clRenderMode.getDistanceFromScreenEdges()
+            val maskDistances = vOptionsMask.getDistanceFromScreenEdges()
+            val targetY = itemDistances.top - maskDistances.top + 30.dp
+            cvOptions.x = vOptionsMask.width - 250.dp
+            cvOptions.y = targetY
+
+            // Calculate height with constraints
+            val params = cvOptions.layoutParams
+            val itemHeight = 56.dp.toInt()
+            // Ensure maxHeight is at least one item height
+            val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
+            val finalHeight = (itemHeight * transcriptRenders.size).coerceIn(itemHeight, finalMaxHeight)
+
+            params.height = finalHeight
+            cvOptions.layoutParams = params
+
+            // Update options and handle selection
+            val selectedIndex = transcriptRenders.indexOfFirst { it.renderMode == CovAgentManager.renderMode }
+            optionsAdapter2.updateOptions(
+                transcriptRenders,
+                selectedIndex
+            ) { index ->
+                val transcriptRender = transcriptRenders[index]
+                if (transcriptRender.renderMode == CovAgentManager.renderMode) {
+                    return@updateOptions
+                }
+                CovAgentManager.renderMode = transcriptRender.renderMode
+                mBinding?.vOptionsMask?.visibility = View.INVISIBLE
+            }
+        }
+    }
+
     private fun onClickAvatar() {
         val activity = activity ?: return
 
@@ -456,7 +423,9 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.bind(options[position], (position == selectedIndex))
             holder.itemView.setOnClickListener {
-                listener?.invoke(position)
+                if (position in 0 until options.size) {
+                    listener?.invoke(position)
+                }
             }
         }
 
@@ -475,6 +444,50 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             RecyclerView.ViewHolder(binding.root) {
             fun bind(option: String, selected: Boolean) {
                 binding.tvText.text = option
+                binding.ivIcon.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+            }
+        }
+    }
+
+    inner class Options2Adapter : RecyclerView.Adapter<Options2Adapter.ViewHolder>() {
+
+        private var options: List<CovTranscriptRender> = emptyList()
+        private var listener: ((Int) -> Unit)? = null
+        private var selectedIndex: Int? = null
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ViewHolder(CovSettingOptionItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false))
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bind(options[position], (position == selectedIndex))
+            holder.itemView.setOnClickListener {
+                if (position in 0 until options.size) {
+                    listener?.invoke(position)
+                }
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return options.size
+        }
+
+        fun updateOptions(
+            newOptions: List<CovTranscriptRender>,
+            selectedIndex: Int,
+            newListener: (Int) -> Unit
+        ) {
+            options = newOptions
+            listener = newListener
+            this.selectedIndex = if (selectedIndex in 0 until newOptions.size) selectedIndex else null
+            notifyDataSetChanged()
+        }
+
+        inner class ViewHolder(private val binding: CovSettingOptionItem2Binding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bind(option: CovTranscriptRender, selected: Boolean) {
+                binding.tvText.text = option.text
+                binding.tvDetail.text = option.detail
                 binding.ivIcon.visibility = if (selected) View.VISIBLE else View.INVISIBLE
             }
         }

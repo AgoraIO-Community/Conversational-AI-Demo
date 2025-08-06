@@ -41,12 +41,6 @@ class DebugTabDialog : BaseDialogFragment<CommonDebugTabDialogBinding>() {
         fun getConvoAiHost(): String = ""
 
         fun onAudioParameter(parameter: String) = Unit
-
-        /**
-         * Callback when render mode changes
-         * @param mode The new render mode value (RenderMode.TEXT or RenderMode.WORD)
-         */
-        fun onRenderModeChange(@RenderMode mode: Int) = Unit
     }
 
     var onDebugCallback: DebugCallback? = null

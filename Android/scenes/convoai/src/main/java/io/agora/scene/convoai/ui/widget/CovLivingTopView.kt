@@ -17,6 +17,7 @@ import android.view.animation.Animation
 import android.widget.ImageButton
 import androidx.core.view.isVisible
 import io.agora.scene.common.R
+import io.agora.scene.common.util.GlideImageLoader
 
 /**
  * Top bar view for living activity, encapsulating info/settings/net buttons, ViewFlipper switching, and timer logic.
@@ -87,6 +88,16 @@ class CovLivingTopView @JvmOverloads constructor(
      */
     fun setOnCCClickListener(listener: (() -> Unit)?) {
         onCCClick = listener
+    }
+
+    fun updateTitleName(name: String,url:String) {
+        binding.tvPresetName.text = name
+        GlideImageLoader.load(
+            binding.ivPreset,
+            url,
+            R.drawable.common_default_agent,
+            R.drawable.common_default_agent
+        )
     }
 
     /**
