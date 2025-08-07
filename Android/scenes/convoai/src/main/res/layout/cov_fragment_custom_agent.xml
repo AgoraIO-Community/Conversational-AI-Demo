@@ -113,7 +113,7 @@
             android:padding="9dp">
 
             <EditText
-                android:id="@+id/et_agent_id"
+                android:id="@+id/et_agent_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"

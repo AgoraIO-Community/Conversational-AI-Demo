@@ -4,7 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.agora.scene.common.constant.EnvConfig
+import io.agora.scene.common.constant.ServerConfig
+import io.agora.scene.common.util.LocalStorageUtil
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
+import io.agora.scene.convoai.R
+import io.agora.scene.convoai.api.ApiException
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.CovAgentManager
@@ -31,6 +37,18 @@ class CovListViewModel : ViewModel() {
 
     private val _customState = MutableLiveData<AgentListState>()
     val customState: LiveData<AgentListState> = _customState
+
+    // Local storage key for custom agent IDs
+    private val customAgentIdsKey: String
+        get() = generateCustomAgentIdsKey()
+
+    /**
+     * Generate custom agent IDs key using hashCode of toolBoxUrl and rtcAppId
+     */
+    private fun generateCustomAgentIdsKey(): String {
+        val combinedString = "${ServerConfig.toolBoxUrl}_${ServerConfig.rtcAppId}"
+        return "custom_agent_ids_${combinedString.hashCode()}"
+    }
 
     init {
         // Initialize with empty data and states
@@ -103,8 +121,8 @@ class CovListViewModel : ViewModel() {
                 name = "Mock Assistant",
                 display_name = "AI Assistant",
                 description = "A helpful AI assistant for general conversations",
-                avatar_url = "https://example.com/avatar1.png",
-                preset_type = "official",
+                avatar_url = "",
+                preset_type = "",
                 default_language_code = "",
                 default_language_name = "",
                 support_languages = emptyList(),
@@ -116,14 +134,26 @@ class CovListViewModel : ViewModel() {
     }
 
     /**
-     * Load custom agent presets
-     * @param customPresetIds Comma-separated list of custom preset IDs (e.g., "p1,p2,p3")
+     * Load custom agent presets from local storage and API
      */
-    fun loadCustomAgents(customPresetIds: String = "") {
+    fun loadCustomAgents(showLoading: Boolean = true) {
         viewModelScope.launch {
             try {
-                _customState.value = AgentListState.Loading
-                CovAgentApiManager.fetchCustomsPresets(customPresetIds) { error, presets ->
+                if (showLoading) {
+                    _customState.value = AgentListState.Loading
+                }
+
+                // Get custom agent IDs from local storage
+                val customAgentIds = getCustomAgentIdsFromStorage()
+                CovLogger.d(TAG, "Loading custom agents with IDs: $customAgentIds")
+
+                if (customAgentIds.isEmpty()) {
+                    _customAgents.value = emptyList()
+                    _customState.value = AgentListState.Empty
+                    return@launch
+                }
+
+                CovAgentApiManager.fetchCustomsPresets(customAgentIds) { error, presets ->
                     if (error != null) {
                         CovLogger.e(TAG, "Failed to load custom presets: ${error.message}")
                         _customState.value = AgentListState.Error("")
@@ -133,6 +163,13 @@ class CovListViewModel : ViewModel() {
                             AgentListState.Empty
                         } else {
                             AgentListState.Success
+                        }
+
+                        // Update local cache with successful results
+                        if (presets.isNotEmpty()) {
+                            val successfulIds = presets.map { it.name }.joinToString(",")
+                            saveCustomAgentIdsToStorage(successfulIds)
+                            CovLogger.d(TAG, "Updated local cache with successful agent IDs: $successfulIds")
                         }
                     }
                 }
@@ -145,12 +182,49 @@ class CovListViewModel : ViewModel() {
     }
 
     /**
-     * Refresh both official and custom agents
-     * @param customPresetIds Comma-separated list of custom preset IDs
+     * Load single custom agent by agent name
      */
-    fun refreshAllAgents(customPresetIds: String = "") {
-        loadOfficialAgents()
-        loadCustomAgents(customPresetIds)
+    fun loadCustomAgent(
+        customAgentName: String,
+        isUpdate: Boolean = false,
+        onLoading: (Boolean) -> Unit = {},
+        completion: (Boolean, CovAgentPreset?) -> Unit
+    ) {
+        onLoading.invoke(true)
+        CovAgentApiManager.fetchCustomsPresets(customAgentName) { error, presets ->
+            if (error == null) {
+                if (presets.isNotEmpty()) {
+                    // Add to local storage if agent exists
+                    addCustomAgentName(customAgentName)
+                    completion.invoke(true, presets[0])
+                    if (!isUpdate) {
+                        ToastUtil.show(R.string.cov_get_agent_success)
+                    }
+                } else {
+                    completion.invoke(true, null)
+                    removeCustomAgentName(customAgentName)
+                    ToastUtil.show(R.string.cov_get_agent_failed)
+                }
+            } else {
+                CovLogger.e(TAG, "Failed to load custom preset: ${error.message}")
+                completion.invoke(false, null)
+
+                // Handle specific error codes
+                when (error.errorCode) {
+                    CovAgentApiManager.ERROR_AGENT_OFFLINE -> {
+                        // Custom preset agent offline
+                        ToastUtil.show(R.string.cov_get_agent_offline)
+                        removeCustomAgentName(customAgentName)
+                    }
+
+                    else -> {
+                        // Other errors
+                        ToastUtil.show(error.message ?: "")
+                    }
+                }
+            }
+            onLoading.invoke(false)
+        }
     }
 
     /**
@@ -182,4 +256,53 @@ class CovListViewModel : ViewModel() {
     fun isCustomAgentValid(agentName: String): Boolean {
         return _customAgents.value?.any { it.name == agentName } == true
     }
-} 
+
+    /**
+     * Get custom agent IDs from local storage
+     */
+    private fun getCustomAgentIdsFromStorage(): String {
+        return LocalStorageUtil.getString(customAgentIdsKey, "")
+    }
+
+    /**
+     * Save custom agent IDs to local storage
+     */
+    private fun saveCustomAgentIdsToStorage(agentIds: String) {
+        LocalStorageUtil.putString(customAgentIdsKey, agentIds)
+        CovLogger.d(TAG, "Saved custom agent IDs to storage: $agentIds")
+    }
+
+    /**
+     * Add custom agent name to local storage
+     */
+    fun addCustomAgentName(agentId: String) {
+        val currentIds = getCustomAgentIdsFromStorage()
+        val idList = if (currentIds.isEmpty()) {
+            mutableListOf()
+        } else {
+            currentIds.split(",").toMutableList()
+        }
+
+        if (!idList.contains(agentId)) {
+            idList.add(0, agentId)
+            val newIds = idList.joinToString(",")
+            saveCustomAgentIdsToStorage(newIds)
+            CovLogger.d(TAG, "Added custom agent ID: $agentId")
+        }
+    }
+
+    /**
+     * Remove custom agent name from local storage
+     */
+    fun removeCustomAgentName(agentName: String) {
+        val currentIds = getCustomAgentIdsFromStorage()
+        if (currentIds.isNotEmpty()) {
+            val idList = currentIds.split(",").toMutableList()
+            if (idList.remove(agentName)) {
+                val newIds = idList.joinToString(",")
+                saveCustomAgentIdsToStorage(newIds)
+                CovLogger.d(TAG, "Removed custom agent ID: $agentName")
+            }
+        }
+    }
+}

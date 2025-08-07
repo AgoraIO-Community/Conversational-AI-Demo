@@ -110,7 +110,7 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
         // Load agent data after fragments are created
         // This ensures fragments can observe the data changes
         listViewModel.loadOfficialAgents()
-        listViewModel.loadCustomAgents("p1,p2,p3") // Example IDs
+        listViewModel.loadCustomAgents() // Load from local storage
     }
 
     private fun showLoadingState() {
