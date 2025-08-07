@@ -40,7 +40,7 @@ extension ChatViewController {
         showTranscription(state: sender.isSelected)
     }
     
-    @objc internal func onClickLogo(_ sender: UIButton) {
+    @objc internal func onCharacterButton() {
         let currentTime = Date()
         if let lastTime = lastClickTime, currentTime.timeIntervalSince(lastTime) > 1.0 {
             clickCount = 0
@@ -51,6 +51,10 @@ extension ChatViewController {
             onThresholdReached()
             clickCount = 0
         }
+    }
+    
+    @objc internal func onCloseButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     internal func onThresholdReached() {

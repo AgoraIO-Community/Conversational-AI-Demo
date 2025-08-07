@@ -99,6 +99,8 @@ public class ChatViewController: UIViewController {
         view.settingButton.addTarget(self, action: #selector(onClickSettingButton), for: .touchUpInside)
         view.wifiInfoButton.addTarget(self, action: #selector(onClickWifiInfoButton), for: .touchUpInside)
         view.transcriptionButton.addTarget(self, action: #selector(onClickTranscriptionButton(_:)), for: .touchUpInside)
+        view.characterButton.addTarget(self, action: #selector(onCharacterButton), for: .touchUpInside)
+        view.closeButton.addTarget(self, action: #selector(onCloseButton), for: .touchUpInside)
         return view
     }()
     

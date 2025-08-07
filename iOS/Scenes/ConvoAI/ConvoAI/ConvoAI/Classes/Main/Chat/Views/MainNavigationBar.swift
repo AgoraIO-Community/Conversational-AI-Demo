@@ -35,6 +35,11 @@ class MainNavigationBar: UIView {
         }
     }
     
+    let characterButton: UIButton = {
+        let button = UIButton()
+        return button
+    }()
+    
     let closeButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage.ag_named("ic_navi_back_icon"), for: .normal)
@@ -197,9 +202,14 @@ class MainNavigationBar: UIView {
     private func setupViews() {
         [closeButton, characterInfo, netStateView, settingButton, transcriptionButton].forEach { addSubview($0) }
         [netTrackView, netRenderView, wifiInfoButton].forEach { netStateView.addSubview($0) }
+        characterInfo.addSubview(characterButton)
     }
     
     private func setupConstraints() {
+        characterButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         closeButton.snp.makeConstraints { make in
             make.left.equalTo(10)
             make.width.height.equalTo(42)
