@@ -1,67 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/ai_fill7">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOfficialAgents"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="32dp"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/cov_item_official_agent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Loading state -->
-    <ProgressBar
-        android:id="@+id/pbLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:visibility="visible"
-        android:indeterminateTint="@color/ai_brand_main6" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvOfficialAgents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="120dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/cov_item_official_agent"
+            tools:visibility="gone" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Error state -->
     <LinearLayout
         android:id="@+id/llError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/app_icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="loading error"
+            android:layout_marginTop="15dp"
+            android:text="@string/cov_retry_tips"
             android:textColor="@color/ai_brand_white10"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            android:textSize="16sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="retry"
+            android:layout_height="@dimen/ai_dp_2small"
+            android:layout_marginTop="15dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingHorizontal="25dp"
+            android:paddingVertical="6dp"
+            android:text="@string/cov_retry"
+            android:textAllCaps="false"
             android:textColor="@color/ai_brand_white10"
-            android:background="@drawable/connect_state_error_border" />
+            android:textSize="14sp"
+            app:backgroundTint="@color/ai_brand_main6"
+            app:cornerRadius="12dp"
+            app:rippleColor="#1AFFFFFF"
+            tools:text="@string/cov_custom_agent_get" />
 
     </LinearLayout>
 

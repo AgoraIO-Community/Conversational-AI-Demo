@@ -35,7 +35,6 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CovLogger.d(TAG, "onViewCreated called")
         initViews()
         setupAdapter()
         observeViewModel()
@@ -44,9 +43,21 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
 
     private fun initViews() {
         mBinding?.apply {
+            // Setup retry button click listener
             btnRetry.setOnClickListener {
                 viewModel.loadOfficialAgents()
             }
+
+            // Setup SwipeRefreshLayout
+            swipeRefreshLayout.setOnRefreshListener {
+                CovLogger.d(TAG, "SwipeRefreshLayout triggered")
+                viewModel.loadOfficialAgents()
+            }
+
+            // Set refresh colors
+            swipeRefreshLayout.setColorSchemeResources(
+                io.agora.scene.common.R.color.ai_brand_main6
+            )
         }
     }
 
@@ -73,47 +84,36 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             CovLogger.d(TAG, "State changed: $state")
             when (state) {
                 is CovListViewModel.AgentListState.Loading -> {
-                    CovLogger.d(TAG, "Showing loading")
-                    showLoading()
+                    // Loading state is handled by SwipeRefreshLayout, no need for additional loading UI
                 }
                 is CovListViewModel.AgentListState.Success -> {
-                    CovLogger.d(TAG, "Showing content")
                     showContent()
                 }
                 is CovListViewModel.AgentListState.Error -> {
-                    CovLogger.d(TAG, "Showing error")
                     showError()
                 }
                 is CovListViewModel.AgentListState.Empty -> {
-                    CovLogger.d(TAG, "Showing error (empty)")
                     showError()
                 }
             }
         }
     }
 
-    private fun showLoading() {
-        mBinding?.apply {
-            pbLoading.visibility = View.VISIBLE
-            rvOfficialAgents.visibility = View.GONE
-            llError.visibility = View.GONE
-        }
-
-    }
-
     private fun showContent() {
         mBinding?.apply {
-            pbLoading.visibility = View.GONE
             rvOfficialAgents.visibility = View.VISIBLE
             llError.visibility = View.GONE
+            swipeRefreshLayout.isEnabled = true
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
     private fun showError() {
         mBinding?.apply {
-            pbLoading.visibility = View.GONE
             rvOfficialAgents.visibility = View.GONE
             llError.visibility = View.VISIBLE
+            swipeRefreshLayout.isEnabled = false
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 

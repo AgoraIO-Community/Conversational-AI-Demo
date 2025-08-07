@@ -137,4 +137,5 @@
     <string name="cov_get_agent_success">Agent retrieved successfully</string>
     <string name="cov_get_agent_failed">Agent retrieval failed, no such agent in current database</string>
     <string name="cov_get_agent_offline">Agent has been taken offline, please contact Agora staff</string>
+    <string name="cov_retry_tips">Page loading failed. Please try again.</string>
 </resources>

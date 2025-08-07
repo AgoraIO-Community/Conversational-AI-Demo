@@ -73,6 +73,7 @@ dependencies {
     api libs.navigation.fragment.ktx
     api libs.navigation.ui.ktx
     api libs.splashscreen
+    api libs.androidx.swiperefreshlayout
 
     api libs.okhttp.core
     api libs.okhttp.logging.interceptor

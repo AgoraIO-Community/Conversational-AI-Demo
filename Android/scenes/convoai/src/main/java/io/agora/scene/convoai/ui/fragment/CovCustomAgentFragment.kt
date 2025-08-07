@@ -86,6 +86,18 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                     )
                 }
             }
+
+            // Setup SwipeRefreshLayout
+            swipeRefreshLayout.setOnRefreshListener {
+                CovLogger.d(TAG, "SwipeRefreshLayout triggered")
+                viewModel.loadCustomAgents(showLoading = false)
+            }
+
+            // Set refresh colors
+            swipeRefreshLayout.setColorSchemeResources(
+                io.agora.scene.common.R.color.ai_brand_main6
+            )
+
             // Setup EditText for agent ID input
             setupAgentIdInput()
         }
@@ -140,12 +152,10 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
         // Observe state changes
         viewModel.customState.observe(viewLifecycleOwner) { state ->
+            CovLogger.d(TAG, "State changed: $state")
             when (state) {
                 is CovListViewModel.AgentListState.Loading -> {
-                    // Only show loading if we don't have any data yet
-                    if (adapter.itemCount == 0) {
-                        showLoading()
-                    }
+                    // Loading state is handled by SwipeRefreshLayout, no need for additional loading UI
                 }
 
                 is CovListViewModel.AgentListState.Success -> {
@@ -153,16 +163,12 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                 }
 
                 is CovListViewModel.AgentListState.Error -> {
-                    // Handle error if needed
-                    CovLogger.e(TAG, "Custom agents error: ${state.message}")
-                    // Only show empty state if we don't have any data
                     if (adapter.itemCount == 0) {
                         showEmptyState()
                     }
                 }
 
                 is CovListViewModel.AgentListState.Empty -> {
-                    // Only show empty state if we don't have any data
                     if (adapter.itemCount == 0) {
                         showEmptyState()
                     }
@@ -171,33 +177,23 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         }
     }
 
-    private fun showLoading() {
-        mBinding?.apply {
-            pbLoading.visibility = View.VISIBLE
-            rvCustomAgents.visibility = View.GONE
-            llEmptyState.visibility = View.GONE
-            // Keep bottom action always visible
-            llBottomAction.visibility = View.VISIBLE
-        }
-    }
-
     private fun showContent() {
         mBinding?.apply {
-            pbLoading.visibility = View.GONE
             rvCustomAgents.visibility = View.VISIBLE
             llEmptyState.visibility = View.GONE
-            // Bottom action is always visible
             llBottomAction.visibility = View.VISIBLE
+            swipeRefreshLayout.isEnabled = true
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
     private fun showEmptyState() {
         mBinding?.apply {
-            pbLoading.visibility = View.GONE
             rvCustomAgents.visibility = View.GONE
             llEmptyState.visibility = View.VISIBLE
-            // Bottom action is always visible
             llBottomAction.visibility = View.VISIBLE
+            swipeRefreshLayout.isEnabled = false
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
