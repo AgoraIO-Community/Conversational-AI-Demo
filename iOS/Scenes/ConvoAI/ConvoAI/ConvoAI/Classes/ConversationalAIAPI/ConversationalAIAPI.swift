@@ -380,7 +380,9 @@ public enum MessageType: String, CaseIterable {
     /// State message type
     case state = "message.state"
     /// Image info message type
-    case imageInfo = "message.info"
+    case messageReceipt = "message.info"
+    /// voice status message
+    case voiceprint = "message.sal_status"
     /// Unknown message type
     case unknown = "unknown"
     
@@ -649,6 +651,13 @@ public enum MessageType: String, CaseIterable {
     ///   - agentUserId: Agent RTM user ID
     ///   - error: Message error containing type, message
     @objc func onMessageError(agentUserId: String, error: MessageError)
+    
+    ///Called when voiceprint was occurs
+    ///This method is called when agent start voiceprint
+    /// - Parameters:
+    ///   - agentUserId: Agent RTM user ID
+    ///   - status: Voiceprint status
+    @objc func onAgentVoiceprint(agentUserId: String, status: String)
 
 }
 

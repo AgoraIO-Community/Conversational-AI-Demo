@@ -317,6 +317,15 @@ extension ConversationalAIAPIImpl {
         }
     }
 
+    private func notifyDelegatesVoiceprintMessage(agentUserId: String, status: String) {
+        callMessagePrint(msg: "<<< [onVoiceprintMessageUpdated], agentUserId: \(agentUserId), status: \(status)")
+        DispatchQueue.main.async {
+            for delegate in self.delegates.allObjects {
+                delegate.onAgentVoiceprint(agentUserId: agentUserId, status: status)
+            }
+        }
+    }
+    
     private func notifyDelegatesMessageReceipt(agentUserId: String, messageReceipt: MessageReceipt) {
         callMessagePrint(msg: "<<< [onMessageReceiptUpdated], agentUserId: \(agentUserId), messageReceipt: \(messageReceipt)")
 
@@ -410,18 +419,25 @@ extension ConversationalAIAPIImpl {
             handleMetricsMessage(uid: uid, msg: msg)
         case .error:
             handleErrorMessage(uid: uid, msg: msg)
-        case .imageInfo:
-            handleImageInfoMessage(uid: uid, msg: msg)
+        case .messageReceipt:
+            handleMessageReceipt(uid: uid, msg: msg)
+        case .voiceprint:
+            handleVoiceprintMessage(uid: uid, msg: msg)
         default:
             break
         }
     }
     
-    private func handleImageInfoMessage(uid: String, msg: [String: Any]) {
+    private func handleVoiceprintMessage(uid: String, msg: [String: Any]) {
+        let status = msg["status"] as? String ?? "Unkown"
+        notifyDelegatesVoiceprintMessage(agentUserId: uid, status: status)
+    }
+    
+    private func handleMessageReceipt(uid: String, msg: [String: Any]) {
         guard let messageString = msg["message"] as? String,
               let module = msg["module"] as? String,
               let turnId = msg["turn_id"] as? Int else {
-            ConvoAILogger.error("Failed to parse message string from image info message")
+            callMessagePrint(msg: "Failed to parse message string from image info message")
             return
         }
         
