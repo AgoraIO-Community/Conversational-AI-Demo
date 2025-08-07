@@ -190,6 +190,13 @@ extension TranscriptDelegate {
     private let queue = DispatchQueue(label: "com.voiceagent.messagequeue", attributes: .concurrent)
     
     private func handleMessage(_ message: TranscriptMessage) {
+        if message.object == MessageType.interrupt.rawValue {
+            let interruptedEvent = InterruptEvent(turnId: message.turn_id ?? 0, timestamp: TimeInterval(message.start_ms ?? 0))
+            let agentUserId = message.publish_id ?? "0"
+            self.callMessagePrint(tag: TranscriptController.tag, msg: "<<< [onInterrupted], pts: \(self.audioTimestamp), \(agentUserId), \(message), \(interruptedEvent) ")
+            self.delegate?.onInterrupted(agentUserId: agentUserId, event: interruptedEvent)
+        }
+        
         if message.object == MessageType.user.rawValue {
             let text = message.text ?? ""
             let userId = message.user_id ?? "0"
@@ -342,10 +349,6 @@ extension TranscriptDelegate {
                 if let interruptTime = message.start_ms,
                    let buffer: TurnMessageInfo = self.messageQueue.first(where: { $0.turnId == message.turn_id })
                 {
-                    let interruptedEvent = InterruptEvent(turnId: buffer.turnId, timestamp: TimeInterval(buffer.start_ms))
-                    let agentUserId = buffer.agentUserId
-                    self.callMessagePrint(tag: TranscriptController.tag, msg: "<<< [onInterrupted], pts: \(self.audioTimestamp), \(agentUserId), \(message), \(interruptedEvent) ")
-
                     var lastIndex: Int = 0
                     let interruptMarkMs = min(interruptTime, self.audioTimestamp)
                     self.callMessagePrint(tag: TranscriptController.tag, msg: "interruptMarkMs: \(interruptMarkMs), startMs: \(interruptTime), pts: \(self.audioTimestamp)")
@@ -362,8 +365,6 @@ extension TranscriptDelegate {
                     if !buffer.words.isEmpty {
                         buffer.words[lastIndex].status = .interrupted
                     }
-
-                    self.delegate?.onInterrupted(agentUserId: agentUserId, event: interruptedEvent)
                 }
             }
         }

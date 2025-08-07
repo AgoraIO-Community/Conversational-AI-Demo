@@ -8,28 +8,30 @@
 import UIKit
 import Common
 
-enum AgentControlStyle {
+enum CallControlBarStyle {
     case startButton
     case controlButtons
 }
 
-protocol AgentControlToolbarDelegate: AnyObject {
+protocol CallControlbarDelegate: AnyObject {
     func hangUp()
     func getStart() async
     func mute(selectedState: Bool) -> Bool
     func switchPublishVideoStream(state: Bool)
+    func openPhotoLibrary()
+    func switchCamera()
 }
 
-class AgentControlToolbar: UIView {
-    weak var delegate: AgentControlToolbarDelegate?
+class CallControlbar: UIView {
+    weak var delegate: CallControlbarDelegate?
     private let buttonWidth = 76.0
     private let buttonHeight = 76.0
     private let startButtonHeight = 68.0
-    private var _style: AgentControlStyle = .startButton
+    private var _style: CallControlBarStyle = .startButton
     private var startButtonGradientLayer: CAGradientLayer?
     private var loadingViewGradientLayer: CAGradientLayer?
 
-    var style: AgentControlStyle {
+    var style: CallControlBarStyle {
         get {
             return _style
         }
@@ -121,7 +123,27 @@ class AgentControlToolbar: UIView {
 
         return button
     }()
-    
+
+    lazy var resourceButton: SwitchableIconButton = {
+        let button = SwitchableIconButton()
+        button.configure(
+            topIcon: UIImage.ag_named("ic_photo_icon"),
+            bottomIcon: UIImage.ag_named("ic_camera_icon")
+        )
+        button.layerCornerRadius = buttonWidth / 2.0
+        button.clipsToBounds = true
+        button.backgroundColor = UIColor.themColor(named: "ai_block1")
+        button.onTap = { [weak self] state in
+            guard let self = self else { return }
+            if state == .camera {
+                self.delegate?.switchCamera()
+            } else if state == .photo {
+                self.delegate?.openPhotoLibrary()
+            }
+        }
+        return button
+    }()
+        
     private lazy var buttonControlContentView: UIView = {
         let view = UIView()
         return view
@@ -216,7 +238,7 @@ class AgentControlToolbar: UIView {
     
     private func setupViews() {
         addSubview(buttonControlContentView)
-        [videoButton, muteButton, micProgressView, closeButton].forEach { button in
+        [muteButton, videoButton, resourceButton, closeButton, micProgressView].forEach { button in
             buttonControlContentView.addSubview(button)
         }
 
@@ -249,28 +271,43 @@ class AgentControlToolbar: UIView {
             make.edges.equalTo(UIEdgeInsets.zero)
         }
         
-        muteButton.snp.makeConstraints { make in
-            make.left.equalTo(buttonControlContentView).offset(34)
+        let buttonSpacing: CGFloat = 20
+        let totalWidth = buttonWidth * 4 + buttonSpacing * 3
+        let startX = (UIScreen.main.bounds.width - totalWidth) / 2
+        
+        muteButton.snp.remakeConstraints { make in
+            make.left.equalTo(buttonControlContentView).offset(startX)
             make.centerY.equalTo(buttonControlContentView)
             make.width.equalTo(buttonWidth)
             make.height.equalTo(buttonHeight)
         }
+        
+        videoButton.snp.remakeConstraints { make in
+            make.left.equalTo(muteButton.snp.right).offset(buttonSpacing)
+            make.centerY.equalTo(buttonControlContentView)
+            make.width.equalTo(buttonWidth)
+            make.height.equalTo(buttonHeight)
+        }
+        
+        resourceButton.snp.makeConstraints { make in
+            make.left.equalTo(videoButton.snp.right).offset(buttonSpacing)
+            make.centerY.equalTo(buttonControlContentView)
+            make.width.equalTo(buttonWidth)
+            make.height.equalTo(buttonHeight)
+        }
+        
+        closeButton.snp.remakeConstraints { make in
+            make.left.equalTo(resourceButton.snp.right).offset(buttonSpacing)
+            make.centerY.equalTo(buttonControlContentView)
+            make.width.equalTo(buttonWidth)
+            make.height.equalTo(buttonHeight)
+        }
+        
         micProgressView.snp.makeConstraints { make in
             make.centerX.equalTo(muteButton)
             make.top.equalTo(26)
             make.width.equalTo(21)
             make.height.equalTo(15)
-        }
-        closeButton.snp.makeConstraints { make in
-            make.center.equalTo(buttonControlContentView)
-            make.width.equalTo(buttonWidth)
-            make.height.equalTo(buttonHeight)
-        }
-        videoButton.snp.makeConstraints { make in
-            make.right.equalTo(buttonControlContentView).offset(-34)
-            make.centerY.equalTo(buttonControlContentView)
-            make.width.equalTo(buttonWidth)
-            make.height.equalTo(buttonHeight)
         }
     }
     
@@ -329,6 +366,7 @@ class AgentControlToolbar: UIView {
         muteButton.setBackgroundColor(color: color, forState: .normal)
         closeButton.setBackgroundColor(color: color, forState: .normal)
         videoButton.setBackgroundColor(color: color, forState: .normal)
+        resourceButton.backgroundColor = color
     }
     
     @objc private func hangUpAction() {
@@ -345,6 +383,7 @@ class AgentControlToolbar: UIView {
     @objc func videoButtonAction(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
         self.delegate?.switchPublishVideoStream(state: sender.isSelected)
+        resourceButton.switchIcon(animated: true)
     }
     
     private func setTintColor(state: Bool) {
@@ -374,7 +413,7 @@ class AgentControlToolbar: UIView {
     }
 }
 
-extension AgentControlToolbar: AgentPreferenceManagerDelegate {
+extension CallControlbar: AgentPreferenceManagerDelegate {
     func preferenceManager(_ manager: AgentPreferenceManager, presetDidUpdated preset: AgentPreset) {
         updateVideoButtonColor()
     }

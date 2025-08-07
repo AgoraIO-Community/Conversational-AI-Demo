@@ -117,14 +117,7 @@ class AgentSettingsView: UIView {
     
     private lazy var aiVadItem: AgentSettingSwitchItemView = {
         let view = AgentSettingSwitchItemView(frame: .zero)
-        let string1 = ResourceManager.L10n.Settings.aiVadNormal
-        let string2 = ResourceManager.L10n.Settings.aiVadLight
-        let attributedString = NSMutableAttributedString()
-        let attrString1 = NSAttributedString(string: string1, attributes: [.foregroundColor: UIColor.themColor(named: "ai_icontext1")])
-        attributedString.append(attrString1)
-        let attrString2 = NSAttributedString(string: string2, attributes: [.foregroundColor: UIColor.themColor(named: "ai_brand_lightbrand6"), .font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedString.append(attrString2)
-        view.titleLabel.attributedText = attributedString
+        view.titleLabel.text = ResourceManager.L10n.Settings.aiVadLight
         view.addtarget(self, action: #selector(onClickAiVad(_:)), for: .touchUpInside)
         if let manager = AppContext.preferenceManager(),
            let language = manager.preference.language,

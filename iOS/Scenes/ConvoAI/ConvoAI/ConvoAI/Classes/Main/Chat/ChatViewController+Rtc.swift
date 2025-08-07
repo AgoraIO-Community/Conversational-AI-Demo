@@ -82,6 +82,7 @@ extension ChatViewController: AgoraRtcEngineDelegate {
         if avatarState {
             remoteIsJoined = agentIsJoined && avatarIsJoined
         }
+
         
         if remoteIsJoined {
             annotationView.dismiss()
@@ -97,7 +98,7 @@ extension ChatViewController: AgoraRtcEngineDelegate {
                 SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.userSpeakToast)
             }
         } else {
-            addLog("avatar state: \(avatarState)")
+            addLog("state error, local agent uid: \(agentUid), local avatar uid: \(avatarUid), remote uid: \(uid)")
         }
     }
     
@@ -264,6 +265,10 @@ extension ChatViewController {
     internal func leaveChannel() {
         addLog("[Call] leaveChannel()")
         channelName = ""
+        agentUid = -1
+        avatarUid = -1
+        agentIsJoined = false
+        avatarIsJoined = false
         rtcManager.leaveChannel()
     }
     

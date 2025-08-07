@@ -94,20 +94,22 @@ public class ChatViewController: UIViewController {
         return manager
     }()
     
-    internal lazy var topBar: AgentSettingBar = {
-        let view = AgentSettingBar()
-        view.infoListButton.addTarget(self, action: #selector(onClickInformationButton), for: .touchUpInside)
+    internal lazy var navivationBar: MainNavigationBar = {
+        let view = MainNavigationBar()
         view.settingButton.addTarget(self, action: #selector(onClickSettingButton), for: .touchUpInside)
         view.wifiInfoButton.addTarget(self, action: #selector(onClickWifiInfoButton), for: .touchUpInside)
-        view.addButton.addTarget(self, action: #selector(onClickAddButton), for: .touchUpInside)
-        view.cameraButton.addTarget(self, action: #selector(clickCameraButton), for: .touchUpInside)
         view.transcriptionButton.addTarget(self, action: #selector(onClickTranscriptionButton(_:)), for: .touchUpInside)
-        view.centerTitleButton.addTarget(self, action: #selector(onClickLogo), for: .touchUpInside)
+        return view
+    }()
+    
+    internal lazy var sideNavigationBar: SideNavigationBar = {
+        let view = SideNavigationBar()
+        view.isHidden = true
         return view
     }()
 
-    internal lazy var bottomBar: AgentControlToolbar = {
-        let view = AgentControlToolbar()
+    internal lazy var callControlBar: CallControlbar = {
+        let view = CallControlbar()
         view.delegate = self
         return view
     }()

@@ -10,7 +10,34 @@ import SVProgressHUD
 import Common
 
 // MARK: - AgentControlToolbarDelegate
-extension ChatViewController: AgentControlToolbarDelegate {
+extension ChatViewController: CallControlbarDelegate {
+    func openPhotoLibrary() {
+        guard let preset = AppContext.preferenceManager()?.preference.preset else {
+            return
+        }
+
+        if !preset.isSupportVision {
+            SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.visionUnsupportMessage)
+            return
+        }
+
+        PhotoPickTypeViewController.start(from: self) { [weak self] data in
+            guard let self = self else { return }
+            guard let image = data?.image else {
+                addLog("<<<<< PhotoPickTypeViewController image is nil")
+                return
+            }
+
+            let uuid = UUID().uuidString
+            self.sendImage(image: image, uuid: uuid)
+        }
+    }
+    
+    func switchCamera() {
+        let engine = rtcManager.getRtcEntine()
+        engine.switchCamera()
+    }
+    
     func hangUp() {
         clickTheCloseButton()
     }
@@ -27,7 +54,7 @@ extension ChatViewController: AgentControlToolbarDelegate {
     func switchPublishVideoStream(state: Bool) {
         // if the agent is not connected, reset the state
         if AppContext.preferenceManager()?.information.agentState != .connected {
-            bottomBar.videoButton.isSelected = false
+            callControlBar.videoButton.isSelected = false
             SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.retryAfterConnect)
             return
         }
@@ -42,18 +69,16 @@ extension ChatViewController: AgentControlToolbarDelegate {
                 guard let self = self else { return }
                 if !granted {
                     self.showCameraPermissionAlert()
-                    self.bottomBar.videoButton.isSelected = false
+                    self.callControlBar.videoButton.isSelected = false
                     return
                 }
                 self.windowState.showVideo = true
                 self.startRenderLocalVideoStream(renderView: self.localVideoView)
-                self.topBar.openCamera(isOpen: true)
                 self.updateWindowContent()
             }
         } else {
             windowState.showVideo = false
             stopRenderLocalVideoStream()
-            topBar.openCamera(isOpen: false)
             updateWindowContent()
         }
     }
@@ -63,8 +88,6 @@ extension ChatViewController {
     @objc internal func onClickStopSpeakingButton(_ sender: UIButton) {
         convoAIAPI.interrupt(agentUserId: "\(agentUid)") { error in
         }
-        
-        messageView.viewModel.userInterruptActively()
     }
     
     private func clickTheCloseButton() {
@@ -111,7 +134,7 @@ extension ChatViewController {
                 try await fetchPresetsIfNeeded()
                 try await fetchTokenIfNeeded()
                 await MainActor.run {
-                    if bottomBar.style == .startButton { return }
+                    if callControlBar.style == .startButton { return }
                     startAgentRequest()
                     joinChannel()
                 }
@@ -153,12 +176,14 @@ extension ChatViewController {
     }
     
     internal func startLoading() {
-        bottomBar.style = .controlButtons
+        callControlBar.style = .controlButtons
+        navivationBar.style = .active
         annotationView.showLoading()
     }
     
     internal func stopLoading() {
-        bottomBar.style = .startButton
+        callControlBar.style = .startButton
+        navivationBar.style = .idle
         annotationView.dismiss()
     }
 }

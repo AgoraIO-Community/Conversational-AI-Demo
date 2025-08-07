@@ -79,9 +79,16 @@ extension AgentSelectTableView: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withClass: AgentSettingSubOptionCell.self)
         let item = dataSource[indexPath.row]
         cell.configure(with: item.title, subtitle: item.subTitle, isSelected: indexPath.row == selectedIndex)
-        // if the cell is last cell, hide the bottom line
         cell.bottomLine.isHidden = (indexPath.row == dataSource.count - 1)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return max(UITableView.automaticDimension, 56)
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 56
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -89,9 +96,5 @@ extension AgentSelectTableView: UITableViewDataSource, UITableViewDelegate {
         selectedIndex = indexPath.row
         tableView.reloadData()
         onSelected?(indexPath.row)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
 }

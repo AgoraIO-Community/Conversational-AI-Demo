@@ -12,7 +12,6 @@ protocol MessageStandard {
     func addImageMessage(uuid: String, image: UIImage)
     func updateImageMessage(uuid: String, state: ImageState)
     func reduceLLMInterrupt(turnId: Int)
-    func userInterruptActively()
 }
 
 extension ChatMessageViewModel: MessageStandard {
@@ -75,17 +74,6 @@ extension ChatMessageViewModel: MessageStandard {
             } else if displayMode == .chunk {
                 createNewMessageForChunkMode(content: message, timestamp: timestamp, isMine: isMine, turnId: turnId, isInterrupted: isInterrupted, isFinal: isFinal)
             }
-        }
-    }
-    
-    func userInterruptActively() {
-        if displayMode == .text {
-            stopTimer()
-            lastMessage?.isFinal = true
-        } else if displayMode == .words {
-            //do nothing now
-        } else if displayMode == .chunk {
-            //do nothing now
         }
     }
 

@@ -48,6 +48,7 @@
 "conversation.agent.transcription" = "字幕";
 "conversation.vision.unsupport.message" = "当前 Preset 不支持视觉理解相关功能，请点击右上角设置按钮切换其他 Preset 体验！";
 "conversation.vision.retry.after.connect" = "请连接后重试";
+"conversation.agent.voice.lock.tips" = "声纹锁定";
 
 "conversation.alert.cancel" = "取消";
 "conversation.alert.confirm" = "确定";
@@ -64,7 +65,6 @@
 "settings.microphone" = "麦克风";
 "settings.speaker" = "扬声器";
 "settings.noise.cancellation" = "噪声取消";
-"settings.noise.aiVad.nomal" = "启用 ";
 "settings.noise.aiVad.highlight" = "优雅打断";
 "settings.transcript.render.mode" = "字幕渲染模式";
 "settings.transcript.render.word.mode" = "Word 模式";

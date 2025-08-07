@@ -45,7 +45,7 @@ class AgentSettingSubOptionCell: UITableViewCell {
         backgroundColor = UIColor.themColor(named: "ai_block3")
         selectionStyle = .none
         [titleLabel, subtitleLabel, bottomLine, checkImageView].forEach { contentView.addSubview($0) }
-        
+                
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(16)
             make.top.equalTo(8)

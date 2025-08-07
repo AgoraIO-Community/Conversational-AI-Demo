@@ -13,23 +13,23 @@ import Common
 extension ChatViewController: AgentTimerCoordinatorDelegate {
     func agentUseLimitedTimerClosed() {
         addLog("[Call] agentUseLimitedTimerClosed")
-        topBar.stop()
+        sideNavigationBar.stop()
     }
     
     func agentUseLimitedTimerStarted(duration: Int) {
         addLog("[Call] agentUseLimitedTimerStarted")
-        topBar.showTips(seconds: duration)
-        topBar.updateRestTime(duration)
+        sideNavigationBar.showTips(seconds: duration)
+        sideNavigationBar.updateRestTime(duration)
     }
     
     func agentUseLimitedTimerUpdated(duration: Int) {
         addLog("[Call] agentUseLimitedTimerUpdated")
-        topBar.updateRestTime(duration)
+        sideNavigationBar.updateRestTime(duration)
     }
     
     func agentUseLimitedTimerEnd() {
         addLog("[Call] agentUseLimitedTimerEnd")
-        topBar.stop()
+        sideNavigationBar.stop()
         stopLoading()
         stopAgent()
         let title = ResourceManager.L10n.ChannelInfo.timeLimitdAlertTitle

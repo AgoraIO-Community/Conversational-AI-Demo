@@ -289,10 +289,13 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
     
     func agentSettingsViewDidTapTranscriptRender(_ view: AgentSettingsView, sender: UIButton) {
         selectTableMask.isHidden = false
-        guard let currentMode = AppContext.preferenceManager()?.preference.transcriptMode else {
-            return
+        guard let preference = AppContext.preferenceManager()?.preference, let language = preference.language else { return }
+        let currentMode = preference.transcriptMode
+        var allModes = TranscriptDisplayMode.allCases
+        if language.languageCode != "zh-CN" {
+            allModes.removeAll { $0 == .chunk}
         }
-        let allModes = TranscriptDisplayMode.allCases
+        
         let currentIndex = allModes.firstIndex { $0 == currentMode } ?? 0
         
         let table = AgentSelectTableView(items: allModes.map { AgentSelectTableItem(title: $0.renderDisplayName, subTitle: $0.renderSubtitle) }) { index in

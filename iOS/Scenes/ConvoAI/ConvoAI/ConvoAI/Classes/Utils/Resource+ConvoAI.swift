@@ -84,6 +84,7 @@ extension ResourceManager {
             public static let agentTranscription = ResourceManager.localizedString("conversation.agent.transcription")
             public static let visionUnsupportMessage = ResourceManager.localizedString("conversation.vision.unsupport.message")
             public static let retryAfterConnect = ResourceManager.localizedString("conversation.vision.retry.after.connect")
+            public static let voiceLockTips = ResourceManager.localizedString("conversation.agent.voice.lock.tips")
         }
         
         public enum Setting {
@@ -115,7 +116,6 @@ extension ResourceManager {
             public static let microphone = ResourceManager.localizedString("settings.microphone")
             public static let speaker = ResourceManager.localizedString("settings.speaker")
             public static let noiseCancellation = ResourceManager.localizedString("settings.noise.cancellation")
-            public static let aiVadNormal = ResourceManager.localizedString("settings.noise.aiVad.nomal")
             public static let aiVadLight = ResourceManager.localizedString("settings.noise.aiVad.highlight")
             public static let transcriptRenderMode = ResourceManager.localizedString("settings.transcript.render.mode")
             public static let transcriptRenderWordMode = ResourceManager.localizedString("settings.transcript.render.word.mode")

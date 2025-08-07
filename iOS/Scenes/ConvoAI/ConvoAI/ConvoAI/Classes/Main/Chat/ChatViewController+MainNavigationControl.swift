@@ -34,34 +34,6 @@ extension ChatViewController {
         present(navigationController, animated: false)
     }
     
-    @objc internal func clickCameraButton() {
-        let engine = rtcManager.getRtcEntine()
-        
-        engine.switchCamera()
-    }
-    
-    @objc internal func onClickAddButton() {
-        guard let preset = AppContext.preferenceManager()?.preference.preset else {
-            return
-        }
-        
-        if !preset.isSupportVision {
-            SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.visionUnsupportMessage)
-            return
-        }
-        
-        PhotoPickTypeViewController.start(from: self) { [weak self] data in
-            guard let self = self else { return }
-            guard let image = data?.image else {
-                addLog("<<<<< PhotoPickTypeViewController image is nil")
-                return
-            }
-            
-            let uuid = UUID().uuidString
-            self.sendImage(image: image, uuid: uuid)
-        }
-    }
-    
     @objc internal func onClickTranscriptionButton(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
         
