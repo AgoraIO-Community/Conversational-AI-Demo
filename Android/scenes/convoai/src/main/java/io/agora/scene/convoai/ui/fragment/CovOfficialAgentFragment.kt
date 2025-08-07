@@ -5,26 +5,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
-import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.convoai.CovLogger
-import io.agora.scene.convoai.R
-import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.constant.CovAgentManager
-import io.agora.scene.convoai.databinding.CovAvatarSelectorCloseItemBinding
 import io.agora.scene.convoai.databinding.CovFragmentOfficialAgentBinding
 import io.agora.scene.convoai.databinding.CovItemOfficialAgentBinding
 import io.agora.scene.convoai.ui.CovLivingActivity
-import io.agora.scene.convoai.ui.dialog.CovAvatarSelectorDialog.AvatarItem
+import io.agora.scene.convoai.ui.vm.CovListViewModel
 
 class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>() {
 
+    companion object{
+        private const val TAG = "CovOfficialAgentFragment"
+    }
+
     private lateinit var adapter: OfficialAgentAdapter
+    private val viewModel: CovListViewModel by activityViewModels()
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -35,16 +35,17 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        CovLogger.d(TAG, "onViewCreated called")
         initViews()
         setupAdapter()
-        loadPresets()
+        observeViewModel()
     }
 
 
     private fun initViews() {
         mBinding?.apply {
             btnRetry.setOnClickListener {
-                loadPresets()
+                viewModel.loadOfficialAgents()
             }
         }
     }
@@ -58,17 +59,33 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
         }
     }
 
-    private fun loadPresets() {
-        showLoading()
-        CovAgentApiManager.fetchPresets { error, presets ->
-            if (error != null) {
-                CovLogger.e("OfficialAgentFragment", "Failed to load presets: ${error.message}")
-                showError()
-            } else {
-                if (presets.isNotEmpty()) {
-                    adapter.updateData(presets)
+    private fun observeViewModel() {
+        CovLogger.d(TAG, "Setting up ViewModel observer")
+
+        // Observe data changes
+        viewModel.officialAgents.observe(viewLifecycleOwner) { presets ->
+            CovLogger.d(TAG, "Data updated: ${presets.size} items")
+            adapter.updateData(presets)
+        }
+
+        // Observe state changes
+        viewModel.officialState.observe(viewLifecycleOwner) { state ->
+            CovLogger.d(TAG, "State changed: $state")
+            when (state) {
+                is CovListViewModel.AgentListState.Loading -> {
+                    CovLogger.d(TAG, "Showing loading")
+                    showLoading()
+                }
+                is CovListViewModel.AgentListState.Success -> {
+                    CovLogger.d(TAG, "Showing content")
                     showContent()
-                } else {
+                }
+                is CovListViewModel.AgentListState.Error -> {
+                    CovLogger.d(TAG, "Showing error")
+                    showError()
+                }
+                is CovListViewModel.AgentListState.Empty -> {
+                    CovLogger.d(TAG, "Showing error (empty)")
                     showError()
                 }
             }
@@ -102,7 +119,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
 
     private fun onPresetSelected(preset: CovAgentPreset) {
         CovAgentManager.setPreset(preset)
-        CovLogger.d("OfficialAgentFragment", "Selected preset: ${preset.name}")
+        CovLogger.d(TAG, "Selected preset: ${preset.name}")
         context?.let {
             it.startActivity(Intent(it, CovLivingActivity::class.java))
         }
@@ -141,11 +158,11 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
-                    tvDescription.text = preset.display_name
+                    tvDescription.text = preset.description
                     // For now, using default avatar
                     GlideImageLoader.load(
                         ivAvatar,
-                        "xxx",
+                        preset.avatar_url,
                         io.agora.scene.common.R.drawable.common_default_agent,
                         io.agora.scene.common.R.drawable.common_default_agent
                     )

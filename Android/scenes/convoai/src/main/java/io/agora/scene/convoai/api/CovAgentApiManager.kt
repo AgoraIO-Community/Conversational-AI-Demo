@@ -63,6 +63,9 @@ object CovAgentApiManager {
             CovAgentManager.getPreset()?.name?.let {
                 postBody.put("preset_name", it)
             }
+            CovAgentManager.getPreset()?.preset_type?.let {
+                postBody.put("preset_type", it)
+            }
 
             // Process convoaiBody, convert Map to JSONObject and filter out null values
             val convoaiJsonObject = mapToJsonObjectWithFilter(convoaiBody)
@@ -321,6 +324,47 @@ object CovAgentApiManager {
                 runOnMainThread {
                     agentId = null
                     completion.invoke(e)
+                }
+            }
+        })
+    }
+
+    fun fetchCustomsPresets(customPresetIds: String, completion: (error: Exception?, List<CovAgentPreset>) -> Unit) {
+        val baseUrl = "${ServerConfig.toolBoxUrl}/convoai/$SERVICE_VERSION/customPresets/search"
+        val requestURL = "$baseUrl?app_id=${ServerConfig.rtcAppId}&customPresetIds=$customPresetIds"
+
+        val request = buildRequest(requestURL, "GET")
+
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val json = response.body.string()
+                try {
+                    val jsonObject = GsonTools.toBean(json, JsonObject::class.java)
+                    if (jsonObject?.get("code")?.asInt == 0) {
+                        val data = GsonTools.toList(
+                            jsonObject.getAsJsonArray("data").toString(),
+                            CovAgentPreset::class.java
+                        ) ?: emptyList()
+                        runOnMainThread {
+                            completion.invoke(null, data)
+                        }
+                    } else {
+                        runOnMainThread {
+                            completion.invoke(null, emptyList())
+                        }
+                    }
+                } catch (e: Exception) {
+                    CovLogger.e(TAG, "Parse custom presets failed: $e")
+                    runOnMainThread {
+                        completion.invoke(e, emptyList())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                CovLogger.e(TAG, "fetch custom presets failed: $e")
+                runOnMainThread {
+                    completion.invoke(e, emptyList())
                 }
             }
         })

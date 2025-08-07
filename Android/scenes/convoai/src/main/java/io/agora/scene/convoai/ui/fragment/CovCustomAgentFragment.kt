@@ -1,13 +1,16 @@
 package io.agora.scene.convoai.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.common.util.GlideImageLoader
@@ -15,15 +18,20 @@ import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentPreset
+import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovFragmentCustomAgentBinding
 import io.agora.scene.convoai.databinding.CovItemOfficialAgentBinding
+import io.agora.scene.convoai.ui.CovLivingActivity
+import io.agora.scene.convoai.ui.vm.CovListViewModel
 
 class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
-    private lateinit var adapter: CustomAgentAdapter
+    companion object{
+        private const val TAG = "CovCustomAgentFragment"
+    }
 
-    // Mock data for demonstration - replace with actual data source
-    private val mockCustomPresets = listOf<CovAgentPreset>()
+    private lateinit var adapter: CustomAgentAdapter
+    private val viewModel: CovListViewModel by activityViewModels()
 
     // Keyboard handling
     private var isKeyboardVisible = false
@@ -40,7 +48,7 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         setupAdapter()
-        loadCustomPresets()
+        observeViewModel()
         setupKeyboardListener()
     }
 
@@ -92,16 +100,30 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         }
     }
 
-    private fun loadCustomPresets() {
-        showLoading()
+    private fun observeViewModel() {
+        // Observe data changes
+        viewModel.customAgents.observe(viewLifecycleOwner) { presets ->
+            adapter.updateData(presets)
+        }
 
-        // For now, using mock data
-        // TODO: Replace with actual custom presets API call
-        if (mockCustomPresets.isNotEmpty()) {
-            adapter.updateData(mockCustomPresets)
-            showContent()
-        } else {
-            showEmptyState()
+        // Observe state changes
+        viewModel.customState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is CovListViewModel.AgentListState.Loading -> {
+                    showLoading()
+                }
+                is CovListViewModel.AgentListState.Success -> {
+                    showContent()
+                }
+                is CovListViewModel.AgentListState.Error -> {
+                    // Handle error if needed
+                    CovLogger.e(TAG, "Custom agents error: ${state.message}")
+                    showEmptyState()
+                }
+                is CovListViewModel.AgentListState.Empty -> {
+                    showEmptyState()
+                }
+            }
         }
     }
 
@@ -136,18 +158,24 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
     }
 
     private fun onPresetSelected(preset: CovAgentPreset) {
-        CovLogger.d("CustomAgentFragment", "Selected custom preset: ${preset.name}")
-        // TODO: Handle custom preset selection
-        // You can add navigation logic here or communicate with parent activity
+        CovLogger.d(TAG, "Selected custom preset: ${preset.name}")
+        CovAgentManager.setPreset(preset)
+        CovLogger.d(TAG, "Selected preset: ${preset.name}")
+        context?.let {
+            it.startActivity(Intent(it, CovLivingActivity::class.java))
+        }
     }
 
     private fun onGetAgentClicked() {
-        CovLogger.d("CustomAgentFragment", "Get agent button clicked")
+        CovLogger.d(TAG, "Get agent button clicked")
         mBinding?.apply {
-            if (etAgentId.text.toString().isEmpty()) {
+            val agentId = etAgentId.text.toString()
+            if (agentId.isEmpty()) {
                 ToastUtil.show(R.string.cov_custom_agent_input_tip)
             } else {
-                ToastUtil.show("Get agent ID: ${etAgentId.text}")
+                // Load custom agent by ID
+                viewModel.loadCustomAgents(agentId)
+                ToastUtil.show("Loading agent: $agentId")
             }
         }
     }
@@ -242,11 +270,11 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
-                    tvDescription.text = preset.display_name
+                    tvDescription.text = preset.description
                     // For now, using default avatar
                     GlideImageLoader.load(
                         ivAvatar,
-                        "xxx",
+                        preset.avatar_url,
                         io.agora.scene.common.R.drawable.common_default_agent,
                         io.agora.scene.common.R.drawable.common_default_agent
                     )

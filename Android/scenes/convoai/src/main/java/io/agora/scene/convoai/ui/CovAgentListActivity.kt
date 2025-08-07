@@ -14,8 +14,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import io.agora.scene.common.debugMode.DebugConfigSettings
-import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
+import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.ui.vm.LoginState
 import io.agora.scene.common.ui.vm.UserViewModel
@@ -27,6 +27,7 @@ import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.ui.dialog.CovAppInfoDialog
 import io.agora.scene.convoai.ui.fragment.CovOfficialAgentFragment
 import io.agora.scene.convoai.ui.fragment.CovCustomAgentFragment
+import io.agora.scene.convoai.ui.vm.CovListViewModel
 import kotlinx.coroutines.launch
 import kotlin.getValue
 import kotlin.math.abs
@@ -41,8 +42,8 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
 
 
     // ViewModel instances
-    private val viewModel: CovLivingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
+    private val listViewModel: CovListViewModel by viewModels()
 
     // State tracking to avoid frequent calls
     private var isCollapsed: Boolean = false
@@ -105,6 +106,11 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
         setupViewPager()
         setupTabLayout()
         hideLoadingState()
+
+        // Load agent data after fragments are created
+        // This ensures fragments can observe the data changes
+        listViewModel.loadOfficialAgents()
+        listViewModel.loadCustomAgents("p1,p2,p3") // Example IDs
     }
 
     private fun showLoadingState() {
@@ -513,7 +519,6 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
         super.onDestroy()
         // Clean up resources if needed
     }
-
 
     // Override debug callback to provide custom behavior for login screen
     override fun createDefaultDebugCallback(): DebugTabDialog.DebugCallback {

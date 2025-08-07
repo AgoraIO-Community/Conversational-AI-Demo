@@ -266,7 +266,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             } else {
                 clTop.updateTitleName(
                     CovAgentManager.getPreset()?.display_name ?: "",
-                    "xxx"
+                    CovAgentManager.getPreset()?.avatar_url ?: ""
                 )
             }
         }
@@ -617,7 +617,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     private fun onClickStartAgent() {
         hasShownTitleAnim = false
         // Set render mode
-        isSelfSubRender = CovAgentManager.getPreset()?.isIndependent() == true
+        isSelfSubRender = CovAgentManager.getPreset()?.isIndependent == true
         resetSceneState()
 
         if (DebugConfigSettings.isDebug) {
