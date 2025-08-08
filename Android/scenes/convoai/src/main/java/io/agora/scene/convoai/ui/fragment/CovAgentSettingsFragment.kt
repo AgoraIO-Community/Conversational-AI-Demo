@@ -226,16 +226,22 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             val itemDistances = clLanguage.getDistanceFromScreenEdges()
             val maskDistances = vOptionsMask.getDistanceFromScreenEdges()
             val targetY = itemDistances.top - maskDistances.top + 30.dp
-            cvOptions.x = vOptionsMask.width - 250.dp
+            
+            // Increase width for language names, but keep it shorter than render mode
+            val widerWidth = 250.dp
+            val maxWidth = vOptionsMask.width - 64.dp // Leave some margin from screen edges
+            val finalWidth = widerWidth.coerceAtMost(maxWidth)
+            cvOptions.x = vOptionsMask.width - finalWidth - 32.dp // Add right margin
             cvOptions.y = targetY
 
-            // Calculate height with constraints
+            // Update width and height with constraints
             val params = cvOptions.layoutParams
             val itemHeight = 56.dp.toInt()
             // Ensure maxHeight is at least one item height
             val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
             val finalHeight = (itemHeight * languages.size).coerceIn(itemHeight, finalMaxHeight)
 
+            params.width = finalWidth.toInt()
             params.height = finalHeight
             cvOptions.layoutParams = params
 
@@ -325,19 +331,25 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             vOptionsMask.visibility = View.VISIBLE
 
             // Calculate popup position using getDistanceFromScreenEdges
-            val itemDistances = clRenderMode.getDistanceFromScreenEdges()
+            val itemDistances = llDevice.getDistanceFromScreenEdges()
             val maskDistances = vOptionsMask.getDistanceFromScreenEdges()
             val targetY = itemDistances.top - maskDistances.top + 30.dp
-            cvOptions.x = vOptionsMask.width - 250.dp
+            
+            // Increase width for longer English text, but ensure it doesn't exceed screen width
+            val widerWidth = 320.dp
+            val maxWidth = vOptionsMask.width - 64.dp // Leave some margin from screen edges
+            val finalWidth = widerWidth.coerceAtMost(maxWidth)
+            cvOptions.x = vOptionsMask.width - finalWidth - 32.dp // Add right margin
             cvOptions.y = targetY
 
-            // Calculate height with constraints
+            // Update width and height with constraints
             val params = cvOptions.layoutParams
-            val itemHeight = 56.dp.toInt()
+            val itemHeight = 80.dp.toInt()
             // Ensure maxHeight is at least one item height
-            val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight)
+            val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight) + 40.dp.toInt()
             val finalHeight = (itemHeight * transcriptRenders.size).coerceIn(itemHeight, finalMaxHeight)
 
+            params.width = finalWidth.toInt()
             params.height = finalHeight
             cvOptions.layoutParams = params
 

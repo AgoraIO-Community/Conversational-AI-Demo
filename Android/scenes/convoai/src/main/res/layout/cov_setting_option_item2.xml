@@ -23,7 +23,9 @@
             android:textSize="14sp"
             android:textDirection="ltr"
             tools:text="ssssss"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:maxLines="2"
+            android:ellipsize="end" />
 
         <TextView
             android:id="@+id/tv_detail"
@@ -34,7 +36,9 @@
             android:layout_marginTop="6dp"
             tools:text="ssssss"
             android:textDirection="ltr"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:maxLines="3"
+            android:ellipsize="end" />
     </LinearLayout>
 
     <ImageView

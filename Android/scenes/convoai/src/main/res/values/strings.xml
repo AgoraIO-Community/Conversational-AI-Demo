@@ -117,14 +117,14 @@
     <string name="cov_photo_permission_cancel">Cancel</string>
 
     <!-- Agent List -->
-    <string name="cov_official_agent_title">Office Agent</string>
-    <string name="cov_custom_agent_title">Custom Agent</string>
-    <string name="cov_custom_agent_acquire">Get Your Custom Agent</string>
-    <string name="cov_custom_agent_acquire_tip">Please contact Agora\'s employee to obtain the custom agent ID</string>
-    <string name="cov_custom_agent_input_tip">Enter your custom agent ID to get</string>
-    <string name="cov_custom_agent_get">Get</string>
-    <string name="cov_voiceprint_lock">Voice print</string>
-    <string name="cov_voiceprint_lock_success">The engine will learn your voice print to filter out other people\'s voices and background noise.</string>
+    <string name="cov_official_agent_title">Official AI Agents</string>
+    <string name="cov_custom_agent_title">Custom AI Agents</string>
+    <string name="cov_custom_agent_acquire">Get Your AI Assistant</string>
+    <string name="cov_custom_agent_acquire_tip">Please contact Agora staff to obtain your custom agent ID.</string>
+    <string name="cov_custom_agent_input_tip">Enter Agent ID to Retrieve</string>
+    <string name="cov_custom_agent_get">Retrieve</string>
+    <string name="cov_voiceprint_lock">Voiceprint Lock</string>
+    <string name="cov_voiceprint_lock_success">The engine will learn your unique voiceprint to filter out other voices and background noise.</string>
     <string name="cov_word_mode">Word-by-Word</string>
     <string name="cov_word_mode_tips">The transcript appears one word at a time, synchronized with the AI\'s speech.</string>
     <string name="cov_text_first_mode">Streaming Text</string>
@@ -134,8 +134,8 @@
     <string name="cov_remove_agent_content">Are you sure you want to delete agent \"%s\"?</string>
     <string name="cov_remove_agent_confirm">Delete</string>
     <string name="cov_remove_agent_cancel">Cancel</string>
-    <string name="cov_get_agent_success">Agent retrieved successfully</string>
-    <string name="cov_get_agent_failed">Agent retrieval failed, no such agent in current database</string>
-    <string name="cov_get_agent_offline">Agent has been taken offline, please contact Agora staff</string>
-    <string name="cov_retry_tips">Page loading failed. Please try again.</string>
+    <string name="cov_get_agent_success">Agent retrieved successfully.</string>
+    <string name="cov_get_agent_failed">Failed to retrieve agent. No matching entry found in the current database.</string>
+    <string name="cov_get_agent_offline">This agent is no longer available. Please contact Agora staff.</string>
+    <string name="cov_retry_tips">Page failed to load. Please try again.</string>
 </resources>
