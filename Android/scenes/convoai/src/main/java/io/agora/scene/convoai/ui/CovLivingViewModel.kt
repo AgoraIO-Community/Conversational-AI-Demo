@@ -231,6 +231,20 @@ class CovLivingViewModel : ViewModel() {
         }
     }
 
+    val agentName: String
+        get() = if (CovAgentManager.isEnableAvatar) {
+            CovAgentManager.avatar?.avatar_name ?: ""
+        } else {
+            CovAgentManager.getPreset()?.display_name ?: ""
+        }
+
+    val agentUrl: String
+        get() = if (CovAgentManager.isEnableAvatar) {
+            CovAgentManager.avatar?.thumb_img_url ?: ""
+        } else {
+            CovAgentManager.getPreset()?.avatar_url ?: ""
+        }
+
     // Start Agent connection
     fun startAgentConnection() {
         if (_connectionState.value != AgentConnectionState.IDLE) return

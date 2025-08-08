@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.common.R
+import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.convoaiApi.subRender.v1.ISelfMessageListView
 import io.agora.scene.convoai.databinding.CovMessageAgentItemBinding
@@ -71,8 +73,8 @@ class SelfMessageListView @JvmOverloads constructor(
         return messageAdapter.getAllMessage()
     }
 
-    fun updateAgentName(str: String) {
-        messageAdapter.updateFromTitle(str)
+    fun updateAgentName(str: String, url: String) {
+        messageAdapter.updateFromTitle(str, url)
     }
 
     private fun handleUserMessage(turnId: Long, text: String, isFinal: Boolean) {
@@ -170,6 +172,7 @@ class SelfMessageListView @JvmOverloads constructor(
     class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
         private var fromTitle: String = ""
+        private var fromUrl: String = ""
         private val messages = mutableListOf<Message>()
 
         abstract class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -187,6 +190,16 @@ class SelfMessageListView @JvmOverloads constructor(
             override fun bind(message: Message) {
                 binding.tvMessageContent.text = message.content
                 binding.tvMessageTitle.text = fromTitle
+                if (fromUrl.isEmpty()) {
+                    binding.ivMessageIcon.setImageResource(R.drawable.common_default_agent)
+                } else {
+                    GlideImageLoader.load(
+                        binding.ivMessageIcon,
+                        fromUrl,
+                        R.drawable.common_default_agent,
+                        R.drawable.common_default_agent
+                    )
+                }
             }
         }
 
@@ -257,8 +270,9 @@ class SelfMessageListView @JvmOverloads constructor(
             }
         }
 
-        fun updateFromTitle(title: String) {
+        fun updateFromTitle(title: String, url: String) {
             fromTitle = title
+            fromUrl = url
             notifyDataSetChanged()
         }
     }

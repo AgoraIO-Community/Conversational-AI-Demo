@@ -88,10 +88,10 @@ class TypingTextView @JvmOverloads constructor(
             val x = dotsStartX + i * (dotRadius * 2 + dotSpacing)
             val phase = (currentPhase + i) % 3f
             val alpha = when {
-                phase < 1f -> phase
-                phase < 2f -> 1f
-                else -> 3f - phase
-            }.coerceIn(0f, 1f)
+                phase < 1f -> 0.6f + (phase * 0.4f)  // 60% to 100%
+                phase < 2f -> 1f                       // 100%
+                else -> 0.6f + ((3f - phase) * 0.4f)  // 100% to 60%
+            }.coerceIn(0.6f, 1f)
 
             paint.alpha = (alpha * 255).toInt()
             // Move dots up by 2dp from the line bottom

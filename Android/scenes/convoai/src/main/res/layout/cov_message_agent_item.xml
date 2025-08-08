@@ -13,12 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_message_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginEnd="6dp"
-            android:src="@drawable/scene_detail_message_list_agent" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/common_default_agent"
+            app:shapeAppearance="@style/CommonRoundShape"/>
 
         <TextView
             android:id="@+id/tv_message_title"

@@ -93,14 +93,18 @@ class CovLivingTopView @JvmOverloads constructor(
         onCCClick = listener
     }
 
-    fun updateTitleName(name: String,url:String) {
+    fun updateTitleName(name: String, url: String) {
         binding.tvPresetName.text = name
-        GlideImageLoader.load(
-            binding.ivPreset,
-            url,
-            R.drawable.common_default_agent,
-            R.drawable.common_default_agent
-        )
+        if (url.isEmpty()) {
+            binding.ivPreset.setImageResource(R.drawable.common_default_agent)
+        } else {
+            GlideImageLoader.load(
+                binding.ivPreset,
+                url,
+                R.drawable.common_default_agent,
+                R.drawable.common_default_agent
+            )
+        }
     }
 
     /**

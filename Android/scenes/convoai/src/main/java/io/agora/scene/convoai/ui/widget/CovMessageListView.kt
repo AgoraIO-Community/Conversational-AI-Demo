@@ -11,6 +11,8 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.common.R
+import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.Transcript
@@ -151,8 +153,8 @@ class CovMessageListView @JvmOverloads constructor(
     /**
      * Update agent name
      */
-    fun updateAgentName(name: String) {
-        messageAdapter.updateAgentName(name)
+    fun updateAgentName(name: String, url: String) {
+        messageAdapter.updateAgentName(name, url)
     }
 
     /**
@@ -253,6 +255,7 @@ class CovMessageListView @JvmOverloads constructor(
     inner class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
         private var agentName: String = ""
+        private var agentUrl: String = ""
         private val messages = mutableListOf<Message>()
 
 
@@ -317,8 +320,18 @@ class CovMessageListView @JvmOverloads constructor(
         inner class AgentMessageViewHolder(private val binding: CovMessageAgentItemBinding) :
             MessageViewHolder(binding.root) {
             override fun bind(message: Message) {
+                binding.tvMessageTitle.text = agentName
+                if (agentUrl.isEmpty()) {
+                    binding.ivMessageIcon.setImageResource(R.drawable.common_default_agent)
+                } else {
+                    GlideImageLoader.load(
+                        binding.ivMessageIcon,
+                        agentUrl,
+                        R.drawable.common_default_agent,
+                        R.drawable.common_default_agent
+                    )
+                }
                 if (message.type == MessageType.TEXT) {
-                    binding.tvMessageTitle.text = agentName
                     binding.tvMessageContent.isVisible = true
                     binding.layoutImageMessage.isVisible = false
 
@@ -474,8 +487,9 @@ class CovMessageListView @JvmOverloads constructor(
         /**
          * Update agent name
          */
-        fun updateAgentName(name: String) {
+        fun updateAgentName(name: String, url: String) {
             agentName = name
+            agentUrl = url
             notifyDataSetChanged()
         }
 
@@ -596,6 +610,5 @@ class CovMessageListView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        // Stop typing animation to prevent memory leaks
     }
 }

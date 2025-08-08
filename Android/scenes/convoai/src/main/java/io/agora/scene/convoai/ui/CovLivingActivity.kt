@@ -127,7 +127,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             val layoutParams = clTop.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.topMargin = statusBarHeight
             clTop.layoutParams = layoutParams
-            updateTitle()
+            clTop.updateTitleName(viewModel.agentName, viewModel.agentUrl)
             agentStateView.configureStateTexts(
                 silent = getString(R.string.cov_agent_silent),
                 listening = getString(R.string.cov_agent_listening),
@@ -252,22 +252,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                 message.uuid?.let { uuid->
                     replayUploadImage(uuid, File(message.content))
                 }
-            }
-        }
-    }
-
-    private fun updateTitle() {
-        mBinding?.apply {
-            if (CovAgentManager.isEnableAvatar) {
-                clTop.updateTitleName(
-                    CovAgentManager.avatar?.avatar_name ?: "",
-                    CovAgentManager.avatar?.thumb_img_url ?: ""
-                )
-            } else {
-                clTop.updateTitleName(
-                    CovAgentManager.getPreset()?.display_name ?: "",
-                    CovAgentManager.getPreset()?.avatar_url ?: ""
-                )
             }
         }
     }
@@ -429,17 +413,14 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         }
         lifecycleScope.launch {
             viewModel.avatar.collect { avatar ->
-                if (avatar == null) {
-                    mBinding?.apply {
+                mBinding?.apply {
+                    if (avatar == null) {
                         clAnimationContent.isVisible = true
                         vDragBigWindow.isVisible = false
                         ivAvatarPreview.isVisible = false
                         videoView.isVisible = true
                         setupBallAnimView()
-                    }
-
-                } else {
-                    mBinding?.apply {
+                    } else {
                         clAnimationContent.isVisible = false
                         vDragBigWindow.isVisible = true
                         ivAvatarPreview.isVisible = true
@@ -457,6 +438,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                             mCovBallAnim = null
                         }
                     }
+                    clTop.updateTitleName(viewModel.agentName, viewModel.agentUrl)
                 }
             }
         }
@@ -629,10 +611,10 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         mBinding?.apply {
             if (isSelfSubRender) {
                 selfRenderController?.enable(true)
-                messageListViewV1.updateAgentName(CovAgentManager.getPreset()?.display_name ?: "")
+                messageListViewV1.updateAgentName(viewModel.agentName, viewModel.agentUrl)
             } else {
                 selfRenderController?.enable(false)
-                messageListViewV2.updateAgentName(CovAgentManager.getPreset()?.display_name ?: "")
+                messageListViewV2.updateAgentName(viewModel.agentName, viewModel.agentUrl)
             }
         }
 
