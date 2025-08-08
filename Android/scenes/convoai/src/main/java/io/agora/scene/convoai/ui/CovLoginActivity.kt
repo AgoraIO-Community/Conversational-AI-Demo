@@ -3,6 +3,7 @@ package io.agora.scene.convoai.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -15,6 +16,7 @@ import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.graphics.toColorInt
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.agora.scene.common.R
@@ -69,6 +71,13 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
             }
         }
         mBinding?.apply {
+            tvTyping.setGradientColors( listOf(
+                "#ffffffff".toColorInt(),
+                "#ccffffff".toColorInt(),
+                "#99ffffff".toColorInt(),
+                "#ccffffff".toColorInt(),
+                "#e6ffffff".toColorInt()
+            ))
             tvTyping.startAnimation()
             setupRichTextTerms(tvTermsRichText)
             btnLoginSSO.setOnClickListener(object : OnFastClickListener() {
