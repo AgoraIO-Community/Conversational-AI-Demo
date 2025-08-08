@@ -4,7 +4,7 @@ import Common
 class ChatMessageCell: UITableViewCell {
     static let identifier = "ChatMessageCell"
     
-    private static let dotAttachment = DotTextAttachment(data: nil, ofType: nil)
+    private let dotAttachment = DotTextAttachment(data: nil, ofType: nil)
     private var transcript: NSAttributedString?
     private var message: Message?
         
@@ -125,7 +125,7 @@ class ChatMessageCell: UITableViewCell {
         transcript = messageString.copy() as? NSAttributedString
         if !message.isMine && !message.isInterrupted && !message.isFinal && isLastMessage {
             messageString.append(NSAttributedString(string: " "))
-            messageString.append(NSAttributedString(attachment: ChatMessageCell.dotAttachment))
+            messageString.append(NSAttributedString(attachment: dotAttachment))
         }
         
         messageLabel.attributedText = messageString

@@ -265,8 +265,8 @@ extension ChatViewController {
     internal func leaveChannel() {
         addLog("[Call] leaveChannel()")
         channelName = ""
-        agentUid = -1
-        avatarUid = -1
+        agentUid = 0
+        avatarUid = 0
         agentIsJoined = false
         avatarIsJoined = false
         rtcManager.leaveChannel()
