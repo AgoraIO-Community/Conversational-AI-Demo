@@ -19,7 +19,7 @@ extension ChatViewController {
             "app_cert": nil,
             "basic_auth_username": nil,
             "basic_auth_password": nil,
-            
+            "preset_type": AppContext.preferenceManager()?.preference.preset?.presetType,
             // ConvoAI request body
             "convoai_body": [
                 "graph_id": DeveloperConfig.shared.graphId,

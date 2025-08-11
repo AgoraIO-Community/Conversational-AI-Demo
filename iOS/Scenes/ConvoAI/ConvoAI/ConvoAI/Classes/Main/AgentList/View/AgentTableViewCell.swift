@@ -55,7 +55,7 @@ class AgentTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         UIView.animate(withDuration: 0.3) {
             if selected {
-                self.customBackgroundView.backgroundColor = UIColor.themColor(named: "ai_mask3")
+                self.customBackgroundView.backgroundColor = UIColor.themColor(named: "ai_click_app")
             } else {
                 self.customBackgroundView.backgroundColor = UIColor.themColor(named: "ai_fill6")
             }
