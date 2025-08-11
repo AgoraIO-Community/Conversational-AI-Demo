@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import AlamofireImage
 import Common
+import Kingfisher
 
 class CharactersInformationView: UIView {
     private lazy var containerView: UIView = {
@@ -75,7 +75,7 @@ class CharactersInformationView: UIView {
     
     func configure(icon: String, name: String) {
         if let url = URL(string: icon) {
-            avatarImageView.af.setImage(withURL: url)
+            avatarImageView.kf.setImage(with: url)
         }
         nameLabel.text = name
     }

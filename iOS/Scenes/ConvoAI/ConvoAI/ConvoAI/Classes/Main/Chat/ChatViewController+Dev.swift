@@ -12,7 +12,8 @@ import IoT
 
 extension ChatViewController: DeveloperConfigDelegate {
     internal func configDevMode() {
-        topBar.centerTitleButton.addTarget(self, action: #selector(onClickLogo), for: .touchUpInside)
+        navivationBar.characterButton.addTarget(self, action: #selector(onClickLogo), for: .touchUpInside)
+
         DeveloperConfig.shared.add(delegate: self)
         
         if (DeveloperConfig.shared.isDeveloperMode) {
