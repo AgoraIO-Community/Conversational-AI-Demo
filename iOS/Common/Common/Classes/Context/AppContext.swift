@@ -103,6 +103,17 @@ import FirebaseCore
         }
     }
     
+    public func loadLocalPreset() -> Data? {
+        if let bundlePath = Bundle.main.path(forResource: "Common", ofType: "bundle"),
+           let bundle = Bundle(path: bundlePath),
+           let localPresetPath = bundle.path(forResource: "local_preset", ofType: "json"),
+           let data = try? Data(contentsOf: URL(fileURLWithPath: localPresetPath)) {
+            return data
+        }
+        
+        return nil
+    }
+    
     @objc public var basicAuthKey: String {
         get { return _basicAuthKey }
         set { _basicAuthKey = newValue }

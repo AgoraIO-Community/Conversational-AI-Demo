@@ -51,6 +51,19 @@ class AgentTableViewController: UIViewController, AgentListProtocol {
         guard UserCenter.shared.isLogin() else {
             return
         }
+        
+        if AppContext.shared.isOpenSource, let data = AppContext.shared.loadLocalPreset() {
+            do {
+                let presets = try JSONDecoder().decode([AgentPreset].self, from: data)
+                self.presets = presets
+                AppContext.preferenceManager()?.setPresets(presets: presets)
+                tableView.reloadData()
+            } catch {
+                ConvoAILogger.error("JSON decode error: \(error)")
+            }
+            return
+        }
+        
         if let p = AppContext.preferenceManager()?.allPresets() {
             presets = p
             refreshControl.endRefreshing()
