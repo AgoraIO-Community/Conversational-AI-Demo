@@ -7,6 +7,7 @@
 
 import UIKit
 import Common
+import Kingfisher
 
 protocol AgentSettingsViewDelegate: AnyObject {
     func agentSettingsViewDidTapLanguage(_ view: AgentSettingsView, sender: UIButton)
@@ -74,7 +75,7 @@ class AgentSettingsView: UIView {
         
         // Add avatar image
         if let avatar = AppContext.preferenceManager()?.preference.avatar, let url = URL(string: avatar.thumbImageUrl) {
-            avatarImageView.af.setImage(withURL: url)
+            avatarImageView.kf.setImage(with: url)
         }
         avatarImageView.contentMode = .scaleAspectFill
         avatarImageView.layer.cornerRadius = 10
@@ -278,7 +279,7 @@ class AgentSettingsView: UIView {
         if let avatar = avatar {
             digitalHumanItem.detailLabel.text = avatar.avatarName
             if let url = URL(string: avatar.thumbImageUrl) {
-                avatarImageView.af.setImage(withURL: url)
+                avatarImageView.kf.setImage(with: url)
             } else {
                 avatarImageView.image = nil
             }

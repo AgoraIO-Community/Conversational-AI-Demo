@@ -10,7 +10,6 @@ import Common
 
 class TypewriterLabel: UILabel {
     private let texts = [
-        ResourceManager.L10n.Conversation.appHello,
         ResourceManager.L10n.Conversation.appWelcomeTitle,
         ResourceManager.L10n.Conversation.appWelcomeDescription
     ]

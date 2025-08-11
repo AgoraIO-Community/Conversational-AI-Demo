@@ -74,7 +74,7 @@ public class ChatViewController: UIViewController {
     internal lazy var timerCoordinator: AgentTimerCoordinator = {
         let coordinator = AgentTimerCoordinator()
         coordinator.delegate = self
-        coordinator.setDurationLimit(limited: !DeveloperConfig.shared.getSessionFree())
+        coordinator.setDurationLimit(limited: DeveloperConfig.shared.getSessionLimit())
         return coordinator
     }()
     
@@ -89,17 +89,13 @@ public class ChatViewController: UIViewController {
         return manager
     }()
     
-    internal lazy var agentManager: AgentManager = {
-        let manager = AgentManager(host: AppContext.shared.baseServerUrl)
-        return manager
-    }()
+    internal lazy var agentManager = AgentManager()
     
     internal lazy var navivationBar: MainNavigationBar = {
         let view = MainNavigationBar()
         view.settingButton.addTarget(self, action: #selector(onClickSettingButton), for: .touchUpInside)
         view.wifiInfoButton.addTarget(self, action: #selector(onClickWifiInfoButton), for: .touchUpInside)
         view.transcriptionButton.addTarget(self, action: #selector(onClickTranscriptionButton(_:)), for: .touchUpInside)
-        view.characterButton.addTarget(self, action: #selector(onCharacterButton), for: .touchUpInside)
         view.closeButton.addTarget(self, action: #selector(onCloseButton), for: .touchUpInside)
         return view
     }()
@@ -172,13 +168,6 @@ public class ChatViewController: UIViewController {
         view.isHidden = true
         view.stopButton.addTarget(self, action: #selector(onClickStopSpeakingButton(_:)), for: .touchUpInside)
         return view
-    }()
-    
-    internal lazy var devModeButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.ag_named("ic_setting_debug"), for: .normal)
-        button.addTarget(self, action: #selector(onClickDevMode), for: .touchUpInside)
-        return button
     }()
     
     internal var traceId: String {
@@ -256,22 +245,6 @@ public class ChatViewController: UIViewController {
             
             Task {
                 do {
-                    try await self.fetchIotPresetsIfNeeded()
-                } catch {
-                    self.addLog("[PreloadData error - iot presets]: \(error)")
-                }
-            }
-            
-            Task {
-                do {
-                    try await self.fetchPresetsIfNeeded()
-                } catch {
-                    self.addLog("[PreloadData error - presets]: \(error)")
-                }
-            }
-                
-            Task {
-                do {
                     try await self.fetchTokenIfNeeded()
                 } catch {
                     self.addLog("[PreloadData error - token]: \(error)")
@@ -284,7 +257,6 @@ public class ChatViewController: UIViewController {
         let rtcEngine = rtcManager.getRtcEntine()
         animateView.setupMediaPlayer(rtcEngine)
         animateView.updateAgentState(.idle)
-        devModeButton.isHidden = !DeveloperConfig.shared.isDeveloperMode
         sendMessageButton.isHidden = !DeveloperConfig.shared.isDeveloperMode
 
         guard let rtmEngine = rtmManager.getRtmEngine() else {
@@ -329,5 +301,3 @@ public class ChatViewController: UIViewController {
     }
 
 }
-
-

@@ -6,6 +6,7 @@ import AgoraRtmKit
 import SVProgressHUD
 import ObjectiveC
 
+public var isDebugPageShow = false
 public class DeveloperModeViewController: UIViewController {
     // Tab type
     enum TabType: Int {
@@ -181,15 +182,27 @@ public class DeveloperModeViewController: UIViewController {
     }
     // Back/Exit actions
     @objc private func onBack() {
-        dismiss(animated: true, completion: nil)
+        dismiss(endDevMode: false)
     }
+    
     @objc private func onExit() {
-        config.resetDevParams()
-        config.onCloseDevMode?()
+        dismiss(endDevMode: true)
+    }
+    
+    private func dismiss(endDevMode: Bool) {
         self.dismiss(animated: true)
+        isDebugPageShow = false
+        if endDevMode {
+            DeveloperConfig.shared.stopDevMode()
+        } else {
+            DeveloperConfig.shared.devModeButton.isHidden = false
+        }
     }
     
     public static func show(from vc: UIViewController) {
+        if isDebugPageShow { return }
+        isDebugPageShow = true
+        DeveloperConfig.shared.devModeButton.isHidden = true
         let devViewController = DeveloperModeViewController()
         devViewController.modalTransitionStyle = .crossDissolve
         devViewController.modalPresentationStyle = .overCurrentContext
@@ -203,7 +216,7 @@ public class DeveloperModeViewController: UIViewController {
         agentSettingView.sdkParamsTextField.text = config.sdkParams.joined(separator: "|")
         agentSettingView.convoaiTextField.text = config.convoaiServerConfig
         agentSettingView.graphTextField.text = config.graphId
-        agentSettingView.sessionLimitSwitch.isOn = config.sessionLimitEnabled
+        agentSettingView.sessionLimitSwitch.isOn = config.getSessionLimit()
         agentSettingView.audioDumpSwitch.isOn = config.audioDump
         agentSettingView.metricsSwitch.isOn = config.metrics
     }
@@ -227,27 +240,27 @@ public class DeveloperModeViewController: UIViewController {
             let displayTitle = isSelected ? "\(title) ✅" : title
             return UIAction(title: displayTitle) { [weak self] _ in
                 self?.selectedEnvironmentIndex = index
-                self?.onSwitchButtonClicked()
+                self?.switchEnvironment()
             }
         }
         return UIMenu(children: actions)
     }
     
     @objc private func onClickAudioDump(_ sender: UISwitch) {
-        config.onAudioDump?(sender.isOn)
+        config.notifyAudioDumpChanged(enabled: sender.isOn)
     }
     
     @objc private func onClickMetricsButton(_ sender: UISwitch) {
         let state = sender.isOn
         config.metrics = state
-        config.onMetrics?(state)
+        config.notifyMetricsChanged(enabled: state)
     }
     
     @objc private func onClickCopy() {
-        config.onCopy?()
+        config.notifyCopy()
     }
     
-    @objc private func onSwitchButtonClicked() {
+    @objc private func switchEnvironment() {
         let environments = AppContext.shared.environments
         guard selectedEnvironmentIndex >= 0 &&
                 selectedEnvironmentIndex < environments.count
@@ -270,13 +283,13 @@ public class DeveloperModeViewController: UIViewController {
         AppContext.shared.baseServerUrl = host
         AppContext.shared.appId = appId
         SVProgressHUD.showInfo(withStatus: host)
-        config.onSwitchServer?()
-        self.dismiss(animated: true)
+        config.notifySwitchServer()
+        dismiss(endDevMode: false)
     }
     
     @objc private func onClickSessionLimit(_ sender: UISwitch) {
-        DeveloperConfig.shared.setSessionFree(!sender.isOn)
-        config.onSessionLimit?(sender.isOn)
+        DeveloperConfig.shared.setSessionLimit(sender.isOn)
+        config.notifySessionLimitChanged(enabled: sender.isOn)
     }
     
     @objc private func onSDKParamsEndEditing(_ sender: UITextField) {
@@ -286,7 +299,7 @@ public class DeveloperModeViewController: UIViewController {
             for param in params {
                 if !config.sdkParams.contains(param) {
                     config.sdkParams.append(param)
-                    config.onSDKParams?(param)
+                    config.notifySDKParamsChanged(params: param)
                 }
             }
             SVProgressHUD.showInfo(withStatus: "sdk parameters did set: \(text)")

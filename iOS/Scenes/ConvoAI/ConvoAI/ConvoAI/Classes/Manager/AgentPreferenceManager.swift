@@ -185,10 +185,8 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
         }
         
         self.updatePreset(preset)
-        
-        if preset.supportLanguages.isEmpty { return }
-        
-        guard let language = preset.supportLanguages.first else {
+        guard let supportLanguages = preset.supportLanguages,
+            let language = supportLanguages.first else {
             return
         }
         

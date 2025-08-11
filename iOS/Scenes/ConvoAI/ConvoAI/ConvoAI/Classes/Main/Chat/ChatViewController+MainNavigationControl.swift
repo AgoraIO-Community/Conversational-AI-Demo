@@ -40,38 +40,16 @@ extension ChatViewController {
         showTranscription(state: sender.isSelected)
     }
     
-    @objc internal func onCharacterButton() {
-        let currentTime = Date()
-        if let lastTime = lastClickTime, currentTime.timeIntervalSince(lastTime) > 1.0 {
-            clickCount = 0
-        }
-        lastClickTime = currentTime
-        clickCount += 1
-        if clickCount >= 5 {
-            onThresholdReached()
-            clickCount = 0
-        }
-    }
-    
     @objc internal func onCloseButton() {
         self.navigationController?.popViewController(animated: true)
     }
     
-    internal func onThresholdReached() {
-        if !DeveloperConfig.shared.isDeveloperMode {
-            devModeButton.isHidden = false
-            sendMessageButton.isHidden = false
-            DeveloperConfig.shared.isDeveloperMode = true
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-        }
-    }
-    
     internal func updateCharacterInformation() {
         if let avatar = AppContext.preferenceManager()?.preference.avatar {
-            navivationBar.updateCharacterInformation(icon: avatar.thumbImageUrl, name: avatar.avatarName)
+            navivationBar.updateCharacterInformation(icon: avatar.thumbImageUrl.stringValue(), name: avatar.avatarName.stringValue())
         } else {
             if let preset = AppContext.preferenceManager()?.preference.preset {
-                navivationBar.updateCharacterInformation(icon: preset.displayName, name: preset.displayName)
+                navivationBar.updateCharacterInformation(icon: preset.avatarUrl.stringValue(), name: preset.displayName.stringValue())
             }
         }
     }

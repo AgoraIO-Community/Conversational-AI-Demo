@@ -8,6 +8,7 @@
 import UIKit
 import Common
 import SVProgressHUD
+import IoT
 
 public class AgentListViewController: UIViewController {
 
@@ -53,9 +54,13 @@ public class AgentListViewController: UIViewController {
         pvc.delegate = self
         return pvc
     }()
+    
+    private let officialAgentVC = OfficialAgentsViewController()
+    
+    private let customAgentVC = CustomAgentsViewController()
 
     private lazy var viewControllers: [UIViewController] = {
-        return [OfficialAgentsViewController(), CustomAgentsViewController()]
+        return [officialAgentVC, customAgentVC]
     }()
     
     private var maxSegmentTop: CGFloat = 50
@@ -71,9 +76,10 @@ public class AgentListViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        configDevMode()
         
-        fetchLoginState()
         AppContext.loginManager()?.addDelegate(self)
+        fetchLoginState()
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -81,15 +87,11 @@ public class AgentListViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    private func deregisterDelegate() {
-    }
-    
     @objc func onClickInformationButton() {
         AgentInformationViewController.show(in: self)
     }
     
     func fetchLoginState() {
-        addLog("[AgentListViewController] clickTheStartButton()")
         let loginState = UserCenter.shared.isLogin()
         if loginState {
             LoginApiService.getUserInfo { error in
@@ -106,7 +108,19 @@ public class AgentListViewController: UIViewController {
     func addLog(_ txt: String) {
         ConvoAILogger.info(txt)
     }
-
+    
+    private func fetchIotPresetsIfNeeded() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            IoTEntrance.fetchPresetIfNeed { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
     private func setupUI() {
         view.backgroundColor = UIColor(hex: "#1A202E")
         view.addSubview(menuButton)
@@ -214,9 +228,14 @@ extension AgentListViewController: LoginManagerDelegate {
     
     func userDidLogin() {
         fetchLoginState()
+        officialAgentVC.fetchPresets()
+        customAgentVC.fetchSavedPresets()
     }
     
     func userDidLogout(reason: LogoutReason) {
+        addLog("[Call] userDidLogout \(reason)")
+        
+        SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Login.sessionExpired)
         // Dismiss all view controllers and return to root
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
@@ -226,4 +245,24 @@ extension AgentListViewController: LoginManagerDelegate {
         LoginViewController.start(from: self)
     }
 }
-
+// MARK: - DevMode
+extension AgentListViewController: DeveloperConfigDelegate {
+    internal func configDevMode() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickLogo))
+        titleView.isUserInteractionEnabled = true
+        titleView.addGestureRecognizer(tapGesture)
+        
+        DeveloperConfig.shared.add(delegate: self)
+    }
+    
+    @objc func onClickLogo() {
+        DeveloperConfig.shared.countTouch()
+    }
+    
+    public func devConfigDidSwitchServer(_ config: DeveloperConfig) {
+        IoTEntrance.deleteAllPresets()
+        AppContext.preferenceManager()?.deleteAllPresets()
+        AppContext.loginManager()?.logout(reason: .sessionExpired)
+        NotificationCenter.default.post(name: .EnvironmentChanged, object: nil, userInfo: nil)
+    }
+}

@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import Common
 
+fileprivate let kCustomPresetSave = "io.agora.customPresets"
 class CustomAgentsViewController: UIViewController {
 
     weak var scrollDelegate: AgentScrollViewDelegate?
@@ -23,16 +25,80 @@ class CustomAgentsViewController: UIViewController {
 
     private let emptyStateView = CustomAgentEmptyView()
     private let inputContainerView = BottomInputView()
+    
+    private lazy var agentManager = AgentManager()
+    
+    private var presets: [AgentPreset] = [AgentPreset]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        fetchSavedPresets()
     }
     
     @objc private func onClickFetch() {
-        guard let text = inputContainerView.textField.text else { return }
-        
+        guard let text = inputContainerView.textField.text, !text.isEmpty else { return }
+        agentManager.searchCustomPresets(customPresetIds: [text]) { [weak self] error, result in
+            guard let self = self else { return }
+            if let err = error {
+                ConvoAILogger.error(err.localizedDescription)
+                return
+            }
+            if let presets = result, !presets.isEmpty {
+                self.save(presetId: text)
+                self.fetchSavedPresets()
+            }
+        }
+    }
+    
+    public func fetchSavedPresets() {
+        guard UserCenter.shared.isLogin() else {
+            self.presets.removeAll()
+            self.tableView.reloadData()
+            return
+        }
+        let ids = getSavedPresetIds()
+        if ids.isEmpty {
+            self.presets.removeAll()
+            self.tableView.reloadData()
+            return
+        }
+        agentManager.searchCustomPresets(customPresetIds: ids) { [weak self] error, result in
+            guard let self = self else { return }
+            if let err = error {
+                ConvoAILogger.error(err.localizedDescription)
+                return
+            }
+            self.presets = result ?? []
+            self.tableView.reloadData()
+        }
+    }
+    
+    private func getSavedPresetIds() -> [String] {
+        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        let saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]]
+        return saved?[key] ?? []
+    }
+    
+    private func save(presetId: String) {
+        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        var saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]] ?? [:]
+        var ids = saved[key] ?? []
+        if !ids.contains(presetId) {
+            ids.append(presetId)
+        }
+        saved[key] = ids
+        UserDefaults.standard.set(saved, forKey: kCustomPresetSave)
+    }
+    
+    private func remove(presetId: String) {
+        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        var saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]] ?? [:]
+        var ids = saved[key] ?? []
+        ids.removeAll { $0 == presetId }
+        saved[key] = ids
+        UserDefaults.standard.set(saved, forKey: kCustomPresetSave)
     }
 
     @objc private func didTapInputView() {
@@ -86,7 +152,7 @@ extension CustomAgentsViewController: UITableViewDataSource, UITableViewDelegate
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = 0 // Placeholder for actual data count
+        let count = presets.count
         emptyStateView.alpha = count > 0 ? 0 : 1
         tableView.alpha = count > 0 ? 1 : 0
         return count
@@ -98,13 +164,19 @@ extension CustomAgentsViewController: UITableViewDataSource, UITableViewDelegate
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "AgentTableViewCell", for: indexPath) as! AgentTableViewCell
-        // Configure cell with placeholder data
-        cell.nameLabel.text = "Agent Name"
-        cell.descriptionLabel.text = "Agent Description"
+        let preset = presets[indexPath.row]
+        cell.nameLabel.text = preset.name
+        cell.descriptionLabel.text = preset.description ?? ""
+        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl ?? ""), placeholder: UIImage(named: "default_avatar"))
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let preset = presets[indexPath.row]
+        AppContext.preferenceManager()?.updatePreset(preset)
+        let chatViewController = ChatViewController()
+        chatViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

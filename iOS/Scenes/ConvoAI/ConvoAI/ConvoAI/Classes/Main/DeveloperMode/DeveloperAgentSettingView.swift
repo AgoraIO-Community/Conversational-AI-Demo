@@ -37,9 +37,6 @@ class DeveloperAgentSettingView: UIView {
     
     private let copyUserQuestionLabel = UILabel()
     public let copyButton = UIButton(type: .system)
-    
-    private let captionModeLabel = UILabel()
-    public let captionModeSegment = UISegmentedControl(items: ["Text", "Word"])
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -166,18 +163,8 @@ class DeveloperAgentSettingView: UIView {
         copyStack.distribution = .equalSpacing
         copyButton.setContentHuggingPriority(.required, for: .horizontal)
         stackView.addArrangedSubview(copyStack)
-        // Caption Rendering Mode
-        captionModeLabel.text = ResourceManager.L10n.DevMode.captionMode
-        captionModeLabel.textColor = .white
-        captionModeLabel.font = UIFont.systemFont(ofSize: 16)
-        captionModeSegment.selectedSegmentIndex = 0
-        captionModeSegment.backgroundColor = UIColor.themColor(named: "ai_block2")
-        captionModeSegment.selectedSegmentTintColor = .systemBlue
-        let captionStack = UIStackView(arrangedSubviews: [captionModeLabel, captionModeSegment])
-        captionStack.axis = .horizontal
-        captionStack.distribution = .equalSpacing
-        stackView.addArrangedSubview(captionStack)
     }
+    
     private func createDivider() -> UIView {
         let divider = UIView()
         divider.backgroundColor = .gray

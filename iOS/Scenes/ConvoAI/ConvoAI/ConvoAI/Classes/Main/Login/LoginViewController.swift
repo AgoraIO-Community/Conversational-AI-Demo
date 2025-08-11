@@ -19,8 +19,14 @@ class LoginViewController: UIViewController {
     }
     
     var completion: (() -> Void)?
+
+    private lazy var devModeButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.addTarget(self, action: #selector(onClickDevTouch), for: .touchUpInside)
+        return button
+    }()
     
-    internal lazy var welcomeMessageView: TypewriterLabel = {
+    private lazy var welcomeMessageView: TypewriterLabel = {
         let view = TypewriterLabel()
         view.font = UIFont.boldSystemFont(ofSize: 20)
         view.startAnimation()
@@ -175,6 +181,11 @@ class LoginViewController: UIViewController {
         SSOWebViewController.clearWebViewCache()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         CATransaction.begin()
@@ -206,6 +217,7 @@ class LoginViewController: UIViewController {
         view.addSubview(termsCheckbox)
         view.addSubview(termsTextLabel)
         view.addSubview(warningButton)
+        view.addSubview(devModeButton)
     }
     
     private func setupConstraints() {
@@ -242,6 +254,12 @@ class LoginViewController: UIViewController {
             make.bottom.equalTo(phoneLoginButton.snp.top).offset(-40)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
+        }
+        devModeButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.width.equalTo(80)
+            make.height.equalTo(44)
         }
     }
     
@@ -324,7 +342,7 @@ class LoginViewController: UIViewController {
         self.present(termsServiceVC, animated: true)
     }
     
-    private func dismiss() {
-        self.dismiss(animated: false)
+    @objc func onClickDevTouch() {
+        DeveloperConfig.shared.countTouch()
     }
 }

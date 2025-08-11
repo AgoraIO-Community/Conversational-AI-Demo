@@ -8,13 +8,13 @@
 import Foundation
 import AgoraRtcKit
 import Common
-import AlamofireImage
+import Kingfisher
 
 extension ChatViewController {
     internal func startShowAvatar() {
         windowState.showAvatar = true
         if let avatar = AppContext.preferenceManager()?.preference.avatar, let url = URL(string: avatar.bgImageUrl) {
-            remoteAvatarView.backgroundImageView.af.setImage(withURL: url)
+            remoteAvatarView.backgroundImageView.kf.setImage(with: url)
         }
         updateWindowContent()
     }

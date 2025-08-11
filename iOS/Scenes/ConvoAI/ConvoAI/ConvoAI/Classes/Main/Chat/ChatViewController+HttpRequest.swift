@@ -144,39 +144,7 @@ extension ChatViewController {
 }
 
 extension ChatViewController {
-    internal func fetchIotPresetsIfNeeded() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            IoTEntrance.fetchPresetIfNeed { error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                continuation.resume()
-            }
-        }
-    }
-
-    internal func fetchPresetsIfNeeded() async throws {
-        guard AppContext.preferenceManager()?.allPresets() == nil else { return }
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            agentManager.fetchAgentPresets(appId: AppContext.shared.appId) { error, result in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                
-                guard let result = result else {
-                    continuation.resume(throwing: NSError(domain: "", code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "result is empty"]))
-                    return
-                }
-                
-                AppContext.preferenceManager()?.setPresets(presets: result)
-                continuation.resume()
-            }
-        }
-    }
+    
     
     internal func fetchTokenIfNeeded() async throws {
         return try await withCheckedThrowingContinuation { continuation in

@@ -72,6 +72,9 @@ extension LoginManager: LoginManagerProtocol {
     }
     
     func logout(reason: LogoutReason) {
+        guard UserCenter.shared.isLogin() else {
+            return
+        }
         UserCenter.shared.logout()
         notifyDelegates { $0.userDidLogout(reason: reason) }
     }

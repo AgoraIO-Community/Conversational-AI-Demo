@@ -230,11 +230,10 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
     func agentSettingsViewDidTapLanguage(_ view: AgentSettingsView, sender: UIButton) {
         print("onClickLanguage")
         selectTableMask.isHidden = false
-        guard let currentPreset = AppContext.preferenceManager()?.preference.preset else { return }
-        let allLanguages = currentPreset.supportLanguages
-        
-        guard let currentLanguage = AppContext.preferenceManager()?.preference.language else { return }
-        
+        guard let currentPreset = AppContext.preferenceManager()?.preference.preset,
+              let allLanguages = currentPreset.supportLanguages,
+              let currentLanguage = AppContext.preferenceManager()?.preference.language
+        else { return }
         let currentIndex = allLanguages.firstIndex { $0.languageName == currentLanguage.languageName } ?? 0
         let table = AgentSelectTableView(items: allLanguages.map { AgentSelectTableItem(title: $0.languageName, subTitle: "") }) { index in
             let selected = allLanguages[index]
@@ -380,11 +379,11 @@ extension AgentSettingViewController: AgentPreferenceManagerDelegate {
         let supportLanguages = preset.supportLanguages
         
         var resetLanguageCode = defaultLanguageCode
-        if defaultLanguageCode.isEmpty, let languageCode = supportLanguages.first?.languageCode {
+        if defaultLanguageCode == nil, let languageCode = supportLanguages?.first?.languageCode {
             resetLanguageCode = languageCode
         }
         
-        if let language = supportLanguages.first(where: { $0.languageCode == resetLanguageCode }) {
+        if let language = supportLanguages?.first(where: { $0.languageCode == resetLanguageCode }) {
             manager.updateLanguage(language)
         }
         
