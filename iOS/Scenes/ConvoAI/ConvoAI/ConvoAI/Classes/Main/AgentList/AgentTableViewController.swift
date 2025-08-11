@@ -1,28 +1,35 @@
 //
-//  OfficialAgentsViewController.swift
+//  AgentTableViewController.swift
 //  ConvoAI
 //
-//  Created by HeZhengQing on 2024/07/25.
+//  Created by qinhui on 2025/8/11.
 //
 
 import UIKit
 import Common
 import SVProgressHUD
-import Kingfisher
 
 protocol AgentScrollViewDelegate: AnyObject {
     func agentScrollViewDidScroll(_ scrollView: UIScrollView)
 }
 
-class OfficialAgentsViewController: UIViewController {
+protocol AgentListProtocol {
+    func setupUI()
+    func setupConstraints()
+    func fetchData()
+    func refreshHandler()
+}
 
+class AgentTableViewController: UIViewController, AgentListProtocol {
+    var presets: [AgentPreset] = [AgentPreset]()
     weak var scrollDelegate: AgentScrollViewDelegate?
-    
-    private lazy var agentManager = AgentManager()
-    
-    private var presets: [AgentPreset] = [AgentPreset]()
-
-    private lazy var tableView: UITableView = {
+    let agentManager = AgentManager()
+    lazy var refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(refreshHandler), for: .valueChanged)
+        return refresh
+    }()
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
         tableView.delegate = self
@@ -37,20 +44,40 @@ class OfficialAgentsViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        
-        fetchPresets()
+        fetchData()
     }
     
-    public func fetchPresets() {
+    func fetchData() {
         guard UserCenter.shared.isLogin() else {
             return
         }
         if let p = AppContext.preferenceManager()?.allPresets() {
             presets = p
+            refreshControl.endRefreshing()
             return
         }
         
-        agentManager.fetchAgentPresets(appId: AppContext.shared.appId) { error, result in
+        requestAgentPresets()
+    }
+    
+    func setupUI() {
+        view.addSubview(tableView)
+        tableView.addSubview(refreshControl)
+    }
+    
+    func setupConstraints() {
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    @objc func refreshHandler() {
+        requestAgentPresets()
+    }
+    
+    private func requestAgentPresets() {
+        agentManager.fetchAgentPresets(appId: AppContext.shared.appId) {[weak self] error, result in
+            self?.refreshControl.endRefreshing()
             if let error = error {
                 SVProgressHUD.showInfo(withStatus: error.localizedDescription)
                 return
@@ -62,24 +89,14 @@ class OfficialAgentsViewController: UIViewController {
             }
             
             AppContext.preferenceManager()?.setPresets(presets: result)
-            self.presets = result
-            self.tableView.reloadData()
-        }
-    }
-
-    private func setupUI() {
-        view.addSubview(tableView)
-    }
-
-    private func setupConstraints() {
-        tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            self?.presets = result
+            self?.tableView.reloadData()
         }
     }
 }
 
-extension OfficialAgentsViewController: UITableViewDataSource, UITableViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+extension AgentTableViewController: UITableViewDelegate, UITableViewDataSource {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollDelegate?.agentScrollViewDidScroll(scrollView)
     }
 

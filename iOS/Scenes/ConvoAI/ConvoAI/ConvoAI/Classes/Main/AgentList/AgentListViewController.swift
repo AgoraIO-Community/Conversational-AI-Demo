@@ -55,7 +55,7 @@ public class AgentListViewController: UIViewController {
         return pvc
     }()
     
-    private let officialAgentVC = OfficialAgentsViewController()
+    private let officialAgentVC = AgentTableViewController()
     
     private let customAgentVC = CustomAgentsViewController()
 
@@ -131,7 +131,7 @@ public class AgentListViewController: UIViewController {
         pageViewController.didMove(toParent: self)
         if let firstViewController = viewControllers.first {
             pageViewController.setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
-            if let vc = firstViewController as? OfficialAgentsViewController {
+            if let vc = firstViewController as? AgentTableViewController {
                 vc.scrollDelegate = self
             } else if let vc = firstViewController as? CustomAgentsViewController {
                 vc.scrollDelegate = self
@@ -215,7 +215,7 @@ extension AgentListViewController: UIPageViewControllerDataSource, UIPageViewCon
             if segmentedControl.selectedIndex != index {
                 segmentedControl.selectedIndex = index
             }
-            if let vc = currentViewController as? OfficialAgentsViewController {
+            if let vc = currentViewController as? AgentTableViewController {
                 vc.scrollDelegate = self
             } else if let vc = currentViewController as? CustomAgentsViewController {
                 vc.scrollDelegate = self
@@ -228,8 +228,8 @@ extension AgentListViewController: LoginManagerDelegate {
     
     func userDidLogin() {
         fetchLoginState()
-        officialAgentVC.fetchPresets()
-        customAgentVC.fetchSavedPresets()
+        officialAgentVC.fetchData()
+        customAgentVC.fetchData()
     }
     
     func userDidLogout(reason: LogoutReason) {
