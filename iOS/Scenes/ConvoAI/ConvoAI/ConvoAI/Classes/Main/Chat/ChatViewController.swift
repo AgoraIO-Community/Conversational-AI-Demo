@@ -224,11 +224,6 @@ public class ChatViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupSomeNecessaryConfig()
-        if isEnableAvatar() {
-            startShowAvatar()
-        } else {
-            stopShowAvatar()
-        }
     }
     
     public override func viewDidLayoutSubviews() {
@@ -309,6 +304,13 @@ public class ChatViewController: UIViewController {
 //        subRenderController2.setupWithConfig(subRenderConfig2)
         
         convoAIAPI.addHandler(handler: self)
+        updateCharacterInformation()
+        
+        if isEnableAvatar() {
+            startShowAvatar()
+        } else {
+            stopShowAvatar()
+        }
     }
     
     func addLog(_ txt: String) {
