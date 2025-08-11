@@ -172,7 +172,7 @@ class CallControlbar: UIView {
             return
         }
         
-        if !preset.isSupportVision {
+        if !preset.isSupportVision.boolValue() {
             videoButton.alpha = 0.5
         } else {
             videoButton.alpha = 1

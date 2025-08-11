@@ -14,6 +14,7 @@ import FirebaseCore
     public let globalTermsOfServiceUrl: String = "https://www.agora.io/en/terms-of-service/"
     public let globalPrivacyUrl: String = "https://www.agora.io/en/privacy-policy/"
 
+    private var _isOpenSource: Bool = false
     private var _appId: String = ""
     private var _certificate: String = ""
     private var _baseServerUrl: String = ""
@@ -145,6 +146,11 @@ import FirebaseCore
     @objc public var avatarEnable: Bool {
         get { return _avatarEnable }
         set { _avatarEnable = newValue }
+    }
+    
+    @objc public var isOpenSource: Bool {
+        get { return _isOpenSource }
+        set { _isOpenSource = newValue }
     }
     
     @objc public var avatarVendor: String {

@@ -105,7 +105,7 @@ class ChatMessageCell: UITableViewCell {
             setupAgentLayout()
             avatarView.backgroundColor = .clear
             avatarImageView.image = UIImage.ag_named("ic_agent_avatar")
-            nameLabel.text = AppContext.preferenceManager()?.preference.preset?.displayName ?? ""
+            nameLabel.text = AppContext.preferenceManager()?.preference.preset?.displayName.stringValue()
             nameLabel.textColor = UIColor.themColor(named: "ai_icontext1")
             messageLabel.textColor = UIColor.themColor(named: "ai_icontext1")
             messageBubble.backgroundColor = .clear
@@ -416,7 +416,7 @@ class ChatImageMessageCell: UITableViewCell {
         } else {
             setupAgentLayout()
             avatarImageView.image = UIImage.ag_named("ic_agent_avatar")
-            nameLabel.text = AppContext.preferenceManager()?.preference.preset?.displayName ?? ""
+            nameLabel.text = AppContext.preferenceManager()?.preference.preset?.displayName.stringValue()
         }
         
         // Configure image content

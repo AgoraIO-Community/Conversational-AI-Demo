@@ -243,7 +243,7 @@ extension ChatViewController {
             addLog("cancel to join channel")
             return
         }
-        let independent = (AppContext.preferenceManager()?.preference.preset?.presetType.hasPrefix("independent") == true)
+        let independent = (AppContext.preferenceManager()?.preference.preset?.presetType?.hasPrefix("independent") == true)
         let secnario: AgoraAudioScenario = {
             if isEnableAvatar() {
                 return .default

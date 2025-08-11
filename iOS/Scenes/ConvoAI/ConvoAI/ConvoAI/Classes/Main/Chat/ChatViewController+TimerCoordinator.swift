@@ -33,8 +33,8 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
         stopLoading()
         stopAgent()
         let title = ResourceManager.L10n.ChannelInfo.timeLimitdAlertTitle
-        if let manager = AppContext.preferenceManager(), let preset = manager.preference.preset {
-            var min = preset.callTimeLimitSecond / 60
+        if let manager = AppContext.preferenceManager(), let preset = manager.preference.preset, let callTimeLimitSecond = preset.callTimeLimitSecond {
+            var min = callTimeLimitSecond / 60
             
             if let _ = manager.preference.avatar {
                 min = preset.callTimeLimitAvatarSecond ?? 600 / 60
@@ -78,18 +78,3 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
     }
 }
 
-extension ChatViewController {
-    private func startPingRequest() {
-        addLog("[Call] startPingRequest()")
-        let presetName = AppContext.preferenceManager()?.preference.preset?.name ?? ""
-        agentManager.ping(appId: AppContext.shared.appId, channelName: channelName, presetName: presetName) { [weak self] err, res in
-            guard let self = self else { return }
-            guard let error = err else {
-                self.addLog("ping request")
-                return
-            }
-            
-            self.addLog("ping error : \(error.message)")
-        }
-    }
-}

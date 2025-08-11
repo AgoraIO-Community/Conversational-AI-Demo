@@ -16,7 +16,7 @@ extension ChatViewController: CallControlbarDelegate {
             return
         }
 
-        if !preset.isSupportVision {
+        if !preset.isSupportVision.boolValue() {
             SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.visionUnsupportMessage)
             return
         }
@@ -52,7 +52,7 @@ extension ChatViewController: CallControlbarDelegate {
         await MainActor.run {
             let needsShowMicrophonePermissionAlert = PermissionManager.getMicrophonePermission() == .denied
             if needsShowMicrophonePermissionAlert {
-                self.bottomBar.setMircophoneButtonSelectState(state: true)
+                self.callControlBar.setMircophoneButtonSelectState(state: true)
             }
         }
         
@@ -61,7 +61,7 @@ extension ChatViewController: CallControlbarDelegate {
                 await self.prepareToStartAgent()
                 await MainActor.run {
                     if !res {
-                        self.bottomBar.setMircophoneButtonSelectState(state: true)
+                        self.callControlBar.setMircophoneButtonSelectState(state: true)
                     }
                 }
             }
@@ -80,7 +80,7 @@ extension ChatViewController: CallControlbarDelegate {
             return
         }
         if  let preset = AppContext.preferenceManager()?.preference.preset,
-            !preset.isSupportVision {
+            !preset.isSupportVision.boolValue() {
             SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.visionUnsupportMessage)
             return
         }

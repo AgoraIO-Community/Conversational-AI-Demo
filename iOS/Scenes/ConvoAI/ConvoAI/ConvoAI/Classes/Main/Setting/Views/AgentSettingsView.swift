@@ -74,7 +74,7 @@ class AgentSettingsView: UIView {
         }
         
         // Add avatar image
-        if let avatar = AppContext.preferenceManager()?.preference.avatar, let url = URL(string: avatar.thumbImageUrl) {
+        if let avatar = AppContext.preferenceManager()?.preference.avatar, let thumbImageUrl = avatar.thumbImageUrl, let url = URL(string: thumbImageUrl) {
             avatarImageView.kf.setImage(with: url)
         }
         avatarImageView.contentMode = .scaleAspectFill
@@ -248,8 +248,10 @@ class AgentSettingsView: UIView {
     }
     
     // MARK: - Public Methods
-    func updatePreset(_ preset: AgentPreset) {        
-        if preset.presetType.contains("independent") {
+    func updatePreset(_ preset: AgentPreset) {
+        guard let presetType = preset.presetType else { return }
+        
+        if presetType.contains("independent") {
             aiVadItem.setEnable(false)
         } else {
             aiVadItem.setEnable(true)
@@ -278,7 +280,7 @@ class AgentSettingsView: UIView {
     func updateAvatar(_ avatar: Avatar?) {
         if let avatar = avatar {
             digitalHumanItem.detailLabel.text = avatar.avatarName
-            if let url = URL(string: avatar.thumbImageUrl) {
+            if let url = URL(string: avatar.thumbImageUrl ?? "") {
                 avatarImageView.kf.setImage(with: url)
             } else {
                 avatarImageView.image = nil
