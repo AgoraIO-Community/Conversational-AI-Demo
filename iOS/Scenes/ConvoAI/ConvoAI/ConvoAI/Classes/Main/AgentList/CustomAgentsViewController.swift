@@ -167,7 +167,7 @@ extension CustomAgentsViewController: UITableViewDataSource, UITableViewDelegate
         let preset = presets[indexPath.row]
         cell.nameLabel.text = preset.name
         cell.descriptionLabel.text = preset.description ?? ""
-        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl ?? ""), placeholder: UIImage(named: "default_avatar"))
+        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl.stringValue()), placeholder: UIImage(named: "default_avatar"))
         return cell
     }
     

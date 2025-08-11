@@ -89,6 +89,19 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
     // MARK: - Preference Updates
     func updatePreset(_ preset: AgentPreset) {
         preference.preset = preset
+        let defaultLanguageCode = preset.defaultLanguageCode
+        let supportLanguages = preset.supportLanguages
+        
+        var resetLanguageCode = defaultLanguageCode
+        if defaultLanguageCode == nil, let languageCode = supportLanguages?.first?.languageCode {
+            resetLanguageCode = languageCode
+        }
+        
+        if let language = supportLanguages?.first(where: { $0.languageCode == resetLanguageCode }) {
+            updateLanguage(language)
+        }
+        
+        updateAvatar(nil)
         notifyDelegates { $0.preferenceManager(self, presetDidUpdated: preset) }
     }
     
@@ -185,12 +198,6 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
         }
         
         self.updatePreset(preset)
-        guard let supportLanguages = preset.supportLanguages,
-            let language = supportLanguages.first else {
-            return
-        }
-        
-        self.updateLanguage(language)
     }
     
     func setAvatar(_ avatar: Avatar?) {

@@ -94,7 +94,7 @@ extension OfficialAgentsViewController: UITableViewDataSource, UITableViewDelega
         let cell = tableView.dequeueReusableCell(withIdentifier: "AgentTableViewCell", for: indexPath) as! AgentTableViewCell
         let preset = presets[indexPath.row]
         cell.nameLabel.text = preset.displayName
-        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl ?? ""), placeholder: UIImage.ag_named("ic_head_ai_sister"))
+        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl.stringValue()), placeholder: UIImage.ag_named("ic_head_ai_sister"))
         cell.descriptionLabel.text = preset.description ?? ""
         return cell
     }
