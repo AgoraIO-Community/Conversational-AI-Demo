@@ -7,36 +7,44 @@
 
 import UIKit
 import Common
+import Kingfisher
+import CryptoKit
 
 fileprivate let kCustomPresetSave = "io.agora.customPresets"
-class CustomAgentsViewController: UIViewController {
-
-    weak var scrollDelegate: AgentScrollViewDelegate?
-
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(AgentTableViewCell.self, forCellReuseIdentifier: "AgentTableViewCell")
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        return tableView
-    }()
-
+class CustomAgentViewController: AgentListViewController {
     private let emptyStateView = CustomAgentEmptyView()
     private let inputContainerView = BottomInputView()
     
-    private lazy var agentManager = AgentManager()
-    
-    private var presets: [AgentPreset] = [AgentPreset]()
+    override func setupUI() {
+        view.addSubview(tableView)
+        view.addSubview(emptyStateView)
+        inputContainerView.textField.isUserInteractionEnabled = false
+        inputContainerView.actionButton.addTarget(self, action: #selector(onClickFetch), for: .touchUpInside)
+        view.addSubview(inputContainerView)
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-        setupConstraints()
-        fetchSavedPresets()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapInputView))
+        inputContainerView.addGestureRecognizer(tapGesture)
+        
+        tableView.addSubview(refreshControl)
     }
-    
+
+    override func setupConstraints() {
+        inputContainerView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(12)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-17)
+        }
+        
+        tableView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(0)
+            make.bottom.equalTo(inputContainerView.snp.top).offset(-21)
+        }
+
+        emptyStateView.snp.makeConstraints { make in
+            make.top.equalTo(0)
+            make.bottom.equalTo(inputContainerView.snp.top).offset(-21)
+            make.left.right.equalToSuperview().inset(12)
+        }
+    }
     @objc private func onClickFetch() {
         guard let text = inputContainerView.textField.text, !text.isEmpty else { return }
         agentManager.searchCustomPresets(customPresetIds: [text]) { [weak self] error, result in
@@ -47,12 +55,16 @@ class CustomAgentsViewController: UIViewController {
             }
             if let presets = result, !presets.isEmpty {
                 self.save(presetId: text)
-                self.fetchSavedPresets()
+                self.fetchData()
             }
         }
     }
     
-    public func fetchSavedPresets() {
+    override func refreshHandler() {
+        fetchData()
+    }
+    
+    override func fetchData() {
         guard UserCenter.shared.isLogin() else {
             self.presets.removeAll()
             self.tableView.reloadData()
@@ -65,6 +77,7 @@ class CustomAgentsViewController: UIViewController {
             return
         }
         agentManager.searchCustomPresets(customPresetIds: ids) { [weak self] error, result in
+            self?.refreshControl.endRefreshing()
             guard let self = self else { return }
             if let err = error {
                 ConvoAILogger.error(err.localizedDescription)
@@ -75,14 +88,24 @@ class CustomAgentsViewController: UIViewController {
         }
     }
     
+    private func getCacheKey() -> String {
+        let rawKey = AppContext.shared.appId + AppContext.shared.baseServerUrl
+        let inputData = Data(rawKey.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            return String(format: "%02x", $0)
+        }.joined()
+        return hashString
+    }
+    
     private func getSavedPresetIds() -> [String] {
-        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        let key = getCacheKey()
         let saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]]
         return saved?[key] ?? []
     }
     
     private func save(presetId: String) {
-        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        let key = getCacheKey()
         var saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]] ?? [:]
         var ids = saved[key] ?? []
         if !ids.contains(presetId) {
@@ -93,7 +116,7 @@ class CustomAgentsViewController: UIViewController {
     }
     
     private func remove(presetId: String) {
-        let key = (AppContext.shared.appId + AppContext.shared.baseServerUrl).hashValue.description
+        let key = getCacheKey()
         var saved = UserDefaults.standard.dictionary(forKey: kCustomPresetSave) as? [String: [String]] ?? [:]
         var ids = saved[key] ?? []
         ids.removeAll { $0 == presetId }
@@ -114,69 +137,13 @@ class CustomAgentsViewController: UIViewController {
         }
         present(vc, animated: true)
     }
-
-    private func setupUI() {
-        view.addSubview(tableView)
-        view.addSubview(emptyStateView)
-        inputContainerView.textField.isUserInteractionEnabled = false
-        inputContainerView.actionButton.addTarget(self, action: #selector(onClickFetch), for: .touchUpInside)
-        view.addSubview(inputContainerView)
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapInputView))
-        inputContainerView.addGestureRecognizer(tapGesture)
-    }
-
-    private func setupConstraints() {
-        inputContainerView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
-        }
-
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(inputContainerView.snp.top).offset(-10)
-        }
-
-        emptyStateView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.bottom.equalTo(inputContainerView.snp.top).offset(-10)
-            make.left.right.equalToSuperview().inset(20)
-        }
-    }
 }
 
-extension CustomAgentsViewController: UITableViewDataSource, UITableViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        scrollDelegate?.agentScrollViewDidScroll(scrollView)
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension CustomAgentViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let count = presets.count
         emptyStateView.alpha = count > 0 ? 0 : 1
         tableView.alpha = count > 0 ? 1 : 0
         return count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 82
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "AgentTableViewCell", for: indexPath) as! AgentTableViewCell
-        let preset = presets[indexPath.row]
-        cell.nameLabel.text = preset.name
-        cell.descriptionLabel.text = preset.description ?? ""
-        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl.stringValue()), placeholder: UIImage(named: "default_avatar"))
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let preset = presets[indexPath.row]
-        AppContext.preferenceManager()?.updatePreset(preset)
-        let chatViewController = ChatViewController()
-        chatViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(chatViewController, animated: true)
     }
 }
