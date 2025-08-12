@@ -18,6 +18,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/llBottomAction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,11 +27,10 @@
         <!-- Empty State Image -->
         <ImageView
             android:id="@+id/ivEmptyState"
-            android:layout_width="188dp"
-            android:layout_height="91dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/app_icon" />
+            android:src="@drawable/common_empty_bg" />
 
         <!-- Empty State Text -->
         <LinearLayout
