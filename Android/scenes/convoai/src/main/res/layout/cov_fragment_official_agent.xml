@@ -29,6 +29,13 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4"/>
+
     <!-- Error state -->
     <LinearLayout
         android:id="@+id/llError"
@@ -36,16 +43,17 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline"
+        tools:visibility="visible"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/app_icon" />
+            android:src="@drawable/common_error_bg" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,7 +61,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/cov_retry_tips"
             android:textColor="@color/ai_brand_white10"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
@@ -67,9 +75,9 @@
             android:text="@string/cov_retry"
             android:textAllCaps="false"
             android:textColor="@color/ai_brand_white10"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:backgroundTint="@color/ai_brand_main6"
-            app:cornerRadius="12dp"
+            app:cornerRadius="999dp"
             app:rippleColor="#1AFFFFFF"
             tools:text="@string/cov_custom_agent_get" />
 

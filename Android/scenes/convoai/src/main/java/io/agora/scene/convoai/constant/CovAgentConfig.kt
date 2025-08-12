@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.constant
 
 import io.agora.scene.common.BuildConfig
+import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovAvatar
@@ -69,13 +70,21 @@ object CovAgentManager {
     }
 
     fun getAvatars(): List<CovAvatar> {
+        if (isOpenSource) {
+            return listOf(
+                CovAvatar(
+                    avatar_name = "Avatar",
+                    vendor = "",
+                    avatar_id = "",
+                    thumb_img_url = "",
+                    bg_img_url = "",
+                )
+            )
+        }
         return preset?.getAvatarsForLang(language?.language_code) ?: emptyList()
     }
 
-    val isEnableAvatar: Boolean
-        get() {
-            return avatar != null || BuildConfig.AVATAR_ENABLE
-        }
+    val isEnableAvatar: Boolean get() = avatar != null
 
     // Preset change reminder management methods
     fun shouldShowPresetChangeReminder(): Boolean {
@@ -98,8 +107,18 @@ object CovAgentManager {
         avatar = null
     }
 
-    val isOpenSource: Boolean
-        get() {
-            return BuildConfig.LLM_API_KEY.isNotEmpty() || BuildConfig.TTS_VENDOR.isNotEmpty() || BuildConfig.AVATAR_VENDOR.isNotEmpty()
-        }
+    val isOpenSource: Boolean get() = BuildConfig.IS_OPEN_SOURCE
+
+    val channelPrefix: String get() = if (isDebugging) "agent_debug_" else "agent_"
+
+    // debug config =================================
+    val isDebugging: Boolean get() = DebugConfigSettings.isDebug
+
+    val graphId: String get() = DebugConfigSettings.graphId
+
+    val convoAIParameter: String get() = DebugConfigSettings.convoAIParameter
+
+    val isMetricsEnabled: Boolean get() = DebugConfigSettings.isMetricsEnabled
+
+    val isSessionLimitMode: Boolean get() = DebugConfigSettings.isSessionLimitMode
 }
