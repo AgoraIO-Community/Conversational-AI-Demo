@@ -86,6 +86,20 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <!-- Floating Back to Top Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/ivBackToTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="200dp"
+        android:visibility="gone"
+        app:backgroundTint="@color/ai_block3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/common_ic_topic"
+        app:tint="@color/ai_icontext2" />
+
     <!-- Bottom Action Container -->
     <LinearLayout
         android:id="@+id/llBottomAction"

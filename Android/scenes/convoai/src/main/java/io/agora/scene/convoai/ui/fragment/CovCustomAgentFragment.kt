@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.common.ui.CommonDialog
@@ -29,6 +30,7 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
     companion object {
         private const val TAG = "CovCustomAgentFragment"
+        private const val SCROLL_THRESHOLD_MULTIPLIER = 1.5f // Show button after scrolling 1.5 screens
     }
 
     private lateinit var adapter: CustomAgentAdapter
@@ -42,6 +44,10 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         handleKeyboardVisibility()
     }
 
+    // Scroll handling
+    private var screenHeight = 0
+    private var scrollThreshold = 0
+
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): CovFragmentCustomAgentBinding? {
         return CovFragmentCustomAgentBinding.inflate(inflater, container, false)
     }
@@ -52,6 +58,7 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         setupAdapter()
         observeViewModel()
         setupKeyboardListener()
+        setupScrollListener()
     }
 
     private fun initViews() {
@@ -100,6 +107,65 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
             // Setup EditText for agent ID input
             setupAgentIdInput()
+
+            // Setup back to top button
+            ivBackToTop.setOnClickListener {
+                scrollToTop()
+            }
+        }
+    }
+
+    private fun setupScrollListener() {
+        mBinding?.apply {
+            // Get screen height for scroll threshold calculation
+            view?.post {
+                screenHeight = swipeRefreshLayout.height
+                scrollThreshold = (screenHeight * SCROLL_THRESHOLD_MULTIPLIER).toInt()
+                CovLogger.d(TAG, "Screen height: $screenHeight, Scroll threshold: $scrollThreshold")
+            }
+
+            // Add scroll listener to RecyclerView
+            rvCustomAgents.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    handleScrollChange()
+                }
+            })
+        }
+    }
+
+    private fun handleScrollChange() {
+        mBinding?.apply {
+            val layoutManager = rvCustomAgents.layoutManager as? LinearLayoutManager
+            layoutManager?.let { manager ->
+                val firstVisibleItemPosition = manager.findFirstVisibleItemPosition()
+                val firstVisibleItemView = manager.findViewByPosition(firstVisibleItemPosition)
+
+                if (firstVisibleItemView != null) {
+                    val scrollOffset = firstVisibleItemView.top
+                    val totalScrollDistance = (firstVisibleItemPosition * firstVisibleItemView.height) - scrollOffset
+
+                    // Show/hide back to top button based on scroll distance
+                    if (totalScrollDistance > scrollThreshold) {
+                        if (ivBackToTop.visibility != View.VISIBLE) {
+                            ivBackToTop.show()
+                        }
+                    } else {
+                        if (ivBackToTop.visibility == View.VISIBLE) {
+                            ivBackToTop.hide()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun scrollToTop() {
+        mBinding?.apply {
+            rvCustomAgents.smoothScrollToPosition(0)
+
+            // Hide the button after scrolling to top
+            ivBackToTop.hide()
         }
     }
 
@@ -184,6 +250,8 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             llBottomAction.visibility = View.VISIBLE
             swipeRefreshLayout.isEnabled = true
             swipeRefreshLayout.isRefreshing = false
+            // Hide back to top button when showing content initially
+            ivBackToTop.hide()
         }
     }
 
@@ -194,6 +262,8 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             llBottomAction.visibility = View.VISIBLE
             swipeRefreshLayout.isEnabled = false
             swipeRefreshLayout.isRefreshing = false
+            // Hide back to top button when showing empty state
+            ivBackToTop.hide()
         }
     }
 
