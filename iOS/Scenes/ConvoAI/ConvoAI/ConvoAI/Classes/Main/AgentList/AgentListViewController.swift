@@ -1,268 +1,101 @@
 //
-//  AgentListViewController.swift
+//  AgentTableViewController.swift
 //  ConvoAI
 //
-//  Created by HeZhengQing on 2024/07/25.
+//  Created by qinhui on 2025/8/11.
 //
 
 import UIKit
 import Common
 import SVProgressHUD
-import IoT
 
-public class AgentListViewController: UIViewController {
+protocol AgentScrollViewDelegate: AnyObject {
+    func agentScrollViewDidScroll(_ scrollView: UIScrollView)
+}
 
-    private lazy var menuButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage.ag_named("ic_agent_info_list")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = UIColor.themColor(named: "ai_icontext1")
-        button.addTarget(self, action: #selector(onClickInformationButton), for: .touchUpInside)
-        return button
+protocol AgentListProtocol {
+    func setupUI()
+    func setupConstraints()
+    func fetchData()
+    func refreshHandler()
+}
+
+class AgentListViewController: UIViewController, AgentListProtocol {
+    var presets: [AgentPreset] = [AgentPreset]()
+    weak var scrollDelegate: AgentScrollViewDelegate?
+    let agentManager = AgentManager()
+    lazy var refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(refreshHandler), for: .valueChanged)
+        return refresh
+    }()
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(AgentTableViewCell.self, forCellReuseIdentifier: "AgentTableViewCell")
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        return tableView
     }()
 
-    private lazy var titleView: UIStackView = {
-        let titleImageView = UIImageView()
-        titleImageView.image = UIImage.ag_named("ic_agent_detail_logo")
-        titleImageView.contentMode = .scaleAspectFit
-
-        let titleLabel = UILabel()
-        titleLabel.text = ResourceManager.L10n.Join.title
-        titleLabel.textColor = UIColor.themColor(named: "ai_icontext1")
-        titleLabel.font = .boldSystemFont(ofSize: 14)
-
-        let stackView = UIStackView(arrangedSubviews: [titleImageView, titleLabel])
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-        stackView.alignment = .center
-
-        titleImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(24)
-        }
-        return stackView
-    }()
-
-    private lazy var segmentedControl: CovSegmentedControl = {
-        let items = [ResourceManager.L10n.AgentList.official, ResourceManager.L10n.AgentList.custom]
-        let control = CovSegmentedControl(frame: .zero, buttonTitles: items)
-        control.delegate = self
-        return control
-    }()
-
-    private lazy var pageViewController: UIPageViewController = {
-        let pvc = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        pvc.dataSource = self
-        pvc.delegate = self
-        return pvc
-    }()
-    
-    private let officialAgentVC = AgentTableViewController()
-    
-    private let customAgentVC = CustomAgentsViewController()
-
-    private lazy var viewControllers: [UIViewController] = {
-        return [officialAgentVC, customAgentVC]
-    }()
-    
-    private var maxSegmentTop: CGFloat = 50
-    private var minSegmentTop: CGFloat = 4
-    private var maxSegmentWidth = UIScreen.main.bounds.width - 50
-    private var minSegmentWidth: CGFloat = 184
-    
-    deinit {
-        AppContext.loginManager()?.removeDelegate(self)
-    }
-
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        configDevMode()
-        
-        AppContext.loginManager()?.addDelegate(self)
-        fetchLoginState()
-    }
-
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        fetchData()
     }
     
-    @objc func onClickInformationButton() {
-        AgentInformationViewController.show(in: self)
+    
+    func setupUI() {
+        view.addSubview(tableView)
+        tableView.addSubview(refreshControl)
     }
     
-    func fetchLoginState() {
-        let loginState = UserCenter.shared.isLogin()
-        if loginState {
-            LoginApiService.getUserInfo { error in
-                if let err = error {
-                    AppContext.loginManager()?.logout(reason: .sessionExpired)
-                    SVProgressHUD.showInfo(withStatus: err.localizedDescription)
-                }
-            }
-        } else {
-            LoginViewController.start(from: self)
+    func setupConstraints() {
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
-    func addLog(_ txt: String) {
-        ConvoAILogger.info(txt)
+    func fetchData() {
+        fatalError("Subclass must implement fetchData()")
     }
     
-    private func fetchIotPresetsIfNeeded() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            IoTEntrance.fetchPresetIfNeed { error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                continuation.resume()
-            }
-        }
-    }
-    
-    private func setupUI() {
-        view.backgroundColor = UIColor(hex: "#1A202E")
-        view.addSubview(menuButton)
-        view.addSubview(titleView)
-        view.addSubview(segmentedControl)
-        addChild(pageViewController)
-        view.addSubview(pageViewController.view)
-        pageViewController.didMove(toParent: self)
-        if let firstViewController = viewControllers.first {
-            pageViewController.setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
-            if let vc = firstViewController as? AgentTableViewController {
-                vc.scrollDelegate = self
-            } else if let vc = firstViewController as? CustomAgentsViewController {
-                vc.scrollDelegate = self
-            }
-        }
-    }
-
-    private func setupConstraints() {
-        menuButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.left.equalToSuperview().offset(16)
-            make.width.height.equalTo(44)
-        }
-        titleView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalTo(menuButton)
-        }
-        segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(maxSegmentTop)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(maxSegmentWidth)
-            make.height.equalTo(36)
-        }
-        pageViewController.view.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(16)
-            make.left.right.bottom.equalToSuperview()
-        }
-    }
-    
-    func agentScrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-
-        let scrollableHeight = maxSegmentTop - minSegmentTop
-        // Clamp offsetY to the range of the animation
-        let clampedOffsetY = max(0, min(offsetY, scrollableHeight))
-        // Calculate scroll progress (0 to 1)
-        let scrollProgress = clampedOffsetY / scrollableHeight
-
-        // Calculate new values based on scroll progress
-        let newSegmentTop = maxSegmentTop - (maxSegmentTop - minSegmentTop) * scrollProgress
-        let newSegmentWidth = maxSegmentWidth - (maxSegmentWidth - minSegmentWidth) * scrollProgress
-        titleView.alpha = (1 - scrollProgress)
-        segmentedControl.snp.updateConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(newSegmentTop)
-            make.width.equalTo(newSegmentWidth)
-        }
+    @objc func refreshHandler() {
+        fatalError("Subclass must implement refreshHandler()")
     }
 }
 
-extension AgentListViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate, CovSegmentedControlDelegate, AgentScrollViewDelegate {
-    func didChange(to index: Int) {
-        let direction: UIPageViewController.NavigationDirection = index > (pageViewController.viewControllers?.first.flatMap { viewControllers.firstIndex(of: $0) } ?? 0) ? .forward : .reverse
-        pageViewController.setViewControllers([viewControllers[index]], direction: direction, animated: true, completion: nil)
-    }
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
-            return nil
-        }
-        let previousIndex = viewControllerIndex - 1
-        guard previousIndex >= 0 else {
-            return nil
-        }
-        return viewControllers[previousIndex]
+extension AgentListViewController: UITableViewDelegate, UITableViewDataSource {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollDelegate?.agentScrollViewDidScroll(scrollView)
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
-            return nil
-        }
-        let nextIndex = viewControllerIndex + 1
-        guard nextIndex < viewControllers.count else {
-            return nil
-        }
-        return viewControllers[nextIndex]
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.presets.count
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed,
-           let currentViewController = pageViewController.viewControllers?.first,
-           let index = viewControllers.firstIndex(of: currentViewController) {
-            if segmentedControl.selectedIndex != index {
-                segmentedControl.selectedIndex = index
-            }
-            if let vc = currentViewController as? AgentTableViewController {
-                vc.scrollDelegate = self
-            } else if let vc = currentViewController as? CustomAgentsViewController {
-                vc.scrollDelegate = self
-            }
-        }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 82
     }
-}
-// MARK: - Login
-extension AgentListViewController: LoginManagerDelegate {
-    
-    func userDidLogin() {
-        fetchLoginState()
-        officialAgentVC.fetchData()
-        customAgentVC.fetchData()
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "AgentTableViewCell", for: indexPath) as! AgentTableViewCell
+        let preset = presets[indexPath.row]
+        cell.nameLabel.text = preset.displayName
+        cell.avatarImageView.kf.setImage(with: URL(string: preset.avatarUrl.stringValue()), placeholder: UIImage.ag_named("ic_default_avatar_icon"))
+        cell.descriptionLabel.text = preset.description ?? ""
+        return cell
     }
     
-    func userDidLogout(reason: LogoutReason) {
-        addLog("[Call] userDidLogout \(reason)")
-        
-        SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Login.sessionExpired)
-        // Dismiss all view controllers and return to root
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController?.dismiss(animated: false, completion: nil)
-        }
-        self.navigationController?.popToRootViewController(animated: false)
-        LoginViewController.start(from: self)
-    }
-}
-// MARK: - DevMode
-extension AgentListViewController: DeveloperConfigDelegate {
-    internal func configDevMode() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickLogo))
-        titleView.isUserInteractionEnabled = true
-        titleView.addGestureRecognizer(tapGesture)
-        
-        DeveloperConfig.shared.add(delegate: self)
-    }
-    
-    @objc func onClickLogo() {
-        DeveloperConfig.shared.countTouch()
-    }
-    
-    public func devConfigDidSwitchServer(_ config: DeveloperConfig) {
-        IoTEntrance.deleteAllPresets()
-        AppContext.preferenceManager()?.deleteAllPresets()
-        AppContext.loginManager()?.logout(reason: .sessionExpired)
-        NotificationCenter.default.post(name: .EnvironmentChanged, object: nil, userInfo: nil)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let preset = presets[indexPath.row]
+        AppContext.preferenceManager()?.updatePreset(preset)
+        let chatViewController = ChatViewController()
+        chatViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(chatViewController, animated: true)
     }
 }
