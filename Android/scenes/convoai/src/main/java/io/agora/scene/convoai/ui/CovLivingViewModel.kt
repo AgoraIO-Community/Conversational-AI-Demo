@@ -15,7 +15,6 @@ import io.agora.scene.convoai.convoaiApi.*
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.rtm.IRtmManagerListener
-import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.net.AgoraTokenType
 import io.agora.scene.common.net.TokenGenerator
 import io.agora.scene.common.net.TokenGeneratorType
@@ -250,8 +249,8 @@ class CovLivingViewModel : ViewModel() {
         if (_connectionState.value != AgentConnectionState.IDLE) return
         _connectionState.value = AgentConnectionState.CONNECTING
         // Generate channel name
-        val channelPrefix = if (DebugConfigSettings.isDebug) "agent_debug_" else "agent_"
-        CovAgentManager.channelName = channelPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, 8)
+        CovAgentManager.channelName =
+            CovAgentManager.channelPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, 8)
 
         viewModelScope.launch {
             try {
@@ -762,11 +761,19 @@ class CovLivingViewModel : ViewModel() {
         _voicePrint.value = null
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        cancelJobs()
+        conversationalAIAPI?.removeHandler(covEventHandler)
+        conversationalAIAPI?.destroy()
+        conversationalAIAPI = null
+    }
+
     private fun getConvoaiBodyMap(channel: String, dataChannel: String = "rtm"): Map<String, Any?> {
-        CovLogger.d(TAG, "preset: ${DebugConfigSettings.convoAIParameter}")
+        CovLogger.d(TAG, "preset: ${CovAgentManager.convoAIParameter}")
         return mapOf(
-            "graph_id" to DebugConfigSettings.graphId.takeIf { it.isNotEmpty() },
-            "preset" to DebugConfigSettings.convoAIParameter.takeIf { it.isNotEmpty() },
+            "graph_id" to CovAgentManager.graphId.takeIf { it.isNotEmpty() },
+            "preset" to CovAgentManager.convoAIParameter.takeIf { it.isNotEmpty() },
             "name" to null,
             "properties" to mapOf(
                 "channel" to channel,
@@ -787,11 +794,92 @@ class CovLivingViewModel : ViewModel() {
                     "vendor_model" to null,
                 ),
                 "llm" to mapOf(
+                    "url" to null,
+                    "api_key" to null,
+                    "system_messages" to null,
+                    "greeting_message" to null,
+                    "params" to null,
+                    "style" to null,
+                    "max_history" to null,
+                    "ignore_empty" to null,
+                    "input_modalities" to listOf("text", "image"),
+                    "output_modalities" to null,
+                    "failure_message" to null,
+                ),
+                "tts" to mapOf(
+                    "vendor" to null,
+                    "params" to null,
+                ),
+                "avatar" to mapOf(
+                    "enable" to CovAgentManager.isEnableAvatar,
+                    "vendor" to CovAgentManager.avatar?.vendor?.takeIf { it.isNotEmpty() },
+                    "params" to mapOf(
+                        "agora_uid" to CovAgentManager.avatarUID.toString(),
+                        "avatar_id" to CovAgentManager.avatar?.avatar_id?.takeIf { it.isNotEmpty() }
+                    )
+                ),
+                "vad" to mapOf(
+                    "interrupt_duration_ms" to null,
+                    "prefix_padding_ms" to null,
+                    "silence_duration_ms" to null,
+                    "threshold" to null,
+                ),
+                "parameters" to mapOf(
+                    "data_channel" to dataChannel,
+                    "enable_flexible" to null,
+                    "enable_metrics" to CovAgentManager.isMetricsEnabled,
+                    "enable_error_message" to true,
+                    "aivad_force_threshold" to null,
+                    "output_audio_codec" to null,
+                    "audio_scenario" to null,
+                    "transcript" to mapOf(
+                        "enable" to true,
+                        "enable_words" to CovAgentManager.isWordRenderMode,
+                        "protocol_version" to "v2",
+                        "redundant" to null,
+                    ),
+                    //"enable_dump" to true,
+                    "sc" to mapOf(
+                        "sessCtrlStartSniffWordGapInMs" to null,
+                        "sessCtrlTimeOutInMs" to null,
+                        "sessCtrlWordGapLenVolumeThr" to null,
+                        "sessCtrlWordGapLenInMs" to null,
+                    )
+                )
+            )
+        )
+    }
+
+    // open source convoai parameter
+    private fun getConvoaiOpenSourceBodyMap(channel: String): Map<String, Any?> {
+        return mapOf(
+            "graph_id" to null,
+            "preset" to null,
+            "name" to null,
+            "properties" to mapOf(
+                "channel" to channel,
+                "token" to null,
+                "agent_rtc_uid" to CovAgentManager.agentUID.toString(),
+                "remote_rtc_uids" to listOf(CovAgentManager.uid.toString()),
+                "enable_string_uid" to null,
+                "idle_timeout" to null,
+                "agent_rtm_uid" to null,
+                "advanced_features" to mapOf(
+                    "enable_aivad" to CovAgentManager.enableAiVad,
+                    "enable_bhvs" to CovAgentManager.enableBHVS,
+                    "enable_rtm" to true,
+                ),
+                "asr" to mapOf(
+                    "language" to null,
+                    "vendor" to null,
+                    "vendor_model" to null,
+                ),
+                "llm" to mapOf(
                     "url" to BuildConfig.LLM_URL.takeIf { it.isNotEmpty() },
                     "api_key" to BuildConfig.LLM_API_KEY.takeIf { it.isNotEmpty() },
                     "system_messages" to try {
                         BuildConfig.LLM_SYSTEM_MESSAGES.takeIf { it.isNotEmpty() }?.let {
-                            JSONArray(it)
+                            org.json.JSONArray(it)
                         }
                     } catch (e: Exception) {
                         CovLogger.e(TAG, "Failed to parse system_messages as JSON: ${e.message}")
@@ -824,7 +912,18 @@ class CovLivingViewModel : ViewModel() {
                         BuildConfig.TTS_PARAMS.takeIf { it.isNotEmpty() }
                     },
                 ),
-                "avatar" to buildAvatarMap(),
+                "avatar" to mapOf(
+                    "enable" to CovAgentManager.isEnableAvatar,
+                    "vendor" to BuildConfig.AVATAR_VENDOR.takeIf { it.isNotEmpty() },
+                    "params" to try {
+                        BuildConfig.AVATAR_PARAMS.takeIf { it.isNotEmpty() }?.let {
+                            JSONObject(it)
+                        }
+                    } catch (e: Exception) {
+                        CovLogger.e(TAG, "Failed to parse AVATAR params as JSON: ${e.message}")
+                        BuildConfig.AVATAR_PARAMS.takeIf { it.isNotEmpty() }
+                    },
+                ),
                 "vad" to mapOf(
                     "interrupt_duration_ms" to null,
                     "prefix_padding_ms" to null,
@@ -832,9 +931,9 @@ class CovLivingViewModel : ViewModel() {
                     "threshold" to null,
                 ),
                 "parameters" to mapOf(
-                    "data_channel" to dataChannel,
+                    "data_channel" to "rtm",
                     "enable_flexible" to null,
-                    "enable_metrics" to DebugConfigSettings.isMetricsEnabled,
+                    "enable_metrics" to null,
                     "enable_error_message" to true,
                     "aivad_force_threshold" to null,
                     "output_audio_codec" to null,
@@ -855,46 +954,5 @@ class CovLivingViewModel : ViewModel() {
                 )
             )
         )
-    }
-
-    private fun buildAvatarMap(): Map<String, Any?>? {
-        var avatarMap: Map<String, Any?>? = null
-        if (BuildConfig.AVATAR_ENABLE) {
-            avatarMap = mapOf(
-                "enable" to true,
-                "vendor" to BuildConfig.AVATAR_VENDOR.takeIf { it.isNotEmpty() },
-                "params" to try {
-                    BuildConfig.AVATAR_PARAMS.takeIf { it.isNotEmpty() }?.let {
-                        JSONObject(it)
-                    }
-                } catch (e: Exception) {
-                    CovLogger.e(TAG, "Failed to parse AVATAR params as JSON: ${e.message}")
-                    BuildConfig.AVATAR_PARAMS.takeIf { it.isNotEmpty() }
-                },
-            )
-        } else {
-            val avatar = CovAgentManager.avatar
-            avatarMap = if (avatar != null) {
-                mapOf(
-                    "enable" to true,
-                    "vendor" to avatar.vendor,
-                    "params" to mapOf(
-                        "agora_uid" to CovAgentManager.avatarUID.toString(),
-                        "avatar_id" to avatar.avatar_id
-                    )
-                )
-            } else {
-                null
-            }
-        }
-        return avatarMap
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        cancelJobs()
-        conversationalAIAPI?.removeHandler(covEventHandler)
-        conversationalAIAPI?.destroy()
-        conversationalAIAPI = null
     }
 }

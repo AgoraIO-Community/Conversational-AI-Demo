@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import io.agora.rtc2.Constants
 import io.agora.rtc2.video.VideoCanvas
-import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
 import io.agora.scene.common.ui.CommonDialog
@@ -304,9 +303,9 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                                 duration = Toast.LENGTH_LONG
                             )
                             mBinding?.clTop?.showTitleAnim(
-                                DebugConfigSettings.isSessionLimitMode,
+                                CovAgentManager.isSessionLimitMode,
                                 CovAgentManager.roomExpireTime,
-                                tipsText = if (DebugConfigSettings.isSessionLimitMode)
+                                tipsText = if (CovAgentManager.isSessionLimitMode)
                                     getString(
                                         io.agora.scene.common.R.string.common_limit_time,
                                         (CovAgentManager.roomExpireTime / 60).toInt()
@@ -315,7 +314,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                                     getString(io.agora.scene.common.R.string.common_limit_time_none)
                             )
                             mBinding?.clTop?.startCountDownTask(
-                                DebugConfigSettings.isSessionLimitMode,
+                                CovAgentManager.isSessionLimitMode,
                                 CovAgentManager.roomExpireTime,
                                 onTimerEnd = {
                                     onClickEndCall()
@@ -602,7 +601,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         isSelfSubRender = CovAgentManager.getPreset()?.isIndependent == true
         resetSceneState()
 
-        if (DebugConfigSettings.isDebug) {
+        if (CovAgentManager.isDebugging) {
             mBinding?.btnSendMsg?.isVisible = !isSelfSubRender
         } else {
             mBinding?.btnSendMsg?.isVisible = false

@@ -255,7 +255,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     return@updateOptions
                 }
 
-                if (CovAgentManager.avatar != null) {
+                if (CovAgentManager.isEnableAvatar) {
                     // Check if user selected "Don't show again"
                     if (CovAgentManager.shouldShowPresetChangeReminder()) {
                         // Show reminder dialog
