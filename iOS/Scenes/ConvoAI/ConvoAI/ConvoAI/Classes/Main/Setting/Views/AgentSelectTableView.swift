@@ -82,14 +82,6 @@ extension AgentSelectTableView: UITableViewDataSource, UITableViewDelegate {
         cell.bottomLine.isHidden = (indexPath.row == dataSource.count - 1)
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return max(UITableView.automaticDimension, 56)
-    }
-
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 56
-    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
