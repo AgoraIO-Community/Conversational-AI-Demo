@@ -123,7 +123,7 @@
     <string name="cov_custom_agent_acquire_tip">Please contact Agora staff to obtain your custom agent ID.</string>
     <string name="cov_custom_agent_input_tip">Enter Agent ID to Retrieve</string>
     <string name="cov_custom_agent_get">Retrieve</string>
-    <string name="cov_voiceprint_lock">Voiceprint Lock</string>
+    <string name="cov_voiceprint_lock">Voiceprint</string>
     <string name="cov_voiceprint_lock_success">The engine will learn your unique voiceprint to filter out other voices and background noise.</string>
     <string name="cov_word_mode">Word-by-Word</string>
     <string name="cov_word_mode_tips">The transcript appears one word at a time, synchronized with the AI\'s speech.</string>

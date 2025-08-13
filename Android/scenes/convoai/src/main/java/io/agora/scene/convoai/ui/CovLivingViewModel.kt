@@ -87,9 +87,9 @@ class CovLivingViewModel : ViewModel() {
     private val _transcriptUpdate = MutableStateFlow<Transcript?>(null)
     val transcriptUpdate: StateFlow<Transcript?> = _transcriptUpdate.asStateFlow()
 
-    // Transcript state
-    private val _voicePrint = MutableStateFlow<String?>(null)
-    val voicePrint: StateFlow<String?> = _voicePrint.asStateFlow()
+    // Voiceprint event state
+    private val _voiceprintEvent = MutableStateFlow<VoiceprintEvent?>(null)
+    val voiceprintEvent: StateFlow<VoiceprintEvent?> = _voiceprintEvent.asStateFlow()
 
     // Media info
     private val _mediaInfoUpdate = MutableStateFlow<MediaInfo?>(null)
@@ -199,9 +199,9 @@ class CovLivingViewModel : ViewModel() {
             }
         }
 
-        override fun onAgentVoicePrint(agentUserId: String, state: String) {
+        override fun onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent) {
             // Update voice print state to notify Activity
-            _voicePrint.value = state
+            _voiceprintEvent.value = event
         }
 
         override fun onDebugLog(log: String) {
@@ -758,7 +758,7 @@ class CovLivingViewModel : ViewModel() {
         _mediaInfoUpdate.value = null
         _resourceError.value = null
         _interruptEvent.value = null
-        _voicePrint.value = null
+        _voiceprintEvent.value = null
     }
 
     override fun onCleared() {

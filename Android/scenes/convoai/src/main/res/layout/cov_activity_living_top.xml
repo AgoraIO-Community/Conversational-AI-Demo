@@ -130,6 +130,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        tools:visibility="visible"
         android:inAnimation="@anim/cov_flip_in"
         android:outAnimation="@anim/cov_flip_out"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -187,6 +188,7 @@
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@id/viewFlipper"
         app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible"
         app:layout_constraintTop_toTopOf="@id/viewFlipper">
 
         <LinearLayout

@@ -37,6 +37,7 @@ import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.AgentState
+import io.agora.scene.convoai.convoaiApi.VoiceprintStatus
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
@@ -487,10 +488,10 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                 }
             }
         }
-        lifecycleScope.launch {  // Observe voice print updates
-            viewModel.voicePrint.collect { voicePrint ->
+        lifecycleScope.launch {  // Observe voiceprint event updates
+            viewModel.voiceprintEvent.collect { voicePrint ->
                 if (isSelfSubRender) return@collect
-                if (voicePrint == "VP_REGISTER_SUCCESS") {
+                if (voicePrint?.status == VoiceprintStatus.REGISTER_SUCCESS) {
                     mBinding?.clTop?.showVoicePrint()
                     ToastUtil.show(R.string.cov_voiceprint_lock_success, Toast.LENGTH_LONG)
                 } else {
