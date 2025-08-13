@@ -67,7 +67,7 @@ class LoginViewController: UIViewController {
     
     private lazy var registerButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("海外的按钮2", for: .normal)
+        button.setTitle(ResourceManager.L10n.Login.signup, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -197,10 +197,17 @@ class LoginViewController: UIViewController {
         CATransaction.commit()
     }
     
-    private func goToSSOViewController() {
+    private func loginAction() {
         let ssoWebVC = SSOWebViewController()
         let baseUrl = AppContext.shared.baseServerUrl
         ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/login"
+        self.navigationController?.pushViewController(ssoWebVC, animated: true)
+    }
+    
+    private func signUpAction() {
+        let ssoWebVC = SSOWebViewController()
+        let baseUrl = AppContext.shared.baseServerUrl
+        ssoWebVC.urlString = "\(baseUrl)/v1/convoai/sso/signup"
         self.navigationController?.pushViewController(ssoWebVC, animated: true)
     }
     
@@ -272,8 +279,13 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func onClickRegister() {
-        // TODO: Handle register action
-        print("Register button tapped")
+        if !termsCheckbox.isSelected {
+            warningButton.isHidden = false
+            shakeWarningLabel()
+            return
+        }
+        
+        signUpAction()
     }
     
     @objc private func onClickLogin() {
@@ -282,7 +294,7 @@ class LoginViewController: UIViewController {
             shakeWarningLabel()
             return
         }
-        goToSSOViewController()
+        loginAction()
     }
     
     @objc private func termsCheckboxTapped() {

@@ -68,8 +68,12 @@ extension ChatViewController {
 }
 
 extension ChatViewController: ConversationalAIAPIEventHandler {
-    public func onAgentVoiceprint(agentUserId: String, status: String) {
-        sideNavigationBar.voiceprintState(status: true)
+    public func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent) {
+        if event.status == .registerSuccess {
+            sideNavigationBar.voiceprintState(status: true)
+        } else {
+            sideNavigationBar.voiceprintState(status: false)
+        }
     }
     
     public func onMessageError(agentUserId: String, error: MessageError) {

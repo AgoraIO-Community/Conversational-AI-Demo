@@ -511,6 +511,98 @@ public enum MessageType: String, CaseIterable {
     }
 }
 
+/// Voiceprint status enumeration
+/// Used to track the status of voiceprint registration and sending
+/// Helps in managing voiceprint lifecycle and UI display by identifying different states
+@objc public enum VoiceprintStatus: Int {
+    /// voice print function disabled
+    case disable = 100
+    /// voice print un-register
+    case unregister = 200
+    /// voice print registering
+    case registering = 201
+    /// voice print register success
+    case registerSuccess = 203
+    /// voice print register failed
+    case registerFail = 204
+    /// voice print register duplicate
+    case registerDuplicate = 205
+    /// unknown voiceprint status
+    case unknown = 0
+    
+    /// String representation of the voiceprint status
+    public var stringValue: String {
+        switch self {
+        case .disable:
+            return "VP_DISABLE"
+        case .unregister:
+            return "VP_UNREGISTER"
+        case .registering:
+            return "VP_REGISTERING"
+        case .registerSuccess:
+            return "VP_REGISTER_SUCCESS"
+        case .registerFail:
+            return "VP_REGISTER_FAIL"
+        case .registerDuplicate:
+            return "VP_REGISTER_DUPLICATE"
+        case .unknown:
+            return "UNKNOWN"
+        }
+    }
+    
+    /// Initialize from string value
+    public init?(stringValue: String) {
+        switch stringValue {
+        case "VP_DISABLE":
+            self = .disable
+        case "VP_UNREGISTER":
+            self = .unregister
+        case "VP_REGISTERING":
+            self = .registering
+        case "VP_REGISTER_SUCCESS":
+            self = .registerSuccess
+        case "VP_REGISTER_FAIL":
+            self = .registerFail
+        case "VP_REGISTER_DUPLICATE":
+            self = .registerDuplicate
+        case "UNKNOWN":
+            self = .unknown
+        default:
+            return nil
+        }
+    }
+}
+
+/// VoiceprintEvent data model
+/// Used for tracking voiceprint registration and sending
+/// Contains send timestamp, message id, timestamp, and status
+@objc public class VoiceprintEvent: NSObject {
+    /// voice print send timestamp in milliseconds
+    @objc public let timestamp: Int
+    /// Milliseconds offset of the status，Offset duration relative to the first audio
+    /// Using this data, the duration of switching between the two states can be calculated.
+    /// For example, from unregister to register success, how much time it takes
+    @objc public let timeOffset: Int
+    /// voice print status
+    @objc public let status: VoiceprintStatus
+    
+    /// Initialize a voiceprint event
+    /// - Parameters:
+    ///   - sendTimestamp: Voiceprint send timestamp in milliseconds
+    ///   - messageId: Voiceprint message id
+    ///   - timestamp: Voiceprint timestamp in milliseconds
+    ///   - status: Voiceprint status
+    @objc public init(timestamp: Int, timeOffset: Int, status: VoiceprintStatus) {
+        self.timestamp = timestamp
+        self.timeOffset = timeOffset
+        self.status = status
+    }
+
+    public override var description: String {
+        return "Voiceprint(sendTimestamp: \(timestamp), timeOffset: \(timeOffset), status: \(status))"
+    }
+}
+
 /// Message receipt model
 /// Used for tracking message processing status and metadata
 /// Contains type, image information, and turn ID
@@ -652,12 +744,12 @@ public enum MessageType: String, CaseIterable {
     ///   - error: Message error containing type, message
     @objc func onMessageError(agentUserId: String, error: MessageError)
     
-    ///Called when voiceprint was occurs
+    ///Called when voiceprint state changed
     ///This method is called when agent start voiceprint
     /// - Parameters:
     ///   - agentUserId: Agent RTM user ID
-    ///   - status: Voiceprint status
-    @objc func onAgentVoiceprint(agentUserId: String, status: String)
+    ///   - event: Voiceprint event containing send timestamp, message id, timestamp, and status
+    @objc func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent)
 
 }
 

@@ -317,11 +317,11 @@ extension ConversationalAIAPIImpl {
         }
     }
 
-    private func notifyDelegatesVoiceprintMessage(agentUserId: String, status: String) {
-        callMessagePrint(msg: "<<< [onVoiceprintMessageUpdated], agentUserId: \(agentUserId), status: \(status)")
+    private func notifyDelegatesVoiceprintMessage(agentUserId: String, event: VoiceprintEvent) {
+        callMessagePrint(msg: "<<< [onVoiceprintMessageUpdated], agentUserId: \(agentUserId), voiceprint: \(event)")
         DispatchQueue.main.async {
             for delegate in self.delegates.allObjects {
-                delegate.onAgentVoiceprint(agentUserId: agentUserId, status: status)
+                delegate.onAgentVoiceprintStateChanged(agentUserId: agentUserId, event: event)
             }
         }
     }
@@ -429,8 +429,12 @@ extension ConversationalAIAPIImpl {
     }
     
     private func handleVoiceprintMessage(uid: String, msg: [String: Any]) {
-        let status = msg["status"] as? String ?? "Unkown"
-        notifyDelegatesVoiceprintMessage(agentUserId: uid, status: status)
+        let status = msg["status"] as? String ?? ""
+        let offset = msg["timestamp"] as? Int ?? 0
+        let timestamp = msg["send_ts"] as? Int ?? 0
+        print("voiceprint --> \(msg)")
+        let event = VoiceprintEvent(timestamp: timestamp, timeOffset: offset, status: VoiceprintStatus(stringValue: status) ?? .unknown)
+        notifyDelegatesVoiceprintMessage(agentUserId: uid, event: event)
     }
     
     private func handleMessageReceipt(uid: String, msg: [String: Any]) {
@@ -606,6 +610,5 @@ extension ConversationalAIAPIImpl: TranscriptDelegate {
         callMessagePrint(msg: txt)
     }
 }
-
 
 
