@@ -19,6 +19,7 @@ class OfficialAgentViewController: AgentListViewController {
     override func setupUI() {
         super.setupUI()
         view.addSubview(emptyStateView)
+        emptyStateView.isHidden = true
         emptyStateView.retryAction = { [weak self] in
             guard let self = self else { return }
             self.requestAgentPresets()
@@ -74,22 +75,19 @@ class OfficialAgentViewController: AgentListViewController {
             
             guard let result = result else {
                 ConvoAILogger.error("result is empty")
-                self?.presets = []
-                self?.tableView.reloadData()
+                self?.refreshSubView()
                 return
             }
             
             AppContext.preferenceManager()?.setPresets(presets: result)
             self?.presets = result
             self?.tableView.reloadData()
+            self?.refreshSubView()
         }
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = presets.count
-        emptyStateView.alpha = count > 0 ? 0 : 1
-        tableView.alpha = count > 0 ? 1 : 0
-        return count
+    private func refreshSubView() {
+        emptyStateView.isHidden = presets.count != 0
     }
 }
 

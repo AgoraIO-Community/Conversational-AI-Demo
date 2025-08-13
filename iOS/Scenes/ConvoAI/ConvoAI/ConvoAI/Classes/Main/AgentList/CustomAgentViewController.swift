@@ -19,6 +19,7 @@ class CustomAgentViewController: AgentListViewController {
     override func setupUI() {
         view.addSubview(tableView)
         view.addSubview(emptyStateView)
+        emptyStateView.isHidden = true
         inputContainerView.textField.isUserInteractionEnabled = false
         inputContainerView.actionButton.addTarget(self, action: #selector(onClickFetch), for: .touchUpInside)
         view.addSubview(inputContainerView)
@@ -107,6 +108,7 @@ class CustomAgentViewController: AgentListViewController {
                 }
                 self.presets = presets
                 self.tableView.reloadData()
+                self.refreshSubView()
             }
         }
     }
@@ -160,16 +162,13 @@ class CustomAgentViewController: AgentListViewController {
         }
         present(vc, animated: true)
     }
+    
+    private func refreshSubView() {
+        emptyStateView.isHidden = presets.count != 0
+    }
 }
 
 extension CustomAgentViewController {
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = presets.count
-        emptyStateView.alpha = count > 0 ? 0 : 1
-        tableView.alpha = count > 0 ? 1 : 0
-        return count
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let preset = presets[indexPath.row]
         let id = preset.name.stringValue()
