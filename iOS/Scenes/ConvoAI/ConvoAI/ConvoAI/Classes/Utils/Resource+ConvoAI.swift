@@ -29,6 +29,7 @@ extension ResourceManager {
 
         public enum Login {
             public static let title = ResourceManager.localizedString("login.title")
+            public static let signup = ResourceManager.localizedString("login.start.button.signup")
             public static let description = ResourceManager.localizedString("login.description")
             public static let buttonTitle = ResourceManager.localizedString("login.start.button.title")
             public static let termsServicePrefix = ResourceManager.localizedString("login.terms.service.prefix")
@@ -42,7 +43,7 @@ extension ResourceManager {
             public static let logoutAlertDescription = ResourceManager.localizedString("logout.alert.description")
             public static let logoutAlertConfirm = ResourceManager.localizedString("logout.alert.cancel.title")
             public static let logoutAlertCancel = ResourceManager.localizedString("logout.alert.confirm.title")
-            public static let signup = ResourceManager.localizedString("login.start.button.signup")
+
         }
 
         public enum Join {
@@ -101,6 +102,9 @@ extension ResourceManager {
             public static let microphonePermissionDescription = ResourceManager.localizedString("error.microphone.permission.alert.description")
             public static let permissionCancel = ResourceManager.localizedString("error.permission.alert.cancel")
             public static let permissionConfirm = ResourceManager.localizedString("error.permission.alert.confirm")
+            public static let agentNotFound = ResourceManager.localizedString("error.agent.is.not.exist")
+            public static let agentOffline = ResourceManager.localizedString("error.agent.is.offline")
+            public static let agentListFetchFailed = ResourceManager.localizedString("error.agent.list.fetch.failed")
         }
 
         public enum Settings {
@@ -221,7 +225,14 @@ extension ResourceManager {
             public static let official = ResourceManager.localizedString("agent.list.official")
             public static let fetch = ResourceManager.localizedString("agent.list.get")
             public static let getAgent = ResourceManager.localizedString("agent.list.get.agent")
+            public static let agentSearchSuccess = ResourceManager.localizedString("agent.search.success")
+        }
+        
+        public enum Empty {
+            public static let loadingFailed = ResourceManager.localizedString("empty.state.loading.failed")
+            public static let retry = ResourceManager.localizedString("empty.state.retry")
         }
     }
 }
+
 

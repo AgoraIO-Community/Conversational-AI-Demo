@@ -9,6 +9,7 @@ import UIKit
 import Common
 import Kingfisher
 import CryptoKit
+import SVProgressHUD
 
 fileprivate let kCustomPresetSave = "io.agora.customPresets"
 class CustomAgentViewController: AgentListViewController {
@@ -47,15 +48,29 @@ class CustomAgentViewController: AgentListViewController {
     }
     @objc private func onClickFetch() {
         guard let text = inputContainerView.textField.text, !text.isEmpty else { return }
+        SVProgressHUD.show()
         agentManager.searchCustomPresets(customPresetIds: [text]) { [weak self] error, result in
+            SVProgressHUD.dismiss()
             guard let self = self else { return }
             if let err = error {
-                ConvoAILogger.error(err.localizedDescription)
+                if err.code == 1800 {
+                    self.remove(presetId: text)
+                    self.fetchData()
+                    ConvoAILogger.error(ResourceManager.L10n.Error.agentOffline)
+                    SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentOffline)
+                } else {
+                    ConvoAILogger.error(err.localizedDescription)
+                    SVProgressHUD.showInfo(withStatus: err.localizedDescription)
+                }
+                
                 return
             }
             if let presets = result, !presets.isEmpty {
                 self.save(presetId: text)
                 self.fetchData()
+            } else {
+                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentNotFound)
+                ConvoAILogger.error(ResourceManager.L10n.Error.agentNotFound)
             }
         }
     }
@@ -76,15 +91,23 @@ class CustomAgentViewController: AgentListViewController {
             self.tableView.reloadData()
             return
         }
+        SVProgressHUD.show()
         agentManager.searchCustomPresets(customPresetIds: ids) { [weak self] error, result in
             self?.refreshControl.endRefreshing()
+            SVProgressHUD.dismiss()
             guard let self = self else { return }
             if let err = error {
                 ConvoAILogger.error(err.localizedDescription)
                 return
             }
-            self.presets = result ?? []
-            self.tableView.reloadData()
+            
+            if let presets = result, !presets.isEmpty {
+                for e in presets {
+                    self.save(presetId: e.name.stringValue())
+                }
+                self.presets = presets
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -145,5 +168,37 @@ extension CustomAgentViewController {
         emptyStateView.alpha = count > 0 ? 0 : 1
         tableView.alpha = count > 0 ? 1 : 0
         return count
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let preset = presets[indexPath.row]
+        let id = preset.name.stringValue()
+        SVProgressHUD.show()
+        agentManager.searchCustomPresets(customPresetIds: [id]) { [weak self] error, result in
+            SVProgressHUD.dismiss()
+            guard let self = self else { return }
+            if let err = error {
+                if err.code == 1800 {
+                    self.remove(presetId: id)
+                    self.fetchData()
+                    ConvoAILogger.error(ResourceManager.L10n.Error.agentOffline)
+                    SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentOffline)
+                } else {
+                    ConvoAILogger.error(err.localizedDescription)
+                    SVProgressHUD.showInfo(withStatus: err.localizedDescription)
+                }
+                
+                return
+            }
+            if let presets = result, !presets.isEmpty {
+                AppContext.preferenceManager()?.updatePreset(preset)
+                let chatViewController = ChatViewController()
+                chatViewController.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(chatViewController, animated: true)
+            } else {
+                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentNotFound)
+                ConvoAILogger.error(ResourceManager.L10n.Error.agentNotFound)
+            }
+        }
     }
 }

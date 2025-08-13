@@ -10,8 +10,26 @@ import Common
 import SVProgressHUD
 
 class OfficialAgentViewController: AgentListViewController {
+    let emptyStateView = CommonEmptyView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func setupUI() {
+        super.setupUI()
+        view.addSubview(emptyStateView)
+        emptyStateView.retryAction = { [weak self] in
+            guard let self = self else { return }
+            self.requestAgentPresets()
+        }
+    }
+    
+    override func setupConstraints() {
+        super.setupConstraints()
+        emptyStateView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalTo(tableView)
+        }
     }
     
     override func fetchData() {
@@ -40,8 +58,14 @@ class OfficialAgentViewController: AgentListViewController {
         requestAgentPresets()
     }
     
+    override func refreshHandler() {
+        requestAgentPresets()
+    }
+    
     private func requestAgentPresets() {
+        SVProgressHUD.show()
         agentManager.fetchAgentPresets(appId: AppContext.shared.appId) {[weak self] error, result in
+            SVProgressHUD.dismiss()
             self?.refreshControl.endRefreshing()
             if let error = error {
                 SVProgressHUD.showInfo(withStatus: error.localizedDescription)
@@ -49,7 +73,9 @@ class OfficialAgentViewController: AgentListViewController {
             }
             
             guard let result = result else {
-                SVProgressHUD.showInfo(withStatus: "result is empty")
+                ConvoAILogger.error("result is empty")
+                self?.presets = []
+                self?.tableView.reloadData()
                 return
             }
             
@@ -58,4 +84,12 @@ class OfficialAgentViewController: AgentListViewController {
             self?.tableView.reloadData()
         }
     }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let count = presets.count
+        emptyStateView.alpha = count > 0 ? 0 : 1
+        tableView.alpha = count > 0 ? 1 : 0
+        return count
+    }
 }
+
