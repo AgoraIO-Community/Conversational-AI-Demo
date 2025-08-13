@@ -380,6 +380,63 @@ enum class MessageType(val value: String) {
 }
 
 /**
+ * @technical preview
+ *
+ * Voiceprint status enumeration
+ * Used to track the status of voiceprint registration and sending
+ * Helps in managing voiceprint lifecycle and UI display by identifying different states
+ */
+enum class VoiceprintStatus(val value: String) {
+    /** Voice print function disabled */
+    DISABLE("VP_DISABLE"),
+    /** Voice print un-register */
+    UNREGISTER("VP_UNREGISTER"),
+    /** Voice print registering */
+    REGISTERING("VP_REGISTERING"),
+    /** Voice print register success */
+    REGISTER_SUCCESS("VP_REGISTER_SUCCESS"),
+    /** Voice print register failed */
+    REGISTER_FAIL("VP_REGISTER_FAIL"),
+    /** Voice print register duplicate */
+    REGISTER_DUPLICATE("VP_REGISTER_DUPLICATE"),
+    /** Unknown status */
+    UNKNOWN("unknown");
+
+    companion object {
+        /**
+         * Initialize from string value
+         */
+        fun fromValue(stringValue: String): VoiceprintStatus {
+            return when (stringValue) {
+                "VP_DISABLE" -> DISABLE
+                "VP_UNREGISTER" -> UNREGISTER
+                "VP_REGISTERING" -> REGISTERING
+                "VP_REGISTER_SUCCESS" -> REGISTER_SUCCESS
+                "VP_REGISTER_FAIL" -> REGISTER_FAIL
+                "VP_REGISTER_DUPLICATE" -> REGISTER_DUPLICATE
+                else -> UNKNOWN
+            }
+        }
+    }
+}
+
+/**
+ * @technical preview
+ *
+ * @property timeOffset For example, from unregister to register success, how much time it takes
+ * @property timestamp Event occurrence timestamp (milliseconds since epoch, i.e., since January 1, 1970 UTC)
+ * @property status Voice print status
+ */
+data class VoiceprintEvent(
+    /** Milliseconds duration of the status，Offset duration relative to the first audios，Using this data, the duration of switching between the two states can be calculated.*/
+    val timeOffset: Int,
+    /** Milliseconds relative to the start of the audio */
+    val timestamp: Long,
+    /** Voice print status */
+    val status: VoiceprintStatus
+)
+
+/**
  * Defines different modes for transcript rendering.
  *
  * @property Word Word-by-word transcripts are rendered.
@@ -402,7 +459,7 @@ enum class TranscriptRenderMode {
  * @property status Current status of the transcript
  * @property type transcript type (AGENT/USER)
  */
-data class Transcript constructor(
+data class Transcript(
     /** Unique identifier for the conversation turn */
     val turnId: Long,
     /** User identifier associated with this transcript */
@@ -569,9 +626,9 @@ interface IConversationalAIAPIEventHandler {
     /**
      * Called when message receipt is updated
      * @param agentUserId Agent User ID
-     * @param state voice print state
+     * @param event voice print event
      */
-    fun onAgentVoicePrint(agentUserId: String, state: String)
+    fun onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent)
 
     /**
      * Called when transcript content is updated.

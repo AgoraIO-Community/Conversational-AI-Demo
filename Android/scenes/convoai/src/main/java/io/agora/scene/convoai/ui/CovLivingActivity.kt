@@ -37,6 +37,7 @@ import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.AgentState
+import io.agora.scene.convoai.convoaiApi.VoiceprintStatus
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
@@ -135,15 +136,14 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                 mute = getString(R.string.cov_user_muted),
             )
 
-            clBottomLogged.btnCamera.alpha = if (viewModel.isVisionSupported) 1.0f else 0.5f
-            clBottomLogged.btnImageContainer.alpha = if (viewModel.isVisionSupported) 1.0f else 0.5f
+            clBottomLogged.setVisionSupport(viewModel.isVisionSupported)
 
-            clBottomLogged.btnEndCall.setOnClickListener(object : OnFastClickListener() {
+            clBottomLogged.setOnEndCallClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     onClickEndCall()
                 }
             })
-            clBottomLogged.btnMic.setOnClickListener {
+            clBottomLogged.setOnMicClickListener {
                 val currentAudioMuted = viewModel.isLocalAudioMuted.value
                 checkMicrophonePermission(
                     granted = {
@@ -154,15 +154,15 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                     force = currentAudioMuted,
                 )
             }
-            clBottomLogged.btnCamera.setOnClickListener {
+            clBottomLogged.setOnCameraClickListener {
                 if (!viewModel.isVisionSupported){
                     CovLogger.d(TAG, "click add pic: This preset does not support vision-related features.")
                     ToastUtil.show(R.string.cov_preset_not_support_vision, Toast.LENGTH_LONG)
-                    return@setOnClickListener
+                    return@setOnCameraClickListener
                 }
                 if (viewModel.connectionState.value!=AgentConnectionState.CONNECTED){
                     ToastUtil.show(R.string.cov_vision_connect_and_try_again, Toast.LENGTH_LONG)
-                    return@setOnClickListener
+                    return@setOnCameraClickListener
                 }
 
                 val isPublishVideo = viewModel.isPublishVideo.value
@@ -188,7 +188,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                 viewModel.toggleMessageList()
             }
             // Set click listener for btn_image_container with dynamic functionality
-            clBottomLogged.btnImageContainer.setOnClickListener {
+            clBottomLogged.setOnImageContainerClickListener {
                 val isPublishVideo = viewModel.isPublishVideo.value
                 if (isPublishVideo) {
                     // Camera is on - switch camera
@@ -198,11 +198,11 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                     if (!viewModel.isVisionSupported) {
                         CovLogger.d(TAG, "click add pic: This preset does not support vision-related features.")
                         ToastUtil.show(R.string.cov_preset_not_support_vision, Toast.LENGTH_LONG)
-                        return@setOnClickListener
+                        return@setOnImageContainerClickListener
                     }
                     if (viewModel.connectionState.value != AgentConnectionState.CONNECTED) {
                         ToastUtil.show(R.string.cov_vision_connect_and_try_again, Toast.LENGTH_LONG)
-                        return@setOnClickListener
+                        return@setOnImageContainerClickListener
                     }
                     PhotoNavigationActivity.start(this@CovLivingActivity) {
                         CovLogger.d(TAG, "select image callback:$it")
@@ -212,7 +212,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                     }
                 }
             }
-            clBottomLogged.btnJoinCall.setOnClickListener(object : OnFastClickListener() {
+            clBottomLogged.setOnJoinCallClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     // Check microphone permission
                     checkMicrophonePermission(
@@ -487,10 +487,10 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                 }
             }
         }
-        lifecycleScope.launch {  // Observe voice print updates
-            viewModel.voicePrint.collect { voicePrint ->
+        lifecycleScope.launch {  // Observe voiceprint event updates
+            viewModel.voiceprintEvent.collect { voicePrint ->
                 if (isSelfSubRender) return@collect
-                if (voicePrint == "VP_REGISTER_SUCCESS") {
+                if (voicePrint?.status == VoiceprintStatus.REGISTER_SUCCESS) {
                     mBinding?.clTop?.showVoicePrint()
                     ToastUtil.show(R.string.cov_voiceprint_lock_success, Toast.LENGTH_LONG)
                 } else {
@@ -581,16 +581,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     private fun updateLightBackground(isLight: Boolean){
         mBinding?.apply {
             clTop.updateLightBackground(isLight)
-
-            if (isLight) {
-                clBottomLogged.btnEndCall.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-                clBottomLogged.btnCamera.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-                clBottomLogged.btnImageContainer.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-            } else {
-                clBottomLogged.btnEndCall.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-                clBottomLogged.btnCamera.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-                clBottomLogged.btnImageContainer.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-            }
+            clBottomLogged.updateButtonBackgrounds(isLight)
         }
         updateMicrophoneView(viewModel.isLocalAudioMuted.value)
     }
@@ -639,17 +630,14 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     private fun updateStateView(connectionState: AgentConnectionState) {
         mBinding?.apply {
+            clBottomLogged.updateCallingControlsVisibility(connectionState)
             when (connectionState) {
                 AgentConnectionState.IDLE -> {
-                    clBottomLogged.llCalling.visibility = View.INVISIBLE
-                    clBottomLogged.btnJoinCall.visibility = View.VISIBLE
                     vConnecting.visibility = View.GONE
                     agentStateView.visibility = View.GONE
                 }
 
                 AgentConnectionState.CONNECTING -> {
-                    clBottomLogged.llCalling.visibility = View.VISIBLE
-                    clBottomLogged.btnJoinCall.visibility = View.INVISIBLE
                     vConnecting.visibility = View.VISIBLE
                     agentStateView.visibility = View.GONE
 
@@ -660,8 +648,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
                 AgentConnectionState.CONNECTED,
                 AgentConnectionState.CONNECTED_INTERRUPT -> {
-                    clBottomLogged.llCalling.visibility = View.VISIBLE
-                    clBottomLogged.btnJoinCall.visibility = View.INVISIBLE
                     vConnecting.visibility = View.GONE
                     if (isSelfSubRender) {
                         agentStateView.visibility = View.GONE
@@ -680,105 +666,17 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     private fun updateMicrophoneView(isLocalAudioMuted: Boolean) {
         mBinding?.apply {
-            if (isLocalAudioMuted) {
-                clBottomLogged.btnMic.setImageResource(io.agora.scene.common.R.drawable.scene_detail_microphone0)
-                clBottomLogged.btnMic.setBackgroundResource(
-                    io.agora.scene.common.R.drawable.btn_bg_brand_white_selector
-                )
-            } else {
-                clBottomLogged.btnMic.setImageResource(io.agora.scene.common.R.drawable.agent_user_speaker)
-                val isLight =  (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !viewModel.isShowMessageList.value
-                if (isLight) {
-                    clBottomLogged.btnMic.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_brand_black4_selector)
-                } else {
-                    clBottomLogged.btnMic.setBackgroundResource(io.agora.scene.common.R.drawable.btn_bg_block1_selector)
-                }
-            }
+            val isLight =
+                (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !viewModel.isShowMessageList.value
+            clBottomLogged.updateMicrophoneView(isLocalAudioMuted, isLight)
         }
     }
 
     private fun updateCameraView(isPublish: Boolean) {
         mBinding?.apply {
-            if (isPublish) {
-                clBottomLogged.btnCamera.setImageResource(io.agora.scene.common.R.drawable.scene_detail_camera_on)
-            } else {
-                clBottomLogged.btnCamera.setImageResource(io.agora.scene.common.R.drawable.scene_detail_camera_off)
-            }
+            clBottomLogged.updateCameraView(isPublish)
             clTop.updatePublishCameraStatus(isPublish)
-            updateImageButtonWithAnimation(isPublish)
-        }
-    }
-
-    private fun updateImageButtonWithAnimation(isPublishVideo: Boolean) {
-        mBinding?.apply {
-            val ivAddPic = clBottomLogged.ivAddPic
-            val ivCameraSwitch = clBottomLogged.ivCameraSwitch
-
-            // Clear any existing animations
-            ivAddPic.clearAnimation()
-            ivCameraSwitch.clearAnimation()
-
-            if (isPublishVideo) {
-                // Camera is on - show camera switch icon
-                if (ivAddPic.isVisible) {
-                    // Show camera switch icon immediately and start both animations simultaneously
-                    ivCameraSwitch.isVisible = true
-
-                    // Start out animation for add pic icon
-                    val outAnim = android.view.animation.AnimationUtils.loadAnimation(this@CovLivingActivity, R.anim.slide_up_out)
-                    outAnim.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-                        override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-                        override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-                        override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-                            // Hide add pic icon after out animation completes
-                            if (viewModel.isPublishVideo.value == true) {
-                                ivAddPic.isVisible = false
-                            }
-                        }
-                    })
-
-                    // Start in animation for camera switch icon simultaneously
-                    val inAnim = android.view.animation.AnimationUtils.loadAnimation(this@CovLivingActivity, R.anim.slide_up_in)
-
-                    // Start both animations at the same time
-                    ivAddPic.startAnimation(outAnim)
-                    ivCameraSwitch.startAnimation(inAnim)
-                } else {
-                    // Direct switch without animation (first time or already in correct state)
-                    ivAddPic.isVisible = false
-                    ivCameraSwitch.isVisible = true
-                }
-            } else {
-                // Camera is off - show add picture icon
-                if (ivCameraSwitch.isVisible) {
-                    // Show add pic icon immediately and start both animations simultaneously
-                    ivAddPic.isVisible = true
-
-                    // Start out animation for camera switch icon
-                    val outAnim = android.view.animation.AnimationUtils.loadAnimation(this@CovLivingActivity, R.anim.slide_down_out)
-                    outAnim.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-                        override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-                        override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-                        override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-                            // Hide camera switch icon after out animation completes
-                            if (viewModel.isPublishVideo.value == false) {
-                                ivCameraSwitch.isVisible = false
-                            }
-                        }
-                    })
-
-                    // Start in animation for add pic icon simultaneously
-                    val inAnim = android.view.animation.AnimationUtils.loadAnimation(this@CovLivingActivity, R.anim.slide_down_in)
-
-                    // Start both animations at the same time
-                    ivCameraSwitch.startAnimation(outAnim)
-                    ivAddPic.startAnimation(inAnim)
-                } else {
-                    // Direct switch without animation (first time or already in correct state)
-                    ivCameraSwitch.isVisible = false
-                    ivAddPic.isVisible = true
-                }
-            }
+            clBottomLogged.updateImageButtonWithAnimation(isPublish)
         }
     }
 

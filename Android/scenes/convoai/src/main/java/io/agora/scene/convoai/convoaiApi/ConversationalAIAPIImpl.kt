@@ -207,12 +207,17 @@ class ConversationalAIAPIImpl(val config: ConversationalAIAPIConfig) : IConversa
                  * {object=message.sal_status, status=VP_REGISTER_SUCCESS, timestamp=18400, data_type=message, message_id=44aff975, send_ts=1754466757510}
                  */
                 MessageType.VOICE_PRINT -> {
-                    val status = msg["status"] as? String ?: "Unknown"
+                    val status = VoiceprintStatus.fromValue(msg["status"] as? String ?: "")
+
+                    val timeOffset = (msg["timestamp"] as? Number)?.toInt() ?: -1
+                    val sendTs = (msg["send_ts"] as? Number)?.toLong() ?: -1L
+
+                    val event = VoiceprintEvent(timeOffset, sendTs, status)
 
                     val agentUserId = publisherId
-                    callMessagePrint(TAG, "<<< [onAgentVoicePrint] $agentUserId $status")
+                    callMessagePrint(TAG, "<<< [onAgentVoiceprintStateChanged] $agentUserId $event")
                     conversationalAIHandlerHelper.notifyEventHandlers {
-                        it.onAgentVoicePrint(agentUserId, status)
+                        it.onAgentVoiceprintStateChanged(agentUserId, event)
                     }
                 }
 
