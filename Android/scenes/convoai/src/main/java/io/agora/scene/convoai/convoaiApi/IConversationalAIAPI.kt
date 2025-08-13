@@ -380,6 +380,8 @@ enum class MessageType(val value: String) {
 }
 
 /**
+ * @technical preview
+ *
  * Voiceprint status enumeration
  * Used to track the status of voiceprint registration and sending
  * Helps in managing voiceprint lifecycle and UI display by identifying different states
@@ -419,6 +421,8 @@ enum class VoiceprintStatus(val value: String) {
 }
 
 /**
+ * @technical preview
+ *
  * @property timeOffset For example, from unregister to register success, how much time it takes
  * @property timestamp Event occurrence timestamp (milliseconds since epoch, i.e., since January 1, 1970 UTC)
  * @property status Voice print status
