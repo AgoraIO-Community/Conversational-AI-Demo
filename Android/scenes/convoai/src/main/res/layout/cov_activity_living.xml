@@ -184,9 +184,8 @@
         app:layout_constraintBottom_toTopOf="@+id/cl_bottom_logged"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <include
+    <io.agora.scene.convoai.ui.widget.CovLivingBottomView
         android:id="@+id/cl_bottom_logged"
-        layout="@layout/cov_activity_living_bottom_logged"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_marginTop="20dp"
