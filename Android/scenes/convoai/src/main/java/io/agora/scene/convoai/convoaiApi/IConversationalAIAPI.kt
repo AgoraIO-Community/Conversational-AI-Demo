@@ -406,16 +406,8 @@ enum class VoiceprintStatus(val value: String) {
         /**
          * Initialize from string value
          */
-        fun fromValue(stringValue: String): VoiceprintStatus {
-            return when (stringValue) {
-                "VP_DISABLE" -> DISABLE
-                "VP_UNREGISTER" -> UNREGISTER
-                "VP_REGISTERING" -> REGISTERING
-                "VP_REGISTER_SUCCESS" -> REGISTER_SUCCESS
-                "VP_REGISTER_FAIL" -> REGISTER_FAIL
-                "VP_REGISTER_DUPLICATE" -> REGISTER_DUPLICATE
-                else -> UNKNOWN
-            }
+        fun fromValue(value: String): VoiceprintStatus {
+            return entries.find { it.value == value } ?: UNKNOWN
         }
     }
 }
