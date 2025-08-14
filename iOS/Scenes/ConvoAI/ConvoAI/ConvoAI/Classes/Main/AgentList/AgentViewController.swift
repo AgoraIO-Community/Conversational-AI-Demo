@@ -122,7 +122,7 @@ public class AgentViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = UIColor(hex: "#1A202E")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill7")
         view.addSubview(menuButton)
         view.addSubview(titleView)
         view.addSubview(segmentedControl)

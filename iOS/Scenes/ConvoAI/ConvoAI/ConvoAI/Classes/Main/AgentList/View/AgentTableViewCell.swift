@@ -20,21 +20,29 @@ class AgentTableViewCell: UITableViewCell {
     let avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
         return imageView
     }()
 
+    private let labelStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 4
+        stackView.alignment = .leading
+        return stackView
+    }()
+
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         label.textColor = UIColor.themColor(named: "ai_icontext1")
         return label
     }()
 
     let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor.themColor(named: "ai_icontext3")
         label.numberOfLines = 2
         return label
@@ -66,32 +74,28 @@ class AgentTableViewCell: UITableViewCell {
         backgroundColor = .clear
         contentView.addSubview(customBackgroundView)
         customBackgroundView.addSubview(avatarImageView)
-        customBackgroundView.addSubview(nameLabel)
-        customBackgroundView.addSubview(descriptionLabel)
+        customBackgroundView.addSubview(labelStackView)
+        
+        labelStackView.addArrangedSubview(nameLabel)
+        labelStackView.addArrangedSubview(descriptionLabel)
+
+        avatarImageView.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(14)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(CGSize(width: 60, height: 60))
+        }
+
+        labelStackView.snp.makeConstraints { make in
+            make.left.equalTo(avatarImageView.snp.right).offset(20)
+            make.right.equalToSuperview().offset(-10)
+            make.centerY.equalToSuperview()
+        }
     }
 
     private func setupConstraints() {
         customBackgroundView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(6)
             make.leading.trailing.equalToSuperview().inset(20)
-        }
-
-        avatarImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(50)
-        }
-
-        nameLabel.snp.makeConstraints { make in
-            make.leading.equalTo(avatarImageView.snp.trailing).offset(16)
-            make.top.equalTo(avatarImageView.snp.top).offset(4)
-            make.trailing.equalToSuperview().offset(-20)
-        }
-
-        descriptionLabel.snp.makeConstraints { make in
-            make.leading.equalTo(nameLabel.snp.leading)
-            make.bottom.equalTo(avatarImageView.snp.bottom).offset(-4)
-            make.trailing.equalTo(nameLabel.snp.trailing)
         }
     }
 

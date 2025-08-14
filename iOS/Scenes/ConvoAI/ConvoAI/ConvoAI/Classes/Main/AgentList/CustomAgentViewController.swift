@@ -84,12 +84,17 @@ class CustomAgentViewController: AgentListViewController {
         guard UserCenter.shared.isLogin() else {
             self.presets.removeAll()
             self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
+            self.refreshSubView()
             return
         }
         let ids = getSavedPresetIds()
         if ids.isEmpty {
             self.presets.removeAll()
             self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
+
+            self.refreshSubView()
             return
         }
         SVProgressHUD.show()

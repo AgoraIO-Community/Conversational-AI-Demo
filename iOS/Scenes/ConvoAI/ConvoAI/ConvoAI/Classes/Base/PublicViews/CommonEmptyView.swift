@@ -65,8 +65,7 @@ class CommonEmptyView: UIView {
     // MARK: - Private Methods
     
     private func setupUI() {
-        backgroundColor = UIColor(hex: "#1A202E")
-        
+        backgroundColor = UIColor.themColor(named: "ai_fill7")
         addSubview(stackView)
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(titleLabel)

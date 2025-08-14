@@ -315,10 +315,10 @@ class AgentInfomation {
 enum TranscriptDisplayMode: CaseIterable {
     //Transcript appear word by word, with subtitles and audio synchronized.
     case words
-    //Transcript appear one by one.
-    case chunk
     //10 words every second
     case text
+    //Transcript appear one by one.
+    case chunk
     
     var renderMode: TranscriptRenderMode {
         if self == .words {
@@ -333,12 +333,12 @@ enum TranscriptDisplayMode: CaseIterable {
             return ResourceManager.L10n.Settings.transcriptRenderWordMode
         }
         
-        if self == .chunk {
-            return ResourceManager.L10n.Settings.transcriptRenderTextMode
-        }
-        
         if self == .text {
             return ResourceManager.L10n.Settings.transcriptRenderPretextMode
+        }
+        
+        if self == .chunk {
+            return ResourceManager.L10n.Settings.transcriptRenderTextMode
         }
         
         return "" // Should not happen
@@ -349,12 +349,12 @@ enum TranscriptDisplayMode: CaseIterable {
             return ResourceManager.L10n.Settings.transcriptRenderWordModeDescription
         }
         
-        if self == .chunk {
-            return ResourceManager.L10n.Settings.transcriptRenderTextModeDescription
-        }
-        
         if self == .text {
             return ResourceManager.L10n.Settings.transcriptRenderPretextModeDescription
+        }
+        
+        if self == .chunk {
+            return ResourceManager.L10n.Settings.transcriptRenderTextModeDescription
         }
         
         return ""

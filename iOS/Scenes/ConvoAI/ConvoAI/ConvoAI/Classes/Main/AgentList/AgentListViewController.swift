@@ -37,6 +37,7 @@ class AgentListViewController: UIViewController, AgentListProtocol {
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
+        tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 110, right: 0)
         return tableView
     }()
 
@@ -49,6 +50,7 @@ class AgentListViewController: UIViewController, AgentListProtocol {
     
     
     func setupUI() {
+        view.backgroundColor = UIColor.themColor(named: "ai_fill7")
         view.addSubview(tableView)
         tableView.addSubview(refreshControl)
     }
@@ -78,7 +80,7 @@ extension AgentListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 82
+        return 89
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
