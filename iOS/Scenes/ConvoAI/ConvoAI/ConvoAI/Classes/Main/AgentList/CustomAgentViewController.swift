@@ -68,7 +68,17 @@ class CustomAgentViewController: AgentListViewController {
             }
             if let presets = result, !presets.isEmpty {
                 self.save(presetId: text)
-                self.fetchData()
+                SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.AgentList.agentSearchSuccess)
+                for p in presets {
+                    let res = self.presets.contains { pre in
+                        pre.name == p.name
+                    }
+                    
+                    if !res {
+                        self.presets.append(p)
+                    }
+                }
+                self.tableView.reloadData()
             } else {
                 SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentNotFound)
                 ConvoAILogger.error(ResourceManager.L10n.Error.agentNotFound)

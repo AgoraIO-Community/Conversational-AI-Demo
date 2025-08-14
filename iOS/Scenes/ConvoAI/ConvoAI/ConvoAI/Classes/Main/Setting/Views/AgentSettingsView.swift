@@ -8,6 +8,7 @@
 import UIKit
 import Common
 import Kingfisher
+import SVProgressHUD
 
 protocol AgentSettingsViewDelegate: AnyObject {
     func agentSettingsViewDidTapLanguage(_ view: AgentSettingsView, sender: UIButton)
@@ -120,6 +121,17 @@ class AgentSettingsView: UIView {
         let view = AgentSettingSwitchItemView(frame: .zero)
         view.titleLabel.text = ResourceManager.L10n.Settings.aiVadLight
         view.addtarget(self, action: #selector(onClickAiVad(_:)), for: .touchUpInside)
+        let button = UIButton()
+        button.setImage(UIImage.ag_named("ic_aivad_tips_icon"), for: .normal)
+        button.addTarget(self, action: #selector(onClickAIVadTips), for: .touchUpInside)
+        view.addSubview(button)
+        
+        button.snp.makeConstraints { make in
+            make.left.equalTo(view.titleLabel.snp.right).offset(8)
+            make.centerY.equalTo(view.titleLabel)
+            make.width.height.equalTo(16)
+        }
+        
         if let manager = AppContext.preferenceManager(),
            let language = manager.preference.language,
            let presetType = manager.preference.preset?.presetType {
@@ -324,4 +336,9 @@ class AgentSettingsView: UIView {
     @objc private func onClickAiVad(_ sender: UISwitch) {
         delegate?.agentSettingsViewDidToggleAiVad(self, isOn: sender.isOn)
     }
-} 
+    
+    @objc private func onClickAIVadTips() {
+        SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Settings.aiVadTips)
+    }
+
+}
