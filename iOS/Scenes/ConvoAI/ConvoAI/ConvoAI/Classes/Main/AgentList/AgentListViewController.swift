@@ -95,6 +95,7 @@ extension AgentListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let preset = presets[indexPath.row]
+        AppContext.preferenceManager()?.preference.isCustomPreset = false
         AppContext.preferenceManager()?.updatePreset(preset)
         let chatViewController = ChatViewController()
         chatViewController.hidesBottomBarWhenPushed = true

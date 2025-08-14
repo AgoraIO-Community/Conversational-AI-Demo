@@ -299,6 +299,7 @@ class AgentPreference {
     var avatar: Avatar?
     var aiVad = false
     var bhvs = true
+    var isCustomPreset = false
     var transcriptMode: TranscriptDisplayMode = .words
 }
 

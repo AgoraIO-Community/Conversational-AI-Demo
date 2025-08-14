@@ -60,8 +60,8 @@ class CustomAgentViewController: AgentListViewController {
                     ConvoAILogger.error(ResourceManager.L10n.Error.agentOffline)
                     SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentOffline)
                 } else {
-                    ConvoAILogger.error(err.localizedDescription)
-                    SVProgressHUD.showInfo(withStatus: err.localizedDescription)
+                    ConvoAILogger.error(err.message)
+                    SVProgressHUD.showInfo(withStatus: err.message)
                 }
                 
                 return
@@ -205,6 +205,7 @@ extension CustomAgentViewController {
                 return
             }
             if let presets = result, !presets.isEmpty {
+                AppContext.preferenceManager()?.preference.isCustomPreset = true
                 AppContext.preferenceManager()?.updatePreset(preset)
                 let chatViewController = ChatViewController()
                 chatViewController.hidesBottomBarWhenPushed = true
