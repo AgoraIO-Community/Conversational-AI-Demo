@@ -505,17 +505,17 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                     rootView.setOnClickListener {
                         val position = adapterPosition
                         if (position != RecyclerView.NO_POSITION) {
-                            onItemClick(presets[position])
+                            onItemClick.invoke(presets[position])
                         }
                     }
 
-                    rootView.setOnLongClickListener {
-                        val position = adapterPosition
-                        if (position != RecyclerView.NO_POSITION) {
-                            onItemLongClick(presets[position])
-                        }
-                        true // Return true to indicate the long click was handled
-                    }
+//                    rootView.setOnLongClickListener {
+//                        val position = adapterPosition
+//                        if (position != RecyclerView.NO_POSITION) {
+//                            onItemLongClick.invoke(presets[position])
+//                        }
+//                        true // Return true to indicate the long click was handled
+//                    }
                 }
             }
         }

@@ -169,7 +169,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
                     rootView.setOnClickListener {
                         val position = adapterPosition
                         if (position != RecyclerView.NO_POSITION) {
-                            onItemClick(presets[position])
+                            onItemClick.invoke(presets[position])
                         }
                     }
                 }
