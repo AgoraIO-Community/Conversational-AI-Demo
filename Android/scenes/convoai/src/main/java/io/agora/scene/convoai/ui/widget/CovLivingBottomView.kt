@@ -25,11 +25,9 @@ class CovLivingBottomView @JvmOverloads constructor(
     private val binding: CovActivityLivingBottomBinding =
         CovActivityLivingBottomBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var onEndCallClick: (() -> Unit)? = null
     private var onMicClick: (() -> Unit)? = null
     private var onCameraClick: (() -> Unit)? = null
     private var onImageContainerClick: (() -> Unit)? = null
-    private var onJoinCallClick: (() -> Unit)? = null
     private var onEndCallFastClick: OnFastClickListener? = null
     private var onJoinCallFastClick: OnFastClickListener? = null
 
@@ -38,22 +36,15 @@ class CovLivingBottomView @JvmOverloads constructor(
     }
 
     private fun setupClickListeners() {
-        binding.btnEndCall.setOnClickListener { 
-            onEndCallFastClick?.onClick(binding.btnEndCall) ?: onEndCallClick?.invoke() 
+        binding.btnEndCall.setOnClickListener {
+            onEndCallFastClick?.onClick(binding.btnEndCall)
         }
         binding.btnMic.setOnClickListener { onMicClick?.invoke() }
         binding.btnCamera.setOnClickListener { onCameraClick?.invoke() }
         binding.btnImageContainer.setOnClickListener { onImageContainerClick?.invoke() }
-        binding.btnJoinCall.setOnClickListener { 
-            onJoinCallFastClick?.onClick(binding.btnJoinCall) ?: onJoinCallClick?.invoke() 
+        binding.btnJoinCall.setOnClickListener {
+            onJoinCallFastClick?.onClick(binding.btnJoinCall)
         }
-    }
-
-    /**
-     * Set callback for end call button click.
-     */
-    fun setOnEndCallClickListener(listener: (() -> Unit)?) {
-        onEndCallClick = listener
     }
 
     /**
@@ -82,13 +73,6 @@ class CovLivingBottomView @JvmOverloads constructor(
      */
     fun setOnImageContainerClickListener(listener: (() -> Unit)?) {
         onImageContainerClick = listener
-    }
-
-    /**
-     * Set callback for join call button click.
-     */
-    fun setOnJoinCallClickListener(listener: (() -> Unit)?) {
-        onJoinCallClick = listener
     }
 
     /**

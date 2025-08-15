@@ -157,19 +157,34 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
             // Hide title
             llTopTitle.visibility = View.GONE
 
-            // Simple: directly set width to 70% and center
+
+            // Calculate adaptive width based on content and screen size
             val params = tabContainer.layoutParams as ViewGroup.MarginLayoutParams
             val screenWidth = resources.displayMetrics.widthPixels
-            val newWidth = (screenWidth * 0.7f).toInt()
-            val newMargin = (screenWidth - newWidth) / 2
+            val originalMargin = 16.dp.toInt()
+            val originalWidth = screenWidth - (originalMargin * 2)
 
-            params.width = newWidth
+            // Calculate minimum width needed for tab content
+            val minTabWidth = calculateMinimumTabWidth()
+            val minContainerWidth = minTabWidth * 2 + 4.dp.toInt() // 2 tabs + padding
+
+            // Calculate adaptive width with constraints
+            val maxWidth = (screenWidth * 0.8f).toInt() // Max 80% of screen width
+            val minWidth = minContainerWidth.coerceAtLeast((screenWidth * 0.4f).toInt()) // Min 40% of screen width
+            val newWidth = maxWidth.coerceAtMost(minWidth.coerceAtLeast(minContainerWidth))
+
+            // Add some extra space for better visual balance
+            val finalWidth = (newWidth * 1.1f).toInt().coerceAtMost(maxWidth)
+
+            val newMargin = (screenWidth - finalWidth) / 2
+
+            params.width = finalWidth
             params.marginStart = newMargin
             params.marginEnd = newMargin
             tabContainer.layoutParams = params
 
             // Update tab indicator for new width (subtract padding from tabContainer)
-            val effectiveWidth = newWidth - 2.dp.toInt() * 2 // Account for tabContainer padding
+            val effectiveWidth = finalWidth - 2.dp.toInt() * 2 // Account for tabContainer padding
             updateTabIndicatorForNewWidth(effectiveWidth)
         }
 
@@ -209,6 +224,29 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
             (mBinding?.vpContent?.adapter as? AgentPagerAdapter)?.getFragmentAt(TAB_CUSTOM_AGENT) as? CovCustomAgentFragment
         // Only return fragment if it's still alive
         return if (fragment?.isAdded == true && !fragment.isDetached) fragment else null
+    }
+
+    /**
+     * Update tab indicator width and position based on new container width
+     */
+    /**
+     * Calculate minimum width needed for tab content based on text length
+     */
+    private fun calculateMinimumTabWidth(): Int {
+        val paint = android.text.TextPaint()
+        // Use actual text size from your tab layout (11sp as seen in the layout)
+        paint.textSize = 11.dp.toFloat()
+
+        val officialAgentText = getString(R.string.cov_official_agent_title)
+        val customAgentText = getString(R.string.cov_custom_agent_title)
+
+        val officialWidth = paint.measureText(officialAgentText).toInt()
+        val customWidth = paint.measureText(customAgentText).toInt()
+
+        // Add padding for text (left + right padding)
+        val textPadding = 12.dp.toInt() * 2
+
+        return maxOf(officialWidth, customWidth) + textPadding
     }
 
     /**

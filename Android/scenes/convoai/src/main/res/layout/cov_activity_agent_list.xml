@@ -32,12 +32,13 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:paddingHorizontal="16dp"
+            android:layout_marginBottom="16dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <LinearLayout
                 android:id="@+id/ll_top_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -48,8 +49,8 @@
 
                 <ImageView
                     android:id="@+id/ivTop"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/scene_detail_convo_ai_logo" />
 
@@ -104,6 +105,7 @@
         android:id="@+id/vpContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <!-- Loading indicator -->
