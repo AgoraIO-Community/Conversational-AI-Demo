@@ -33,7 +33,6 @@ import kotlin.coroutines.suspendCoroutine
 import io.agora.scene.convoai.api.CovAvatar
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import kotlin.collections.forEach
 import kotlin.let
 import kotlin.onFailure
@@ -88,8 +87,8 @@ class CovLivingViewModel : ViewModel() {
     val transcriptUpdate: StateFlow<Transcript?> = _transcriptUpdate.asStateFlow()
 
     // Voiceprint event state
-    private val _voiceprintEvent = MutableStateFlow<VoiceprintEvent?>(null)
-    val voiceprintEvent: StateFlow<VoiceprintEvent?> = _voiceprintEvent.asStateFlow()
+    private val _voiceprintStateChangeEvent = MutableStateFlow<VoiceprintStateChangeEvent?>(null)
+    val voiceprintStateChangeEvent: StateFlow<VoiceprintStateChangeEvent?> = _voiceprintStateChangeEvent.asStateFlow()
 
     // Media info
     private val _mediaInfoUpdate = MutableStateFlow<MediaInfo?>(null)
@@ -199,9 +198,9 @@ class CovLivingViewModel : ViewModel() {
             }
         }
 
-        override fun onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent) {
+        override fun onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintStateChangeEvent) {
             // Update voice print state to notify Activity
-            _voiceprintEvent.value = event
+            _voiceprintStateChangeEvent.value = event
         }
 
         override fun onDebugLog(log: String) {
@@ -758,7 +757,7 @@ class CovLivingViewModel : ViewModel() {
         _mediaInfoUpdate.value = null
         _resourceError.value = null
         _interruptEvent.value = null
-        _voiceprintEvent.value = null
+        _voiceprintStateChangeEvent.value = null
     }
 
     override fun onCleared() {
