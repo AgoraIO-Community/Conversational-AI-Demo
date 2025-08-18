@@ -201,7 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:button="@drawable/cb_def_selector"
+                    android:button="@drawable/common_cb_blue_selector"
                     android:checked="true"
                     app:buttonTint="@null"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.common.ui.CommonDialog
-import io.agora.scene.common.ui.LoadingDialog
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
@@ -35,8 +34,6 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
     private lateinit var adapter: CustomAgentAdapter
     private val viewModel: CovListViewModel by activityViewModels()
-    private var loadingDialog: LoadingDialog? = null
-
     // Keyboard handling
     private var isKeyboardVisible = false
     private var isHeaderCollapsed = false
@@ -187,12 +184,13 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             // Add text watcher to update character count
             etAgentName.doAfterTextChanged {
                 val currentLength = it?.length ?: 0
-                val remainingLength = 8 - currentLength
-                tvCount.text = remainingLength.toString()
+                ivClearInput.isVisible = currentLength>0
+
             }
 
-            // Initialize character count display (show remaining characters)
-            tvCount.text = "8"
+            ivClearInput.setOnClickListener {
+                etAgentName.setText("")
+            }
         }
     }
 
@@ -372,19 +370,11 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
     }
 
     private fun showLoadingDialog() {
-        context?.let { context ->
-            if (loadingDialog?.isShowing == true) {
-                loadingDialog?.dismiss()
-            }
-            loadingDialog = LoadingDialog(context).apply {
-                show()
-            }
-        }
+        mBinding?.pbLoading?.visibility = View.VISIBLE
     }
 
     private fun hideLoadingDialog() {
-        loadingDialog?.dismiss()
-        loadingDialog = null
+        mBinding?.pbLoading?.visibility = View.GONE
     }
 
     /**
@@ -401,9 +391,6 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             // Hide keyboard
             val imm = context?.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
             imm?.hideSoftInputFromWindow(etAgentName.windowToken, 0)
-
-            // Update character count
-            tvCount.text = "8"
         }
     }
 

@@ -73,7 +73,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     override fun getViewBinding(): CovActivityLivingBinding = CovActivityLivingBinding.inflate(layoutInflater)
 
-    override fun supportOnBackPressed(): Boolean = false
+    override fun supportOnBackPressed(): Boolean = viewModel.connectionState.value == AgentConnectionState.IDLE
 
     override fun initView() {
         setupView()
