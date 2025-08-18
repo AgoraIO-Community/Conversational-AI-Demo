@@ -212,7 +212,7 @@ class ConversationalAIAPIImpl(val config: ConversationalAIAPIConfig) : IConversa
                     val timeOffset = (msg["timestamp"] as? Number)?.toInt() ?: -1
                     val sendTs = (msg["send_ts"] as? Number)?.toLong() ?: -1L
 
-                    val event = VoiceprintEvent(timeOffset, sendTs, status)
+                    val event = VoiceprintStateChangeEvent(timeOffset, sendTs, status)
 
                     val agentUserId = publisherId
                     callMessagePrint(TAG, "<<< [onAgentVoiceprintStateChanged] $agentUserId $event")

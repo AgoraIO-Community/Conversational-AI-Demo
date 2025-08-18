@@ -77,7 +77,6 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="16dp"
-            android:paddingTop="6dp"
             android:paddingBottom="16dp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
