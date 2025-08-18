@@ -7,6 +7,7 @@
 
 import Foundation
 import Common
+import SVProgressHUD
 
 // MARK: - Image Upload Error Models
 struct ImageUploadError: Codable {
@@ -68,8 +69,9 @@ extension ChatViewController {
 }
 
 extension ChatViewController: ConversationalAIAPIEventHandler {
-    public func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent) {
+    public func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintStateChangeEvent) {
         if event.status == .registerSuccess {
+            SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Conversation.voiceprintLockToast)
             sideNavigationBar.voiceprintState(status: true)
         } else {
             sideNavigationBar.voiceprintState(status: false)

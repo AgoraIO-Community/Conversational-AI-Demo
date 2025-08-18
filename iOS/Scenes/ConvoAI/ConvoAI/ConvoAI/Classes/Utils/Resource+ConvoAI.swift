@@ -85,6 +85,7 @@ extension ResourceManager {
             public static let visionUnsupportMessage = ResourceManager.localizedString("conversation.vision.unsupport.message")
             public static let retryAfterConnect = ResourceManager.localizedString("conversation.vision.retry.after.connect")
             public static let voiceLockTips = ResourceManager.localizedString("conversation.agent.voice.lock.tips")
+            public static let voiceprintLockToast = ResourceManager.localizedString("conversation.agent.voiceprint.lock.toast")
         }
         
         public enum Setting {

@@ -317,7 +317,7 @@ extension ConversationalAIAPIImpl {
         }
     }
 
-    private func notifyDelegatesVoiceprintMessage(agentUserId: String, event: VoiceprintEvent) {
+    private func notifyDelegatesVoiceprintMessage(agentUserId: String, event: VoiceprintStateChangeEvent) {
         callMessagePrint(msg: "<<< [onVoiceprintMessageUpdated], agentUserId: \(agentUserId), voiceprint: \(event)")
         DispatchQueue.main.async {
             for delegate in self.delegates.allObjects {
@@ -433,7 +433,7 @@ extension ConversationalAIAPIImpl {
         let offset = msg["timestamp"] as? Int ?? 0
         let timestamp = msg["send_ts"] as? Int ?? 0
         print("voiceprint --> \(msg)")
-        let event = VoiceprintEvent(timestamp: timestamp, timeOffset: offset, status: VoiceprintStatus(stringValue: status) ?? .unknown)
+        let event = VoiceprintStateChangeEvent(timestamp: timestamp, timeOffset: offset, status: VoiceprintStatus(stringValue: status) ?? .unknown)
         notifyDelegatesVoiceprintMessage(agentUserId: uid, event: event)
     }
     

@@ -511,6 +511,7 @@ public enum MessageType: String, CaseIterable {
     }
 }
 
+///@technical preview
 /// Voiceprint status enumeration
 /// Used to track the status of voiceprint registration and sending
 /// Helps in managing voiceprint lifecycle and UI display by identifying different states
@@ -573,10 +574,11 @@ public enum MessageType: String, CaseIterable {
     }
 }
 
+///@technical preview
 /// VoiceprintEvent data model
 /// Used for tracking voiceprint registration and sending
 /// Contains send timestamp, message id, timestamp, and status
-@objc public class VoiceprintEvent: NSObject {
+@objc public class VoiceprintStateChangeEvent: NSObject {
     /// voice print send timestamp in milliseconds
     @objc public let timestamp: Int
     /// Milliseconds offset of the status，Offset duration relative to the first audio
@@ -744,12 +746,13 @@ public enum MessageType: String, CaseIterable {
     ///   - error: Message error containing type, message
     @objc func onMessageError(agentUserId: String, error: MessageError)
     
+    ///@technical preview
     ///Called when voiceprint state changed
     ///This method is called when agent start voiceprint
     /// - Parameters:
     ///   - agentUserId: Agent RTM user ID
     ///   - event: Voiceprint event containing send timestamp, message id, timestamp, and status
-    @objc func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintEvent)
+    @objc func onAgentVoiceprintStateChanged(agentUserId: String, event: VoiceprintStateChangeEvent)
 
 }
 

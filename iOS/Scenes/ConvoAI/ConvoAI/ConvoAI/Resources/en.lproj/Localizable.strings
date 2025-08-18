@@ -52,6 +52,7 @@
 "conversation.alert.cancel" = "Cancel";
 "conversation.alert.confirm" = "Confirm";
 "conversation.alert.clear" = "Clear";
+"conversation.agent.voiceprint.lock.toast" = "The engine will learn your unique voiceprint to filter out other voices and background noise.";
 
 // Settings View
 "settings.title" = "Agent Settings";
