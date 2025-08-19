@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@android:color/transparent"
-    android:padding="8dp">
+    android:background="@android:color/transparent">
 
     <TextView
         android:id="@+id/tvTabText"
