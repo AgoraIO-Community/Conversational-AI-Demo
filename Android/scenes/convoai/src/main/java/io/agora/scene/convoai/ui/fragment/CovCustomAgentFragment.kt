@@ -503,6 +503,7 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
+                    tvDescription.isVisible  =  preset.description.isNotEmpty()
                     tvDescription.text = preset.description
                     // For now, using default avatar
                     GlideImageLoader.load(

@@ -169,15 +169,7 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
 
             // Calculate minimum width needed for tab content
             val minTabWidth = calculateMinimumTabWidth()
-            val minContainerWidth = minTabWidth * 2 + 4.dp.toInt() // 2 tabs + padding
-
-            // Calculate adaptive width with constraints
-            val maxWidth = (screenWidth * 0.8f).toInt() // Max 80% of screen width
-            val minWidth = minContainerWidth.coerceAtLeast((screenWidth * 0.4f).toInt()) // Min 40% of screen width
-            val newWidth = maxWidth.coerceAtMost(minWidth.coerceAtLeast(minContainerWidth))
-
-            // Add some extra space for better visual balance
-            val finalWidth = (newWidth * 1.1f).toInt().coerceAtMost(maxWidth)
+            val finalWidth = minTabWidth * 2 + 4.dp.toInt() // 2 tabs + padding
 
             val newMargin = (screenWidth - finalWidth) / 2
 
@@ -257,8 +249,8 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
      */
     private fun calculateMinimumTabWidth(): Int {
         val paint = android.text.TextPaint()
-        // Use actual text size from your tab layout (11sp as seen in the layout)
-        paint.textSize = 11.dp.toFloat()
+        // Use actual text size from your tab layout (12sp as seen in the layout)
+        paint.textSize = 12.dp.toFloat()
 
         val officialAgentText = getString(R.string.cov_official_agent_title)
         val customAgentText = getString(R.string.cov_custom_agent_title)

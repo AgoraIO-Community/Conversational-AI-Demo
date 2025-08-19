@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.ui.BaseFragment
@@ -158,6 +159,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
+                    tvDescription.isVisible  =  preset.description.isNotEmpty()
                     tvDescription.text = preset.description
                     // For now, using default avatar
                     GlideImageLoader.load(
