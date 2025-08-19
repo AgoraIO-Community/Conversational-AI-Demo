@@ -185,7 +185,7 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
         mBinding?.apply {
             tvCheckTips.visibility = View.VISIBLE
             val animation = TranslateAnimation(
-                -10f, 10f, 0f, 0f
+                -6f, 6f, 0f, 0f
             )
             animation.duration = 60
             animation.repeatCount = 4
