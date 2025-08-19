@@ -74,9 +74,7 @@ class CharactersInformationView: UIView {
     }
     
     func configure(icon: String, name: String) {
-        if let url = URL(string: icon) {
-            avatarImageView.kf.setImage(with: url)
-        }
+        avatarImageView.kf.setImage(with: URL(string: icon), placeholder: UIImage.ag_named("ic_default_avatar_icon"))
         nameLabel.text = name
     }
 }
