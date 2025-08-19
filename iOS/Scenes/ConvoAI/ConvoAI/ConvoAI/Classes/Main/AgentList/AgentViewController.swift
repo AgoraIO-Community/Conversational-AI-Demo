@@ -129,6 +129,9 @@ public class AgentViewController: UIViewController {
         addChild(pageViewController)
         view.addSubview(pageViewController.view)
         pageViewController.didMove(toParent: self)
+        if let scrollView = pageViewController.view.subviews.first(where: { $0 is UIScrollView }) as? UIScrollView {
+            scrollView.delegate = self
+        }
         if let firstViewController = viewControllers.first {
             pageViewController.setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
             if let vc = firstViewController as? AgentListViewController {
@@ -181,7 +184,19 @@ public class AgentViewController: UIViewController {
     }
 }
 
-extension AgentViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate, CovSegmentedControlDelegate, AgentScrollViewDelegate {
+extension AgentViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate, CovSegmentedControlDelegate, AgentScrollViewDelegate, UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // This is for the page view controller's horizontal scroll
+        let pageWidth = view.bounds.width
+        let offset = scrollView.contentOffset.x
+        let progress = (offset - pageWidth) / pageWidth
+        
+        // Pass the progress to the segmented control to update its selector position
+        if progress != 0 {
+            segmentedControl.moveSelector(with: progress)
+        }
+    }
+    
     func didChange(to index: Int) {
         let direction: UIPageViewController.NavigationDirection = index > (pageViewController.viewControllers?.first.flatMap { viewControllers.firstIndex(of: $0) } ?? 0) ? .forward : .reverse
         pageViewController.setViewControllers([viewControllers[index]], direction: direction, animated: true, completion: nil)

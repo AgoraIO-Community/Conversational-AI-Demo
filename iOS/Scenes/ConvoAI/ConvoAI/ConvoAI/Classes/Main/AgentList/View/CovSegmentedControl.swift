@@ -131,4 +131,49 @@ class CovSegmentedControl: UIView {
             btn.setTitleColor(isSelected ? selectorTextColor : textColor, for: .normal)
         }
     }
+    
+    public func moveSelector(with progress: CGFloat) {
+        let fromIndex = selectedIndex
+        var toIndex = selectedIndex
+
+        if progress > 0 {
+            toIndex = fromIndex + 1
+        } else {
+            toIndex = fromIndex - 1
+        }
+
+        guard fromIndex >= 0, fromIndex < buttons.count,
+              toIndex >= 0, toIndex < buttons.count else {
+            return
+        }
+
+        let fromButton = buttons[fromIndex]
+        let toButton = buttons[toIndex]
+
+        // --- CenterX Calculation ---
+        let distance = toButton.center.x - fromButton.center.x
+        let newCenterX = fromButton.center.x + distance * abs(progress)
+
+        // --- Width Calculation ---
+        let p = abs(progress)
+        let fullWidth = fromButton.bounds.width
+        
+        guard fullWidth > 0 else { return }
+
+        // The slider shrinks to 80% of its size at the midpoint of the transition.
+        let minWidthFactor: CGFloat = 0.62
+        let minWidth = fullWidth * minWidthFactor
+        
+        // This is a parabolic function for width change:
+        // It's `fullWidth` at p=0 and p=1, and `minWidth` at p=0.5.
+        let widthChange = 4 * (fullWidth - minWidth) * p * (p - 1)
+        let newWidth = fullWidth + widthChange
+
+        selectorView.snp.remakeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.height.equalToSuperview()
+            make.width.equalTo(newWidth)
+            make.centerX.equalTo(self.snp.leading).offset(newCenterX)
+        }
+    }
 }

@@ -13,14 +13,6 @@ class BottomInputView: UIView, UITextFieldDelegate {
 
     private let maxCharCount = 8
 
-    let charCountLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.themColor(named: "ai_icontext2")
-        label.font = .systemFont(ofSize: 14)
-        label.isHidden = true
-        return label
-    }()
-
     let textField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .none
@@ -65,11 +57,6 @@ class BottomInputView: UIView, UITextFieldDelegate {
         addSubview(textField)
         addSubview(actionButton)
         
-        charCountLabel.text = "\(self.maxCharCount)"
-        addSubview(charCountLabel)
-
-        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        
         actionButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-9)
             make.centerY.equalToSuperview()
@@ -77,15 +64,9 @@ class BottomInputView: UIView, UITextFieldDelegate {
             make.height.equalTo(36)
         }
 
-        charCountLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(actionButton.snp.leading)
-            make.width.equalTo(33)
-            make.centerY.equalToSuperview()
-        }
-
         textField.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(14)
-            make.trailing.equalTo(charCountLabel.snp.leading).offset(-12)
+            make.trailing.equalTo(actionButton.snp.leading).offset(-12)
             make.centerY.equalToSuperview()
             make.height.equalTo(36)
         }
@@ -93,20 +74,6 @@ class BottomInputView: UIView, UITextFieldDelegate {
         self.snp.makeConstraints { make in
             make.height.equalTo(54)
         }
-    }
-
-    @objc private func textFieldDidChange() {
-        guard let text = textField.text else { return }
-        let remaining = maxCharCount - text.count
-        charCountLabel.text = "\(remaining)"
-    }
-
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        charCountLabel.isHidden = false
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        charCountLabel.isHidden = true
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
