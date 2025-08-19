@@ -78,7 +78,7 @@ class CustomAgentViewController: AgentListViewController {
                         self.presets.append(p)
                     }
                 }
-                self.tableView.reloadData()
+                self.reloadData()
             } else {
                 SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Error.agentNotFound)
                 ConvoAILogger.error(ResourceManager.L10n.Error.agentNotFound)
@@ -93,18 +93,17 @@ class CustomAgentViewController: AgentListViewController {
     override func fetchData() {
         guard UserCenter.shared.isLogin() else {
             self.presets.removeAll()
-            self.tableView.reloadData()
+            self.reloadData()
             self.refreshControl.endRefreshing()
-            self.refreshSubView()
+            self.reloadData()
             return
         }
         let ids = getSavedPresetIds()
         if ids.isEmpty {
             self.presets.removeAll()
-            self.tableView.reloadData()
+            self.reloadData()
             self.refreshControl.endRefreshing()
-
-            self.refreshSubView()
+            self.reloadData()
             return
         }
         SVProgressHUD.show()
@@ -122,8 +121,7 @@ class CustomAgentViewController: AgentListViewController {
                     self.save(presetId: e.name.stringValue())
                 }
                 self.presets = presets
-                self.tableView.reloadData()
-                self.refreshSubView()
+                self.reloadData()
             }
         }
     }
@@ -178,7 +176,8 @@ class CustomAgentViewController: AgentListViewController {
         present(vc, animated: true)
     }
     
-    private func refreshSubView() {
+    private func reloadData() {
+        tableView.reloadData()
         emptyStateView.isHidden = presets.count != 0
     }
 }

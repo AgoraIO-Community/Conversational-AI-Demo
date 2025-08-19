@@ -40,28 +40,13 @@ class LoginViewController: UIViewController {
         return imageView
     }()
     
-    private var gradientLayer: CAGradientLayer?
-    
     private lazy var phoneLoginButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(ResourceManager.L10n.Login.buttonTitle, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18)
         button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
-        button.layer.cornerRadius = 20
-        button.clipsToBounds = true
+        button.titleLabel?.font = .systemFont(ofSize: 18)
         button.addTarget(self, action: #selector(onClickLogin), for: .touchUpInside)
-        
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [
-            UIColor(hexString: "#17C5FF")?.cgColor as Any,
-            UIColor(hexString: "#315DFF")?.cgColor as Any,
-            UIColor(hexString: "#446CFF")?.cgColor as Any
-        ]
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
-        button.layer.insertSublayer(gradientLayer, at: 0)
-        self.gradientLayer = gradientLayer
-        
+        button.setBackgroundImage(UIImage.ag_named("btn_gradient_borderd"), for: .normal)
         return button
     }()
     
@@ -190,7 +175,6 @@ class LoginViewController: UIViewController {
         super.viewDidLayoutSubviews()
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        gradientLayer?.frame = phoneLoginButton.bounds
         if let registerGradient = registerButton.layer.sublayers?.first as? CAGradientLayer {
             registerGradient.frame = registerButton.bounds
         }
@@ -232,15 +216,15 @@ class LoginViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(100)
         }
-        termsCheckbox.snp.makeConstraints { make in
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-40)
-            make.left.equalTo(phoneLoginButton.snp.left)
-            make.width.height.equalTo(20)
-        }
         termsTextLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(termsCheckbox)
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-40)
             make.left.equalTo(termsCheckbox.snp.right).offset(8)
-            make.right.equalTo(phoneLoginButton.snp.right)
+        }
+        termsCheckbox.snp.makeConstraints { make in
+            make.centerY.equalTo(termsTextLabel)
+            make.right.equalTo(termsTextLabel.snp.left)
+            make.width.height.equalTo(20)
         }
         warningButton.snp.makeConstraints { make in
             make.left.equalTo(termsCheckbox.snp.left).offset(-5)
