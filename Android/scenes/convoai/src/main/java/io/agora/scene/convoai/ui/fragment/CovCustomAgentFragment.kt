@@ -32,8 +32,16 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
         private const val SCROLL_THRESHOLD_MULTIPLIER = 1.5f // Show button after scrolling 1.5 screens
     }
 
+    // Callback to notify activity about keyboard state
+    private var keyboardStateCallback: ((Boolean) -> Unit)? = null
+
+    fun setKeyboardStateCallback(callback: (Boolean) -> Unit) {
+        keyboardStateCallback = callback
+    }
+
     private lateinit var adapter: CustomAgentAdapter
     private val viewModel: CovListViewModel by activityViewModels()
+
     // Keyboard handling
     private var isKeyboardVisible = false
     private var isHeaderCollapsed = false
@@ -60,6 +68,11 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
     private fun initViews() {
         mBinding?.apply {
+            // Setup keyboard overlay mask click listener
+            keyboardOverlayMask.setOnClickListener {
+                hideKeyboardAndMask()
+            }
+
             // Setup button click listener
             btnGetAgent.setOnClickListener {
                 val agentName = etAgentName.text.toString()
@@ -85,7 +98,8 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                                 adapter.updateDataToTop(preset)
                             }
                             // Clear input and hide keyboard
-                            clearInputAndHideKeyboard()
+                            mBinding?.etAgentName?.setText("")
+                            hideKeyboardAndMask()
                         }
                     )
                 }
@@ -344,6 +358,9 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
 
             mBinding?.apply {
                 if (isKeyboardVisible) {
+                    // Show fragment keyboard overlay mask
+                    keyboardOverlayMask.visibility = View.VISIBLE
+
                     val location = IntArray(2)
                     llBottomAction.getLocationInWindow(location)
 
@@ -357,9 +374,14 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                     val overlap = effectiveBottom - rect.bottom
                     llBottomAction.translationY = if (overlap > 0) -overlap.toFloat() else 0f
                 } else {
+                    // Hide fragment keyboard overlay mask
+                    keyboardOverlayMask.visibility = View.GONE
                     llBottomAction.translationY = 0f
                 }
             }
+
+            // Notify activity about keyboard state
+            keyboardStateCallback?.invoke(isKeyboardVisible)
         }
     }
 
@@ -378,19 +400,19 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
     }
 
     /**
-     * Clear input field and hide keyboard
+     * Hide keyboard and mask
      */
-    private fun clearInputAndHideKeyboard() {
+    fun hideKeyboardAndMask() {
         mBinding?.apply {
-            // Clear input text
-            etAgentName.setText("")
-
             // Clear focus and hide keyboard
             etAgentName.clearFocus()
 
             // Hide keyboard
             val imm = context?.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
             imm?.hideSoftInputFromWindow(etAgentName.windowToken, 0)
+
+            // Hide fragment keyboard overlay mask
+            keyboardOverlayMask.visibility = View.GONE
         }
     }
 

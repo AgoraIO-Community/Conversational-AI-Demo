@@ -7,12 +7,13 @@
     android:layout_gravity="bottom"
     android:background="#0A0A0A">
 
-    <androidx.constraintlayout.widget.Guideline
+    <View
         android:id="@+id/guideline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55"/>
+        android:layout_marginBottom="88dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLoginSSO" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

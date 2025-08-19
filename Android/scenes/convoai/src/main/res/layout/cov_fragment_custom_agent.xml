@@ -18,11 +18,11 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
-        tools:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/llBottomAction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
         <!-- Empty State Image -->
         <ImageView
@@ -77,7 +77,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp"
+            android:paddingVertical="16dp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/cov_item_official_agent"
@@ -98,6 +98,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/common_ic_topic"
         app:tint="@color/ai_icontext2" />
+
+    <!-- Fragment Keyboard Overlay Mask - Full screen but below input area -->
+    <View
+        android:id="@+id/keyboardOverlayMask"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/ai_mask1"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Bottom Action Container -->
     <LinearLayout
@@ -143,8 +157,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="12dp"
-                android:visibility="gone"
-                android:src="@drawable/common_ic_clear" />
+                android:src="@drawable/common_ic_clear"
+                android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGetAgent"
@@ -177,12 +191,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/ai_brand_main6"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:indeterminateTint="@color/ai_brand_main6" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

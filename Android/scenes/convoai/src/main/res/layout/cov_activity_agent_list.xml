@@ -105,8 +105,20 @@
         android:id="@+id/vpContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!-- Activity Keyboard Overlay Mask - Covers entire AppBarLayout including status bar -->
+    <View
+        android:id="@+id/activityKeyboardOverlayMask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ai_mask1"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="5dp"
+        app:layout_anchor="@id/appBarLayout"
+        app:layout_anchorGravity="top" />
 
     <!-- Loading indicator -->
     <ProgressBar

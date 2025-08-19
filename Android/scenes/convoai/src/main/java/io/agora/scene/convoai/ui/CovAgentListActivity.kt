@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -40,7 +41,6 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
     private var tabWidth: Int = 0
     private var initialTab: Int = TAB_OFFICIAL_AGENT
 
-
     // ViewModel instances
     private val userViewModel: UserViewModel by viewModels()
     private val listViewModel: CovListViewModel by viewModels()
@@ -65,11 +65,17 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
 
     override fun initView() {
         mBinding?.apply {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             btnInfo.setOnClickListener {
                 showInfoDialog()
             }
             ivTop.setOnClickListener {
                 DebugConfigSettings.checkClickDebug()
+            }
+            activityKeyboardOverlayMask.setOnClickListener {
+                activityKeyboardOverlayMask.visibility = View.GONE
+                // Also hide keyboard in custom agent fragment if it's active
+                getCustomAgentFragment()?.hideKeyboardAndMask()
             }
         }
 
@@ -157,7 +163,6 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
             // Hide title
             llTopTitle.visibility = View.GONE
 
-
             // Calculate adaptive width based on content and screen size
             val params = tabContainer.layoutParams as ViewGroup.MarginLayoutParams
             val screenWidth = resources.displayMetrics.widthPixels
@@ -228,6 +233,22 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
         return if (fragment?.isAdded == true && !fragment.isDetached) fragment else null
     }
 
+    private fun setupFragmentKeyboardCallback() {
+        getCustomAgentFragment()?.setKeyboardStateCallback { isVisible ->
+            mBinding?.apply {
+                if (isVisible) {
+                    activityKeyboardOverlayMask.visibility = View.VISIBLE
+                    val appBarHeight = appBarLayout.height
+                    activityKeyboardOverlayMask.layoutParams = activityKeyboardOverlayMask.layoutParams.apply {
+                        height = appBarHeight
+                    }
+                } else {
+                    activityKeyboardOverlayMask.visibility = View.GONE
+                }
+            }
+        }
+    }
+
     /**
      * Update tab indicator width and position based on new container width
      */
@@ -251,9 +272,6 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
         return maxOf(officialWidth, customWidth) + textPadding
     }
 
-    /**
-     * Update tab indicator width and position based on new container width
-     */
     private fun updateTabIndicatorForNewWidth(containerWidth: Int) {
         mBinding?.apply {
             // Calculate new tab width (2 tabs total)
@@ -472,6 +490,11 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
                     tabLayout.getTabAt(position)?.select()
                     // Ensure indicator scale is reset to normal when page is fully selected
                     vTabIndicator.scaleX = 1f
+
+                    // Setup keyboard callback for custom agent fragment
+                    if (position == TAB_CUSTOM_AGENT) {
+                        setupFragmentKeyboardCallback()
+                    }
                 }
 
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {

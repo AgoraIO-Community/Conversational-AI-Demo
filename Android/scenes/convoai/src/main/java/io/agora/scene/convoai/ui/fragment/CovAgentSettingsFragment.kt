@@ -355,10 +355,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
 
             // Update options and handle selection
             val selectedIndex = transcriptRenders.indexOfFirst { it.renderMode == CovAgentManager.renderMode }
-            optionsAdapter2.updateOptions(
-                transcriptRenders,
-                selectedIndex
-            ) { index ->
+            optionsAdapter2.updateOptions(transcriptRenders, selectedIndex) { index ->
                 val transcriptRender = transcriptRenders[index]
                 if (transcriptRender.renderMode == CovAgentManager.renderMode) {
                     return@updateOptions
