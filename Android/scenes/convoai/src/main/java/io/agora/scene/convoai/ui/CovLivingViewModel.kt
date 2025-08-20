@@ -656,9 +656,14 @@ class CovLivingViewModel : ViewModel() {
     }
 
     private suspend fun startAgentAsync(): Pair<String, Int> = suspendCoroutine { cont ->
+        val channel = CovAgentManager.channelName
         CovAgentApiManager.startAgentWithMap(
             channelName = CovAgentManager.channelName,
-            convoaiBody = getConvoaiBodyMap(CovAgentManager.channelName),
+            convoaiBody = if (CovAgentManager.isOpenSource) {
+                getConvoaiOpenSourceBodyMap(channel)
+            } else {
+                getConvoaiBodyMap(channel)
+            },
             completion = { err, channelName ->
                 cont.resume(Pair(channelName, err?.errorCode ?: 0))
             }
