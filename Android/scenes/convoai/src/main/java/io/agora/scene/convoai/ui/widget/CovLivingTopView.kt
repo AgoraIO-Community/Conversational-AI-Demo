@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import io.agora.scene.convoai.constant.AgentConnectionState
 import android.view.animation.Animation
-import android.widget.ImageButton
 import androidx.core.view.isVisible
 import io.agora.scene.common.R
 import io.agora.scene.common.util.GlideImageLoader
@@ -93,16 +92,16 @@ class CovLivingTopView @JvmOverloads constructor(
         onCCClick = listener
     }
 
-    fun updateTitleName(name: String, url: String) {
+    fun updateTitleName(name: String, url: String, @androidx.annotation.DrawableRes defaultImage:Int) {
         binding.tvPresetName.text = name
         if (url.isEmpty()) {
-            binding.ivPreset.setImageResource(R.drawable.common_default_agent)
+            binding.ivPreset.setImageResource(defaultImage)
         } else {
             GlideImageLoader.load(
                 binding.ivPreset,
                 url,
-                R.drawable.common_default_agent,
-                R.drawable.common_default_agent
+                defaultImage,
+                defaultImage
             )
         }
     }
