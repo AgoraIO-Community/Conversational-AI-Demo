@@ -361,6 +361,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     return@updateOptions
                 }
                 CovAgentManager.renderMode = transcriptRender.renderMode
+                tvRenderDetail.text = transcriptRender.text
                 mBinding?.vOptionsMask?.visibility = View.INVISIBLE
             }
         }
