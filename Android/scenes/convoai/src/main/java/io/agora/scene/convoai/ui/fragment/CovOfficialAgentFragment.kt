@@ -20,7 +20,7 @@ import io.agora.scene.convoai.ui.vm.CovListViewModel
 
 class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>() {
 
-    companion object{
+    companion object {
         private const val TAG = "CovOfficialAgentFragment"
     }
 
@@ -87,12 +87,15 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
                 is CovListViewModel.AgentListState.Loading -> {
                     // Loading state is handled by SwipeRefreshLayout, no need for additional loading UI
                 }
+
                 is CovListViewModel.AgentListState.Success -> {
                     showContent()
                 }
+
                 is CovListViewModel.AgentListState.Error -> {
                     showError()
                 }
+
                 is CovListViewModel.AgentListState.Empty -> {
                     showError()
                 }
@@ -159,15 +162,18 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
-                    tvDescription.isVisible  =  preset.description.isNotEmpty()
+                    tvDescription.isVisible = preset.description.isNotEmpty()
                     tvDescription.text = preset.description
-                    // For now, using default avatar
-                    GlideImageLoader.load(
-                        ivAvatar,
-                        preset.avatar_url,
-                        io.agora.scene.common.R.drawable.common_default_agent,
-                        io.agora.scene.common.R.drawable.common_default_agent
-                    )
+                    if (preset.avatar_url.isNullOrEmpty()) {
+                        ivAvatar.setImageResource(io.agora.scene.common.R.drawable.common_default_agent)
+                    } else {
+                        GlideImageLoader.load(
+                            ivAvatar,
+                            preset.avatar_url,
+                            io.agora.scene.common.R.drawable.common_default_agent,
+                            io.agora.scene.common.R.drawable.common_default_agent
+                        )
+                    }
                     rootView.setOnClickListener {
                         val position = adapterPosition
                         if (position != RecyclerView.NO_POSITION) {
