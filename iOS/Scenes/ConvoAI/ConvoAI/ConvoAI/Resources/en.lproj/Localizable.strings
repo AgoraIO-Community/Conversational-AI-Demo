@@ -45,6 +45,7 @@
 "conversation.agent.transcription" = "CC";
 "conversation.vision.unsupport.message" = "This preset does not support vision-related features. Please click the settings button in the upper right corner to select another preset.";
 "conversation.vision.retry.after.connect" = "Please connect and try again!";
+"conversation.agent.voice.lock.tips" = "Voiceprint ";
 
 "conversation.message.alert.title" = "Clear Messages";
 "conversation.message.alert.content" = "Are you sure you want to clear all messages?";
@@ -170,11 +171,11 @@
 "photo.permission.enable" = "Enable Permission";
 
 // agent list
-"agent.list.contact" = "Please contact Agora staff to get custom agent ID";
-"agent.list.input" = "Enter agent ID to get";
-"agent.list.custom" = "Custom Agent";
-"agent.list.official" = "Official Agents";
-"agent.list.get" = "Get";
+"agent.list.contact" = "Please contact Agora staff to obtain your custom agent ID.";
+"agent.list.input" = "Enter Agent ID to Retrieve";
+"agent.list.custom" = "Custom AI Agents";
+"agent.list.official" = "Official AI Agents";
+"agent.list.get" = "Retrieve";
 "agent.list.get.agent" = "Get Your AI Assistant";
 "agent.search.success" = "Agent retrieved successfully.";
 
