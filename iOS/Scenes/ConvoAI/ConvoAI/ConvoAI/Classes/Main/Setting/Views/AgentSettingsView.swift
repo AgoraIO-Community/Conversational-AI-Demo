@@ -143,6 +143,9 @@ class AgentSettingsView: UIView {
                 view.setEnable(true)
             }
             view.setOn(language.aivadEnabledByDefault.boolValue())
+        } else {
+            view.setEnable(false)
+            view.setOn(false)
         }
         view.updateLayout()
         return view
@@ -270,11 +273,11 @@ class AgentSettingsView: UIView {
         }
     }
     
-    func updateLanguage(_ language: SupportLanguage) {
-        languageItem.detailLabel.text = language.languageName
-        if (language.aivadSupported.boolValue()) {
+    func updateLanguage(_ language: SupportLanguage?) {
+        languageItem.detailLabel.text = language?.languageName ?? ""
+        if let l = language, l.aivadSupported.boolValue() {
             aiVadItem.setEnable(true)
-            aiVadItem.setOn(language.aivadEnabledByDefault.boolValue())
+            aiVadItem.setOn(l.aivadEnabledByDefault.boolValue())
         } else {
             aiVadItem.setEnable(false)
             aiVadItem.setOn(false)
