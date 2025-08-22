@@ -37,7 +37,6 @@ BASIC_AUTH_KEY=<Agora RESTful API KEY>
 BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 
 #----------- Open Source --------------
-# Whether to use open source LLM,TTS,AVATAR
 IS_OPEN_SOURCE=true
 
 #----------- LLM -----------
