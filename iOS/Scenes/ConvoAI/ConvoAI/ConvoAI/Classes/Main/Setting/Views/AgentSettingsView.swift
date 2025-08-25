@@ -142,7 +142,7 @@ class AgentSettingsView: UIView {
             } else {
                 view.setEnable(true)
             }
-            view.setOn(language.aivadEnabledByDefault.boolValue())
+            view.setOn(manager.preference.aiVad)
         } else {
             view.setEnable(false)
             view.setOn(false)
