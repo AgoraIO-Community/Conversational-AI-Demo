@@ -162,8 +162,6 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        
-        SSOWebViewController.clearWebViewCache()
     }
     
     override func viewWillAppear(_ animated: Bool) {
