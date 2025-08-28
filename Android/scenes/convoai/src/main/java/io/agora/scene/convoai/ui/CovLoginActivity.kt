@@ -10,6 +10,7 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import android.widget.CompoundButton
@@ -29,6 +30,7 @@ import io.agora.scene.common.ui.OnFastClickListener
 import io.agora.scene.common.ui.SSOWebViewActivity
 import io.agora.scene.common.ui.TermsActivity
 import io.agora.scene.convoai.databinding.CovActivityLoginBinding
+import io.agora.scene.convoai.ui.dialog.CovPrivacyPolicyDialog
 import kotlin.apply
 import kotlin.jvm.java
 
@@ -71,13 +73,16 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
             }
         }
         mBinding?.apply {
-            tvTyping.setGradientColors( listOf(
-                "#ffffffff".toColorInt(),
-                "#ccffffff".toColorInt(),
-                "#99ffffff".toColorInt(),
-                "#ccffffff".toColorInt(),
-                "#e6ffffff".toColorInt()
-            ))
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            tvTyping.setGradientColors(
+                listOf(
+                    "#ffffffff".toColorInt(),
+                    "#ccffffff".toColorInt(),
+                    "#99ffffff".toColorInt(),
+                    "#ccffffff".toColorInt(),
+                    "#e6ffffff".toColorInt()
+                )
+            )
             tvTyping.startAnimation()
             setupRichTextTerms(tvTermsRichText)
             btnLoginSSO.setOnClickListener(object : OnFastClickListener() {
@@ -86,6 +91,7 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
                         activityResultLauncher.launch(SSOWebViewActivity.TYPE_LOGIN)
                     } else {
                         animCheckTip()
+                        showPrivacyDialog()
                     }
                 }
             })
@@ -95,6 +101,7 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
                         activityResultLauncher.launch(SSOWebViewActivity.TYPE_SIGNUP)
                     } else {
                         animCheckTip()
+                        showPrivacyDialog()
                     }
                 }
             })
@@ -193,6 +200,17 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
             tvCheckTips.clearAnimation()
             tvCheckTips.startAnimation(animation)
         }
+    }
+
+    private fun showPrivacyDialog() {
+        CovPrivacyPolicyDialog.newInstance(
+            onAgreeCallback = {
+                if (it) {
+                    mBinding?.apply {
+                        cbTerms.isChecked = true
+                    }
+                }
+            }).show(supportFragmentManager, "privacy_policy_dialog")
     }
 
     // Override debug callback to provide custom behavior for login screen

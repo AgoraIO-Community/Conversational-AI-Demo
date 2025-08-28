@@ -54,7 +54,7 @@
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="88dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/selector_gradient_button_with_border20"
+        android:background="@drawable/selector_gradient_button_r20"
         android:gravity="center"
         android:insetTop="0dp"
         android:insetBottom="0dp"
