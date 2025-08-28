@@ -7,10 +7,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.agora.agent.databinding.WelcomeActivityBinding
 import io.agora.scene.common.constant.AgentScenes
 import io.agora.scene.common.ui.BaseActivity
-import io.agora.scene.common.util.toast.ToastUtil
-import io.agora.scene.convoai.ui.CovLivingActivity
 import androidx.annotation.RequiresApi
-
+import io.agora.scene.common.constant.SSOUserManager
+import io.agora.scene.convoai.ui.CovAgentListActivity
+import io.agora.scene.convoai.ui.CovLoginActivity
 
 class WelcomeActivity : BaseActivity<WelcomeActivityBinding>() {
 
@@ -22,29 +22,26 @@ class WelcomeActivity : BaseActivity<WelcomeActivityBinding>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             handleSplashScreenExit()
         } else {
-            goScene(AgentScenes.ConvoAi)
+            goScene()
         }
         super.onCreate(savedInstanceState)
     }
 
-    override fun immersiveMode(): ImmersiveMode {
-        return ImmersiveMode.FULLY_IMMERSIVE
-    }
+    override fun immersiveMode(): ImmersiveMode  = ImmersiveMode.FULLY_IMMERSIVE
+
+    override fun supportOnBackPressed(): Boolean = false
 
     override fun initView() {
     }
 
-    private fun goScene(scene: AgentScenes) {
-        try {
-            val intent = when (scene) {
-                AgentScenes.ConvoAi -> Intent(this, CovLivingActivity::class.java)
-                else -> Intent()
-            }
-            startActivity(intent)
-            finish()
-        } catch (e: Exception) {
-            ToastUtil.show(getString(R.string.scenes_coming_soon))
+    private fun goScene() {
+        if (SSOUserManager.getToken().isNotEmpty()) {
+            initFirebaseCrashlytics()
+            startActivity(Intent(this@WelcomeActivity, CovAgentListActivity::class.java))
+        } else {
+            startActivity(Intent(this, CovLoginActivity::class.java))
         }
+        finish()
     }
 
     private val SPLASH_DURATION = 300L
@@ -62,7 +59,7 @@ class WelcomeActivity : BaseActivity<WelcomeActivityBinding>() {
                 .scaleY(1f)
                 .withEndAction {
                     provider.remove()
-                    goScene(AgentScenes.ConvoAi)
+                    goScene()
                 }.start()
         }
         

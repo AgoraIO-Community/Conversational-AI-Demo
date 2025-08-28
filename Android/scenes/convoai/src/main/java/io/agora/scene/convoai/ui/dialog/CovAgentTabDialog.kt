@@ -16,6 +16,8 @@ import io.agora.scene.common.ui.BaseSheetDialog
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.databinding.CovAgentTabDialogBinding
+import io.agora.scene.convoai.ui.fragment.CovAgentInfoFragment
+import io.agora.scene.convoai.ui.fragment.CovAgentSettingsFragment
 
 /**
  * Bottom sheet dialog with tab switching functionality
@@ -31,8 +33,8 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
         private const val TAG = "CovInfoTabDialog"
 
         // Tab indices
-        private const val TAB_CHANNEL_INFO = 0
-        private const val TAB_AGENT_SETTINGS = 1
+        const val TAB_AGENT_SETTINGS = 0
+        const val TAB_CHANNEL_INFO = 1
 
         fun newInstance(
             agentState: AgentConnectionState?,
@@ -148,8 +150,8 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
                 agentSettingsTab.customView = agentSettingsView
 
                 tabLayout.removeAllTabs()
-                tabLayout.addTab(channelInfoTab)
                 tabLayout.addTab(agentSettingsTab)
+                tabLayout.addTab(channelInfoTab)
 
                 // Remove tab padding and minWidth for each tab
                 val tabStrip = tabLayout.getChildAt(0) as? LinearLayout
@@ -245,8 +247,8 @@ class CovAgentTabDialog : BaseSheetDialog<CovAgentTabDialogBinding>() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = when (position) {
-                TAB_CHANNEL_INFO -> CovAgentInfoFragment.newInstance(agentState)
                 TAB_AGENT_SETTINGS -> CovAgentSettingsFragment.newInstance(agentState)
+                TAB_CHANNEL_INFO -> CovAgentInfoFragment.newInstance(agentState)
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }
             fragments[position] = fragment

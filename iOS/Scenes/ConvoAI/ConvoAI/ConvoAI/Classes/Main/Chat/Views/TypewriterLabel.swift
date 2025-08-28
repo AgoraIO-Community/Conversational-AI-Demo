@@ -10,13 +10,12 @@ import Common
 
 class TypewriterLabel: UILabel {
     private let texts = [
-        ResourceManager.L10n.Conversation.appHello,
         ResourceManager.L10n.Conversation.appWelcomeTitle,
         ResourceManager.L10n.Conversation.appWelcomeDescription
     ]
     private let cursor = "●"
     
-    private let speed: Double = 22
+    private let speed: Double = 12
     private let pauseTime1: Double = 0.5
     private let pauseTime2: Double = 1.5
     private let blinkSpeed: Double = 1
@@ -39,10 +38,11 @@ class TypewriterLabel: UILabel {
     }
     
     private var gradientColors: [UIColor] = [
-        UIColor(hex: "#1787FF")!,
-        UIColor(hex: "#5A6BFF")!,
-        UIColor(hex: "#17B2FF")!,
-        UIColor(hex: "#446CFF")!
+        UIColor(hex: "#FFFFFF", alpha: 1)!,
+        UIColor(hex: "#FFFFFF", alpha: 0.8)!,
+        UIColor(hex: "#FFFFFF", alpha: 0.6)!,
+        UIColor(hex: "#FFFFFF", alpha: 0.8)!,
+        UIColor(hex: "#FFFFFF", alpha: 0.9)!
     ]
     
     override init(frame: CGRect) {
@@ -208,5 +208,6 @@ class TypewriterLabel: UILabel {
         stopAnimation()
     }
 }
+
 
 

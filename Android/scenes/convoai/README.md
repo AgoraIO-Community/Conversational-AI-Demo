@@ -36,6 +36,9 @@ AG_APP_CERTIFICATE=<Agora App Certificate>
 BASIC_AUTH_KEY=<Agora RESTful API KEY>
 BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 
+#----------- Open Source --------------
+IS_OPEN_SOURCE=true
+
 #----------- LLM -----------
 LLM_URL=<LLM Vendor API BASE URL>
 LLM_API_KEY=<LLM Vendor API KEY>(optional)
@@ -47,7 +50,6 @@ TTS_VENDOR=<TTS Vendor>
 TTS_PARAMS=<TTS Parameters>
 
 #----------- AVATAR -----------
-AVATAR_ENABLE=<Enable/Disable AVATAR>
 AVATAR_VENDOR=<AVATAR Vendor>
 AVATAR_PARAMS=<AVATAR Parameters>
 ```

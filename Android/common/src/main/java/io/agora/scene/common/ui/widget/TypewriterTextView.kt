@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import io.agora.scene.common.R
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
+import androidx.core.graphics.toColorInt
 
 class TypewriterTextView @JvmOverloads constructor(
     context: Context,
@@ -20,7 +21,6 @@ class TypewriterTextView @JvmOverloads constructor(
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
     private var texts = listOf(
-        context.getString(R.string.common_login_typing_text1),
         context.getString(R.string.common_login_typing_text2),
         context.getString(R.string.common_login_typing_text3)
     )
@@ -56,10 +56,10 @@ class TypewriterTextView @JvmOverloads constructor(
 
         gradientColors.addAll(
             listOf(
-                Color.parseColor("#1787FF"),
-                Color.parseColor("#5A6BFF"),
-                Color.parseColor("#17B2FF"),
-                Color.parseColor("#446CFF")
+                "#1787FF".toColorInt(),
+                "#5A6BFF".toColorInt(),
+                "#17B2FF".toColorInt(),
+                "#446CFF".toColorInt()
             )
         )
         calculateTimings()
