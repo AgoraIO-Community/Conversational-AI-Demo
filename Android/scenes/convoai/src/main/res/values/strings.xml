@@ -138,4 +138,48 @@
     <string name="cov_get_agent_failed">Failed to retrieve agent. No matching entry found in the current database.</string>
     <string name="cov_get_agent_offline">This agent is no longer available. Please contact Agora staff.</string>
     <string name="cov_retry_tips">Page failed to load. Please try again.</string>
+
+    <string name="cov_voiceprint_recognition">Voiceprint Lock</string>
+    <string name="cov_voiceprint_close">Off</string>
+    <string name="cov_voiceprint_close_tips">Without this, the agent might be interrupted or distracted by other voices nearby.</string>
+    <string name="cov_voiceprint_senseless">Seamless Mode</string>
+    <string name="cov_voiceprint_senseless_tips">AI automatically learns your voiceprint from your conversations with the agent and will ignore other people\'s voices.</string>
+    <string name="cov_voiceprint_sensible">Personalized Mode</string>
+    <string name="cov_voiceprint_has">Voiceprint available</string>
+    <string name="cov_voiceprint_sensible_tips">Record a short voiceprint, and the agent will focus only on your voice.</string>
+    <string name="cov_voiceprint_create_mine_voice">Create my voiceprint</string>
+    <string name="cov_voiceprint_recording">Record</string>
+    <string name="cov_voiceprint_re_recording">Record again</string>
+    <string name="cov_voiceprint_uploading">Uploading…</string>
+    <string name="cov_loading">Loading</string>
+    <string name="cov_voiceprint_upload_failed">Upload failed. Please try again.</string>
+    <string name="cov_voiceprint_upload_success">Sample text upload success.</string>
+    <string name="cov_voiceprint_no_voice">No voiceprint recorded</string>
+    <string name="cov_voiceprint_no_voice_tips">You\'ll need a voiceprint to use Personalized Mode. The app will switch back to [Previous Mode] when you exit.</string>
+    <string name="cov_voiceprint_exit">Exit</string>
+    <string name="cov_voiceprint_title">Please read aloud</string>
+    <string name="cov_voiceprint_title1">Recording, please read aloud…</string>
+    <string name="cov_voiceprint_content">It was the best of times, it was the worst of times,
+        \n it was the age of wisdom, it was the age of foolishness,
+        \n it was the epoch of belief, it was the epoch of incredulity，
+        \n it was the season of Light, it was the season of Darkness,
+        \n it was the spring of hope, it was the winter of despair，
+        \n we had everything before us, we had nothing before us。
+        \n we were all going direct to Heaven, we were all going direct the other way.</string>
+    <string name="cov_voiceprint_long_pressed">Press and hold to record</string>
+    <string name="cov_voiceprint_recording_only_one">You can only save one voiceprint. Recording a new one will replace the current one.</string>
+    <string name="cov_voiceprint_release_to_create">Release to save, slide up to cancel</string>
+    <string name="cov_voiceprint_release_to_cancel">Release to cancel</string>
+    <string name="cov_voiceprint_duration">Sample text：%1s/%2s</string>
+    <string name="cov_voiceprint_recording_short">That\'s a bit too short. Please record for at least 10 seconds.</string>
+    <string name="cov_voiceprint_recording_auto_end">Recording finished</string>
+    <string name="cov_voiceprint_recording_uploading">Sample text uploading…</string>
+    <string name="cov_voiceprint_recording_upload_failed">Sample text upload failed，Please try again.</string>
+    <string name="cov_voiceprint_prepare_recording">Ready for recording…</string>
+    <string name="cov_voiceprint_prepare">Ready for recording</string>
+    <string name="cov_voiceprint_name_format">Voiceprint from %s</string>
+    <string name="cov_voiceprint_date_format">YYYY-MM-DD</string>
+    <string name="cov_voiceprint_recording_tips_title">Voiceprint recording tips</string>
+    <string name="cov_voiceprint_recording_tips_content">Your voiceprint is stored locally by default. Agora\'s
+        voiceprint locking function requires collecting your voice data. Once you finish using this feature, the voiceprint data on the cloud will be deleted immediately. We will never use your voice for commercial purposes.</string>
 </resources>

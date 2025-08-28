@@ -31,6 +31,7 @@ import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import io.agora.scene.convoai.api.CovAvatar
+import io.agora.scene.convoai.constant.VoiceprintMode
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
@@ -109,6 +110,13 @@ class CovLivingViewModel : ViewModel() {
             CovAgentManager.avatar = null
         }
         _avatar.value = avatar
+    }
+
+    private val _voiceprintMode = MutableStateFlow(VoiceprintMode.OFF)
+    val voiceprintMode: StateFlow<VoiceprintMode> = _voiceprintMode.asStateFlow()
+
+    fun setVoiceprintMode(mode: VoiceprintMode) {
+        _voiceprintMode.value = mode
     }
 
     val isVisionSupported: Boolean get() = CovAgentManager.getPreset()?.is_support_vision == true
