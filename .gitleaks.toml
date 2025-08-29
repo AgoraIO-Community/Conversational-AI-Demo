@@ -137,5 +137,6 @@ paths = [
     '''.*\/zh-Hant\.lproj\/.*''',
     '''.*\/zh\.lproj\/.*''',
     '''iOS/Pods/.*''',
-    '''README\.md'''
+    '''README\.md''',
+    '''Web/.*'''
 ]
