@@ -15,7 +15,7 @@ The Conversational AI Engine redefines the human-AI interaction interface, break
 
 ## 🚀 Quick Start
 ### 📱 Experience the demo
-|    Platform    |                  Experience link                  |
+|    Platform    |                  Links                 |
 | -------- | ------------------------------------- |
 | 📱 Android | [Android Demo](https://demo-app-download.agora.io/Agora_Conversational_Al_Engine_Demo_for_Android-Lastest.apk) |
 |   📱 iOS   |   [iOS Demo](https://testflight.apple.com/join/hrfHg3p8)   |
