@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:background="@drawable/bottom_dialog_bg"
+    android:paddingBottom="16dp"
     tools:theme="@style/Theme.AppCompat">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -152,7 +153,7 @@
             android:layout_marginTop="24dp"
             android:text="@string/cov_setting_advanced_settings"
             android:textColor="@color/ai_icontext4"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ll_avatar" />
@@ -295,10 +296,10 @@
                     android:id="@+id/tv_voiceprint_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/cov_voiceprint_close"
                     android:textColor="@color/ai_icontext1"
                     android:textDirection="ltr"
                     android:textSize="14sp"
-                    android:text="@string/cov_voiceprint_close"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_voiceprint_arrow"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -307,7 +308,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="160dp"
             app:layout_constraintTop_toBottomOf="@+id/ll_device" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

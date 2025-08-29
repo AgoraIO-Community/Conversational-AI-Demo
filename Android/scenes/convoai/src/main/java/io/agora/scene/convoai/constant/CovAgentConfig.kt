@@ -22,12 +22,12 @@ enum class AgentConnectionState() {
 }
 
 /**
- * Voiceprint recognition modes
+ * Voiceprint lock modes
  */
-enum class VoiceprintMode(@StringRes val title: Int, @StringRes val description: Int) {
-    OFF(R.string.cov_voiceprint_close, R.string.cov_voiceprint_close_tips),
-    AUTO_LEARNING(R.string.cov_voiceprint_senseless, R.string.cov_voiceprint_senseless_tips),
-    MANUAL(R.string.cov_voiceprint_sensible, R.string.cov_voiceprint_sensible_tips),
+enum class VoiceprintMode{
+    OFF,
+    SEAMLESS,
+    PERSONALIZED
 }
 
 object CovAgentManager {

@@ -284,7 +284,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             var previousState: AgentConnectionState? = null
             viewModel.connectionState.collect { state ->
                 updateStateView(state)
-                appTabDialog?.updateConnectStatus(state)
                 mBinding?.clTop?.updateAgentState(state)
 
                 // Update animation and timer display based on state
@@ -714,7 +713,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     private fun showSettingDialog(initialTab: Int) {
         appTabDialog = CovAgentTabDialog.newInstance(
-            viewModel.connectionState.value,
             initialTab,
             onDismiss = {
                 appTabDialog = null

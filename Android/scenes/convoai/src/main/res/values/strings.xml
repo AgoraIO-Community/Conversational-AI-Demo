@@ -142,11 +142,11 @@
     <string name="cov_voiceprint_recognition">Voiceprint Lock</string>
     <string name="cov_voiceprint_close">Off</string>
     <string name="cov_voiceprint_close_tips">Without this, the agent might be interrupted or distracted by other voices nearby.</string>
-    <string name="cov_voiceprint_senseless">Seamless Mode</string>
-    <string name="cov_voiceprint_senseless_tips">AI automatically learns your voiceprint from your conversations with the agent and will ignore other people\'s voices.</string>
-    <string name="cov_voiceprint_sensible">Personalized Mode</string>
+    <string name="cov_voiceprint_seamless">Seamless Mode</string>
+    <string name="cov_voiceprint_seamless_tips">AI automatically learns your voiceprint from your conversations with the agent and will ignore other people\'s voices.</string>
+    <string name="cov_voiceprint_personalized">Personalized Mode</string>
+    <string name="cov_voiceprint_personalized_tips">Record a short voiceprint, and the agent will focus only on your voice.</string>
     <string name="cov_voiceprint_has">Voiceprint available</string>
-    <string name="cov_voiceprint_sensible_tips">Record a short voiceprint, and the agent will focus only on your voice.</string>
     <string name="cov_voiceprint_create_mine_voice">Create my voiceprint</string>
     <string name="cov_voiceprint_recording">Record</string>
     <string name="cov_voiceprint_re_recording">Record again</string>
@@ -191,4 +191,9 @@
     <string name="cov_user_agreement_text">《User Agreement》</string>
     <string name="cov_privacy_policy_text">《Privacy Policy》</string>
     <string name="cov_service_info">Information</string>
+    <string name="cov_agent_service_info">Agent Service Status</string>
+    <string name="cov_agent_not_activated">Not Activated</string>
+    <string name="cov_agent_activating">Activating</string>
+    <string name="cov_agent_sensitive">Personalized</string>
+    <string name="cov_agent_insensitive">Seamless</string>
 </resources>
