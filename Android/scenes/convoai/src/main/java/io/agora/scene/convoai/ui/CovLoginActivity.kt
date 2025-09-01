@@ -67,7 +67,7 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
                 SSOUserManager.saveToken(token)
                 initFirebaseCrashlytics()
                 mBinding?.root?.postDelayed({
-                    startActivity(Intent(this@CovLoginActivity, CovAgentListActivity::class.java))
+                    startActivity(Intent(this@CovLoginActivity, CovMainActivity::class.java))
                     finish()
                 }, 500L)
             }
