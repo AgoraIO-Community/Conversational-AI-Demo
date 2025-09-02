@@ -1,10 +1,8 @@
 package io.agora.scene.convoai.constant
 
-import androidx.annotation.StringRes
 import io.agora.scene.common.BuildConfig
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.debugMode.DebugConfigSettings
-import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentLanguage
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovAvatar
@@ -74,6 +72,11 @@ object CovAgentManager {
             p.support_languages.firstOrNull { it.language_code == p.default_language_code }
         } else {
             p?.support_languages?.firstOrNull()
+        }
+        voiceprintMode = if (p?.advanced_features_enable_sal == true) {
+            VoiceprintMode.SEAMLESS
+        } else {
+            VoiceprintMode.OFF
         }
     }
 

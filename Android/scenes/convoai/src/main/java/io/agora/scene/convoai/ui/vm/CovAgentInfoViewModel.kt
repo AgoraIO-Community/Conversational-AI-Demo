@@ -12,7 +12,7 @@ import io.agora.scene.convoai.ui.VoiceprintUIStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.text.ifEmpty
+
 
 /**
  * ViewModel for managing Agent Info fragment data

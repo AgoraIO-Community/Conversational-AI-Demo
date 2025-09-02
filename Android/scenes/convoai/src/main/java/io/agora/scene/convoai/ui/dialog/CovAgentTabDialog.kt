@@ -1,12 +1,10 @@
 package io.agora.scene.convoai.ui.dialog
 
-import android.animation.ValueAnimator
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -15,7 +13,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import io.agora.scene.common.ui.BaseSheetDialog
 import io.agora.scene.convoai.R
-import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.databinding.CovAgentTabDialogBinding
 import io.agora.scene.convoai.ui.fragment.CovAgentInfoFragment
 import io.agora.scene.convoai.ui.fragment.CovAgentSettingsFragment
