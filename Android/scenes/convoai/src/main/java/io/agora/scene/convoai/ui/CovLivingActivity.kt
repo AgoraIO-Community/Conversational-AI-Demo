@@ -46,6 +46,7 @@ import io.agora.scene.convoai.convoaiApi.subRender.v1.SelfSubRenderController
 import io.agora.scene.convoai.ui.dialog.CovAgentTabDialog
 import io.agora.scene.convoai.ui.dialog.CovImagePreviewDialog
 import io.agora.scene.convoai.ui.photo.PhotoNavigationActivity
+import io.agora.scene.convoai.ui.vm.CovAgentInfoViewModel
 import io.agora.scene.convoai.ui.widget.CovMessageListView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,6 +60,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     // ViewModel instances
     private val viewModel: CovLivingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
+    private val agentInfoViewModel: CovAgentInfoViewModel by viewModels()
 
     // UI related
     private var appTabDialog: CovAgentTabDialog? = null
@@ -191,6 +193,9 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             }
             clTop.setOnCCClickListener {
                 viewModel.toggleMessageList()
+            }
+            clTop.setOnMoreClickListener {
+                showSettingDialog(CovAgentTabDialog.TAB_CHANNEL_INFO) // Channel Info tab
             }
             // Set click listener for btn_image_container with dynamic functionality
             clBottomLogged.setOnImageContainerClickListener {
@@ -498,10 +503,21 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             viewModel.voiceprintStateChangeEvent.collect { voicePrint ->
                 if (isSelfSubRender) return@collect
                 if (voicePrint?.status == VoiceprintStatus.REGISTER_SUCCESS) {
-                    mBinding?.clTop?.showVoicePrint()
+                    mBinding?.clTop?.updateVoiceprintStatus(true)
                     ToastUtil.show(R.string.cov_voiceprint_lock_success, Toast.LENGTH_LONG)
                 } else {
-                    mBinding?.clTop?.hideVoicePrint()
+                    mBinding?.clTop?.updateVoiceprintStatus(false)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            // Collect AI VAD status
+            agentInfoViewModel.aiVadStatus.collect { status ->
+                mBinding?.clTop?.apply {
+                    when (status) {
+                        ActivateStatus.NotActivated -> updateElegantInterruptStatus(false)
+                        ActivateStatus.Activating -> updateElegantInterruptStatus(true)
+                    }
                 }
             }
         }

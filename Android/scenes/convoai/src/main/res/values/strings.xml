@@ -58,6 +58,7 @@
     <string name="cov_setting_speaker">Speaker</string>
     <string name="cov_setting_bhvs">Enable BHVS</string>
     <string name="cov_setting_ai_vad"></string>
+    <string name="cov_setting_ai_vad1">AI-VAD</string>
     <string name="cov_setting_ai_vad_high">Intelligent Interruption Handling</string>
     <string name="cov_setting_ai_vad_high_desc">Elegant Interruption is an advanced interruption function independently developed by Agora. It enables the agent to temporarily stop logical reasoning to do the actual thing, and then return to allow the agent to continue according to the node before the interruption</string>
     <string name="cov_setting_network_error">Network Error!</string>
@@ -203,6 +204,7 @@
     <string name="cov_agent_activating">Activating</string>
     <string name="cov_agent_sensitive">Personalized</string>
     <string name="cov_agent_insensitive">Seamless</string>
+    <string name="cov_agent_info_more">More…</string>
 
     <!-- Mine -->
     <string name="cov_mine_delete_account">Delete Account</string>
@@ -214,12 +216,15 @@
     <string name="cov_mine_settings">Settings</string>
     <string name="cov_mine_privacy">Privacy</string>
     <string name="cov_mine_nickname">Nickname</string>
+    <string name="cov_mine_conversational_persona">My persona</string>
     <string name="cov_mine_should">How should we address you?</string>
     <string name="cov_mine_mr">Mr.</string>
     <string name="cov_mine_ms">Ms.</string>
     <string name="cov_mine_your_birthday">Your Birthday</string>
     <string name="cov_mine_about_me">About Me</string>
-    <string name="cov_mine_select_your_birthday">Select your birthday</string>
+    <string name="cov_mine_select">Select</string>
+    <string name="cov_mine_about_me_hint">Set up your self-introduction to help the AI agent understand you
+        better.</string>
     <string name="cov_mine_iot_devices">My iot Devices</string>
     <string name="cov_mine_devices"> %d devices linked</string>
 </resources>
