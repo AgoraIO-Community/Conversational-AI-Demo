@@ -160,20 +160,14 @@
     <string name="cov_voiceprint_exit">Exit</string>
     <string name="cov_voiceprint_title">Please read aloud</string>
     <string name="cov_voiceprint_title1">Recording, please read aloud…</string>
-    <string name="cov_voiceprint_content">It was the best of times,
-        \n it was the worst of times,
-        \n it was the age of wisdom,
-        \n it was the age of foolishness,
-        \n it was the epoch of belief,
-        \n it was the epoch of incredulity，
-        \n it was the season of Light,
-        \n it was the season of Darkness,
-        \n it was the spring of hope,
-        \n it was the winter of despair，
-        \n we had everything before us,
-        \n we had nothing before us。
-        \n we were all going direct to Heaven,
-        \n we were all going direct the other way.</string>
+    <string name="cov_voiceprint_content">
+        It was the best of times, it was the worst of times,
+        \n\nit was the age of wisdom, it was the age of foolishness,
+        \n\nit was the epoch of belief, it was the epoch of incredulity，
+        \n\nit was the season of Light, it was the season of Darkness,
+        \n\nit was the spring of hope, it was the winter of despair，
+        \n\nwe had everything before us, we had nothing before us。
+        \n\nwe were all going direct to Heaven, we were all going direct the other way.</string>
     <string name="cov_voiceprint_long_pressed">Press and hold to record</string>
     <string name="cov_voiceprint_recording_only_one">You can only save one voiceprint. Recording a new one will replace the current one.</string>
     <string name="cov_voiceprint_release_to_create">Release to save, slide up to cancel</string>
