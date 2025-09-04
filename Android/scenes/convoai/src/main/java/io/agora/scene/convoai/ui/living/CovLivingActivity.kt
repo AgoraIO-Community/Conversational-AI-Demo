@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ import io.agora.scene.convoai.ui.ActivateStatus
 import io.agora.scene.convoai.ui.PictureError
 import io.agora.scene.convoai.ui.PictureInfo
 import io.agora.scene.convoai.ui.auth.CovLoginActivity
+import io.agora.scene.convoai.ui.auth.GlobalUserViewModel
 import io.agora.scene.convoai.ui.auth.LoginState
 import io.agora.scene.convoai.ui.auth.UserViewModel
 import io.agora.scene.convoai.ui.living.settings.CovAgentTabDialog
@@ -63,7 +65,9 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     // ViewModel instances
     private val viewModel: CovLivingViewModel by viewModels()
-    private val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by lazy {
+        GlobalUserViewModel.getUserViewModel(application)
+    }
     private val agentInfoViewModel: CovAgentInfoViewModel by viewModels()
 
     // UI related
@@ -82,6 +86,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     override fun supportOnBackPressed(): Boolean = viewModel.connectionState.value == AgentConnectionState.IDLE
 
     override fun initView() {
+        Log.d("UserViewModel","UserViewModel:$userViewModel $this")
         setupView()
         // Create RTC and RTM engines
         val rtcEngine = CovRtcManager.createRtcEngine(viewModel.handleRtcEvents())
@@ -775,7 +780,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun uploadImageWithRequestId(requestId: String, file: File) {
-        userViewModel.uploadImage(
+        viewModel.uploadImage(
             requestId = requestId,
             channelName = CovAgentManager.channelName,
             imageFile = file,

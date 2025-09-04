@@ -46,6 +46,18 @@
 
         <service
             android:name=".service.CovLocalRecordingService"
-            android:foregroundServiceType="microphone|mediaPlayback"></service>
+            android:foregroundServiceType="microphone|mediaPlayback"/>
+
+        <activity
+            android:name=".ui.mine.CovProfileSettingsActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="locale|layoutDirection"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.mine.CovProfilePrivacyActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="locale|layoutDirection"
+            android:exported="false"/>
     </application>
 </manifest>

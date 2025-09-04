@@ -204,7 +204,7 @@
     <string name="cov_mine_delete_account">Delete Account</string>
     <string name="cov_mine_important_notice">Important Notice</string>
     <string name="cov_mine_delete_account_content">Once deleted, your account and all its data will be permanently erased and cannot be recovered.</string>
-    <string name="cov_mine_delete_account_tips">I understand the risks of deleting my account</string>
+    <string name="cov_mine_delete_account_tips">I have understood the various risks associated with account cancellation.</string>
     <string name="cov_mine_confirm_deleted">Confirm Deletion</string>
     <string name="cov_mine_delete_account_toast">To continue, you must check the box to confirm you understand the risks.</string>
     <string name="cov_mine_settings">Settings</string>
@@ -221,4 +221,9 @@
         better.</string>
     <string name="cov_mine_iot_devices">My iot Devices</string>
     <string name="cov_mine_devices"> %d devices linked</string>
+    <string name="cov_settings_version_format">Version: %s</string>
+    <string name="cov_settings_agreement">User Agreement</string>
+    <string name="cov_settings_privacy_policy">Privacy Policy</string>
+    <string name="cov_settings_third_party_data_sharing">Third-party data sharing</string>
+    <string name="cov_settings_personal_data_checklist">Personal data checklist</string>
 </resources>

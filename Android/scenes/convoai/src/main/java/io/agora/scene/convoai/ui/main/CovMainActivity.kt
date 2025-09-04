@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui.main
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -12,6 +13,7 @@ import io.agora.scene.convoai.R
 import io.agora.scene.convoai.databinding.CovActivityMainBinding
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.ui.auth.CovLoginActivity
+import io.agora.scene.convoai.ui.auth.GlobalUserViewModel
 import io.agora.scene.convoai.ui.auth.LoginState
 import io.agora.scene.convoai.ui.auth.UserViewModel
 import io.agora.scene.convoai.ui.main.list.CovAgentListFragment
@@ -28,13 +30,16 @@ class CovMainActivity : DebugSupportActivity<CovActivityMainBinding>() {
         const val TAB_USER_INFO = 1
     }
 
-    // ViewModel instances
-    private val userViewModel: UserViewModel by viewModels()
+    // ViewModel instances - using global UserViewModel for cross-activity communication
+    private val userViewModel: UserViewModel by lazy {
+        GlobalUserViewModel.getUserViewModel(application)
+    }
     private val listViewModel: CovListViewModel by viewModels()
 
     override fun getViewBinding(): CovActivityMainBinding = CovActivityMainBinding.inflate(layoutInflater)
 
     override fun initView() {
+        Log.d("UserViewModel","UserViewModel:$userViewModel $this")
         userViewModel.checkLogin()
         mBinding?.apply {
             activityKeyboardOverlayMask.setOnClickListener {
