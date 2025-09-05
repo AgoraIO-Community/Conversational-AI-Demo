@@ -16,6 +16,7 @@ protocol AgentPreferenceManagerDelegate: AnyObject {
     func preferenceManager(_ manager: AgentPreferenceManager, aiVadStateDidUpdated state: Bool)
     func preferenceManager(_ manager: AgentPreferenceManager, transcriptModeDidUpdated mode: TranscriptDisplayMode)
     func preferenceManager(_ manager: AgentPreferenceManager, bhvsStateDidUpdated state: Bool)
+    func preferenceManager(_ manager: AgentPreferenceManager, voiceprintModeDidUpdated mode: VoiceprintMode)
     func preferenceManager(_ manager: AgentPreferenceManager, loginStateDidUpdated state: Bool)
 
 
@@ -104,6 +105,12 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
         }
         
         updateAvatar(nil)
+        if let enableSal = preset.enableSal {
+            updateVoiceprintMode(enableSal ? .seamless : .off)
+        } else {
+            updateVoiceprintMode(.off)
+        }
+        
         notifyDelegates { $0.preferenceManager(self, presetDidUpdated: preset) }
     }
     
@@ -131,6 +138,11 @@ class AgentPreferenceManager: AgentPreferenceManagerProtocol {
     func updateForceThresholdState(_ state: Bool) {
         preference.bhvs = state
         notifyDelegates { $0.preferenceManager(self, bhvsStateDidUpdated: state) }
+    }
+    
+    func updateVoiceprintMode(_ mode: VoiceprintMode) {
+        preference.voiceprintMode = mode
+        notifyDelegates { $0.preferenceManager(self, voiceprintModeDidUpdated: mode) }
     }
     
     // MARK: - Information Updates
@@ -238,11 +250,11 @@ enum ConnectionStatus: String {
     var color: UIColor {
         switch self {
         case .connected:
-            return UIColor(hex: 0x36B37E) // Green
+            return UIColor.themColor(named: "ai_green6")
         case .disconnected:
-            return UIColor(hex: 0xFF5630) // Red
+            return UIColor.themColor(named: "ai_red6")
         case .unload:
-            return UIColor(hex: 0x8F92A1) // Gray
+            return UIColor.themColor(named: "ai_icontext4")
         }
     }
 }
@@ -296,6 +308,7 @@ class AgentPreference {
     var bhvs = true
     var isCustomPreset = false
     var transcriptMode: TranscriptDisplayMode = .words
+    var voiceprintMode: VoiceprintMode = .off
 }
 
 class AgentInfomation {
@@ -364,6 +377,7 @@ extension AgentPreferenceManagerDelegate {
     func preferenceManager(_ manager: AgentPreferenceManager, aiVadStateDidUpdated state: Bool) {}
     func preferenceManager(_ manager: AgentPreferenceManager, transcriptModeDidUpdated mode: TranscriptDisplayMode) {}
     func preferenceManager(_ manager: AgentPreferenceManager, bhvsStateDidUpdated state: Bool) {}
+    func preferenceManager(_ manager: AgentPreferenceManager, voiceprintModeDidUpdated mode: VoiceprintMode) {}
     func preferenceManager(_ manager: AgentPreferenceManager, loginStateDidUpdated state: Bool) {}
 
     func preferenceManager(_ manager: AgentPreferenceManager, networkDidUpdated networkState: NetworkStatus) {}

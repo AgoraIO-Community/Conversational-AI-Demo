@@ -312,6 +312,11 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
             make.right.equalTo(sender).offset(-20)
         }
     }
+    
+    func agentSettingsViewDidTapVoiceprintMode(_ view: AgentSettingsView, sender: UIButton) {
+        let voiceprintVC = VoiceprintViewController()
+        self.navigationController?.pushViewController(voiceprintVC)
+    }
 }
 
 // MARK: - Creations
@@ -424,6 +429,10 @@ extension AgentSettingViewController: AgentPreferenceManagerDelegate {
     
     func preferenceManager(_ manager: AgentPreferenceManager, transcriptModeDidUpdated mode: TranscriptDisplayMode) {
         agentSettingsView.updateTranscriptMode(mode)
+    }
+    
+    func preferenceManager(_ manager: AgentPreferenceManager, voiceprintModeDidUpdated mode: VoiceprintMode) {
+        agentSettingsView.updateVoiceprintMode(mode)
     }
 }
 

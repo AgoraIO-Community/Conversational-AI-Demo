@@ -15,6 +15,7 @@ protocol AgentSettingsViewDelegate: AnyObject {
     func agentSettingsViewDidTapDigitalHuman(_ view: AgentSettingsView, sender: UIButton)
     func agentSettingsViewDidToggleAiVad(_ view: AgentSettingsView, isOn: Bool)
     func agentSettingsViewDidTapTranscriptRender(_ view: AgentSettingsView, sender: UIButton)
+    func agentSettingsViewDidTapVoiceprintMode(_ view: AgentSettingsView, sender: UIButton)
 }
 
 class AgentSettingsView: UIView {
@@ -164,6 +165,23 @@ class AgentSettingsView: UIView {
         return view
     }()
     
+    private lazy var voiceprintModeItem: AgentSettingTableItemView = {
+        let view = AgentSettingTableItemView(frame: .zero)
+        view.titleLabel.text = ResourceManager.L10n.Voiceprint.title
+        
+        // Get current voiceprint mode from preference manager
+        if let manager = AppContext.preferenceManager() {
+            let currentMode = manager.preference.voiceprintMode
+            view.detailLabel.text = currentMode.title
+        } else {
+            view.detailLabel.text = ResourceManager.L10n.Voiceprint.off
+        }
+        
+        view.button.addTarget(self, action: #selector(onClickVoiceprintMode(_:)), for: .touchUpInside)
+        return view
+    }()
+
+    
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -174,6 +192,9 @@ class AgentSettingsView: UIView {
     
     func loadData() {
         updateAvatar(AppContext.preferenceManager()?.preference.avatar)
+        if let voiceprintMode = AppContext.preferenceManager()?.preference.voiceprintMode {
+            voiceprintModeItem.detailLabel.text = voiceprintMode.title
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -185,8 +206,8 @@ class AgentSettingsView: UIView {
         backgroundColor = .clear
         
         basicSettingItems = [languageItem]
-        advancedSettingItems = [aiVadItem, transcriptRenderItem]
-        
+        advancedSettingItems = [aiVadItem, transcriptRenderItem, voiceprintModeItem]
+
         addSubview(basicSettingView)
         addSubview(digitalHumanView)
         addSubview(advancedSettingTitle)
@@ -324,6 +345,10 @@ class AgentSettingsView: UIView {
         }
     }
     
+    func updateVoiceprintMode(_ mode: VoiceprintMode) {
+        voiceprintModeItem.detailLabel.text = mode.title
+    }
+    
     // MARK: - Action Methods
     @objc private func onClickTranscriptRender(_ sender: UIButton) {
         delegate?.agentSettingsViewDidTapTranscriptRender(self, sender: sender)
@@ -343,6 +368,10 @@ class AgentSettingsView: UIView {
     
     @objc private func onClickAIVadTips() {
         SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Settings.aiVadTips)
+    }
+
+    @objc private func onClickVoiceprintMode(_ sender: UIButton) {
+        delegate?.agentSettingsViewDidTapVoiceprintMode(self, sender: sender)
     }
 
 }
