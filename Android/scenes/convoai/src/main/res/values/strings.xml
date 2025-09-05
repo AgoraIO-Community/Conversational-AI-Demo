@@ -58,8 +58,8 @@
     <string name="cov_setting_speaker">Speaker</string>
     <string name="cov_setting_bhvs">Enable BHVS</string>
     <string name="cov_setting_ai_vad"></string>
-    <string name="cov_setting_ai_vad1">AI-VAD</string>
-    <string name="cov_setting_ai_vad_high">Intelligent Interruption Handling</string>
+    <string name="cov_setting_ai_vad1">IIH</string>
+    <string name="cov_setting_ai_vad_high">Intelligent Interruption Handling (IIH)</string>
     <string name="cov_setting_ai_vad_high_desc">Elegant Interruption is an advanced interruption function independently developed by Agora. It enables the agent to temporarily stop logical reasoning to do the actual thing, and then return to allow the agent to continue according to the node before the interruption</string>
     <string name="cov_setting_network_error">Network Error!</string>
     <string name="cov_agent_connecting">Connecting…</string>
@@ -124,7 +124,7 @@
     <string name="cov_custom_agent_acquire_tip">Please contact Agora staff to obtain your custom agent ID.</string>
     <string name="cov_custom_agent_input_tip">Enter Agent ID to Retrieve</string>
     <string name="cov_custom_agent_get">Retrieve</string>
-    <string name="cov_voiceprint_lock">Voiceprint</string>
+    <string name="cov_voiceprint">Voiceprint</string>
     <string name="cov_voiceprint_lock_success">The engine will learn your unique voiceprint to filter out other voices and background noise.</string>
     <string name="cov_word_mode">Word-by-Word</string>
     <string name="cov_word_mode_tips">The transcript appears one word at a time, synchronized with the AI\'s speech.</string>
@@ -140,7 +140,7 @@
     <string name="cov_get_agent_offline">This agent is no longer available. Please contact Agora staff.</string>
     <string name="cov_retry_tips">Page failed to load. Please try again.</string>
 
-    <string name="cov_voiceprint_recognition">Voiceprint Lock</string>
+    <string name="cov_voiceprint_lock">Voiceprint Lock</string>
     <string name="cov_voiceprint_close">Off</string>
     <string name="cov_voiceprint_close_tips">Without this, the agent might be interrupted or distracted by other voices nearby.</string>
     <string name="cov_voiceprint_seamless">Seamless Mode</string>
@@ -193,9 +193,9 @@
     <string name="cov_user_agreement_text">《User Agreement》</string>
     <string name="cov_privacy_policy_text">《Privacy Policy》</string>
     <string name="cov_service_info">Information</string>
-    <string name="cov_agent_service_info">Agent Service Status</string>
-    <string name="cov_agent_not_activated">Not Activated</string>
-    <string name="cov_agent_activating">Activating</string>
+    <string name="cov_agent_service_info">Advanced Features</string>
+    <string name="cov_agent_not_activated">Off</string>
+    <string name="cov_agent_activating">On</string>
     <string name="cov_agent_sensitive">Personalized</string>
     <string name="cov_agent_insensitive">Seamless</string>
     <string name="cov_agent_info_more">More…</string>

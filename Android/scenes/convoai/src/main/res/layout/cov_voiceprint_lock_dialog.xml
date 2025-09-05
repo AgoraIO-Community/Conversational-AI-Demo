@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/cov_voiceprint_recognition"
+            android:text="@string/cov_voiceprint_lock"
             android:textColor="@color/ai_icontext1"
             android:textSize="14sp"
             android:textStyle="bold"

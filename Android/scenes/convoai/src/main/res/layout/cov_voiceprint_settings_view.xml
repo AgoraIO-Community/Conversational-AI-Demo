@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:gravity="center_vertical"
-                        android:text="@string/cov_voiceprint_lock"
+                        android:text="@string/cov_voiceprint"
                         android:textColor="@color/ai_brand_white10"
                         android:textSize="11sp" />
 
