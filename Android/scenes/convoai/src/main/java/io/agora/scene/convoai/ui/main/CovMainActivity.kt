@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.agora.scene.common.debugMode.DebugSupportActivity
+import io.agora.scene.common.debugMode.DebugTabDialog
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.databinding.CovActivityMainBinding
 import io.agora.scene.convoai.rtm.CovRtmManager
@@ -154,5 +155,19 @@ class CovMainActivity : DebugSupportActivity<CovActivityMainBinding>() {
         }
 
         fun getFragmentAt(position: Int): Fragment? = fragments[position]
+    }
+
+    // Override debug callback to provide custom behavior for login screen
+    override fun createDefaultDebugCallback(): DebugTabDialog.DebugCallback {
+        return object : DebugTabDialog.DebugCallback {
+            override fun onEnvConfigChange() {
+                handleEnvironmentChange()
+            }
+        }
+    }
+
+    override fun handleEnvironmentChange() {
+        startActivity(Intent(this@CovMainActivity, CovLoginActivity::class.java))
+        finish()
     }
 }

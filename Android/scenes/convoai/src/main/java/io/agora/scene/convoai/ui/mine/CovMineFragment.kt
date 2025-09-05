@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.agora.scene.common.R
+import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.util.toast.ToastUtil
@@ -44,8 +45,8 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
     override fun initView() {
         Log.d("UserViewModel","UserViewModel:$userViewModel $this")
         mBinding?.apply {
-            ivUserAvatar.setOnClickListener {
-                ToastUtil.show("click user avatar")
+            layoutPersona.setOnClickListener {
+                DebugConfigSettings.checkClickDebug()
             }
             tvNickname.setOnClickListener {
                 ToastUtil.show("click nickname")
@@ -79,24 +80,6 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
                 CovProfileSettingsActivity.startActivity(activity)
             }
         }
-    }
-
-    private fun showLogoutConfirmDialog(onLogout: () -> Unit) {
-        val activity = activity ?: return
-        CommonDialog.Builder()
-            .setTitle(getString(R.string.common_logout_confirm_title))
-            .setContent(getString(R.string.common_logout_confirm_text))
-            .setPositiveButton(
-                getString(R.string.common_logout_confirm_known),
-                onClick = {
-                    cleanCookie()
-                    userViewModel.logout()
-                    onLogout.invoke()
-                })
-            .setNegativeButton(getString(R.string.common_logout_confirm_cancel))
-            .hideTopImage()
-            .build()
-            .show(activity.supportFragmentManager, "logout_dialog_tag")
     }
 
     override fun onResume() {
