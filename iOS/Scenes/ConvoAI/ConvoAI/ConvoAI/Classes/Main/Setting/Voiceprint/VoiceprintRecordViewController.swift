@@ -374,10 +374,26 @@ class VoiceprintRecordViewController: UIViewController {
         timeLabel.text = String(format: ResourceManager.L10n.Voiceprint.recordingTime, currentTime)
     }
     
+    private func showMicroPhonePermissionAlert() {
+        let title = ResourceManager.L10n.Error.microphonePermissionTitle
+        let description = ResourceManager.L10n.Error.microphonePermissionDescription
+        let cancel = ResourceManager.L10n.Error.permissionCancel
+        let confirm = ResourceManager.L10n.Error.permissionConfirm
+        AgentAlertView.show(in: view, title: title, content: description, cancelTitle: cancel, confirmTitle: confirm, onConfirm: {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        })
+    }
+    
     @objc private func onRecordingButtonTouchDown() {
-        PermissionManager.checkMicrophonePermission { res in
-            self.updateUIForRecordingState()
-            self.startRecording()
+        PermissionManager.checkMicrophonePermission { [weak self] res in
+            if res {
+                self?.updateUIForRecordingState()
+                self?.startRecording()
+            } else {
+                self?.showMicroPhonePermissionAlert()
+            }
         }
     }
     
