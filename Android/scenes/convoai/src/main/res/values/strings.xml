@@ -156,7 +156,7 @@
     <string name="cov_voiceprint_upload_failed">Upload failed. Please try again.</string>
     <string name="cov_voiceprint_upload_success">Sample text upload success.</string>
     <string name="cov_voiceprint_no_voice">No voiceprint recorded</string>
-    <string name="cov_voiceprint_no_voice_tips">You\'ll need a voiceprint to use Personalized Mode. The app will switch back to previous mode when you exit.</string>
+    <string name="cov_voiceprint_no_voice_tips">You\'ll need a voiceprint to use Personalized Mode. The app will switch back to [Previous Mode] when you exit.</string>
     <string name="cov_voiceprint_exit">Exit</string>
     <string name="cov_voiceprint_title">Please read aloud</string>
     <string name="cov_voiceprint_title1">Recording, please read aloud…</string>
