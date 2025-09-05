@@ -84,7 +84,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ai_dp_large"
+        android:layout_height="@dimen/ai_dp_default"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="20dp"
         android:insetTop="0dp"

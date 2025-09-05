@@ -13,13 +13,13 @@ import io.agora.scene.common.util.dp
 import io.agora.scene.common.util.getStatusBarHeight
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.R
-import io.agora.scene.convoai.databinding.CovProfileSettingsActivityBinding
+import io.agora.scene.convoai.databinding.CovActivityProfileSettingsBinding
 import io.agora.scene.convoai.ui.auth.GlobalUserViewModel
 import io.agora.scene.convoai.ui.auth.UserViewModel
 import kotlin.apply
 import kotlin.jvm.java
 
-class CovProfileSettingsActivity : BaseActivity<CovProfileSettingsActivityBinding>() {
+class CovProfileSettingsActivity : BaseActivity<CovActivityProfileSettingsBinding>() {
 
     companion object Companion {
         fun startActivity(activity: Activity) {
@@ -32,8 +32,8 @@ class CovProfileSettingsActivity : BaseActivity<CovProfileSettingsActivityBindin
         GlobalUserViewModel.getUserViewModel(application)
     }
 
-    override fun getViewBinding(): CovProfileSettingsActivityBinding {
-        return CovProfileSettingsActivityBinding.inflate(layoutInflater)
+    override fun getViewBinding(): CovActivityProfileSettingsBinding {
+        return CovActivityProfileSettingsBinding.inflate(layoutInflater)
     }
 
     override fun initView() {
