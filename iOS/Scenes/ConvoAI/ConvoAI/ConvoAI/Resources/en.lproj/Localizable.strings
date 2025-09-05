@@ -194,8 +194,6 @@
 "channel.aware" = "Aware";
 "channel.effective" = "Active";
 "channel.elegant.interrupt" = "Elegant Interruption";
-"channel.info.effective" = "Effective";
-"channel.info.sensitive" = "Sensitive";
 "channel.insensitive" = "Insensitive";
 "channel.more" = "More...";
 "channel.not.effective" = "Inactive";
@@ -211,7 +209,6 @@
 
 // Mine View Controller
 "mine.user.nickname" = "Nickname";
-"mine.user.email" = "user@example.com";
 "mine.menu.settings" = "Settings";
 "mine.menu.settings.subtitle" = "App settings and preferences";
 "mine.menu.about" = "About";

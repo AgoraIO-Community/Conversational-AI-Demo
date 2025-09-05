@@ -291,7 +291,6 @@ extension ResourceManager {
         
         public enum Mine {
             public static let userNickname = ResourceManager.localizedString("mine.user.nickname")
-            public static let userEmail = ResourceManager.localizedString("mine.user.email")
             public static let menuSettings = ResourceManager.localizedString("mine.menu.settings")
             public static let menuSettingsSubtitle = ResourceManager.localizedString("mine.menu.settings.subtitle")
             public static let menuAbout = ResourceManager.localizedString("mine.menu.about")

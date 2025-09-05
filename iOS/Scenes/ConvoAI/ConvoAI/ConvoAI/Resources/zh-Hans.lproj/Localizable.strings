@@ -220,7 +220,7 @@
 "settings.voiceprint.uploading" = "上传中...";
 "settings.voiceprint.upload.failed" = "上传失败，请重试";
 "settings.voiceprint.upload.success" = "语料上传成功";
-"settings.voiceprint.date.format" = "Voiceprint on %@";
+"settings.voiceprint.date.format" = "创建于 %@";
 "settings.voiceprint.recording.too.short" = "录制时间过短，请至少录制10s语料";
 "settings.voiceprint.tip.text" = "本机有声纹录入";
 "settings.voiceprint.alert.title" = "声纹录入提示";
@@ -234,10 +234,6 @@
 // Voiceprint Recording Text
 "settings.voiceprint.recording.text" = "君不见黄河之水天上来，\n奔流到海不复回。\n\n君不见高堂明镜悲白发，\n朝如青丝暮成雪。\n\n人生得意须尽欢，莫使金樽空对月。\n\n天生我材必有用，千金散尽还复来。";
 
-// 频道信息状态
-"channel.info.sensitive" = "敏感";
-"channel.info.effective" = "有效";
-
 // Main Tab Navigation
 "main.chat" = "对话";
 "main.agents" = "AI助手";
@@ -246,7 +242,6 @@
 
 // Mine View Controller
 "mine.user.nickname" = "用户昵称";
-"mine.user.email" = "user@example.com";
 "mine.menu.settings" = "设置";
 "mine.menu.settings.subtitle" = "应用设置和偏好";
 "mine.menu.about" = "关于";

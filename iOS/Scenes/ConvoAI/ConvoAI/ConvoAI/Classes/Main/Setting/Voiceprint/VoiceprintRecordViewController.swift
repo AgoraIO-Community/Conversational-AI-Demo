@@ -83,6 +83,7 @@ class VoiceprintRecordViewController: UIViewController {
         label.textAlignment = .left
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
+        label.contentMode = .topLeft
         return label
     }()
     
@@ -101,6 +102,7 @@ class VoiceprintRecordViewController: UIViewController {
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor.white.withAlphaComponent(0.75)
         label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
     
@@ -188,7 +190,8 @@ class VoiceprintRecordViewController: UIViewController {
         }
         
         textLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(80)
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.bottom.equalTo(timeLabel.snp.top).offset(-20)
             make.left.right.equalToSuperview().inset(14)
         }
         
@@ -199,7 +202,7 @@ class VoiceprintRecordViewController: UIViewController {
         
         instructionLabel.snp.makeConstraints { make in
             make.bottom.equalTo(recordingButton.snp.top).offset(-12)
-            make.centerX.equalToSuperview()
+            make.left.right.equalTo(recordingButton)
         }
         
         recordingButton.snp.makeConstraints { make in
