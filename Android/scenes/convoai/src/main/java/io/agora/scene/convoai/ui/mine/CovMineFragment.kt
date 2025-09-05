@@ -49,11 +49,13 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
                 DebugConfigSettings.checkClickDebug()
             }
             tvNickname.setOnClickListener {
-                ToastUtil.show("click nickname")
+                val activity = activity ?: return@setOnClickListener
+                CovProfileNicknameActivity.startActivity(activity)
             }
 
             tvSelectAddress.setOnClickListener {
-                ToastUtil.show("click address")
+                val activity = activity ?: return@setOnClickListener
+                CovProfileAddressActivity.startActivity(activity)
             }
 
             tvSelectBirthday.setOnClickListener {
@@ -61,13 +63,13 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
             }
 
             tvIntroduction.setOnClickListener {
-                ToastUtil.show("click introduction")
+                val activity = activity ?: return@setOnClickListener
+                CovProfileAboutMeActivity.startActivity(activity)
             }
 
             flDeviceContent.setOnClickListener {
-                val activity  = activity?:return@setOnClickListener
-                CovIotDeviceListActivity.Companion.startActivity(activity)
-
+                val activity = activity ?: return@setOnClickListener
+                CovIotDeviceListActivity.startActivity(activity)
             }
             updateDeviceCount()
 
