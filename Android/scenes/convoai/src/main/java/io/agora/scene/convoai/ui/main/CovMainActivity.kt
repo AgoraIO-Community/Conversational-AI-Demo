@@ -1,6 +1,7 @@
 package io.agora.scene.convoai.ui.main
 
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
+import io.agora.scene.common.util.TimeUtils
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.databinding.CovActivityMainBinding
 import io.agora.scene.convoai.rtm.CovRtmManager
@@ -38,6 +40,11 @@ class CovMainActivity : DebugSupportActivity<CovActivityMainBinding>() {
     private val listViewModel: CovListViewModel by viewModels()
 
     override fun getViewBinding(): CovActivityMainBinding = CovActivityMainBinding.inflate(layoutInflater)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        TimeUtils.syncTimeAsync()
+    }
 
     override fun initView() {
         Log.d("UserViewModel","UserViewModel:$userViewModel $this")
