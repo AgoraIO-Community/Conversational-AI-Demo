@@ -78,6 +78,8 @@ class AgentSettingsView: UIView {
         // Add avatar image
         if let avatar = AppContext.preferenceManager()?.preference.avatar, let thumbImageUrl = avatar.thumbImageUrl, let url = URL(string: thumbImageUrl) {
             avatarImageView.kf.setImage(with: url)
+        } else {
+            avatarImageView.image = nil
         }
         avatarImageView.contentMode = .scaleAspectFill
         avatarImageView.layer.cornerRadius = 10
