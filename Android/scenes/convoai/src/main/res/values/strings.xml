@@ -192,6 +192,7 @@
     <string name="cov_disagree">Disagree</string>
     <string name="cov_user_agreement_text">《User Agreement》</string>
     <string name="cov_privacy_policy_text">《Privacy Policy》</string>
+    <string name="cov_privacy_policy_text1">privacy policy</string>
     <string name="cov_service_info">Information</string>
     <string name="cov_agent_service_info">Advanced Features</string>
     <string name="cov_agent_not_activated">Off</string>
@@ -199,6 +200,10 @@
     <string name="cov_agent_sensitive">Personalized</string>
     <string name="cov_agent_insensitive">Seamless</string>
     <string name="cov_agent_info_more">More…</string>
+    <string
+        name="cov_voiceprint_recording_tips_content1">Your voice is stored locally by default. Agora’s seamless
+        voiceprint locking feature requires collecting your voice data. The cloud voiceprint will be deleted after each use of this feature. Your voice will absolutely not be used for commercial purposes. For details, please refer to the privacy policy.
+    </string>
 
     <!-- Mine -->
     <string name="cov_mine_delete_account">Delete Account</string>
@@ -216,6 +221,7 @@
     <string name="cov_mine_ms">Ms.</string>
     <string name="cov_mine_your_birthday">Your Birthday</string>
     <string name="cov_mine_about_me">About Me</string>
+    <string name="cov_mine_no_nickname">Not set</string>
     <string name="cov_mine_select">Select</string>
     <string name="cov_mine_about_me_hint">Set up your self-introduction to help the AI agent understand you
         better.</string>
