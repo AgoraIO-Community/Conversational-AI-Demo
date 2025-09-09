@@ -13,6 +13,7 @@ import FirebaseCore
     
     public let globalTermsOfServiceUrl: String = "https://www.agora.io/en/terms-of-service/"
     public let globalPrivacyUrl: String = "https://www.agora.io/en/privacy-policy/"
+    public let personalReportInfoUrl: String = "https://fullapp.oss-cn-beijing.aliyuncs.com/convoai/personal_info/manifest-dev/ConvoAI/index.html"
 
     private var _isOpenSource: Bool = false
     private var _appId: String = ""
