@@ -11,10 +11,11 @@ import FirebaseCore
 @objc public class AppContext: NSObject {
     @objc public static let shared: AppContext = .init()
     
-    public let globalTermsOfServiceUrl: String = "https://www.agora.io/en/terms-of-service/"
-    public let globalPrivacyUrl: String = "https://www.agora.io/en/privacy-policy/"
+    public let termsOfServiceUrl: String = "https://www.agora.io/en/terms-of-service/"
+    public let privacyUrl: String = "https://www.agora.io/en/privacy-policy/"
     public let personalReportInfoUrl: String = "https://fullapp.oss-cn-beijing.aliyuncs.com/convoai/personal_info/manifest-dev/ConvoAI/index.html"
-
+    public let sharedInfoUrl: String = "https://fullapp.oss-cn-beijing.aliyuncs.com/convoai/libraries.html"
+    
     private var _isOpenSource: Bool = false
     private var _appId: String = ""
     private var _certificate: String = ""
