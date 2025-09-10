@@ -47,4 +47,11 @@ interface ApiManagerService {
         @Part("channel_name") channelName: RequestBody,
         @Part file: MultipartBody.Part
     ): BaseResponse<UploadFile>
+
+
+    @POST("v1/convoai/sso/user/update")
+    suspend fun updateUserInfo(
+        @Header("Authorization") token: String,
+        @retrofit2.http.Body request: UpdateUserInfoRequest
+    ): BaseResponse<Unit>
 }

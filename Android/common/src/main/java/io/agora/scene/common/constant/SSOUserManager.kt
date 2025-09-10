@@ -1,6 +1,9 @@
 package io.agora.scene.common.constant
 
 import com.google.gson.JsonIOException
+import io.agora.scene.common.constant.SSOUserManager.CURRENT_SSO_USER
+import io.agora.scene.common.constant.SSOUserManager.TAG
+import io.agora.scene.common.constant.SSOUserManager.mUserInfo
 import io.agora.scene.common.net.SSOUserInfo
 import io.agora.scene.common.util.CommonLogger
 import io.agora.scene.common.util.GsonTools
@@ -30,7 +33,15 @@ object SSOUserManager {
         return mToken
     }
 
-    val accountUid: String get() = mUserInfo?.accountUid ?: ""
+    val accountUid: String get() = userInfo?.accountUid ?: ""
+
+    val userInfo: SSOUserInfo?
+        get() {
+            if (mUserInfo == null) {
+                loadUserFromLocal()
+            }
+            return mUserInfo
+        }
 
     @JvmStatic
     fun logout() {
@@ -49,4 +60,17 @@ object SSOUserManager {
         }
         LocalStorageUtil.putString(CURRENT_SSO_USER, userString)
     }
+
+    private fun loadUserFromLocal() {
+        val userString = LocalStorageUtil.getString(CURRENT_SSO_USER, "")
+        if (userString.isNotEmpty()) {
+            try {
+                mUserInfo = GsonTools.toBean(userString, SSOUserInfo::class.java)
+            } catch (e: Exception) {
+                CommonLogger.e(TAG, "Failed to load user info from local storage: ${e.message}")
+                mUserInfo = null
+            }
+        }
+    }
+
 }

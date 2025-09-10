@@ -221,7 +221,7 @@
     <string name="cov_mine_ms">Ms.</string>
     <string name="cov_mine_your_birthday">Your Birthday</string>
     <string name="cov_mine_about_me">About Me</string>
-    <string name="cov_mine_no_nickname">Not set</string>
+    <string name="cov_mine_not_set">Click to set</string>
     <string name="cov_mine_select">Select</string>
     <string name="cov_mine_about_me_hint">Set up your self-introduction to help the AI agent understand you
         better.</string>
@@ -232,4 +232,8 @@
     <string name="cov_settings_privacy_policy">Privacy Policy</string>
     <string name="cov_settings_third_party_data_sharing">Third-party data sharing</string>
     <string name="cov_settings_personal_data_checklist">Personal data checklist</string>
+    <string name="cov_settings_update_success">Update successful</string>
+    <string name="cov_settings_update_failed">Update failed</string>
+    <string name="cov_mine_nickname_hint">How would you like the AI agent to address you?</string>
+    <string name="cov_mine_nickname_tips">Nickname cannot exceed 15 characters</string>
 </resources>
