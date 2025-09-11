@@ -87,7 +87,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             CovLogger.d(TAG, "State changed: $state")
             when (state) {
                 is CovListViewModel.AgentListState.Loading -> {
-                    // Loading state is handled by SwipeRefreshLayout, no need for additional loading UI
+                    showLoadingState()
                 }
 
                 is CovListViewModel.AgentListState.Success -> {
@@ -111,6 +111,7 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             llError.visibility = View.GONE
             swipeRefreshLayout.isEnabled = true
             swipeRefreshLayout.isRefreshing = false
+            pbLoading.visibility = View.GONE
         }
     }
 
@@ -120,6 +121,17 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
             llError.visibility = View.VISIBLE
             swipeRefreshLayout.isEnabled = false
             swipeRefreshLayout.isRefreshing = false
+            pbLoading.visibility = View.GONE
+        }
+    }
+
+    private fun showLoadingState() {
+        mBinding?.apply {
+            if (listViewModel.officialAgents.value.isNullOrEmpty()) {
+                pbLoading.visibility = View.VISIBLE
+            } else {
+                pbLoading.visibility = View.GONE
+            }
         }
     }
 

@@ -109,8 +109,8 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
                 userInfo.bio.ifEmpty { getString(io.agora.scene.convoai.R.string.cov_mine_about_me_hint) }
 
             // Update gender display
-            when (userInfo.gender.lowercase()){
-                "male" ->{
+            when (userInfo.gender.lowercase()) {
+                "male" -> {
                     ivUserAvatar.setImageResource(R.drawable.common_default_male)
                     ivUserAvatar.setBackgroundResource(R.drawable.app_bg_mine_avatar)
                     tvSelectAddress.text = getString(io.agora.scene.convoai.R.string.cov_mine_mr)
@@ -118,7 +118,8 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
                     viewAvatar.isVisible = true
                     viewAvatar.setBackgroundResource(R.drawable.app_avatar_boy_en)
                 }
-                "female" ->{
+
+                "female" -> {
                     ivUserAvatar.setImageResource(R.drawable.common_default_female)
                     ivUserAvatar.setBackgroundResource(R.drawable.app_bg_mine_avatar)
                     tvSelectAddress.text = getString(io.agora.scene.convoai.R.string.cov_mine_ms)
@@ -156,7 +157,11 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
 
     private fun updateDeviceCount() {
         val count = CovIotDeviceManager.Companion.getInstance(requireContext()).getDeviceCount()
-        mBinding?.tvDeviceCount?.text = getString(io.agora.scene.convoai.R.string.cov_mine_devices, count)
+        if (count > 0) {
+            mBinding?.tvDeviceCount?.text = getString(io.agora.scene.convoai.R.string.cov_mine_devices, count)
+        } else {
+            mBinding?.tvDeviceCount?.text = getString(io.agora.scene.convoai.R.string.cov_mine_no_devices)
+        }
     }
 
     /**

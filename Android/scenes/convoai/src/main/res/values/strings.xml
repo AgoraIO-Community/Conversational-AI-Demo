@@ -229,6 +229,7 @@
         better.</string>
     <string name="cov_mine_iot_devices">My iot Devices</string>
     <string name="cov_mine_devices"> %d devices linked</string>
+    <string name="cov_mine_no_devices">Click to bind</string>
     <string name="cov_settings_version_format">Version: %s</string>
     <string name="cov_settings_agreement">User Agreement</string>
     <string name="cov_settings_privacy_policy">Privacy Policy</string>
