@@ -13,7 +13,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import io.agora.scene.common.ui.BaseFragment
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.databinding.CovFragmentAgentListBinding
-import io.agora.scene.convoai.ui.main.list.CovCustomAgentFragment
 
 class CovAgentListFragment : BaseFragment<CovFragmentAgentListBinding>() {
 

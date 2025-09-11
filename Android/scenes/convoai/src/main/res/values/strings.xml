@@ -52,6 +52,7 @@
     <string name="cov_setting_model">Model</string>
     <string name="cov_setting_language">Language</string>
     <string name="cov_setting_avatar">AI Avatar</string>
+    <string name="cov_setting_avatar_all">All</string>
     <string name="cov_setting_device">DEVICE</string>
     <string name="cov_setting_advanced_settings">Advanced Settings</string>
     <string name="cov_setting_microphone">Microphone</string>
