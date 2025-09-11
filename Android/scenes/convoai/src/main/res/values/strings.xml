@@ -220,6 +220,7 @@
     <string name="cov_mine_mr">Mr.</string>
     <string name="cov_mine_ms">Ms.</string>
     <string name="cov_mine_your_birthday">Your Birthday</string>
+    <string name="cov_mine_select_your_birthday">When is your birthday？</string>
     <string name="cov_mine_about_me">About Me</string>
     <string name="cov_mine_not_set">Click to set</string>
     <string name="cov_mine_select">Select</string>
@@ -234,6 +235,10 @@
     <string name="cov_settings_personal_data_checklist">Personal data checklist</string>
     <string name="cov_settings_update_success">Update successful</string>
     <string name="cov_settings_update_failed">Update failed</string>
-    <string name="cov_mine_nickname_hint">How would you like the AI agent to address you?</string>
-    <string name="cov_mine_nickname_tips">Nickname cannot exceed 15 characters</string>
+    <string name="cov_mine_nickname_input_hint">How would you like the AI agent to address you?</string>
+    <string name="cov_mine_about_me_input_hint">Enter your introduction to help the AI agent understand you better ❤️</string>
+    <string name="cov_mine_about_me_official1">I\'m a homebody who grows succulents and learns to cook—detail-oriented and always helping friends. My mom\'s tomato and egg stir-fry is my ultimate comfort food, and iced lychees in summer are super healing with their refreshing sweetness～</string>
+    <string name="cov_mine_about_me_official2">An internet operations specialist here, constantly wrestling with data and copywriting, skilled at catching trends and creating content. I unwind by coding for stress relief, survive on milk tea, and swear by coconut latte—looking for buddies to discuss operations insights～</string>
+    <string name="cov_mine_about_me_official3">Frontend developer reporting in! Obsessed with styling tweaks and interaction optimization, chasing new tech like following series updates. I fuel up with iced Americano for efficiency, game hard on weekends at home—seeking tech buddies to exchange bug solutions～</string>
+    <string name="cov_mine_about_me_official4">A product manager here, daily prototyping and monitoring iterations, expert at scrutinizing requirement details. Coffee is my constant companion, prefer cold brew, browse industry reports in free time—looking for like-minded pals to chat product strategies～</string>
 </resources>
