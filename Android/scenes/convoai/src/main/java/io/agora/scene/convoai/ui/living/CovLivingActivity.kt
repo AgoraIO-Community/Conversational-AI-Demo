@@ -611,8 +611,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
             val isLight = (vDragBigWindow.isVisible || ivAvatarPreview.isVisible) && !showTranscript
 
             updateLightBackground(isLight)
-
-            tvAvatarHint.isVisible = showAvatar
         }
     }
 

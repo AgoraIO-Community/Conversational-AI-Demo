@@ -29,6 +29,12 @@ object ServerConfig {
         }
 
     @JvmStatic
+    val ssoProfileUrl : String
+        get() {
+            return "https://sso.agora.io/profile"
+        }
+
+    @JvmStatic
     var appVersionName: String = ""
         private set
 
