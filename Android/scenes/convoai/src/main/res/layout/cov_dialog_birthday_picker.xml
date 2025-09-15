@@ -36,6 +36,7 @@
             android:background="@drawable/cov_picker_select_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_percent="0.25"
+            android:layout_marginBottom="5dp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- DateTimePicker -->

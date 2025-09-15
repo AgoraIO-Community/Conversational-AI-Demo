@@ -70,7 +70,7 @@ class CovSeamlessVoiceprintDialog : BaseDialogFragment<CovDialogSeamlessVoicepri
 
     private fun CovDialogSeamlessVoiceprintBinding.setupClickableContent() {
         val content = getString(io.agora.scene.convoai.R.string.cov_voiceprint_recording_tips_content1)
-        val privacyText = getString(io.agora.scene.convoai.R.string.cov_privacy_policy_text1)
+        val privacyText = getString(io.agora.scene.convoai.R.string.cov_privacy_policy_text)
 
         val spannableString = SpannableString(content)
         val startIndex = content.indexOf(privacyText)

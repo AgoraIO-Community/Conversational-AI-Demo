@@ -200,7 +200,7 @@ class CovLoginActivity : DebugSupportActivity<CovActivityLoginBinding>() {
     }
 
     private fun showPrivacyDialog() {
-        CovPrivacyPolicyDialog.Companion.newInstance(
+        CovPrivacyPolicyDialog.newInstance(
             onAgreeCallback = {
                 if (it) {
                     mBinding?.apply {

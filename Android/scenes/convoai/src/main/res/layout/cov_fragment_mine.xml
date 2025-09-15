@@ -174,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/cov_mine_should"
+                android:text="@string/cov_mine_call"
                 android:textColor="@color/ai_icontext3"
                 android:textSize="12sp" />
 
