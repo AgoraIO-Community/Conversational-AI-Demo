@@ -27,17 +27,16 @@ class MineTabListView: UIView {
     // Settings Container View
     private lazy var settingsContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_block2")
-        view.layerCornerRadius = 10
-        view.layer.borderWidth = 1.0
-        view.layer.borderColor = UIColor.themColor(named: "ai_line1").cgColor
+        view.backgroundColor = UIColor.themColor(named: "ai_fill2")
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
         return view
     }()
     
     // Privacy Item
     private lazy var privacyItem: MineSettingItemView = {
         let view = MineSettingItemView(frame: .zero)
-        view.titleLabel.text = "隐私"
+        view.titleLabel.text = ResourceManager.L10n.Mine.privacyTitle
         view.iconImageView.image = UIImage.ag_named("ic_mine_privacy")
         view.button.addTarget(self, action: #selector(onTapPrivacy(_:)), for: .touchUpInside)
         return view
@@ -46,7 +45,7 @@ class MineTabListView: UIView {
     // Settings Item
     private lazy var settingsItem: MineSettingItemView = {
         let view = MineSettingItemView(frame: .zero)
-        view.titleLabel.text = "设置"
+        view.titleLabel.text = ResourceManager.L10n.Mine.settingsTitle
         view.iconImageView.image = UIImage.ag_named("ic_mine_setting")
         view.button.addTarget(self, action: #selector(onTapSettings(_:)), for: .touchUpInside)
         view.bottomLine.isHidden = true
@@ -162,7 +161,7 @@ class MineSettingItemView: UIView {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        backgroundColor = UIColor.themColor(named: "ai_block2")
+        backgroundColor = UIColor.themColor(named: "ai_fill2")
         
         addSubview(iconImageView)
         addSubview(titleLabel)

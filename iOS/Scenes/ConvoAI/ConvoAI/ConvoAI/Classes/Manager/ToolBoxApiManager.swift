@@ -140,4 +140,112 @@ class ToolBoxApiManager: NSObject {
             }
         }, failure: failure)
     }
+    
+    /// Update user information
+    /// - Parameters:
+    ///   - nickname: user nickname
+    ///   - gender: user gender
+    ///   - birthday: user birthday in format "1990/2/14"
+    ///   - bio: user bio/self introduction
+    ///   - success: success callback
+    ///   - failure: failure callback
+    public func updateUserInfo(nickname: String,
+                               gender: String,
+                               birthday: String,
+                               bio: String,
+                               success: NetworkManager.SuccessClosure?,
+                               failure: NetworkManager.FailClosure?) {
+        let url = "\(AppContext.shared.baseServerUrl)/v1/convoai/sso/user/update"
+        
+        let parameters = [
+            "nickname": nickname,
+            "gender": gender,
+            "birthday": birthday,
+            "bio": bio
+        ]
+        
+        NetworkManager.shared.postRequest(urlString: url,
+                                           params: parameters,
+                                           success: success,
+                                           failure: failure)
+    }
+    
+    /// Get user information
+    /// - Parameters:
+    ///   - success: success callback with user data
+    ///   - failure: failure callback
+    public func getUserInfo(success: NetworkManager.SuccessClosure?,
+                            failure: NetworkManager.FailClosure?) {
+        let url = "\(AppContext.shared.baseServerUrl)/v1/convoai/sso/userInfo"
+        
+        NetworkManager.shared.getRequest(urlString: url,
+                                         params: nil,
+                                         success: success,
+                                         failure: failure)
+    }
+}
+
+// MARK: - TimeUtils
+class TimeUtils {
+    private static var hasSync = false
+    private static var timeDiff: TimeInterval = 0
+    private static let syncQueue = DispatchQueue(label: "TimeSyncQueue")
+    
+    static func currentTimeMillis() -> TimeInterval {
+        if !hasSync {
+            syncTimeAsync()
+        }
+        return Date().timeIntervalSince1970 * 1000 + timeDiff
+    }
+    
+    private static func syncTimeAsync() {
+        guard let url = URL(string: AppContext.shared.baseServerUrl) else { return }
+        
+        let session = URLSession(configuration: .default)
+        let request = URLRequest(url: url, timeoutInterval: 5)
+        
+        let startTime = Date().timeIntervalSince1970
+        
+        let task = session.dataTask(with: request) { _, response, error in
+            guard error == nil, let httpResponse = response as? HTTPURLResponse else {
+                print("Time sync failed, using local time")
+                hasSync = true
+                return
+            }
+            
+            if let dateString = httpResponse.allHeaderFields["Date"] as? String,
+               let serverDate = DateFormatter.rfc1123.date(from: dateString) {
+                let endTime = Date().timeIntervalSince1970
+                let networkDelay = (endTime - startTime) / 2
+                let diff = serverDate.timeIntervalSince1970 * 1000 - Date().timeIntervalSince1970 * 1000 + networkDelay * 1000
+                
+                syncQueue.sync {
+                    timeDiff = diff
+                    hasSync = true
+                }
+                
+                print("Time sync successful, serverTime=\(serverDate), diff=\(diff) ms, network delay=\(networkDelay * 1000) ms")
+            }
+        }
+        
+        task.resume()
+    }
+    
+    static func resetSync() {
+        syncQueue.sync {
+            hasSync = false
+            timeDiff = 0
+        }
+    }
+}
+
+// MARK: - DateFormatter Extension
+extension DateFormatter {
+    static let rfc1123: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+        return formatter
+    }()
 }

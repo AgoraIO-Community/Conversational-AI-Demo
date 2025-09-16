@@ -8,8 +8,11 @@
 import UIKit
 import Common
 import SnapKit
+import IoT
+import SVProgressHUD
 
 class MineViewController: UIViewController {
+    
     // MARK: - UI Components
     private lazy var topInfoView: MineTopInfoView = {
         let view = MineTopInfoView()
@@ -29,12 +32,15 @@ class MineViewController: UIViewController {
         return view
     }()
     
+    private lazy var toolBox = ToolBoxApiManager()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
         loadUserInfo()
+        AppContext.loginManager().addDelegate(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,79 +76,108 @@ class MineViewController: UIViewController {
     }
     
     private func loadUserInfo() {
-        // Load user information from UserCenter or other sources
         if let user = UserCenter.user {
             topInfoView.updateUserInfo(
-                nickname: "尹希尔",
-                birthday: "1998/02/02",
-                bio: "sdksdhjksdjssdhsxcsdksdhjksdjssdhsxcx..."
+                nickname: user.nickname,
+                birthday: user.birthday,
+                bio: user.bio,
+                gender: user.gender
             )
         }
+        // Update IoT device count
+        updateIoTDeviceCount()
     }
     
-    // MARK: - Public Methods
-    public func refreshData() {
-        loadUserInfo()
-        tabListView.reloadData()
+    
+    private func updateIoTDeviceCount() {
+        let deviceCount = IoTEntrance.deviceCount()
+        iotView.updateDeviceCount(deviceCount)
+        IoTEntrance.fetchPresetIfNeed { [weak self] error in
+            if let _ = error {
+                return
+            }
+            let deviceCount = IoTEntrance.deviceCount()
+            self?.iotView.updateDeviceCount(deviceCount)
+        }
     }
 }
 
 // MARK: - MineTopInfoViewDelegate
 extension MineViewController: MineTopInfoViewDelegate {
     func mineTopInfoViewDidTapProfile() {
-        // Navigate to profile page
-        print("Profile button tapped")
+        let nicknameVC = NicknameSettingViewController()
+        nicknameVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(nicknameVC, animated: true)
     }
     
     func mineTopInfoViewDidTapAddressing() {
-        // Navigate to addressing settings page
-        print("Addressing button tapped")
+        let genderVC = GenderSettingViewController()
+        genderVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(genderVC, animated: true)
     }
     
     func mineTopInfoViewDidTapBirthday() {
-        // Navigate to birthday settings page
-        print("Birthday button tapped")
+        guard let user = UserCenter.user else { return }
+        let birthday = user.birthday.isEmpty ? "1990/01/01" : user.birthday
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd"
+        let birthdayDate = formatter.date(from: birthday)
+        BirthdaySettingViewController.show(in: self, currentBirthday: birthdayDate ?? Date()) { [weak self] selectedDate in
+            if let date = selectedDate {
+                let birthdayString = formatter.string(from: date)
+                user.birthday = birthdayString
+                self?.toolBox.updateUserInfo(
+                    nickname: user.nickname,
+                    gender: user.gender,
+                    birthday: user.birthday,
+                    bio: user.bio,
+                    success: { response in
+                        AppContext.loginManager().updateUserInfo(userInfo: user)
+                    },
+                    failure: { error in
+                    }
+                )
+            }
+        }
     }
     
     func mineTopInfoViewDidTapBio() {
-        // Navigate to bio settings page
-        print("Bio button tapped")
+        let bioVC = BioSettingViewController()
+        bioVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(bioVC, animated: true)
+    }
+
+    func mineTopInfoViewDidTapCardTitle() {
+        DeveloperConfig.shared.countTouch()
     }
 }
 
 // MARK: - MineIotViewDelegate
 extension MineViewController: MineIotViewDelegate {
     func mineIotViewDidTapAddDevice() {
-        // Navigate to add device page
-        print("Add device button tapped")
+        // Enter IoT scene
+        IoTEntrance.iotScene(viewController: self)
     }
 }
 
 // MARK: - MineTabListViewDelegate
 extension MineViewController: MineTabListViewDelegate {
     func mineTabListViewDidTapPrivacy() {
-        // Navigate to privacy settings page
-        print("Privacy tapped")
+        let privacyVC = PrivacySettingViewController()
+        privacyVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(privacyVC, animated: true)
     }
     
     func mineTabListViewDidTapSettings() {
-        // Navigate to app settings page
-//        let webViewVC = BaseWebViewController()
-//        let token = UserCenter.user?.token ?? ""
-//        let appId = AppContext.shared.appId
-//        let sceneId = ConvoAIEntrance.kSceneName
-//        webViewVC.url = "\(AppContext.shared.personalReportInfoUrl)?token=\(token)&app_id=\(appId)&scene_id=\(sceneId)"
-//        self.navigationController?.pushViewController(webViewVC)
-        print("Settings tapped")
-    }
-    
-    func mineTabListViewDidTapAbout() {
-        // Navigate to about page
-        print("About tapped")
-    }
-    
-    func mineTabListViewDidTapHelp() {
-        // Navigate to help page
-        print("Help tapped")
+        let logoutVC = AccountViewController()
+        logoutVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(logoutVC, animated: true)
     }
 }
+
+extension MineViewController: LoginManagerDelegate {
+    func loginManager(_ manager: LoginManager, userInfoDidChange userInfo: LoginModel) {
+        loadUserInfo()
+    }
+}
+

@@ -15,18 +15,32 @@ protocol MineTopInfoViewDelegate: AnyObject {
     func mineTopInfoViewDidTapAddressing()
     func mineTopInfoViewDidTapBirthday()
     func mineTopInfoViewDidTapBio()
+    func mineTopInfoViewDidTapCardTitle()
 }
 
 class MineTopInfoView: UIView {
     
-    // MARK: - Properties
     weak var delegate: MineTopInfoViewDelegate?
-    
-    // MARK: - UI Components
-    
-    private lazy var backgroundImageView: UIImageView = {
+        
+    private lazy var imageView1: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage.ag_named("ic_mine_background")
+        imageView.image = UIImage.ag_named("img_mine_top_bg")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    private lazy var imageView2: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("img_mine_gender_holder")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
+    private lazy var titleCycleImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("ic_mine_title_cycle")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -37,19 +51,33 @@ class MineTopInfoView: UIView {
         imageView.image = UIImage.ag_named("ic_default_avatar_icon")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 20
-        imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 2
-        imageView.layer.borderColor = UIColor.themColor(named: "ai_brand_main6").cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
     
     // Profile Info Button (combines name and arrow)
     private lazy var profileInfoButton: MineInfoButton = {
         let button = MineInfoButton()
-        button.configure(title: "尹希尔") {
-            self.delegate?.mineTopInfoViewDidTapProfile()
-        }
+        button.configure(title: ResourceManager.L10n.Mine.personaTitle)
+        button.tapButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
         return button
+    }()
+
+    private lazy var backBoardImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("img_mine_back_board")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
+    private lazy var bigAvatarImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 30
+        imageView.layer.masksToBounds = true
+        return imageView
     }()
     
     // Conversation Persona Card
@@ -69,25 +97,26 @@ class MineTopInfoView: UIView {
         return imageView
     }()
     
-    private lazy var cardTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "我的对话人设"
-        label.textColor = UIColor.themColor(named: "ai_brand_white10")
-        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        return label
+    private lazy var cardTitleButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle(ResourceManager.L10n.Mine.personaTitle, for: .normal)
+        button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.contentHorizontalAlignment = .left
+        button.addTarget(self, action: #selector(cardTitleButtonTapped), for: .touchUpInside)
+        return button
     }()
     
     private lazy var addressingButton: MineInfoButton = {
         let button = MineInfoButton()
-        button.configure(title: "先生") {
-            self.delegate?.mineTopInfoViewDidTapAddressing()
-        }
+        button.configure(title: ResourceManager.L10n.Mine.addressingTitle)
+        button.tapButton.addTarget(self, action: #selector(addressingButtonTapped), for: .touchUpInside)
         return button
     }()
     
     private lazy var addressingLabel: UILabel = {
         let label = UILabel()
-        label.text = "称呼您为"
+        label.text = ResourceManager.L10n.Mine.addressingTitle
         label.textColor = UIColor.themColor(named: "ai_icontext3")
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         return label
@@ -95,7 +124,7 @@ class MineTopInfoView: UIView {
     
     private lazy var birthdayLabel: UILabel = {
         let label = UILabel()
-        label.text = "您的生日"
+        label.text = ResourceManager.L10n.Mine.birthdayTitle
         label.textColor = UIColor.themColor(named: "ai_icontext3")
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         return label
@@ -103,17 +132,13 @@ class MineTopInfoView: UIView {
     
     private lazy var birthdayValueButton: MineInfoButton = {
         let button = MineInfoButton()
-        button.configure(title: "1998/02/02") {
-            self.delegate?.mineTopInfoViewDidTapBirthday()
-        }
+        button.tapButton.addTarget(self, action: #selector(birthdayButtonTapped), for: .touchUpInside)
         return button
     }()
     
-
-    
     private lazy var bioLabel: UILabel = {
         let label = UILabel()
-        label.text = "自我介绍"
+        label.text = ResourceManager.L10n.Mine.bioTitle
         label.textColor = UIColor.themColor(named: "ai_icontext3")
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         return label
@@ -121,9 +146,7 @@ class MineTopInfoView: UIView {
     
     private lazy var bioValueButton: MineInfoButton = {
         let button = MineInfoButton()
-        button.configure(title: "sdksdhjksdjssdhsxcsdksdhjksdjssdhsxcx...") {
-            self.delegate?.mineTopInfoViewDidTapBio()
-        }
+        button.tapButton.addTarget(self, action: #selector(bioButtonTapped), for: .touchUpInside)
         return button
     }()
 
@@ -151,14 +174,18 @@ class MineTopInfoView: UIView {
         backgroundColor = .clear
         clipsToBounds = true
         
-        addSubview(backgroundImageView)
+        addSubview(imageView1)
+        addSubview(backBoardImageView)
+        addSubview(bigAvatarImageView)
+        addSubview(imageView2)
         addSubview(avatarImageView)
         addSubview(profileInfoButton)
         
         // Persona Card
         addSubview(personaCardView)
         personaCardView.addSubview(personaCardBGView)
-        personaCardView.addSubview(cardTitleLabel)
+        personaCardView.addSubview(cardTitleButton)
+        personaCardView.addSubview(titleCycleImageView)
         personaCardView.addSubview(addressingButton)
         personaCardView.addSubview(addressingLabel)
         personaCardView.addSubview(birthdayLabel)
@@ -171,11 +198,23 @@ class MineTopInfoView: UIView {
     
     private func setupConstraints() {
         // Header constraints
-        
-        backgroundImageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        imageView1.snp.makeConstraints { make in
+            make.top.right.equalToSuperview()
         }
         
+        backBoardImageView.snp.makeConstraints { make in
+            make.top.equalTo(personaCardView).offset(-6)
+            make.right.equalTo(personaCardView).offset(16)
+        }
+        
+        bigAvatarImageView.snp.makeConstraints { make in
+            make.top.equalTo(personaCardView).offset(-76)
+            make.right.equalToSuperview()
+        }
+        imageView2.snp.makeConstraints { make in
+            make.top.equalTo(personaCardView).offset(-5)
+            make.right.equalTo(personaCardView)
+        }
         avatarImageView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(40)
             make.top.equalToSuperview().offset(40)
@@ -199,13 +238,18 @@ class MineTopInfoView: UIView {
             make.edges.equalToSuperview()
         }
         
-        cardTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(12)
+        cardTitleButton.snp.makeConstraints { make in
+            make.top.equalTo(5)
             make.left.equalTo(17)
         }
         
+        titleCycleImageView.snp.makeConstraints { make in
+            make.bottom.equalTo(cardTitleButton).offset(-4)
+            make.right.equalTo(cardTitleButton).offset(3)
+        }
+        
         addressingLabel.snp.makeConstraints { make in
-            make.top.equalTo(cardTitleLabel.snp.bottom).offset(25)
+            make.top.equalTo(cardTitleButton.snp.bottom).offset(20)
             make.left.equalToSuperview().offset(20)
         }
         
@@ -234,7 +278,7 @@ class MineTopInfoView: UIView {
         bioValueButton.snp.makeConstraints { make in
             make.top.equalTo(bioLabel.snp.bottom).offset(8)
             make.left.equalTo(bioLabel)
-            make.right.equalToSuperview().offset(-20)
+            make.right.lessThanOrEqualToSuperview().offset(-20)
             make.height.equalTo(20)
         }
 
@@ -245,30 +289,57 @@ class MineTopInfoView: UIView {
     }
     
     // MARK: - Public Methods
-    func updateUserInfo(nickname: String?, birthday: String?, bio: String?) {
-        if let nickname = nickname {
-            profileInfoButton.configure(title: nickname) {
-                self.delegate?.mineTopInfoViewDidTapProfile()
-            }
-        }
-        
-        if let birthday = birthday {
-            birthdayValueButton.configure(title: birthday) {
-                self.delegate?.mineTopInfoViewDidTapBirthday()
-            }
-        }
-        
-        if let bio = bio {
-            bioValueButton.configure(title: bio) {
-                self.delegate?.mineTopInfoViewDidTapBio()
-            }
+    func updateUserInfo(nickname: String, birthday: String, bio: String, gender: String) {
+        profileInfoButton.configure(title: nickname)
+        birthdayValueButton.configure(title: birthday.isEmpty ? ResourceManager.L10n.Mine.placeholderSelect : birthday)
+        bioValueButton.configure(title: bio.isEmpty ? ResourceManager.L10n.Mine.bioPlaceholderDisplay : bio)
+        updateAddressingAndAvatarsBasedOnGender(gender)
+    }
+    
+    private func updateAddressingAndAvatarsBasedOnGender(_ gender: String) {
+        if gender == "female" {
+            addressingButton.configure(title: ResourceManager.L10n.Mine.genderFemale)
+            avatarImageView.image = UIImage.ag_named("img_mine_avatar_female")
+            avatarImageView.layer.borderColor = UIColor.themColor(named: "ai_brand_main6").cgColor
+            imageView2.isHidden = true
+            bigAvatarImageView.isHidden = false
+            bigAvatarImageView.image = UIImage.ag_named("img_mine_gender_female_big")
+        } else if gender == "male" {
+            addressingButton.configure(title: ResourceManager.L10n.Mine.genderMale)
+            avatarImageView.image = UIImage.ag_named("img_mine_avatar_male")
+            avatarImageView.layer.borderColor = UIColor.themColor(named: "ai_brand_main6").cgColor
+            imageView2.isHidden = true
+            bigAvatarImageView.isHidden = false
+            bigAvatarImageView.image = UIImage.ag_named("img_mine_gender_male_big")
+        } else {
+            addressingButton.configure(title: ResourceManager.L10n.Mine.placeholderSelect)
+            avatarImageView.image = UIImage.ag_named("img_mine_avatar_holder")
+            avatarImageView.layer.borderColor = UIColor.clear.cgColor
+            imageView2.isHidden = false
+            bigAvatarImageView.isHidden = true
+            bigAvatarImageView.image = UIImage.ag_named("img_mine_gender_female_big")
         }
     }
     
-    func updateAddressing(_ addressing: String) {
-        addressingButton.configure(title: addressing) {
-            self.delegate?.mineTopInfoViewDidTapAddressing()
-        }
+    // MARK: - Actions
+    @objc private func profileButtonTapped() {
+        delegate?.mineTopInfoViewDidTapProfile()
+    }
+    
+    @objc private func addressingButtonTapped() {
+        delegate?.mineTopInfoViewDidTapAddressing()
+    }
+    
+    @objc private func birthdayButtonTapped() {
+        delegate?.mineTopInfoViewDidTapBirthday()
+    }
+    
+    @objc private func bioButtonTapped() {
+        delegate?.mineTopInfoViewDidTapBio()
+    }
+    
+    @objc private func cardTitleButtonTapped() {
+        delegate?.mineTopInfoViewDidTapCardTitle()
     }
 }
 
@@ -276,7 +347,7 @@ class MineTopInfoView: UIView {
 class MineInfoButton: UIView {
     
     // MARK: - UI Components
-    private lazy var titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -290,15 +361,11 @@ class MineInfoButton: UIView {
         return imageView
     }()
     
-    private lazy var tapButton: UIButton = {
+    let tapButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         return button
     }()
-    
-    // MARK: - Properties
-    var onTap: (() -> Void)?
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -339,15 +406,9 @@ class MineInfoButton: UIView {
         }
     }
     
-    // MARK: - Actions
-    @objc private func buttonTapped() {
-        onTap?()
-    }
-    
     // MARK: - Configuration
-    func configure(title: String, onTap: @escaping () -> Void) {
+    func configure(title: String) {
         titleLabel.text = title
-        self.onTap = onTap
     }
     
     func setTitleColor(_ color: UIColor) {

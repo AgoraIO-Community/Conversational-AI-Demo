@@ -39,7 +39,7 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
     
     private var isVoiceprintTabVisible = false
     private var voiceprintInfo: VoiceprintInfo? = nil
-    private var currentMode = AppContext.preferenceManager()?.preference.voiceprintMode ?? .off
+    private var currentMode = AppContext.settingManager().voiceprintMode
     private var audioPlayer: AVAudioPlayer?
     private var toolBox = ToolBoxApiManager()
     
@@ -90,7 +90,7 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
         label.textColor = UIColor.themColor(named: "ai_icontext1")
         return label
     }()
-        
+    
     private lazy var voiceprintInfoTab: VoiceprintInfoTabView = {
         let view = VoiceprintInfoTabView()
         view.retryButton.addTarget(self, action: #selector(onRetryButtonTapped), for: .touchUpInside)
@@ -122,7 +122,7 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
     
     override func navigationBackButtonTapped() {
         if readyPop() {
-            AppContext.preferenceManager()?.updateVoiceprintMode(currentMode)
+            AppContext.settingManager().updateVoiceprintMode(currentMode)
             self.navigationController?.popViewController(animated: true)
         } else {
             VoiceprintAlertView.show(
@@ -278,8 +278,8 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
     
     private func checkNeedUpdateRemote() {
         guard
-            let userId = UserCenter.user?.uid,
-            let info = voiceprintInfo, let ts = info.timestamp
+            let info = voiceprintInfo,
+            let _ = info.timestamp
         else {
             // no local file
             return
@@ -304,9 +304,8 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
         toolBox.uploadFile(filePath: audioFileURL.path) { [weak self] remoteUrl in
             guard let self = self else { return }
             if let remoteUrl = remoteUrl, !remoteUrl.isEmpty {
-                // Update local info with remote URL
                 self.voiceprintInfo?.remoteUrl = remoteUrl
-                self.voiceprintInfo?.timestamp = Date().timeIntervalSince1970
+                self.voiceprintInfo?.timestamp = TimeUtils.currentTimeMillis() / 1000
                 if let p = self.voiceprintInfo {
                     VoiceprintManager.shared.saveVoiceprint(p, forUserId: userId)
                 }
@@ -321,11 +320,11 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
             AgentToast.showWarn(info)
         }
     }
-
+    
     @objc private func onRetryButtonTapped() {
         uploadVoiceprint()
     }
-
+    
     @objc private func onPlayButtonTapped() {
         if voiceprintInfoTab.getCurrentStatus() == .playing {
             // Stop playing
@@ -335,7 +334,7 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
             startVoiceprintPlayback()
         }
     }
-
+    
     @objc private func onGotoButtonTapped() {
         CommonAlertView.show(
             in: view,
@@ -361,6 +360,27 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
         let selectedIndex = sender.tag
         guard selectedIndex < VoiceprintMode.allCases.count else { return }
         let newMode = VoiceprintMode.allCases[selectedIndex]
+        if newMode == currentMode {
+            return
+        }
+        let previousMode = currentMode
+        updateMode(newMode)
+        if newMode == .seamless {
+            CommonAlertView.show(
+                in: view,
+                title: ResourceManager.L10n.Voiceprint.alertTitle,
+                content: ResourceManager.L10n.Voiceprint.alertSeamlessContent,
+                cancelTitle: ResourceManager.L10n.Voiceprint.alertCancel,
+                confirmTitle: ResourceManager.L10n.Voiceprint.alertConfirm,
+                onConfirm: { _ in },
+                onCancel: { [weak self] in
+                    self?.updateMode(previousMode)
+                }
+            )
+        }
+    }
+    
+    private func updateMode(_ newMode: VoiceprintMode) {
         currentMode = newMode
         updateSelectedMode()
         
@@ -373,8 +393,8 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
             stopVoiceprintPlayback()
         }
         
-        // Update preference manager
-        AppContext.preferenceManager()?.updateVoiceprintMode(newMode)
+        // Update setting manager
+        AppContext.settingManager().updateVoiceprintMode(newMode)
     }
     
     private func showvoiceprintInfoTab(animated: Bool = true) {

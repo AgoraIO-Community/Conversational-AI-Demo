@@ -79,6 +79,7 @@
 "settings.noise.bhvs" = "Background Human Voice Suppression";
 "settings.digital.human" = "AI Avatar";
 "settings.digital.human.closed" = "Closed";
+"settings.digital.human.all" = "All";
 "settings.digital.human.preset.alert.title" = "AI Avatar Will Be Reset";
 "settings.digital.human.preset.alert.description" = "Reconfigure AI avatar after changing preset.";
 "settings.digital.human.language.alert.title" = "AI Avatar Will Be Reset";
@@ -207,59 +208,15 @@
 "main.digitalHuman" = "Digital Human";
 "main.mine" = "Mine";
 
-// Mine View Controller
-"mine.user.nickname" = "Nickname";
-"mine.menu.settings" = "Settings";
-"mine.menu.settings.subtitle" = "App settings and preferences";
-"mine.menu.about" = "About";
-"mine.menu.about.subtitle" = "App information and version";
-"mine.menu.help" = "Help";
-"mine.menu.help.subtitle" = "Usage help and feedback";
-"mine.menu.privacy" = "Privacy";
-"mine.menu.privacy.subtitle" = "Privacy protection information";
-"mine.logout.button" = "Log Out";
-"mine.logout.alert.title" = "Log Out";
-"mine.logout.alert.message" = "Are you sure you want to log out of your current account?";
-"mine.logout.alert.cancel" = "Cancel";
-"mine.logout.alert.confirm" = "Log Out";
-
-// Gender Setting
-"mine.gender.setting.title" = "How should we address you?";
-"mine.gender.female" = "Ms.";
-"mine.gender.male" = "Mr.";
-"mine.gender.setting.saved" = "Gender setting saved";
-
-// User Logout
-"mine.deactivate.account" = "Delete Account";
-"mine.deactivate.account.alert.title" = "Important Notice";
-"mine.deactivate.account.alert.message" = "Once deleted, your account and all its data will be permanently erased and cannot be recovered. Please proceed with caution.";
-"mine.cancel" = "Cancel";
-"mine.deactivate" = "Confirm Deletion";
-"mine.deactivating.account" = "I understand the risks of deleting my account";
-"mine.account.deactivated" = "To continue, you must check the box to confirm you understand the risks.";
-"mine.logging.out" = "Logging out...";
-"mine.logout.success" = "Logged out successfully";
-
-// Nickname Setting
-"mine.nickname.setting.title" = "Nickname Settings";
-"mine.nickname.placeholder" = "Please enter your nickname";
-"mine.nickname.tips" = "Your nickname will be displayed in your profile and visible to other users.";
-"mine.save" = "Save";
-"mine.nickname.empty" = "Nickname cannot be empty";
-"mine.nickname.too.long" = "Nickname is too long";
-"mine.saving" = "Saving...";
-"mine.nickname.saved" = "Nickname saved successfully";
-"mine.unsaved.changes.title" = "Unsaved Changes";
-"mine.unsaved.changes.message" = "You have unsaved changes. Are you sure you want to leave?";
-"mine.discard" = "Discard";
-"mine.keep.editing" = "Keep Editing";
-
 // Bio Setting
 "mine.bio.setting.title" = "About Me";
-"mine.bio.placeholder" = "Please briefly introduce yourself...";
-"mine.bio.tips" = "Your bio will be displayed in your profile to help other users get to know you better.";
-"mine.bio.too.long" = "Bio is too long";
-"mine.bio.saved" = "Bio saved successfully";
+"mine.bio.placeholder.display" = "Set your bio to help AI agent understand you better";
+"mine.bio.example.1" = "I love staying home, growing succulents and learning to cook. I'm caring and love helping friends. Mom's tomato scrambled eggs are my favorite, and chilled lychees in summer are super refreshing~";
+"mine.bio.example.2" = "Internet operations specialist here, daily wrestling with data and copywriting, good at catching trends and creating content. Love coding for stress relief, milk tea addict, coconut latte is my go-to, looking for buddies to chat about operations~";
+"mine.bio.example.3" = "Frontend developer reporting in, obsessed with styling and optimizing interactions, chasing new tech like following updates. Love iced Americano for efficiency, weekend gamer, looking for tech buddies to discuss bug solutions~";
+"mine.bio.example.4" = "Product manager here, daily drawing prototypes and monitoring iterations, good at digging into requirement details. Coffee never leaves my hand, prefer cold brew, love reading industry reports, looking for like-minded friends to discuss product ideas~";
+"mine.bio.input.placeholder" = "Tell us about yourself to help AI agent understand you better ❤";
+"mine.placeholder.select" = "Please select";
 
 // Settings
 "settings.not.effective" = "Not Effective";
@@ -294,6 +251,7 @@
 "settings.voiceprint.tip.text" = "Voiceprint available";
 "settings.voiceprint.alert.title" = "Voiceprint Recording Notice";
 "settings.voiceprint.alert.content" = "Your voice is stored locally by default. Agora's voiceprint lock feature needs to collect your voice, and the cloud voiceprint will be deleted after the single experience is complete. Your voice will never be used for commercial purposes.";
+"settings.voiceprint.alert.seamless.content" = "Your voice is stored locally by default. Agora's seamless voiceprint lock feature needs to collect your voice, and the cloud voiceprint will be deleted after the single experience is complete. Your voice will never be used for commercial purposes.";
 "settings.voiceprint.alert.cancel" = "Cancel";
 "settings.voiceprint.alert.confirm" = "Confirm";
 "settings.voiceprint.alert.no.voiceprint.title" = "No voiceprint recorded";
@@ -302,3 +260,54 @@
 
 // Voiceprint Recording Text
 "settings.voiceprint.recording.text" = "It was the best of times, it was the worst of times,\nit was the age of wisdom, it was the age of foolishness,\nit was the epoch of belief, it was the epoch of incredulity,\nit was the season of Light, it was the season of Darkness,\nit was the spring of hope, it was the winter of despair,\nwe had everything before us, we had nothing before us,\nwe were all going direct to Heaven, we were all going direct the other way.";
+
+// Mine Module
+"mine.persona.title" = "My Conversation Persona";
+"mine.addressing.title" = "Address You As";
+"mine.birthday.title" = "Your Birthday";
+"mine.bio.title" = "Self Introduction";
+"mine.iot.devices.title" = "My Conversational AI Devices";
+"mine.iot.devices.count" = "%d devices connected";
+"mine.settings.title" = "Settings";
+
+// Nickname Setting
+"mine.nickname.title" = "Nickname";
+"mine.nickname.placeholder" = "How would you like the AI agent to address you?";
+"mine.nickname.update.success" = "Nickname updated successfully";
+"mine.nickname.update.failed" = "Failed to update nickname";
+"mine.nickname.too.long" = "Nickname cannot exceed %d characters";
+"mine.nickname.invalid.characters" = "Nickname can only contain Chinese characters, English letters, and numbers";
+
+// Gender Setting
+"mine.gender.title" = "Address You As";
+"mine.gender.female" = "Female";
+"mine.gender.male" = "Male";
+"mine.gender.confirm" = "Confirm";
+
+// Birthday Setting
+"mine.birthday.select.title" = "Select Your Birthday";
+"mine.birthday.cancel" = "Cancel";
+"mine.birthday.confirm" = "Confirm";
+
+// Privacy Settings
+"mine.privacy.title" = "Privacy";
+"mine.privacy.userAgreement" = "User Agreement";
+"mine.privacy.privacyPolicy" = "Privacy Policy";
+"mine.privacy.dataSharing" = "Third-party Data Sharing";
+"mine.privacy.personalInfo" = "Personal Information Collection List";
+"mine.privacy.recordNumber" = "Record Number";
+
+// Account Settings
+"mine.account.deactivateWarning.message" = "You must check and agree to the risks of account deactivation before proceeding";
+"mine.account.deactivateAccount" = "Deactivate Account";
+"mine.account.logout" = "Logout";
+"mine.account.importantNotice" = "Important Notice";
+"mine.account.deactivateMessage" = "After successful account deactivation, the account and all associated data will be permanently deleted and cannot be recovered. Please choose carefully and operate with caution.";
+"mine.account.understandRisks" = "I understand the risks of account deactivation";
+"mine.account.cancel" = "Cancel";
+"mine.account.confirmDeactivate" = "Confirm Deactivation";
+
+// Nickname Generation
+"mine.nickname.adjectives" = "Warm,Soft,Light,Gentle,Tiny,Pale,Soft,Fluffy,Pure,Clean,Empty,Quiet,Silent,Mystic,Mystery,Rhythm,Mood,Memory,Thought,Recall,Spring,Summer,Autumn,Winter,Day,Night,Dawn,Dusk,Year,Month";
+"mine.nickname.nouns" = "Cloud,Star,Moon,Sun,Rainbow,Wind,Rain,Snow,Fog,Dragon,Phoenix,Crane,Deer,Butterfly,Cicada,Firefly,Goose,Seagull,Heron,Light,Shadow,Dawn,Dusk,Day,Night,Second,Minute,Hour,Season";
+

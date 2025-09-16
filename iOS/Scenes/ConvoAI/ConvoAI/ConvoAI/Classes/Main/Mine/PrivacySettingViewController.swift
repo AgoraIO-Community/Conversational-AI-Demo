@@ -36,7 +36,7 @@ class PrivacySettingViewController: BaseViewController {
         let item = PrivacyListItemView()
         item.configure(
             icon: "ic_privacy_setting_useragreement",
-            title: "User Agreement",
+            title: ResourceManager.L10n.Mine.privacyUserAgreement,
             hasArrow: true
         )
         item.addTarget(self, action: #selector(userAgreementTapped), for: .touchUpInside)
@@ -47,7 +47,7 @@ class PrivacySettingViewController: BaseViewController {
         let item = PrivacyListItemView()
         item.configure(
             icon: "ic_privacy_setting_privacypolicy",
-            title: "Privacy Policy",
+            title: ResourceManager.L10n.Mine.privacyPrivacyPolicy,
             hasArrow: true
         )
         item.addTarget(self, action: #selector(privacyPolicyTapped), for: .touchUpInside)
@@ -58,7 +58,7 @@ class PrivacySettingViewController: BaseViewController {
         let item = PrivacyListItemView()
         item.configure(
             icon: "ic_privacy_setting_disclaimer",
-            title: "Third-party information data sharing",
+            title: ResourceManager.L10n.Mine.privacyDataSharing,
             hasArrow: true
         )
         item.addTarget(self, action: #selector(dataSharingTapped), for: .touchUpInside)
@@ -69,7 +69,7 @@ class PrivacySettingViewController: BaseViewController {
         let item = PrivacyListItemView()
         item.configure(
             icon: "ic_privacy_setting_personal",
-            title: "Personal Information Collection List",
+            title: ResourceManager.L10n.Mine.privacyPersonalInfo,
             hasArrow: true
         )
         item.addTarget(self, action: #selector(personalInfoTapped), for: .touchUpInside)
@@ -80,8 +80,8 @@ class PrivacySettingViewController: BaseViewController {
         let item = PrivacyListItemView()
         item.configure(
             icon: "ic_privacy_setting_global",
-            title: "Filing number",
-            subtitle: "xxxxxxprd",
+            title: ResourceManager.L10n.Mine.privacyRecordNumber,
+            subtitle: "",
             hasArrow: true
         )
         item.addTarget(self, action: #selector(recordNumberTapped), for: .touchUpInside)
@@ -105,18 +105,18 @@ class PrivacySettingViewController: BaseViewController {
         view.backgroundColor = UIColor.themColor(named: "ai_fill2")
         
         // Configure navigation bar
-        naviBar.title = "Privacy"
+        naviBar.title = ResourceManager.L10n.Mine.privacyTitle
         
-        view.addSubview(scrollView) 
+        view.addSubview(scrollView)
         scrollView.addSubview(settingsListContainer)
         settingsListContainer.addSubview(settingsStackView)
         
         // Add items to stack view
         settingsStackView.addArrangedSubview(userAgreementItem)
         settingsStackView.addArrangedSubview(privacyPolicyItem)
-        settingsStackView.addArrangedSubview(dataSharingItem)
-        settingsStackView.addArrangedSubview(personalInfoItem)
-        settingsStackView.addArrangedSubview(recordNumberItem)
+//        settingsStackView.addArrangedSubview(dataSharingItem)
+//        settingsStackView.addArrangedSubview(personalInfoItem)
+//        settingsStackView.addArrangedSubview(recordNumberItem)
     }
     
     private func setupConstraints() {
@@ -171,10 +171,8 @@ class PrivacySettingViewController: BaseViewController {
     }
     
     @objc private func recordNumberTapped() {
-        // Show record number info
-        SVProgressHUD.showInfo(withStatus: "Filing number：xxxxxxprd")
+        
     }
-    
 }
 
 // MARK: - PrivacyListItemView
