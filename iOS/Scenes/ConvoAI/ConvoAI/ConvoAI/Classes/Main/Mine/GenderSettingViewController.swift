@@ -2,7 +2,7 @@
 //  GenderSettingViewController.swift
 //  ConvoAI
 //
-//  Created by HeZhengQing on 2025/9/1.
+//  Created by HeZhengQing on 2025/9/3.
 //
 
 import UIKit
@@ -10,74 +10,87 @@ import Common
 import SnapKit
 import SVProgressHUD
 
-class GenderSettingViewController: UIViewController {
+// MARK: - Gender Enum
+enum Gender: String, CaseIterable {
+    case female = "female"
+    case male = "male"
+    
+    var localizedTitle: String {
+        switch self {
+        case .female:
+            return ResourceManager.L10n.Mine.genderFemale
+        case .male:
+            return ResourceManager.L10n.Mine.genderMale
+        }
+    }
+    
+    var avatarImage: UIImage? {
+        switch self {
+        case .female:
+            return UIImage.ag_named("img_mine_avatar_female")
+        case .male:
+            return UIImage.ag_named("img_mine_avatar_male")
+        }
+    }
+    
+    // Remove default value - user must make a selection
+}
+
+// MARK: - Gender Colors
+struct GenderColors {
+    // Common colors
+    static let selectionBorder = UIColor(red: 0.27, green: 0.42, blue: 1.0, alpha: 1.0)
+    static let confirmButton = UIColor(red: 0.27, green: 0.42, blue: 1.0, alpha: 1.0)
+}
+
+class GenderSettingViewController: BaseViewController {
     
     // MARK: - UI Components
-    private lazy var headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        return view
+    
+    private lazy var genderOptionViews: [Gender: GenderOptionView] = {
+        var views: [Gender: GenderOptionView] = [:]
+        
+        for gender in Gender.allCases {
+            let view = GenderOptionView()
+            view.configure(
+                title: gender.localizedTitle,
+                isSelected: false, // No default selection
+                avatarImage: gender.avatarImage
+            )
+            // Use individual methods for now
+            if gender == .female {
+                view.addTarget(self, action: #selector(femaleOptionSelected), for: .touchUpInside)
+            } else {
+                view.addTarget(self, action: #selector(maleOptionSelected), for: .touchUpInside)
+            }
+            views[gender] = view
+        }
+        
+        return views
     }()
     
-    private lazy var backButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .white
-        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    private var femaleOptionView: GenderOptionView {
+        return genderOptionViews[.female]!
+    }
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Mine.genderSettingTitle
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private lazy var femaleOptionView: GenderOptionView = {
-        let view = GenderOptionView()
-        view.configure(
-            icon: "ic_female_avatar_icon",
-            title: ResourceManager.L10n.Mine.genderFemale,
-            isSelected: true,
-            gradientColors: [UIColor.themColor(named: "ai_gradient_green"), UIColor.themColor(named: "ai_gradient_yellow")]
-        )
-        view.addTarget(self, action: #selector(femaleOptionSelected), for: .touchUpInside)
-        return view
-    }()
-    
-    private lazy var maleOptionView: GenderOptionView = {
-        let view = GenderOptionView()
-        view.configure(
-            icon: "ic_male_avatar_icon",
-            title: ResourceManager.L10n.Mine.genderMale,
-            isSelected: false,
-            gradientColors: [UIColor.themColor(named: "ai_gradient_blue"), UIColor.themColor(named: "ai_gradient_purple")]
-        )
-        view.addTarget(self, action: #selector(maleOptionSelected), for: .touchUpInside)
-        return view
-    }()
+    private var maleOptionView: GenderOptionView {
+        return genderOptionViews[.male]!
+    }
     
     private lazy var confirmButton: UIButton = {
         let button = UIButton(type: .system)
-//        button.setTitle(ResourceManager.L10n.Mine.confirm, for: .normal)
+        button.setTitle(ResourceManager.L10n.Mine.genderConfirm, for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.layer.cornerRadius = 8
+        button.backgroundColor = GenderColors.confirmButton
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.layer.cornerRadius = 12
         button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
         return button
     }()
     
     // MARK: - Properties
-    private var selectedGender: Gender = .female
-    
-    enum Gender {
-        case female
-        case male
-    }
+    private var selectedGender: Gender? = nil
+    private let toolBox = ToolBoxApiManager()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -89,62 +102,48 @@ class GenderSettingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     // MARK: - Setup Methods
     private func setupUI() {
-        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill2")
+        naviBar.title = ResourceManager.L10n.Mine.genderTitle
         
-        view.addSubview(headerView)
-        headerView.addSubview(backButton)
-        headerView.addSubview(titleLabel)
         view.addSubview(femaleOptionView)
         view.addSubview(maleOptionView)
         view.addSubview(confirmButton)
     }
     
     private func setupConstraints() {
-        headerView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(60)
-        }
-        
-        backButton.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(16)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(44)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
         femaleOptionView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom).offset(40)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(200)
+            make.top.equalTo(naviBar.snp.bottom).offset(8)
+            make.width.height.equalTo(185)
         }
         
         maleOptionView.snp.makeConstraints { make in
-            make.top.equalTo(femaleOptionView.snp.bottom).offset(30)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(200)
+            make.top.equalTo(femaleOptionView.snp.bottom).offset(67)
+            make.width.height.equalTo(185)
         }
         
         confirmButton.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+            make.left.equalToSuperview().offset(16)
+            make.right.equalToSuperview().offset(-16)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             make.height.equalTo(50)
         }
     }
     
     private func loadCurrentGender() {
-        // Load current gender setting from UserCenter or other sources
-        // For now, default to female
-        selectedGender = .female
+        // Load current gender setting from UserCenter
+        if let user = UserCenter.user, !user.gender.isEmpty {
+            selectedGender = Gender(rawValue: user.gender)
+        } else {
+            selectedGender = nil // No default selection
+        }
         updateSelection()
+        updateConfirmButtonState()
     }
     
     private func updateSelection() {
@@ -152,37 +151,65 @@ class GenderSettingViewController: UIViewController {
         maleOptionView.setSelected(selectedGender == .male)
     }
     
+    private func updateConfirmButtonState() {
+        let isEnabled = selectedGender != nil
+        confirmButton.isEnabled = isEnabled
+        confirmButton.alpha = isEnabled ? 1.0 : 0.5
+    }
+    
     // MARK: - Actions
     @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
     
+    @objc private func genderOptionSelected(_ sender: UIButton) {
+        // Find the gender based on the button's tag
+        for (gender, view) in genderOptionViews {
+            if view.tapButton == sender {
+                selectedGender = gender
+                updateSelection()
+                break
+            }
+        }
+    }
+    
+    // Keep individual methods for backward compatibility
     @objc private func femaleOptionSelected() {
         selectedGender = .female
         updateSelection()
+        updateConfirmButtonState()
     }
     
     @objc private func maleOptionSelected() {
         selectedGender = .male
         updateSelection()
+        updateConfirmButtonState()
     }
     
     @objc private func confirmButtonTapped() {
         // Save gender setting
         saveGenderSetting()
-        
-        // Show success message
-        SVProgressHUD.showSuccess(withStatus: ResourceManager.L10n.Mine.genderSettingSaved)
-        
-        // Pop back to previous view
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.navigationController?.popViewController(animated: true)
-        }
     }
     
     private func saveGenderSetting() {
-        // Save gender setting to UserCenter or other storage
-//        UserCenter.shared.setGender(selectedGender == .female ? "female" : "male")
+        guard let user = UserCenter.user, let gender = selectedGender else { return }
+        user.gender = gender.rawValue
+        SVProgressHUD.show()
+        toolBox.updateUserInfo(
+            nickname: user.nickname,
+            gender: user.gender,
+            birthday: user.birthday,
+            bio: user.bio,
+            success: { [weak self] response in
+                SVProgressHUD.dismiss()
+                AppContext.loginManager().updateUserInfo(userInfo: user)
+                self?.navigationController?.popViewController(animated: true)
+            },
+            failure: { error in
+                SVProgressHUD.dismiss()
+                SVProgressHUD.showError(withStatus: error)
+            }
+        )
     }
 }
 
@@ -191,36 +218,54 @@ class GenderOptionView: UIView {
     
     private lazy var containerView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 100
+        view.layer.cornerRadius = 92.5
         view.layer.masksToBounds = true
         return view
     }()
     
-    private lazy var iconImageView: UIImageView = {
+    private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 92.5
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
-    private lazy var titleButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
-        button.layer.cornerRadius = 12
-        button.isUserInteractionEnabled = false
-        return button
+    private lazy var titleContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = GenderColors.selectionBorder
+        view.layer.cornerRadius = 12
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        return label
     }()
     
     private lazy var selectionBorder: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        view.layer.borderWidth = 3
-        view.layer.borderColor = UIColor.themColor(named: "ai_brand_main6").cgColor
-        view.layer.cornerRadius = 103
+        view.layer.borderWidth = 5
+        view.layer.borderColor = GenderColors.selectionBorder.cgColor
+        view.layer.cornerRadius = 100
         view.isHidden = true
         return view
     }()
+    
+    lazy var tapButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.backgroundColor = .clear
+        return button
+    }()
+    
+    var onTap: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -234,51 +279,53 @@ class GenderOptionView: UIView {
     private func setupUI() {
         addSubview(containerView)
         addSubview(selectionBorder)
-        containerView.addSubview(iconImageView)
-        containerView.addSubview(titleButton)
+        containerView.addSubview(avatarImageView)
+        containerView.addSubview(titleContentView)
+        titleContentView.addSubview(titleLabel)
+        addSubview(tapButton)
         
         containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         
         selectionBorder.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(-3)
+            make.edges.equalToSuperview().inset(-7.5)
         }
         
-        iconImageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.width.height.equalTo(120)
+        avatarImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         
-        titleButton.snp.makeConstraints { make in
+        titleContentView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-20)
-            make.width.equalTo(60)
             make.height.equalTo(24)
+            make.bottom.equalTo(-9)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12))
+        }
+        
+        tapButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
-    func configure(icon: String, title: String, isSelected: Bool, gradientColors: [UIColor]) {
-        iconImageView.image = UIImage.ag_named(icon)
-        titleButton.setTitle(title, for: .normal)
+    func configure(title: String, isSelected: Bool, avatarImage: UIImage?) {
+        titleLabel.text = title
         
-        // Apply gradient background
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = containerView.bounds
-        gradientLayer.colors = gradientColors.map { $0.cgColor }
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        containerView.layer.insertSublayer(gradientLayer, at: 0)
+        // Set avatar image
+        avatarImageView.image = avatarImage ?? UIImage.ag_named("ic_default_avatar_icon")
         
         setSelected(isSelected)
     }
     
     func setSelected(_ selected: Bool) {
         selectionBorder.isHidden = !selected
+        titleContentView.isHidden = !selected
     }
     
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
-        let tapGesture = UITapGestureRecognizer(target: target, action: action)
-        addGestureRecognizer(tapGesture)
+        tapButton.addTarget(target, action: action, for: controlEvents)
     }
 }

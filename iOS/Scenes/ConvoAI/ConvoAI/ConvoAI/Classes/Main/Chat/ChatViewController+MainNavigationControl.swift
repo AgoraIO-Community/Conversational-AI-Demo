@@ -11,7 +11,7 @@ import SVProgressHUD
 
 extension ChatViewController {
     @objc internal func onClickInformationButton() {
-        AgentInformationViewController.show(in: self)
+        // AgentInformationViewController removed - functionality moved to MineViewController
     }
     
     @objc internal func onClickWifiInfoButton() {
@@ -49,13 +49,13 @@ extension ChatViewController {
     }
     
     internal func updateCharacterInformation() {
-        if let avatar = AppContext.preferenceManager()?.preference.avatar {
+        if let avatar = AppContext.settingManager().avatar {
             navivationBar.updateCharacterInformation(
                 icon: avatar.thumbImageUrl.stringValue(),
                 defaultIcon: "",
                 name: avatar.avatarName.stringValue()
             )
-        } else if let preset = AppContext.preferenceManager()?.preference.preset {
+        } else if let preset = AppContext.settingManager().preset {
             navivationBar.updateCharacterInformation(
                 icon: preset.avatarUrl.stringValue(),
                 defaultIcon: preset.defaultAvatar ?? "",

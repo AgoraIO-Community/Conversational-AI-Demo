@@ -10,35 +10,13 @@ import Common
 import SnapKit
 import SVProgressHUD
 
-class NicknameSettingViewController: UIViewController {
+class NicknameSettingViewController: BaseViewController {
     
     // MARK: - UI Components
-    private lazy var headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        return view
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .white
-        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Mine.nicknameSettingTitle
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.textAlignment = .center
-        return label
-    }()
     
     private lazy var inputContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.themColor(named: "ai_fill2")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill5")
         view.layer.cornerRadius = 12
         return view
     }()
@@ -46,8 +24,8 @@ class NicknameSettingViewController: UIViewController {
     private lazy var nicknameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = ResourceManager.L10n.Mine.nicknamePlaceholder
-        textField.textColor = UIColor.themColor(named: "ai_icontext1")
-        textField.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        textField.textColor = .white
+        textField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         textField.backgroundColor = .clear
         textField.borderStyle = .none
         textField.clearButtonMode = .whileEditing
@@ -55,41 +33,9 @@ class NicknameSettingViewController: UIViewController {
         textField.delegate = self
         return textField
     }()
-    
-    private lazy var characterCountLabel: UILabel = {
-        let label = UILabel()
-        label.text = "0/20"
-        label.textColor = UIColor.themColor(named: "ai_icontext3")
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textAlignment = .right
-        return label
-    }()
-    
-    private lazy var tipsLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Mine.nicknameTips
-        label.textColor = UIColor.themColor(named: "ai_icontext3")
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.numberOfLines = 0
-        label.textAlignment = .left
-        return label
-    }()
-    
-    private lazy var saveButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle(ResourceManager.L10n.Mine.save, for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.themColor(named: "ai_brand_main6")
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
-        button.alpha = 0.6
-        return button
-    }()
-    
+    let toolBox = ToolBoxApiManager()
     // MARK: - Properties
-    private let maxCharacterCount = 20
+    private let maxCharacterCount = 15
     private var originalNickname: String = ""
     
     // MARK: - Lifecycle
@@ -98,12 +44,10 @@ class NicknameSettingViewController: UIViewController {
         setupUI()
         setupConstraints()
         loadCurrentNickname()
-        setupTextFieldObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -113,36 +57,22 @@ class NicknameSettingViewController: UIViewController {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill2")
         
-        view.addSubview(headerView)
-        headerView.addSubview(backButton)
-        headerView.addSubview(titleLabel)
+        // Configure navigation bar
+        naviBar.title = ResourceManager.L10n.Mine.nicknameTitle
+        
         view.addSubview(inputContainerView)
         inputContainerView.addSubview(nicknameTextField)
-        inputContainerView.addSubview(characterCountLabel)
-        view.addSubview(tipsLabel)
-        view.addSubview(saveButton)
+        
+        // Add tap gesture to dismiss keyboard
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupConstraints() {
-        headerView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(60)
-        }
-        
-        backButton.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(16)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(44)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
         inputContainerView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom).offset(30)
+            make.top.equalTo(naviBar.snp.bottom).offset(30)
             make.left.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
             make.height.equalTo(60)
@@ -150,126 +80,85 @@ class NicknameSettingViewController: UIViewController {
         
         nicknameTextField.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(16)
-            make.right.equalTo(characterCountLabel.snp.left).offset(-16)
-            make.centerY.equalToSuperview()
-            make.height.equalTo(40)
-        }
-        
-        characterCountLabel.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-16)
             make.centerY.equalToSuperview()
-            make.width.equalTo(40)
-        }
-        
-        tipsLabel.snp.makeConstraints { make in
-            make.top.equalTo(inputContainerView.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-        }
-        
-        saveButton.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
-            make.height.equalTo(50)
+            make.height.equalTo(40)
         }
     }
     
     private func loadCurrentNickname() {
-        // Load current nickname from UserCenter or other sources
-//        if let userInfo = UserCenter.shared.getUserInfo() {
-//            originalNickname = userInfo.nickname ?? ""
-//            nicknameTextField.text = originalNickname
-//            updateCharacterCount()
-//        }
-    }
-    
-    private func setupTextFieldObserver() {
-        nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-    }
-    
-    private func updateCharacterCount() {
-        let currentCount = nicknameTextField.text?.count ?? 0
-        characterCountLabel.text = "\(currentCount)/\(maxCharacterCount)"
-        
-        // Update save button state
-        let hasChanges = nicknameTextField.text != originalNickname
-        let isValidLength = currentCount > 0 && currentCount <= maxCharacterCount
-        
-        saveButton.isEnabled = hasChanges && isValidLength
-        saveButton.alpha = saveButton.isEnabled ? 1.0 : 0.6
-    }
-    
-    // MARK: - Actions
-    @objc private func backButtonTapped() {
-        // Check if there are unsaved changes
-        if nicknameTextField.text != originalNickname {
-            showUnsavedChangesAlert()
-        } else {
-            navigationController?.popViewController(animated: true)
+        // Load current nickname from UserCenter
+        if let user = UserCenter.user {
+            originalNickname = user.nickname
+            nicknameTextField.text = originalNickname
         }
     }
     
-    @objc private func textFieldDidChange() {
-        updateCharacterCount()
+    // MARK: - Action Methods
+    
+    @objc private func dismissKeyboard() {
+        saveNicknameIfChanged()
+        view.endEditing(true)
     }
     
-    @objc private func saveButtonTapped() {
-        guard let newNickname = nicknameTextField.text, !newNickname.isEmpty else {
-            SVProgressHUD.showError(withStatus: ResourceManager.L10n.Mine.nicknameEmpty)
+    private func saveNickname(_ nickname: String) {
+        guard let user = UserCenter.user else { return }
+        user.nickname = nickname
+        SVProgressHUD.show()
+        toolBox.updateUserInfo(
+            nickname: user.nickname,
+            gender: user.gender,
+            birthday: user.birthday,
+            bio: user.bio,
+            success: { [weak self] response in
+                SVProgressHUD.dismiss()
+                self?.originalNickname = nickname
+                AppContext.loginManager().updateUserInfo(userInfo: user)
+                SVProgressHUD.showSuccess(withStatus: ResourceManager.L10n.Mine.nicknameUpdateSuccess)
+            },
+            failure: { error in
+                SVProgressHUD.dismiss()
+                SVProgressHUD.showError(withStatus: ResourceManager.L10n.Mine.nicknameUpdateFailed)
+            }
+        )
+    }
+    
+    private func saveNicknameIfChanged() {
+        guard let newNickname = nicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !newNickname.isEmpty else {
+            // Empty nickname, restore original
+            nicknameTextField.text = originalNickname
             return
         }
         
         if newNickname.count > maxCharacterCount {
-            SVProgressHUD.showError(withStatus: ResourceManager.L10n.Mine.nicknameTooLong)
+            // Truncate nickname to maxCharacterCount and continue
+            let truncatedNickname = String(newNickname.prefix(maxCharacterCount))
+            nicknameTextField.text = truncatedNickname
+        }
+        
+        if !isValidNickname(newNickname) {
+            // Invalid characters, restore original
+            nicknameTextField.text = originalNickname
+            SVProgressHUD.showError(withStatus: ResourceManager.L10n.Mine.nicknameInvalidCharacters)
             return
         }
         
-        // Save nickname
-        saveNickname(newNickname)
-    }
-    
-    private func saveNickname(_ nickname: String) {
-        // Show loading
-        SVProgressHUD.show(withStatus: ResourceManager.L10n.Mine.saving)
-        
-        // Simulate save process
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            SVProgressHUD.dismiss()
-            
-            // Save to UserCenter
-//            UserCenter.shared.setNickname(nickname)
-            
-            // Update original nickname
-            self.originalNickname = nickname
-            
-            // Show success message
-            SVProgressHUD.showSuccess(withStatus: ResourceManager.L10n.Mine.nicknameSaved)
-            
-            // Update save button state
-            self.updateCharacterCount()
-            
-            // Pop back to previous view
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.navigationController?.popViewController(animated: true)
-            }
+        if newNickname != originalNickname {
+            saveNickname(newNickname)
         }
     }
     
-    private func showUnsavedChangesAlert() {
-        let alert = UIAlertController(
-            title: ResourceManager.L10n.Mine.unsavedChangesTitle,
-            message: ResourceManager.L10n.Mine.unsavedChangesMessage,
-            preferredStyle: .alert
-        )
+    private func isValidNickname(_ nickname: String) -> Bool {
+        let allowedCharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        let chineseCharacterSet = CharacterSet(charactersIn: "\u{4e00}"..."\u{9fff}")
         
-        alert.addAction(UIAlertAction(title: ResourceManager.L10n.Mine.discard, style: .destructive) { _ in
-            self.navigationController?.popViewController(animated: true)
-        })
-        
-        alert.addAction(UIAlertAction(title: ResourceManager.L10n.Mine.keepEditing, style: .cancel))
-        
-        present(alert, animated: true)
+        for char in nickname.unicodeScalars {
+            if !allowedCharacterSet.contains(char) && !chineseCharacterSet.contains(char) {
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -284,11 +173,28 @@ extension NicknameSettingViewController: UITextFieldDelegate {
             return false
         }
         
+        // Allow only Chinese characters, English letters, and numbers
+        if string.isEmpty {
+            // Allow deletion
+            return true
+        }
+        
+        // Check if the input character is valid (Chinese, English, or number)
+        let allowedCharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        let chineseCharacterSet = CharacterSet(charactersIn: "\u{4e00}"..."\u{9fff}")
+        
+        for char in string.unicodeScalars {
+            if !allowedCharacterSet.contains(char) && !chineseCharacterSet.contains(char) {
+                return false
+            }
+        }
+        
         return true
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        saveNicknameIfChanged()
         return true
     }
 }

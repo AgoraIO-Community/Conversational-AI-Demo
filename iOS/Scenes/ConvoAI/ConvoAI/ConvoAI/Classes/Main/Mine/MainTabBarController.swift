@@ -11,8 +11,10 @@ import SVProgressHUD
 
 public class MainTabBarController: UITabBarController {
     
+    private lazy var toolBox = ToolBoxApiManager()
+    
     deinit {
-        AppContext.loginManager()?.removeDelegate(self)
+        AppContext.loginManager().removeDelegate(self)
     }
     
     // MARK: - Lifecycle
@@ -21,27 +23,47 @@ public class MainTabBarController: UITabBarController {
         setupViewControllers()
         configureTabBarAppearance()
         
-        AppContext.loginManager()?.addDelegate(self)
+        AppContext.loginManager().addDelegate(self)
         fetchLoginState()
     }
     
     func fetchLoginState() {
         let loginState = UserCenter.shared.isLogin()
         if loginState {
-            LoginApiService.getUserInfo { error in
+            LoginApiService.getUserInfo { [weak self] error in
                 if let err = error {
-                    AppContext.loginManager()?.logout(reason: .sessionExpired)
+                    AppContext.loginManager().logout(reason: .sessionExpired)
                     SVProgressHUD.showInfo(withStatus: err.localizedDescription)
+                    return
                 }
+                self?.mayGenerateName()
             }
         } else {
-            // Only show login view if this view controller is in the window hierarchy
             DispatchQueue.main.async { [weak self] in
                 if let self = self, self.view.window != nil {
                     LoginViewController.start(from: self)
                 }
             }
         }
+    }
+    
+    private func mayGenerateName() {
+        guard
+            let user = UserCenter.user,
+            user.nickname.isEmpty
+        else { return }
+        user.nickname = MainTabBarController.generateRandomNickname()
+        toolBox.updateUserInfo(
+            nickname: user.nickname,
+            gender: user.gender,
+            birthday: user.birthday,
+            bio: user.bio,
+            success: { response in
+                AppContext.loginManager().updateUserInfo(userInfo: user)
+            },
+            failure: { error in
+            }
+        )
     }
     
     // MARK: - Setup Methods
@@ -153,13 +175,35 @@ extension MainTabBarController: LoginManagerDelegate {
            let window = windowScene.windows.first {
             window.rootViewController?.dismiss(animated: false, completion: nil)
         }
-        self.navigationController?.popToRootViewController(animated: false)
-        
-        // Only show login view if this view controller is in the window hierarchy
+        // Pop all view controllers in each tab's navigation stack to root
+        if let viewControllers = self.viewControllers {
+            for case let nav as UINavigationController in viewControllers {
+                nav.popToRootViewController(animated: false)
+            }
+        }
+        // Return to the first tab before showing the login view
+        self.selectedIndex = 0
         DispatchQueue.main.async { [weak self] in
             if let self = self, self.view.window != nil {
                 LoginViewController.start(from: self)
             }
         }
+    }
+}
+
+// MARK: - Name Generation
+extension MainTabBarController {
+    
+    /// Generate a random nickname using adjective + noun combination
+    /// Used when user first logs in and has no nickname
+    static func generateRandomNickname() -> String {
+        // Use localized strings for adjectives and nouns, split by comma
+        let adjectives = ResourceManager.L10n.Mine.nicknameAdjectives.components(separatedBy: ",")
+        let nouns = ResourceManager.L10n.Mine.nicknameNouns.components(separatedBy: ",")
+        
+        let randomAdjective = adjectives.randomElement() ?? ""
+        let randomNoun = nouns.randomElement() ?? ""
+        
+        return "\(randomAdjective)\(randomNoun)"
     }
 }
