@@ -103,7 +103,7 @@ class AccountViewController: BaseViewController {
     }
     
     @objc private func logoutButtonTapped() {
-        AgentAlertView.show(in: view, 
+        AgentAlertView.show(in: view,
                            title: ResourceManager.L10n.Login.logoutAlertTitle,
                            content: ResourceManager.L10n.Login.logoutAlertDescription,
                            cancelTitle: ResourceManager.L10n.Login.logoutAlertCancel,
@@ -257,6 +257,7 @@ class AccountDeactivateAlert: UIView {
         label.text = ResourceManager.L10n.Mine.accountUnderstandRisks
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        label.numberOfLines = 0
         return label
     }()
     
@@ -384,7 +385,7 @@ class AccountDeactivateAlert: UIView {
     }
     
     // MARK: - Public Methods
-    func show(in viewController: UIViewController, 
+    func show(in viewController: UIViewController,
               onCancel: (() -> Void)? = nil,
               onConfirm: @escaping (Bool) -> Void) {
         self.onCancel = onCancel
