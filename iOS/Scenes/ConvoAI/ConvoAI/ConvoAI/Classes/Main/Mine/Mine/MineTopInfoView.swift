@@ -92,7 +92,7 @@ class MineTopInfoView: UIView {
     private lazy var personaCardBGView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage.ag_named("img_mine_info_card")
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleToFill
         imageView.clipsToBounds = true
         return imageView
     }()
