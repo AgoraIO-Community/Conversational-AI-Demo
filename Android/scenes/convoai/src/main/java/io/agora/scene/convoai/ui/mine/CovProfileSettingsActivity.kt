@@ -91,8 +91,9 @@ class CovProfileSettingsActivity : BaseActivity<CovActivityProfileSettingsBindin
                     }
                 })
             .showNoMoreReminder(
-                getString(R.string.cov_mine_delete_account_tips),
-                io.agora.scene.common.R.color.ai_icontext1
+                text = getString(R.string.cov_mine_delete_account_tips),
+                textColor = io.agora.scene.common.R.color.ai_icontext1,
+                defaultCheck = true
             )
             .hideTopImage()
             .build()
