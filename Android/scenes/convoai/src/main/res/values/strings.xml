@@ -148,7 +148,7 @@
     <string name="cov_voiceprint_seamless_tips">AI automatically learns your voiceprint from your conversations with the agent and will ignore other people\'s voices.</string>
     <string name="cov_voiceprint_personalized">Personalized Mode</string>
     <string name="cov_voiceprint_personalized_tips">Record a short voiceprint, and the agent will focus only on your voice.</string>
-    <string name="cov_voiceprint_has">Voiceprint available</string>
+    <string name="cov_voiceprint_has">Local Personalized Voiceprint</string>
     <string name="cov_voiceprint_create_mine_voice">Create my voiceprint</string>
     <string name="cov_voiceprint_recording">Record</string>
     <string name="cov_voiceprint_re_recording">Record again</string>

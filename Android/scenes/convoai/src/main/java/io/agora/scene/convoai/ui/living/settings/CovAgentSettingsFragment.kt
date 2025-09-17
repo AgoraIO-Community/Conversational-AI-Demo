@@ -369,7 +369,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     private fun onClickAvatar() {
         val activity = activity ?: return
 
-        val avatarSelectorDialog = CovAvatarSelectorDialog.Companion.newInstance(
+        val avatarSelectorDialog = CovAvatarSelectorDialog.newInstance(
             currentAvatar = CovAgentManager.avatar,
             onDismiss = {
                 // Handle dialog closure
