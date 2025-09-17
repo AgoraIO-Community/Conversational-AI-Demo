@@ -260,35 +260,43 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func onClickRegister() {
-        LoginTermsAlert.show(
-            in: self.view,
-            onAccept: { [weak self] in
-                self?.termsCheckbox.isSelected = true
-                self?.warningButton.isHidden = true
-                
-                self?.signUpAction()
-            },
-            onDecline: { [weak self] in
-                self?.termsCheckbox.isSelected = false
-                self?.warningButton.isHidden = false
-            }
-        )
+        if termsCheckbox.isSelected {
+            self.signUpAction()
+        } else {
+            LoginTermsAlert.show(
+                in: self.view,
+                onAccept: { [weak self] in
+                    self?.termsCheckbox.isSelected = true
+                    self?.warningButton.isHidden = true
+                    
+                    self?.signUpAction()
+                },
+                onDecline: { [weak self] in
+                    self?.termsCheckbox.isSelected = false
+                    self?.warningButton.isHidden = false
+                }
+            )
+        }
     }
     
     @objc private func onClickLogin() {
-        LoginTermsAlert.show(
-            in: self.view,
-            onAccept: { [weak self] in
-                self?.termsCheckbox.isSelected = true
-                self?.warningButton.isHidden = true
-                
-                self?.loginAction()
-            },
-            onDecline: { [weak self] in
-                self?.termsCheckbox.isSelected = false
-                self?.warningButton.isHidden = false
-            }
-        )
+        if termsCheckbox.isSelected {
+            self.loginAction()
+        } else {
+            LoginTermsAlert.show(
+                in: self.view,
+                onAccept: { [weak self] in
+                    self?.termsCheckbox.isSelected = true
+                    self?.warningButton.isHidden = true
+                    
+                    self?.loginAction()
+                },
+                onDecline: { [weak self] in
+                    self?.termsCheckbox.isSelected = false
+                    self?.warningButton.isHidden = false
+                }
+            )
+        }
     }
     
     @objc private func termsCheckboxTapped() {
