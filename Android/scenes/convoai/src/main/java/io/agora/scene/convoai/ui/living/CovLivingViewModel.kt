@@ -41,10 +41,12 @@ import io.agora.scene.convoai.convoaiApi.Priority
 import io.agora.scene.convoai.convoaiApi.StateChangeEvent
 import io.agora.scene.convoai.convoaiApi.TextMessage
 import io.agora.scene.convoai.convoaiApi.Transcript
+import io.agora.scene.convoai.convoaiApi.TranscriptStatus
 import io.agora.scene.convoai.convoaiApi.VoiceprintStateChangeEvent
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.rtm.IRtmManagerListener
+import io.agora.scene.convoai.ui.CovRenderMode
 import io.agora.scene.convoai.ui.MediaInfo
 import io.agora.scene.convoai.ui.PictureError
 import io.agora.scene.convoai.ui.PictureInfo
@@ -172,6 +174,13 @@ class CovLivingViewModel : ViewModel() {
         override fun onAgentInterrupted(agentUserId: String, event: InterruptEvent) {
             // Handle interruption
             _interruptEvent.value = event
+            if (CovAgentManager.renderMode == CovRenderMode.Companion.TEXT) {
+                // In non-sync mode, directly update transcript
+                if (event.turnId == _transcriptUpdate.value?.turnId) {
+                    val transcriptUpdate = _transcriptUpdate.value?.copy(status = TranscriptStatus.END)
+                    _transcriptUpdate.value = transcriptUpdate
+                }
+            }
         }
 
         override fun onAgentMetrics(agentUserId: String, metrics: Metric) {
