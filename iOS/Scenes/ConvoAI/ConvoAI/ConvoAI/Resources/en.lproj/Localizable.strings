@@ -68,7 +68,7 @@
 "settings.speaker" = "Speaker";
 "settings.noise.cancellation" = "Noise Cancellation";
 "settings.noise.aiVad.nomal" = "";
-"settings.noise.aiVad.highlight" = "Intelligent Interruption Handling";
+"settings.noise.aiVad.highlight" = "IHH";
 "settings.transcript.render.mode" = "Transcript Display Mode";
 "settings.transcript.render.word.mode" = "Word-by-Word";
 "settings.transcript.render.text.mode" = "Streaming Text";
@@ -195,7 +195,7 @@
 // Channel Info Status
 "channel.aware" = "Personalized Mode";
 "channel.effective" = "Active";
-"channel.elegant.interrupt" = "Elegant Interruption";
+"channel.elegant.interrupt" = "IHH";
 "channel.insensitive" = "Insensitive";
 "channel.more" = "More...";
 "channel.not.effective" = "Inactive";
@@ -225,7 +225,7 @@
 "settings.transcript.render.pretext.mode.description" = "Text mode with synchronized subtitle and voice display";
 
 // Voiceprint Mode Settings
-"settings.voiceprint.mode.title" = "Voiceprint Mode";
+"settings.voiceprint.mode.title" = "Voiceprint Lock";
 "settings.voiceprint.mode.off" = "Off";
 "settings.voiceprint.mode.off.description" = "Without this, the agent might be interrupted or distracted by other voices nearby.";
 "settings.voiceprint.mode.seamless" = "Seamless Mode";
