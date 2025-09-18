@@ -80,7 +80,7 @@
                     android:id="@+id/mtv_ai_vad"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
+                    android:gravity="start|center_vertical"
                     android:text="@string/cov_setting_ai_vad_high"
                     android:textColor="@color/ai_icontext1"
                     android:textSize="14sp" />

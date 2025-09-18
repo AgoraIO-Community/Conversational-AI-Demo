@@ -332,7 +332,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             // Calculate popup position using getDistanceFromScreenEdges
             val itemDistances = llDevice.getDistanceFromScreenEdges()
             val maskDistances = vOptionsMask.getDistanceFromScreenEdges()
-            val targetY = itemDistances.top - maskDistances.top + 30.dp
+            val targetY = itemDistances.top - maskDistances.top - 10.dp
 
             // Increase width for longer English text, but ensure it doesn't exceed screen width
             val widerWidth = 320.dp
@@ -343,13 +343,8 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
 
             // Update width and height with constraints
             val params = cvOptions.layoutParams
-            val itemHeight = 80.dp.toInt()
-            // Ensure maxHeight is at least one item height
-            val finalMaxHeight = itemDistances.bottom.coerceAtLeast(itemHeight) + 40.dp.toInt()
-            val finalHeight = (itemHeight * transcriptRenders.size).coerceIn(itemHeight, finalMaxHeight)
-
             params.width = finalWidth.toInt()
-            params.height = finalHeight
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT
             cvOptions.layoutParams = params
 
             // Update options and handle selection
