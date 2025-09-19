@@ -1,5 +1,5 @@
 <resources>
-    <string name="common_app_name">Agora Convo AI</string>
+    <string name="common_app_title">Agora Convo AI</string>
     <string name="common_detail_message_list_you">You</string>
     <string name="common_debug_base_config">Base Settings</string>
     <string name="common_debug_cov_config">ConvoAI Settings</string>
