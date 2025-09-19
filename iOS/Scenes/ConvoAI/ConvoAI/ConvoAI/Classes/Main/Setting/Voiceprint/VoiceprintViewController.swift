@@ -386,10 +386,8 @@ class VoiceprintViewController: BaseViewController, VoiceprintRecordViewControll
                 ]
             )
             
-            if content.count >= 4 {
-                let endIndex = content.endIndex
-                let startIndex = content.index(endIndex, offsetBy: -4)
-                let range = startIndex..<endIndex
+            let privacyText = "Privacy Policy"
+            if let range = content.range(of: privacyText) {
                 let nsRange = NSRange(range, in: content)
                 attributedString.addAttributes([
                     .link: AppContext.shared.privacyUrl,
