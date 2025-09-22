@@ -353,6 +353,10 @@ extension ResourceManager {
             public static let nicknameAdjectives = ResourceManager.localizedString("mine.nickname.adjectives")
             public static let nicknameNouns = ResourceManager.localizedString("mine.nickname.nouns")
         }
+
+        public enum Sip {
+            public static let sipCallInTips = ResourceManager.localizedString("agent.sip.tips")
+        }
     }
 }
 
