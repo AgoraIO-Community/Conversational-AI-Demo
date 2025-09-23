@@ -169,3 +169,8 @@
 "agent.list.official" = "官方智能体";
 "agent.list.get" = "获取";
 "agent.list.get.agent" = "获取你的智能助手";
+
+"agent.sip.in.call.tips" = "请使用你的手机拨打该号码，即可体验电话与 AI 智能客服沟通";
+"agent.sip.out.call.tips" = "输入您的手机号码/固定电话号码并拨出，AI智能客服会拨打电话到您的手机与您沟通";
+"agent.sip.calling.tips" = "电话拨打中，请在您的电话上接听...";
+"agent.sip.input.placeholder" = "请输入你的手机号/固定电话";
