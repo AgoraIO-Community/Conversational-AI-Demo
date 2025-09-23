@@ -24,7 +24,8 @@
             android:exported="false"
             android:keepScreenOn="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity
             android:name=".ui.photo.PhotoNavigationActivity"
