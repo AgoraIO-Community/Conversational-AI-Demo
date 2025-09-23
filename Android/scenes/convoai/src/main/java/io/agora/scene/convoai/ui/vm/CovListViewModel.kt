@@ -128,7 +128,8 @@ class CovListViewModel : ViewModel() {
                 support_languages = emptyList(),
                 call_time_limit_second = 600L,
                 call_time_limit_avatar_second = 300L,
-                is_support_vision = true
+                is_support_vision = true,
+                sip_vendor_callee_numbers = emptyList()
             )
         )
     }

@@ -311,10 +311,17 @@ class CovLivingViewModel : ViewModel() {
 
         if (_connectionState.value != AgentConnectionState.IDLE) {
             _connectionState.value = AgentConnectionState.IDLE
-            CovAgentApiManager.stopAgent(
-                CovAgentManager.channelName,
-                CovAgentManager.getPreset()?.name
-            ) {}
+            if (CovAgentManager.getPreset()?.isSip == true) {
+                CovAgentApiManager.stopSipCall(
+                    CovAgentManager.channelName,
+                    CovAgentManager.getPreset()?.name
+                ) {}
+            } else {
+                CovAgentApiManager.stopAgent(
+                    CovAgentManager.channelName,
+                    CovAgentManager.getPreset()?.name
+                ) {}
+            }
         }
 
         resetState()
@@ -657,17 +664,27 @@ class CovLivingViewModel : ViewModel() {
 
     private suspend fun startAgentAsync(): Pair<String, Int> = suspendCoroutine { cont ->
         val channel = CovAgentManager.channelName
-        CovAgentApiManager.startAgentWithMap(
-            channelName = CovAgentManager.channelName,
-            convoaiBody = if (CovAgentManager.isOpenSource) {
-                getConvoaiOpenSourceBodyMap(channel)
-            } else {
-                getConvoaiBodyMap(channel)
-            },
-            completion = { err, channelName ->
-                cont.resume(Pair(channelName, err?.errorCode ?: 0))
-            }
-        )
+        if (CovAgentManager.getPreset()?.isSip == true) {
+            CovAgentApiManager.startSipCallWithMap(
+                channelName = CovAgentManager.channelName,
+                convoaiBody = getConvoaiSipBodyMap(channel),
+                completion = { err, channelName ->
+                    cont.resume(Pair(channelName, err?.errorCode ?: 0))
+                }
+            )
+        } else {
+            CovAgentApiManager.startAgentWithMap(
+                channelName = CovAgentManager.channelName,
+                convoaiBody = if (CovAgentManager.isOpenSource) {
+                    getConvoaiOpenSourceBodyMap(channel)
+                } else {
+                    getConvoaiBodyMap(channel)
+                },
+                completion = { err, channelName ->
+                    cont.resume(Pair(channelName, err?.errorCode ?: 0))
+                }
+            )
+        }
     }
 
     private suspend fun loginRtmClientAsync(): Boolean = suspendCoroutine { cont ->
@@ -954,6 +971,30 @@ class CovLivingViewModel : ViewModel() {
                         "sessCtrlTimeOutInMs" to null,
                         "sessCtrlWordGapLenVolumeThr" to null,
                         "sessCtrlWordGapLenInMs" to null,
+                    )
+                )
+            )
+        )
+    }
+
+    private fun getConvoaiSipBodyMap(channel: String, callee: String? = null, ): Map<String, Any?> {
+        CovLogger.d(TAG, "preset: ${CovAgentManager.convoAIParameter}")
+        return mapOf(
+            "graph_id" to CovAgentManager.graphId.takeIf { it.isNotEmpty() },
+            "preset" to CovAgentManager.convoAIParameter.takeIf { it.isNotEmpty() },
+            "name" to null,
+            "parameters" to mapOf(
+                "channel" to channel,
+                "token" to null,
+                "agent_rtc_uid" to CovAgentManager.agentUID.toString(),
+                "pipeline" to null,
+                "sip" to mapOf(
+                    "provider" to null,
+                    "params" to mapOf(
+                        "token" to null,
+                        "uid" to null,
+                        "callee" to callee,
+                        "caller" to null,
                     )
                 )
             )

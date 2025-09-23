@@ -138,4 +138,10 @@
     <string name="cov_get_agent_failed">Failed to retrieve agent. No matching entry found in the current database.</string>
     <string name="cov_get_agent_offline">This agent is no longer available. Please contact Agora staff.</string>
     <string name="cov_retry_tips">Page failed to load. Please try again.</string>
+
+    <!-- SIP -->
+    <string name="cov_sip_internal_call_tips">Dial this number from your phone to start a conversation with our AI Agent.</string>
+    <string name="cov_sip_outbound_call_tips">Enter your number below, and our AI Agent will call you.</string>
+    <string name="cov_sip_outbound_calling">Calling now… please answer on your phone.</string>
+    <string name="cov_sip_outbound_call_hint">Enter your mobile or landline number</string>
 </resources>

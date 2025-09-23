@@ -217,4 +217,22 @@
             android:visibility="gone"
             tools:visibility="visible" />
     </FrameLayout>
+
+    <io.agora.scene.convoai.ui.sip.CovSipInternalCallView
+        android:id="@+id/internalCallView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="100dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <io.agora.scene.convoai.ui.sip.CovSipOutBoundCallView
+        android:id="@+id/outBoundCallView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
