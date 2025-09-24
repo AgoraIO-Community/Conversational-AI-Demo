@@ -48,8 +48,8 @@ class CovSipInternalCallView @JvmOverloads constructor(
     fun setPhoneNumbersFromPreset(preset: CovAgentPreset) {
         if (!preset.sip_vendor_callee_numbers.isNullOrEmpty()) {
             // Find India and Chile numbers from sip callees
-            val indiaCallee = preset.sip_vendor_callee_numbers.find { it.region_code == CountryConfig.IN.dialCode }
-            val chileCallee = preset.sip_vendor_callee_numbers.find { it.region_code == CountryConfig.CL.dialCode }
+            val indiaCallee = preset.sip_vendor_callee_numbers.find { it.region_code == RegionConfig.IN.dialCode }
+            val chileCallee = preset.sip_vendor_callee_numbers.find { it.region_code == RegionConfig.CL.dialCode }
             
             indiaCallee?.let {
                 setIndiaNumber("+${it.region_code}-${it.phone_number}")
@@ -64,11 +64,11 @@ class CovSipInternalCallView @JvmOverloads constructor(
      * Setup click listeners for phone numbers
      */
     private fun setupView() {
-        binding.tvIndiaEmoji.text = CountryConfig.IN.flagEmoji
-        binding.tvIndiaCode.text = CountryConfig.IN.countryCode
+        binding.tvIndiaEmoji.text = RegionConfig.IN.flagEmoji
+        binding.tvIndiaCode.text = RegionConfig.IN.regionCode
 
-        binding.tvChileEmoji.text = CountryConfig.CL.flagEmoji
-        binding.tvChileCode.text = CountryConfig.CL.countryCode
+        binding.tvChileEmoji.text = RegionConfig.CL.flagEmoji
+        binding.tvChileCode.text = RegionConfig.CL.regionCode
 
         binding.tvIndiaPhone.setOnClickListener {
             val phoneNumber = binding.tvIndiaPhone.text.toString()
