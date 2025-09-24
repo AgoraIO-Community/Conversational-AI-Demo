@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import io.agora.scene.convoai.ui.sip.KeyboardVisibilityHelper
-import io.agora.scene.convoai.ui.sip.setupSipKeyboardListener
 import androidx.activity.viewModels
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
@@ -73,9 +71,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     private var selfRenderController: SelfSubRenderController? = null
     private var hasShownTitleAnim = false
     
-    // SIP keyboard handling
-    private var sipKeyboardHelper: KeyboardVisibilityHelper? = null
-
     override fun getViewBinding(): CovActivityLivingBinding = CovActivityLivingBinding.inflate(layoutInflater)
 
     override fun supportOnBackPressed(): Boolean = viewModel.connectionState.value == AgentConnectionState.IDLE
@@ -94,9 +89,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
         // Observe ViewModel states
         observeViewModelStates()
-        
-        // Setup sip call view
-        setupSipCallView()
 
         viewModel.getPresetTokenConfig()
     }
@@ -108,7 +100,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cleanupSipKeyboardListener()
         CovLogger.d(TAG, "activity onDestroy")
     }
 
@@ -387,15 +378,11 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         lifecycleScope.launch {    // Observe agent state
             viewModel.agentState.collect { agentState ->
                 agentState?.let {
-                    if (CovAgentManager.getPreset()?.isSipOutBound == true) {
-                        // TODO:
+                    mBinding?.agentStateView?.updateAgentState(it)
+                    if (agentState == AgentState.SPEAKING) {
+                        mBinding?.agentSpeakingIndicator?.startAnimation()
                     } else {
-                        mBinding?.agentStateView?.updateAgentState(it)
-                        if (agentState == AgentState.SPEAKING) {
-                            mBinding?.agentSpeakingIndicator?.startAnimation()
-                        } else {
-                            mBinding?.agentSpeakingIndicator?.stopAnimation()
-                        }
+                        mBinding?.agentSpeakingIndicator?.stopAnimation()
                     }
                 }
             }
@@ -1028,62 +1015,5 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
-    }
-
-    private fun setupSipCallView() {
-        if (CovAgentManager.getPreset()?.isSipInternal == true) {
-            mBinding?.apply {
-                clBottomLogged.isVisible = false
-                layoutConnect.isVisible = false
-                agentStateView.isVisible = false
-                outBoundCallView.isVisible = false
-                internalCallView.isVisible = true
-
-                // Set phone numbers from CovAgentPreset's sip_vendor_callee_numbers
-
-                internalCallView.setIndiaNumber("+91-22-47790159")
-                internalCallView.setChileNumber("+56-911-52465127")
-                CovAgentManager.getPreset()?.let { preset ->
-                    internalCallView.setPhoneNumbersFromPreset(preset)
-                }
-            }
-        } else if (CovAgentManager.getPreset()?.isSipOutBound == true) {
-            mBinding?.apply {
-                clBottomLogged.isVisible = false
-                layoutConnect.isVisible = false
-                agentStateView.isVisible = false
-                internalCallView.isVisible = false
-                outBoundCallView.isVisible = true
-            }
-            setupSipInputKeyboardListener()
-        } else {
-            mBinding?.apply {
-                outBoundCallView.isVisible = false
-                internalCallView.isVisible = false
-            }
-        }
-    }
-    
-    /**
-     * Setup keyboard listener specifically for SIP input field
-     */
-    private fun setupSipInputKeyboardListener() {
-        mBinding?.apply {
-            // Find the input field
-            val inputField = outBoundCallView.findViewById<View>(R.id.et_phone_number)
-
-            if (inputField != null) {
-                // Move the entire outBoundCallView to keep all elements together
-                sipKeyboardHelper = this@CovLivingActivity.setupSipKeyboardListener(outBoundCallView, inputField)
-            }
-        }
-    }
-    
-    /**
-     * Clean up SIP keyboard listener
-     */
-    private fun cleanupSipKeyboardListener() {
-        sipKeyboardHelper?.stopListening(this)
-        sipKeyboardHelper = null
     }
 }

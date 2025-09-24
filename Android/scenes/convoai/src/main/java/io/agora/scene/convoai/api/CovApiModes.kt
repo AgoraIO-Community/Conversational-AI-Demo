@@ -75,6 +75,7 @@ data class CovAvatar(
 
 @Parcelize
 data class CovSipCallee(
-    val region_code: String,
+    val region_name: String, // CN、US
+    val region_code: String, // 86、1
     val phone_number: String,
 ) : Parcelable

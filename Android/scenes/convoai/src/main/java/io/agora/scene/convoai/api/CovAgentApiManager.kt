@@ -44,7 +44,7 @@ object CovAgentApiManager {
         private set
 
 
-    private const val SERVICE_VERSION = "v4"
+    private const val SERVICE_VERSION = "v5"
 
     fun startAgentWithMap(channelName:String,convoaiBody: Map<String,Any?>, completion: (error: ApiException?, channelName: String) -> Unit) {
         val requestURL = "${ServerConfig.toolBoxUrl}/convoai/$SERVICE_VERSION/start"

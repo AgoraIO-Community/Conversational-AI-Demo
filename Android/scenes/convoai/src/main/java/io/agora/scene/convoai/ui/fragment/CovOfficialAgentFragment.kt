@@ -16,6 +16,7 @@ import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.databinding.CovFragmentOfficialAgentBinding
 import io.agora.scene.convoai.databinding.CovItemOfficialAgentBinding
 import io.agora.scene.convoai.ui.CovLivingActivity
+import io.agora.scene.convoai.ui.sip.CovLivingSipActivity
 import io.agora.scene.convoai.ui.vm.CovListViewModel
 
 class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>() {
@@ -125,7 +126,11 @@ class CovOfficialAgentFragment : BaseFragment<CovFragmentOfficialAgentBinding>()
         CovAgentManager.setPreset(preset)
         CovLogger.d(TAG, "Selected preset: ${preset.name}")
         context?.let {
-            it.startActivity(Intent(it, CovLivingActivity::class.java))
+            if (preset.isSip) {
+                it.startActivity(Intent(it, CovLivingSipActivity::class.java))
+            } else {
+                it.startActivity(Intent(it, CovLivingActivity::class.java))
+            }
         }
     }
 
