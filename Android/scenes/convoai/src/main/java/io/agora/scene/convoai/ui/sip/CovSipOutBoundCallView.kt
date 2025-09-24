@@ -26,16 +26,16 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     private var currentState: CallState = CallState.IDLE
     private var phoneNumber: String = ""
     
-    // Country data
-    private val availableCountries = listOf(
-        CountryConfig.IN, // India
-        CountryConfig.CL  // Chile
+    // Region data
+    private val availableRegions = listOf(
+        RegionConfig.IN, // India
+        RegionConfig.CL  // Chile
     )
-    private var selectedCountry = availableCountries.first() // Default to first country
+    private var selectedRegion = availableRegions.first() // Default to first region
     
-    // Country selector popup and adapter
-    private var countryPopup: PopupWindow? = null
-    private var countryAdapter: CountrySelectionAdapter? = null
+    // Region selector popup and adapter
+    private var regionPopup: PopupWindow? = null
+    private var regionAdapter: RegionSelectionAdapter? = null
     
     // Callback interfaces
     var onCallStateChangeListener: ((CallState, String) -> Unit)? = null
@@ -55,7 +55,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     init {
         setupClickListeners()
         setupTextWatcher()
-        setupCountrySelector()
+        setupRegionSelector()
         updateUIForState(CallState.IDLE)
     }
 
@@ -72,15 +72,15 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     }
 
     /**
-     * Get current phone number with country code
+     * Get current phone number with region code
      */
     fun getFullPhoneNumber(): String {
         val number = binding.etPhoneNumber.text.toString().trim()
-        return if (number.isNotEmpty()) "${selectedCountry.dialCode}-$number" else ""
+        return if (number.isNotEmpty()) "${selectedRegion.dialCode}-$number" else ""
     }
     
     /**
-     * Get current entered phone number without country code
+     * Get current entered phone number without region code
      */
     fun getPhoneNumber(): String {
         return binding.etPhoneNumber.text.toString().trim()
@@ -139,8 +139,8 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
             binding.etPhoneNumber.setText("")
         }
         
-        binding.llCountryCode.setOnClickListener {
-            showCountrySelector()
+        binding.llRegionCode.setOnClickListener {
+            showRegionSelector()
         }
     }
     
@@ -162,33 +162,33 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     }
     
     /**
-     * Setup country selector with initial selection
+     * Setup region selector with initial selection
      */
-    private fun setupCountrySelector() {
-        // Set initial country to first available country
-        updateCountryUI()
+    private fun setupRegionSelector() {
+        // Set initial region to first available region
+        updateRegionUI()
     }
     
     /**
-     * Show country selector popup
+     * Show region selector popup
      */
-    private fun showCountrySelector() {
-        if (countryPopup?.isShowing == true) {
-            countryPopup?.dismiss()
+    private fun showRegionSelector() {
+        if (regionPopup?.isShowing == true) {
+            regionPopup?.dismiss()
             return
         }
         
-        createCountryPopup()
-        countryPopup?.showAsDropDown(binding.llCountryCode, 0, 8)
+        createRegionPopup()
+        regionPopup?.showAsDropDown(binding.llRegionCode, 0, 8)
     }
     
     /**
-     * Create country selector popup window
+     * Create region selector popup window
      */
-    private fun createCountryPopup() {
-        val popupView = LayoutInflater.from(context).inflate(R.layout.cov_country_selector_popup, null)
+    private fun createRegionPopup() {
+        val popupView = LayoutInflater.from(context).inflate(R.layout.cov_region_selector_popup, null)
         
-        countryPopup = PopupWindow(
+        regionPopup = PopupWindow(
             popupView,
             LayoutParams.WRAP_CONTENT,
             LayoutParams.WRAP_CONTENT,
@@ -203,32 +203,32 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     }
     
     /**
-     * Setup RecyclerView with country adapter
+     * Setup RecyclerView with region adapter
      */
     private fun setupRecyclerView(popupView: View) {
         val recyclerView = popupView.findViewById<RecyclerView>(R.id.rv_countries)
         
-        countryAdapter = CountrySelectionAdapter(availableCountries) { selectedCountryConfig ->
-            selectedCountry = selectedCountryConfig
-            updateCountryUI()
-            countryPopup?.dismiss()
+        regionAdapter = RegionSelectionAdapter(availableRegions) { selectedRegionConfig ->
+            selectedRegion = selectedRegionConfig
+            updateRegionUI()
+            regionPopup?.dismiss()
         }
         
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = countryAdapter
+            adapter = regionAdapter
         }
         
-        // Update adapter selection to current country
-        countryAdapter?.updateSelection(selectedCountry.dialCode)
+        // Update adapter selection to current region
+        regionAdapter?.updateSelection(selectedRegion.dialCode)
     }
     
     /**
-     * Update country UI based on current selection
+     * Update region UI based on current selection
      */
-    private fun updateCountryUI() {
-        binding.tvCountryCode.text = selectedCountry.dialCode
-        binding.ivCountryCode.text = selectedCountry.flagEmoji
+    private fun updateRegionUI() {
+        binding.tvRegionFlag.text = selectedRegion.flagEmoji
+        binding.tvRegionCode.text = selectedRegion.dialCode
     }
     
     /**
@@ -236,7 +236,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        countryPopup?.dismiss()
-        countryPopup = null
+        regionPopup?.dismiss()
+        regionPopup = null
     }
 }
