@@ -13,7 +13,23 @@ import SVProgressHUD
 
 class MineViewController: UIViewController {
     
-    // MARK: - UI Components
+    private lazy var appNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = ResourceManager.L10n.Conversation.appName
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var imageView1: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.ag_named("img_mine_top_bg")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
     private lazy var topInfoView: MineTopInfoView = {
         let view = MineTopInfoView()
         view.delegate = self
@@ -50,21 +66,24 @@ class MineViewController: UIViewController {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        view.backgroundColor = UIColor.themColor(named: "ai_fill1")
-        
-        view.addSubview(topInfoView)
+        view.backgroundColor = UIColor.themColor(named: "ai_fill4")
+
+        view.addSubview(appNameLabel)
+        view.addSubview(imageView1)
         view.addSubview(iotView)
         view.addSubview(tabListView)
     }
     
     private func setupConstraints() {
-        topInfoView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(315)
+        imageView1.snp.makeConstraints { make in
+            make.top.right.equalToSuperview()
         }
-        
+        appNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(20)
+            make.centerX.equalToSuperview()
+        }
         iotView.snp.makeConstraints { make in
-            make.top.equalTo(topInfoView.snp.bottom).offset(10)
+            make.top.equalTo(self.appNameLabel.snp.bottom).offset(30)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(144)
         }
