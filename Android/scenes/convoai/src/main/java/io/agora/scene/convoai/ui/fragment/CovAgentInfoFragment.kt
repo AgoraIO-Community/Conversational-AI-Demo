@@ -136,7 +136,7 @@ class CovAgentInfoFragment : BaseFragment<CovAgentInfoFragmentBinding>() {
                     mtvAgentStatus.text = getString(R.string.cov_info_your_network_disconnected)
                     mtvAgentStatus.setTextColor(context.getColor(io.agora.scene.common.R.color.ai_red6))
 
-                    mtvAgentId.text = getString(R.string.cov_info_empty)
+                    mtvAgentId.text = CovAgentApiManager.agentId ?: getString(R.string.cov_info_empty)
                     mtvRoomId.text = CovAgentManager.channelName
                     mtvUidValue.text = CovAgentManager.uid.toString()
                 }

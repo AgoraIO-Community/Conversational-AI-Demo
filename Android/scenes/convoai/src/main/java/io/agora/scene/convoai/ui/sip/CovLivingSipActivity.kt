@@ -150,7 +150,7 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
                     }
 
                     CallState.CALLING -> {
-                        appTabDialog?.updateConnectStatus(AgentConnectionState.CONNECTED)
+                        appTabDialog?.updateConnectStatus(AgentConnectionState.CONNECTING)
                     }
 
                     CallState.CALLED -> {
@@ -273,6 +273,7 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
     private fun setupSipCallView() {
         if (CovAgentManager.getPreset()?.isSipInternal == true) {
             mBinding?.apply {
+                clTop.settingIcon.isVisible = false
                 outBoundCallView.isVisible = false
                 internalCallView.isVisible = true
 
@@ -284,6 +285,7 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
             }
         } else if (CovAgentManager.getPreset()?.isSipOutBound == true) {
             mBinding?.apply {
+                clTop.settingIcon.isVisible = true
                 internalCallView.isVisible = false
                 outBoundCallView.isVisible = true
                 outBoundCallView.onCallActionListener = { action, phoneNumber ->
