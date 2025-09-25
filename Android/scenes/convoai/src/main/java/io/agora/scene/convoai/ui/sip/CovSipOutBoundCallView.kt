@@ -146,6 +146,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 // Update calling number display
                 binding.tvCallingNumber.text = phoneNumber
                 binding.tvCalling.visibility = VISIBLE
+                binding.tvCalling.setText(R.string.cov_sip_outbound_calling)
             }
 
             CallState.CALLED -> {
@@ -154,7 +155,8 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
 
                 // Update connected number display
                 binding.tvCallingNumber.text = phoneNumber
-                binding.tvCalling.visibility = INVISIBLE
+                binding.tvCalling.visibility = VISIBLE
+                binding.tvCalling.setText(R.string.cov_sip_call_in_progress)
             }
         }
     }

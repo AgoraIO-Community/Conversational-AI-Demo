@@ -3,6 +3,7 @@ package io.agora.scene.convoai.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.annotation.DrawableRes
 import io.agora.scene.common.util.GlideImageLoader
@@ -28,6 +29,8 @@ class CovLivingTopSipView @JvmOverloads constructor(
         binding.btnBack.setOnClickListener { onbackClick?.invoke() }
         binding.btnSettings.setOnClickListener { onSettingsClick?.invoke() }
     }
+
+    val settingIcon: View get() = binding.btnSettings
 
     /**
      * Set callback for back button click.
