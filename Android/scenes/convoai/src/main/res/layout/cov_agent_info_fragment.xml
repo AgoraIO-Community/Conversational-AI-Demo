@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/ai_fill2"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ai_fill2">
+        android:background="@color/ai_fill2"
+        android:paddingVertical="16dp">
 
         <TextView
             android:id="@+id/tv_service_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="16dp"
             android:text="@string/cov_agent_service_info"
             android:textColor="@color/ai_icontext4"
             android:textSize="12sp"
@@ -304,7 +304,6 @@
             android:background="@drawable/settings_item_bg"
             android:orientation="vertical"
             android:paddingVertical="6dp"
-            android:layout_marginBottom="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_more">
