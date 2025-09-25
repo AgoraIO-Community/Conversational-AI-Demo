@@ -380,6 +380,7 @@ object CovAgentApiManager {
 
     fun startSipCallWithMap(channelName:String,convoaiBody: Map<String,Any?>, completion: (error: ApiException?,
                                                                                      channelName: String) -> Unit) {
+        agentId = null
         val requestURL = "${ServerConfig.toolBoxUrl}/convoai/$SERVICE_VERSION/call"
         val postBody = JSONObject()
         try {

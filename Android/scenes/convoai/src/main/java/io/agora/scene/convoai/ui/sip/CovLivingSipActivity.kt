@@ -29,14 +29,11 @@ import io.agora.scene.convoai.animation.CovBallAnimCallback
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
-import io.agora.scene.convoai.convoaiApi.AgentState
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
 import io.agora.scene.convoai.databinding.CovActivityLivingSipBinding
 import io.agora.scene.convoai.ui.CovLoginActivity
 import io.agora.scene.convoai.ui.dialog.CovAgentTabDialog
-import io.agora.scene.convoai.ui.dialog.CovImagePreviewDialog
-import io.agora.scene.convoai.ui.sip.CovSipOutBoundCallView.CallState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,11 +45,10 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
     private val viewModel: CovLivingSipViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
-    private lateinit var mPermissionHelp: PermissionHelp
+    private var appTabDialog: CovAgentTabDialog? = null
 
     // Animation and rendering
     private var mCovBallAnim: CovBallAnim? = null
-    private var hasShownTitleAnim = false
 
     // SIP keyboard handling
     private var sipKeyboardHelper: KeyboardVisibilityHelper? = null
@@ -101,7 +97,6 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
     }
 
     private fun setupView() {
-        mPermissionHelp = PermissionHelp(this)
         mBinding?.apply {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             val statusBarHeight = getStatusBarHeight() ?: 25.dp.toInt()
@@ -115,6 +110,10 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
                 io.agora.scene.common.R.drawable.common_default_agent
             }
             clTop.updateTitleName(viewModel.agentName, viewModel.agentUrl, defaultImage)
+
+            clTop.setOnSettingsClickListener {
+                showSettingDialog()
+            }
 
             clTop.setOnBackClickListener {
                 finish()
@@ -143,47 +142,19 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
         }
 
         lifecycleScope.launch {   // Observe connection state
-            viewModel.connectionState.collect { state ->
-                mBinding?.clTop?.updateAgentState(state)
-
-                // Update animation and timer display based on state
+            viewModel.callState.collect { state ->
+                mBinding?.outBoundCallView?.setCallState(state)
                 when (state) {
-                    AgentConnectionState.IDLE -> {
-                        mBinding?.outBoundCallView?.setCallState(CallState.IDLE)
+                    CallState.IDLE -> {
+                        appTabDialog?.updateConnectStatus(AgentConnectionState.IDLE)
                     }
 
-                    AgentConnectionState.CONNECTING -> {
+                    CallState.CALLING -> {
+                        appTabDialog?.updateConnectStatus(AgentConnectionState.CONNECTED)
                     }
 
-                    AgentConnectionState.CONNECTED -> {
-                        if (!hasShownTitleAnim) {
-                            hasShownTitleAnim = true
-                            mBinding?.clTop?.showTitleAnim(
-                                CovAgentManager.isSessionLimitMode,
-                                CovAgentManager.roomExpireTime,
-                                tipsText = if (CovAgentManager.isSessionLimitMode)
-                                    getString(
-                                        io.agora.scene.common.R.string.common_limit_time,
-                                        (CovAgentManager.roomExpireTime / 60).toInt()
-                                    )
-                                else
-                                    getString(io.agora.scene.common.R.string.common_limit_time_none)
-                            )
-                            mBinding?.clTop?.startCountDownTask(
-                                CovAgentManager.isSessionLimitMode,
-                                CovAgentManager.roomExpireTime,
-                                onTimerEnd = {
-                                    onClickEndCall()
-                                    showRoomEndDialog()
-                                }
-                            )
-                        }
-                    }
-
-                    AgentConnectionState.CONNECTED_INTERRUPT -> {
-                    }
-
-                    AgentConnectionState.ERROR -> {
+                    CallState.CALLED -> {
+                        appTabDialog?.updateConnectStatus(AgentConnectionState.CONNECTED)
                     }
                 }
             }
@@ -193,31 +164,33 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
                 mCovBallAnim?.updateAgentState(animState)
             }
         }
-        lifecycleScope.launch {    // Observe agent state
-            viewModel.agentState.collect { agentState ->
-                agentState?.let {
-                    if (agentState==AgentState.IDLE){
-                        mBinding?.outBoundCallView?.setCallState(CallState.IDLE)
-                    }else{
-                        mBinding?.outBoundCallView?.setCallState(CallState.CALLED)
-                    }
-
-                }
-            }
-        }
     }
 
 
     private fun onClickStartAgent(phoneNumber: String) {
-        hasShownTitleAnim = false
         // Delegate to ViewModel for processing
         viewModel.startAgentConnection(phoneNumber)
     }
 
     private fun onClickEndCall() {
-        mBinding?.clTop?.stopCountDownTask()
-        mBinding?.clTop?.stopTitleAnim()
         viewModel.stopAgentAndLeaveChannel()
+    }
+
+    private fun showSettingDialog() {
+        val agentState = when (viewModel.callState.value) {
+            CallState.IDLE -> AgentConnectionState.IDLE
+
+            CallState.CALLING -> AgentConnectionState.CONNECTING
+
+            CallState.CALLED -> AgentConnectionState.CONNECTED
+        }
+        appTabDialog = CovAgentTabDialog.newSipInstance(
+            agentState,
+            onDismiss = {
+                appTabDialog = null
+            }
+        )
+        appTabDialog?.show(supportFragmentManager, "info_tab_dialog")
     }
 
     private fun setupBallAnimView() {
@@ -237,19 +210,6 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
             }
         })
         mCovBallAnim?.setupView()
-    }
-
-
-    private fun showRoomEndDialog() {
-        if (isFinishing || isDestroyed) return
-        val mins: String = (CovAgentManager.roomExpireTime / 60).toInt().toString()
-        CommonDialog.Builder()
-            .setTitle(getString(io.agora.scene.common.R.string.common_call_time_is_up))
-            .setContent(getString(io.agora.scene.common.R.string.common_call_time_is_up_tips, mins))
-            .setPositiveButton(getString(io.agora.scene.common.R.string.common_i_known))
-            .hideNegativeButton()
-            .build()
-            .show(supportFragmentManager, "end_dialog_tag")
     }
 
     private var isReleased = false
@@ -326,11 +286,16 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
             mBinding?.apply {
                 internalCallView.isVisible = false
                 outBoundCallView.isVisible = true
-                outBoundCallView.onJoinCallListener = {
-                    onClickStartAgent(it)
-                }
-                outBoundCallView.onEndCallListener = {
-                    onClickEndCall()
+                outBoundCallView.onCallActionListener = { action, phoneNumber ->
+                    when (action) {
+                        CovSipOutBoundCallView.CallAction.JOIN_CALL -> {
+                            onClickStartAgent(phoneNumber)
+                        }
+
+                        CovSipOutBoundCallView.CallAction.END_CALL -> {
+                            onClickEndCall()
+                        }
+                    }
                 }
 
                 CovAgentManager.getPreset()?.let { preset ->

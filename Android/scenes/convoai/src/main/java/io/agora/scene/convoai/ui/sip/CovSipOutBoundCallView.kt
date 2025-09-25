@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.databinding.CovOutboundCallLayoutBinding
@@ -36,18 +37,15 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     private var regionPopup: PopupWindow? = null
     private var regionAdapter: RegionSelectionAdapter? = null
 
-    // Callback interfaces
-    var onCallStateChangeListener: ((CallState, String) -> Unit)? = null
-    var onJoinCallListener: ((String) -> Unit)? = null
-    var onEndCallListener: (() -> Unit)? = null
+    // Unified callback interface
+    var onCallActionListener: ((CallAction, String) -> Unit)? = null
 
     /**
-     * Call states enum
+     * Call actions enum
      */
-    enum class CallState {
-        IDLE,    // Not calling, showing input UI
-        CALLING, // Dialing/connecting
-        CALLED   // Connected and in call
+    enum class CallAction {
+        JOIN_CALL,    // User clicked join call button
+        END_CALL,     // User clicked end call button
     }
 
     init {
@@ -83,7 +81,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 this.phoneNumber = phoneNumber
             }
             updateUIForState(state)
-            onCallStateChangeListener?.invoke(state, phoneNumber)
         }
     }
 
@@ -91,14 +88,14 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      * Get current phone number with region code
      */
     fun getFullPhoneNumber(): String {
-        val number = binding.etPhoneNumber.text.toString().trim()
+        val number = getPhoneNumber()
         return if (number.isNotEmpty() && selectedRegion != null) "${selectedRegion!!.dialCode}$number" else ""
     }
 
     /**
      * Get current entered phone number without region code
      */
-    fun getPhoneNumber(): String {
+    private fun getPhoneNumber(): String {
         return binding.etPhoneNumber.text.toString().trim()
     }
 
@@ -167,16 +164,22 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     private fun setupClickListeners() {
         binding.btnJoinCall.setOnClickListener {
+            val phoneNumber = getPhoneNumber()
+            if (phoneNumber.length < 4) {
+                ToastUtil.show(R.string.cov_sip_valid_number)
+                return@setOnClickListener
+            }
             val fullNumber = getFullPhoneNumber()
             if (fullNumber.isNotEmpty()) {
                 setCallState(CallState.CALLING, fullNumber)
-                onJoinCallListener?.invoke(fullNumber)
+                onCallActionListener?.invoke(CallAction.JOIN_CALL, fullNumber)
             }
         }
 
         binding.btnEndCall.setOnClickListener {
             setCallState(CallState.IDLE)
-            onEndCallListener?.invoke()
+            ToastUtil.show(R.string.cov_sip_call_ended)
+            onCallActionListener?.invoke(CallAction.END_CALL, "")
         }
 
         binding.ivClearInput.setOnClickListener {

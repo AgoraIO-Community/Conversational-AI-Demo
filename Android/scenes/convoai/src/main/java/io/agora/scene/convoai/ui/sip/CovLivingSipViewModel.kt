@@ -8,7 +8,6 @@ import io.agora.rtm.RtmClient
 import io.agora.scene.convoai.CovLogger
 import io.agora.scene.convoai.animation.BallAnimState
 import io.agora.scene.convoai.api.CovAgentApiManager
-import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
 import io.agora.scene.convoai.convoaiApi.*
 import io.agora.scene.convoai.rtc.CovRtcManager
@@ -19,6 +18,8 @@ import io.agora.scene.common.net.TokenGenerator
 import io.agora.scene.common.net.TokenGeneratorType
 import io.agora.scene.common.util.toast.ToastUtil
 import android.widget.Toast
+import io.agora.rtm.PresenceEvent
+import io.agora.rtm.RtmConstants
 import io.agora.scene.convoai.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +31,18 @@ import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.launch
 import kotlin.onFailure
 import kotlin.runCatching
-import kotlin.takeIf
-import kotlin.text.isNotEmpty
 import kotlin.text.replace
 import kotlin.text.substring
 import kotlin.to
+
+/**
+ * Call states enum
+ */
+enum class CallState {
+    IDLE,    // Not calling, showing input UI
+    CALLING, // Dialing/connecting
+    CALLED   // Connected and in call
+}
 
 /**
  * view model
@@ -44,14 +52,11 @@ class CovLivingSipViewModel : ViewModel() {
     private val TAG = "CovLivingSipViewModel"
 
     // UI states
-    private val _connectionState = MutableStateFlow(AgentConnectionState.IDLE)
-    val connectionState: StateFlow<AgentConnectionState> = _connectionState.asStateFlow()
+    private val _callState = MutableStateFlow(CallState.IDLE)
+    val callState: StateFlow<CallState> = _callState.asStateFlow()
 
     private val _ballAnimState = MutableStateFlow(BallAnimState.STATIC)
     val ballAnimState: StateFlow<BallAnimState> = _ballAnimState.asStateFlow()
-
-    private val _agentState = MutableStateFlow<AgentState?>(null)
-    val agentState: StateFlow<AgentState?> = _agentState.asStateFlow()
 
     // Business states
     private var integratedToken: String? = null
@@ -78,10 +83,11 @@ class CovLivingSipViewModel : ViewModel() {
     // ConversationalAI event handler
     private val covEventHandler = object : IConversationalAIAPIEventHandler {
         override fun onAgentStateChanged(agentUserId: String, event: StateChangeEvent) {
-            if (event.state != AgentState.IDLE) {
-                _connectionState.value = AgentConnectionState.CONNECTED
+            if (event.state == AgentState.IDLE) {
+//                _callState.value = CallState.IDLE
+            } else if (event.state != AgentState.UNKNOWN) {
+                _callState.value = CallState.CALLED
             }
-            _agentState.value = event.state
         }
 
         override fun onAgentInterrupted(agentUserId: String, event: InterruptEvent) {
@@ -128,6 +134,19 @@ class CovLivingSipViewModel : ViewModel() {
             CovLogger.w(TAG, "RTM token will expire, renewing token")
             renewToken()
         }
+
+        override fun onPresenceEvent(event: PresenceEvent) {
+            if (event.channelType == RtmConstants.RtmChannelType.MESSAGE) {
+                if (event.eventType == RtmConstants.RtmPresenceEventType.REMOTE_LEAVE) {
+                    val agentUserId = event.publisherId
+                    if (agentUserId == CovAgentManager.agentUID.toString()) {
+                        _callState.value = CallState.IDLE
+                        ToastUtil.show(R.string.cov_sip_call_ended)
+                        CovLogger.d(TAG, "rtm agent leave: $agentUserId")
+                    }
+                }
+            }
+        }
     }
 
     fun getPresetTokenConfig() {
@@ -153,8 +172,8 @@ class CovLivingSipViewModel : ViewModel() {
 
     // Start Agent connection
     fun startAgentConnection(phoneNumber: String) {
-        if (_connectionState.value != AgentConnectionState.IDLE) return
-        _connectionState.value = AgentConnectionState.CONNECTING
+        if (_callState.value != CallState.IDLE) return
+        _callState.value = CallState.CALLING
         // Generate channel name
         CovAgentManager.channelName =
             CovAgentManager.channelPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, 8)
@@ -165,7 +184,7 @@ class CovLivingSipViewModel : ViewModel() {
                 if (integratedToken == null) {
                     val tokenResult = updateTokenAsync()
                     if (!tokenResult) {
-                        _connectionState.value = AgentConnectionState.IDLE
+                        _callState.value = CallState.IDLE
                         _ballAnimState.value = BallAnimState.STATIC
                         ToastUtil.show(R.string.cov_detail_join_call_failed, Toast.LENGTH_LONG)
                         return@launch
@@ -199,16 +218,8 @@ class CovLivingSipViewModel : ViewModel() {
     fun stopAgentAndLeaveChannel() {
         cancelJobs()
         conversationalAIAPI?.unsubscribeMessage(CovAgentManager.channelName) {}
-
-        if (_connectionState.value != AgentConnectionState.IDLE) {
-            _connectionState.value = AgentConnectionState.IDLE
-            CovAgentApiManager.stopSipCall(
-                CovAgentManager.channelName,
-                CovAgentManager.getPreset()?.name
-            ) {}
-        }
-
-        resetState()
+        _callState.value = CallState.IDLE
+        _ballAnimState.value = BallAnimState.STATIC
     }
 
     // RTC event handling
@@ -244,7 +255,7 @@ class CovLivingSipViewModel : ViewModel() {
 
                 else -> ToastUtil.show(R.string.cov_detail_join_call_failed, Toast.LENGTH_LONG)
             }
-            _connectionState.value = AgentConnectionState.IDLE
+            _callState.value = CallState.CALLING
             _ballAnimState.value = BallAnimState.STATIC
         }
     }
@@ -295,8 +306,8 @@ class CovLivingSipViewModel : ViewModel() {
         // Cancel existing timeout job first
         waitingAgentJob?.cancel()
         waitingAgentJob = viewModelScope.launch {
-            delay(30000) // 30 seconds timeout
-            if (_connectionState.value == AgentConnectionState.CONNECTING) {
+            delay(60000) // 60 seconds timeout
+            if (_callState.value == CallState.CALLING) {
                 ToastUtil.show(R.string.cov_detail_agent_join_timeout, Toast.LENGTH_LONG)
                 stopAgentAndLeaveChannel()
             }
@@ -343,10 +354,6 @@ class CovLivingSipViewModel : ViewModel() {
             CovLogger.w(TAG, "Failed to cancel waiting agent job: ${it.message}")
         }
         waitingAgentJob = null
-    }
-
-    private fun resetState() {
-        _ballAnimState.value = BallAnimState.STATIC
     }
 
     override fun onCleared() {
