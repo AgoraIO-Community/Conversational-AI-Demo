@@ -19,6 +19,9 @@ class MineViewController: UIViewController {
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onAppNameLabelTapped))
+        label.addGestureRecognizer(tapGesture)
         return label
     }()
     
@@ -119,6 +122,10 @@ class MineViewController: UIViewController {
             self?.iotView.updateDeviceCount(deviceCount)
         }
     }
+    
+    @objc private func onAppNameLabelTapped() {
+        DeveloperConfig.shared.countTouch()
+    }
 }
 
 // MARK: - MineTopInfoViewDelegate
@@ -167,7 +174,6 @@ extension MineViewController: MineTopInfoViewDelegate {
     }
 
     func mineTopInfoViewDidTapCardTitle() {
-        DeveloperConfig.shared.countTouch()
     }
 }
 
