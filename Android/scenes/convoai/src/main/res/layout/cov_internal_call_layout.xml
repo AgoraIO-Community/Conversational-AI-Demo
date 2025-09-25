@@ -8,93 +8,18 @@
     android:background="@android:color/transparent"
     tools:background="@color/ai_fill4">
 
-    <LinearLayout
-        android:id="@+id/layout_india"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/layout_chile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.8">
-
-        <TextView
-            android:id="@+id/tv_india_emoji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="🇮🇳"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/tv_india_code"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            tools:text="IN"
-            android:textColor="@color/ai_icontext1"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/tv_india_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/cov_phone_number_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="2dp"
-            android:text=""
-            android:textColor="@color/ai_icontext1"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="+91-22-47790159" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_chile"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_sip_callees"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:maxHeight="200dp"
         app:layout_constraintBottom_toTopOf="@+id/layout_tips"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.8">
-
-        <TextView
-            android:id="@+id/tv_chile_emoji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="🇮🇨"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/tv_chile_code"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            tools:text="CL"
-            android:textColor="@color/ai_icontext1"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/tv_chile_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/cov_phone_number_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="2dp"
-            android:text=""
-            android:textColor="@color/ai_icontext1"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="+54-911-52465127" />
-
-    </LinearLayout>
+        app:layout_constraintWidth_percent="0.8"
+        tools:itemCount="10"
+        tools:listitem="@layout/cov_sip_callee_item" />
 
     <LinearLayout
         android:id="@+id/layout_tips"

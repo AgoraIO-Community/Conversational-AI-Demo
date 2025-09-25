@@ -311,17 +311,10 @@ class CovLivingViewModel : ViewModel() {
 
         if (_connectionState.value != AgentConnectionState.IDLE) {
             _connectionState.value = AgentConnectionState.IDLE
-            if (CovAgentManager.getPreset()?.isSip == true) {
-                CovAgentApiManager.stopSipCall(
-                    CovAgentManager.channelName,
-                    CovAgentManager.getPreset()?.name
-                ) {}
-            } else {
-                CovAgentApiManager.stopAgent(
-                    CovAgentManager.channelName,
-                    CovAgentManager.getPreset()?.name
-                ) {}
-            }
+            CovAgentApiManager.stopAgent(
+                CovAgentManager.channelName,
+                CovAgentManager.getPreset()?.name
+            ) {}
         }
 
         resetState()

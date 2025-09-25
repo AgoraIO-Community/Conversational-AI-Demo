@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
-                android:digits="0123456789-"
+                android:digits="0123456789"
                 android:hint="@string/cov_sip_outbound_call_hint"
                 android:inputType="number"
                 android:maxLength="12"

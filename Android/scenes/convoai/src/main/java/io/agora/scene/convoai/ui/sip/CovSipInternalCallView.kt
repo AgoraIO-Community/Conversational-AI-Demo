@@ -9,11 +9,12 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.databinding.CovInternalCallLayoutBinding
 
 /**
- * SIP Internal Call View for displaying India and Chile phone numbers
+ * SIP Internal Call View for displaying SIP callee phone numbers
  * Provides clickable phone numbers that can initiate calls
  */
 class CovSipInternalCallView @JvmOverloads constructor(
@@ -21,24 +22,10 @@ class CovSipInternalCallView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val binding: CovInternalCallLayoutBinding = CovInternalCallLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+    private val calleeAdapter = CovSipCalleeAdapter()
     
     init {
         setupView()
-    }
-
-    /**
-     * Set the india number
-     */
-    fun setIndiaNumber(phoneNumber: String) {
-        binding.tvIndiaPhone.text = phoneNumber
-    }
-
-
-    /**
-     * Set the chile number
-     */
-    fun setChileNumber(phoneNumber: String) {
-        binding.tvChilePhone.text = phoneNumber
     }
 
     /**
@@ -47,41 +34,24 @@ class CovSipInternalCallView @JvmOverloads constructor(
      */
     fun setPhoneNumbersFromPreset(preset: CovAgentPreset) {
         if (!preset.sip_vendor_callee_numbers.isNullOrEmpty()) {
-            // Find India and Chile numbers from sip callees
-            val indiaCallee = preset.sip_vendor_callee_numbers.find { it.region_code == RegionConfig.IN.dialCode }
-            val chileCallee = preset.sip_vendor_callee_numbers.find { it.region_code == RegionConfig.CL.dialCode }
-            
-            indiaCallee?.let {
-                setIndiaNumber("+${it.region_code}-${it.phone_number}")
-            }
-            chileCallee?.let {
-                setChileNumber("+${it.region_code}-${it.phone_number}")
-            }
+            // Update the adapter with all available callees
+            calleeAdapter.updateCallees(preset.sip_vendor_callee_numbers)
         }
     }
     
     /**
-     * Setup click listeners for phone numbers
+     * Setup RecyclerView and click listeners
      */
     private fun setupView() {
-        binding.tvIndiaEmoji.text = RegionConfig.IN.flagEmoji
-        binding.tvIndiaCode.text = RegionConfig.IN.regionCode
-
-        binding.tvChileEmoji.text = RegionConfig.CL.flagEmoji
-        binding.tvChileCode.text = RegionConfig.CL.regionCode
-
-        binding.tvIndiaPhone.setOnClickListener {
-            val phoneNumber = binding.tvIndiaPhone.text.toString()
-            if (phoneNumber.isNotEmpty()) {
-                showCallPhoneDialog(phoneNumber)
-            }
+        // Setup RecyclerView
+        binding.rvSipCallees.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = calleeAdapter
         }
         
-        binding.tvChilePhone.setOnClickListener {
-            val phoneNumber = binding.tvChilePhone.text.toString()
-            if (phoneNumber.isNotEmpty()) {
-                showCallPhoneDialog(phoneNumber)
-            }
+        // Setup phone number click listener
+        calleeAdapter.setOnPhoneNumberClickListener { phoneNumber ->
+            showCallPhoneDialog(phoneNumber)
         }
     }
     
@@ -89,8 +59,6 @@ class CovSipInternalCallView @JvmOverloads constructor(
      * Show call phone dialog
      */
     private fun showCallPhoneDialog(phoneNumber: String) {
-//        val callNumber = phoneNumber.replace("+", "").replace("-", "")
-        
         val context = this.context
         if (context is FragmentActivity) {
             val dialog = CovSipCallPhoneDialog().apply {
