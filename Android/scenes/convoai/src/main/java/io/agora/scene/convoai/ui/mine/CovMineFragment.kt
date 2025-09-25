@@ -47,7 +47,7 @@ class CovMineFragment : BaseFragment<CovFragmentMineBinding>() {
 
     private fun setupClickListeners() {
         mBinding?.apply {
-            viewMineTop.setOnClickListener {
+            customTitleBar.setOnTitleClickListener {
                 DebugConfigSettings.checkClickDebug()
             }
 
