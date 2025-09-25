@@ -451,7 +451,7 @@ enum class TranscriptRenderMode {
  * @property status Current status of the transcript
  * @property type transcript type (AGENT/USER)
  */
-data class Transcript(
+data class Transcript constructor(
     /** Unique identifier for the conversation turn */
     val turnId: Long,
     /** User identifier associated with this transcript */
@@ -462,6 +462,8 @@ data class Transcript(
     var status: TranscriptStatus,
     /** transcript type (AGENT/USER) */
     var type: TranscriptType,
+    /** real render mode */
+    var renderMode: TranscriptRenderMode,
 )
 
 /**
