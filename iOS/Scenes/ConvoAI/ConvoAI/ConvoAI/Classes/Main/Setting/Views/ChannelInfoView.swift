@@ -111,7 +111,7 @@ class ChannelInfoView: UIView {
     
     private lazy var voiceprintLockItem: AgentSettingTextItemView = {
         let view = AgentSettingTextItemView(frame: .zero)
-        view.titleLabel.text = ResourceManager.L10n.ChannelInfo.voiceprintLock
+        view.titleLabel.text = ResourceManager.L10n.Voiceprint.title
         view.detailLabel.text = ResourceManager.L10n.ChannelInfo.seamless
         view.detailLabel.textColor = UIColor.themColor(named: "ai_green6")
         return view
@@ -119,7 +119,7 @@ class ChannelInfoView: UIView {
     
     private lazy var elegantInterruptItem: AgentSettingTextItemView = {
         let view = AgentSettingTextItemView(frame: .zero)
-        view.titleLabel.text = ResourceManager.L10n.ChannelInfo.elegantInterrupt
+        view.titleLabel.text = ResourceManager.L10n.Settings.aiVadLight
         view.detailLabel.text = ResourceManager.L10n.ChannelInfo.effective
         view.detailLabel.textColor = UIColor.themColor(named: "ai_green6")
         view.bottomLine.isHidden = true
