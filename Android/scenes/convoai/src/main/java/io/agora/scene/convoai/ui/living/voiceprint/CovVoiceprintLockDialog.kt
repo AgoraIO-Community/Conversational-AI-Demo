@@ -265,6 +265,18 @@ class CovVoiceprintLockDialog : BaseDialogFragment<CovVoiceprintLockDialogBindin
         onDismissCallback?.invoke()
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        CovLogger.d(TAG, "onCancel called")
+        super.onCancel(dialog)
+        var mode = selectedMode
+        if (mode == VoiceprintMode.PERSONALIZED && CovAgentManager.voiceprintInfo == null) {
+            mode = preMode
+        }
+        mode?.let {
+            onModeSelectedCallback?.invoke(it)
+        }
+    }
+
     /**
      * Handle dialog dismiss with mode selection logic
      */
@@ -402,6 +414,7 @@ class CovVoiceprintLockDialog : BaseDialogFragment<CovVoiceprintLockDialogBindin
                     if (voiceprintInfo != null) {
                         val voiceprintName = generateVoiceprintNameFromTimestamp(TimeUtils.currentTimeMillis())
                         tvVoiceprintName.text = voiceprintName
+                        isCancelable = true
                     }
                     if (state == VoiceprintUIState.UPLOAD_SUCCESS) {
                         ToastUtil.showNew(
@@ -467,12 +480,14 @@ class CovVoiceprintLockDialog : BaseDialogFragment<CovVoiceprintLockDialogBindin
                     if (!createLayout.isVisible) {
                         showCreateVoiceprintWithAnimation()
                     }
+                    isCancelable = CovAgentManager.voiceprintInfo != null
                 }
 
                 else -> {
                     if (createLayout.isVisible) {
                         hideCreateVoiceprintWithAnimation()
                     }
+                    isCancelable = true
                 }
             }
         }
