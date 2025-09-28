@@ -119,7 +119,7 @@
                         android:ellipsize="end"
                         android:gravity="end"
                         android:maxLines="1"
-                        android:text="@string/common_close"
+                        android:text="@string/cov_setting_avatar_close"
                         android:textColor="@color/ai_icontext1"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"

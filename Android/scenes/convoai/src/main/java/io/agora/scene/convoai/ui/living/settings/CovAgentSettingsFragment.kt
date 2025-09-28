@@ -397,7 +397,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                 )
             } else {
                 // Avatar function closed, show closed state
-                tvAvatarDetail.text = getString(R.string.common_close)
+                tvAvatarDetail.text = getString(io.agora.scene.convoai.R.string.cov_setting_avatar_close)
                 ivAvatar.visibility = View.GONE
             }
         }

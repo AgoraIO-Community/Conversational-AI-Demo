@@ -739,7 +739,9 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun showSettingDialog(initialTab: Int) {
-        appTabDialog = CovAgentTabDialog.Companion.newInstance(
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+
+        appTabDialog = CovAgentTabDialog.newInstance(
             initialTab,
             onDismiss = {
                 appTabDialog = null
@@ -808,7 +810,8 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun showRoomEndDialog() {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+
         val mins: String = (CovAgentManager.roomExpireTime / 60).toInt().toString()
         CommonDialog.Builder()
             .setTitle(getString(R.string.common_call_time_is_up))
@@ -888,7 +891,8 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun showPermissionDialog(title: String, content: String, onResult: (Boolean) -> Unit) {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+
         CommonDialog.Builder()
             .setTitle(title)
             .setContent(content)
@@ -905,11 +909,12 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun enableNotifications() {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
         if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
             CovLogger.d(TAG, "Notifications enable!")
             return
         }
+
         CommonDialog.Builder()
             .setTitle(getString(io.agora.scene.convoai.R.string.cov_permission_required))
             .setContent(getString(io.agora.scene.convoai.R.string.cov_notifications_enable_tip))
@@ -932,7 +937,8 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
     }
 
     private fun showPreviewDialog(imagePath: String, imageBounds: Rect) {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+
         CovImagePreviewDialog.Companion.newInstance(imagePath, imageBounds)
             .show(supportFragmentManager, "preview_image_dialog")
     }

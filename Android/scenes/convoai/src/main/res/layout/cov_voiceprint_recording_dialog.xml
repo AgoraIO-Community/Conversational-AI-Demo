@@ -18,11 +18,9 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:padding="16dp"
-            android:src="@drawable/app_icon_close"
+            android:src="@drawable/app_icon_close_grey"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/ai_icontext1" />
-
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -31,7 +29,7 @@
             android:gravity="center"
             android:text="@string/cov_voiceprint_title"
             android:textColor="@color/ai_icontext1"
-            android:textSize="16sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivBack" />
@@ -41,11 +39,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="30dp"
-            android:lineSpacingExtra="2dp"
+            android:layout_marginTop="70dp"
+            android:textSize="20sp"
+            android:lineSpacingExtra="5dp"
             android:text="@string/cov_voiceprint_content"
             android:textColor="@color/ai_icontext1"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />

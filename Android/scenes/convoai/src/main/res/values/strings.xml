@@ -52,6 +52,7 @@
     <string name="cov_setting_model">Model</string>
     <string name="cov_setting_language">Language</string>
     <string name="cov_setting_avatar">AI Avatar</string>
+    <string name="cov_setting_avatar_close">Closed</string>
     <string name="cov_setting_avatar_all">All</string>
     <string name="cov_setting_device">DEVICE</string>
     <string name="cov_setting_advanced_settings">Advanced Settings</string>
@@ -61,7 +62,7 @@
     <string name="cov_setting_ai_vad"></string>
     <string name="cov_setting_ai_vad1">IIH</string>
     <string name="cov_setting_ai_vad_high">Intelligent Interruption Handling\n(IIH)</string>
-    <string name="cov_setting_ai_vad_high_desc">Elegant Interruption is an advanced interruption function independently developed by Agora. It enables the agent to temporarily stop logical reasoning to do the actual thing, and then return to allow the agent to continue according to the node before the interruption</string>
+    <string name="cov_setting_ai_vad_high_desc">This feature makes AI better understand you and reduces false interruption.</string>
     <string name="cov_setting_network_error">Network Error!</string>
     <string name="cov_agent_connecting">Connecting…</string>
     <string name="cov_copy_succeed">Copied</string>
@@ -162,13 +163,9 @@
     <string name="cov_voiceprint_title">Please read aloud</string>
     <string name="cov_voiceprint_title1">Please read this clearly and aloud.</string>
     <string name="cov_voiceprint_content">
-        It was the best of times, it was the worst of times,
-        \n\nit was the age of wisdom, it was the age of foolishness,
-        \n\nit was the epoch of belief, it was the epoch of incredulity，
-        \n\nit was the season of Light, it was the season of Darkness,
-        \n\nit was the spring of hope, it was the winter of despair，
-        \n\nwe had everything before us, we had nothing before us。
-        \n\nwe were all going direct to Heaven, we were all going direct the other way.</string>
+        It was the best of times, it was the worst of times
+        \n\nIt was the age of wisdom, it was the age of foolishness
+        \n\nIt was the epoch of belief, it was the epoch of incredulity</string>
     <string name="cov_voiceprint_long_pressed">Press and hold to record</string>
     <string name="cov_voiceprint_recording_only_one">You can only save one voiceprint. Recording a new one will replace the current one.</string>
     <string name="cov_voiceprint_release_to_create">Release to save, slide up to cancel</string>
