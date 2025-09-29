@@ -69,7 +69,7 @@ class CovAgentListActivity : DebugSupportActivity<CovActivityAgentListBinding>()
             btnInfo.setOnClickListener {
                 showInfoDialog()
             }
-            ivTop.setOnClickListener {
+            llTopTitle.setOnClickListener {
                 DebugConfigSettings.checkClickDebug()
             }
             activityKeyboardOverlayMask.setOnClickListener {
