@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.crashlytics)
+//    alias(libs.plugins.google.services)
+//    alias(libs.plugins.crashlytics)
 }
 apply from: 'resource.gradle'
 
@@ -21,7 +21,7 @@ android {
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.8.0"
+        versionName "1.8.1"
         
         buildConfigField("String", "BUILD_TIMESTAMP", "\"${buildTimestamp}\"")
 
@@ -33,8 +33,8 @@ android {
     productFlavors {
         global {
             dimension "region"
-            applicationId "io.agora.convoai"
-            resValue "string", "app_name", "Convo AI"
+            applicationId "io.agora.convoai.sip"
+            resValue "string", "app_name", "Convo SIP"
             buildConfigField("String", "TOOLBOX_SERVER_HOST", "\"${project.getProperty("TOOLBOX_SERVER_HOST")}\"")
             buildConfigField("String", "AG_APP_ID", "\"${project.getProperty("AG_APP_ID")}\"")
             buildConfigField("String", "AG_APP_CERTIFICATE", "\"${project.getProperty("AG_APP_CERTIFICATE")}\"")
