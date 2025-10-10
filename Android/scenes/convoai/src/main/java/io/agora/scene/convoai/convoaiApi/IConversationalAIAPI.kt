@@ -183,6 +183,7 @@ data class MessageReceipt(
  * @property UNKNOWN Unknown state
  */
 enum class AgentState(val value: String) {
+    IDLE("idle"),
     /** Agent is silent */
     SILENT("silent"),
 
