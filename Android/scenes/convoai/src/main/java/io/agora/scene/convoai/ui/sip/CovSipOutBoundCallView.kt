@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.util.toast.ToastUtil
@@ -36,6 +37,9 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     // Region selector popup and adapter
     private var regionPopup: PopupWindow? = null
     private var regionAdapter: RegionSelectionAdapter? = null
+
+    // Error state management
+    private var isErrorState = false
 
     // Unified callback interface
     var onCallActionListener: ((CallAction, String) -> Unit)? = null
@@ -168,9 +172,10 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
         binding.btnJoinCall.setOnClickListener {
             val phoneNumber = getPhoneNumber()
             if (phoneNumber.length < 4) {
-                ToastUtil.show(R.string.cov_sip_valid_number)
+                showErrorState()
                 return@setOnClickListener
             }
+            clearErrorState()
             val fullNumber = getFullPhoneNumber()
             if (fullNumber.isNotEmpty()) {
                 setCallState(CallState.CALLING, fullNumber)
@@ -197,6 +202,9 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      * Setup text watcher for phone number input
      */
     private fun setupTextWatcher() {
+        // Set initial text size to hint size
+        binding.etPhoneNumber.textSize = 14f
+
         binding.etPhoneNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -204,6 +212,14 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 val hasText = !s.isNullOrEmpty()
                 binding.btnJoinCall.isEnabled = hasText && currentState == CallState.IDLE
                 binding.ivClearInput.visibility = if (hasText) VISIBLE else GONE
+                
+                // Change text size based on content
+                binding.etPhoneNumber.textSize = if (hasText) 18f else 14f
+                
+                // Clear error state when user starts typing
+                if (isErrorState && hasText) {
+                    clearErrorState()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -311,6 +327,31 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
             // Show default/empty state when no region is selected
             binding.tvRegionFlag.text = "🌍"
             binding.tvRegionCode.text = "+"
+        }
+    }
+
+
+    /**
+     * Show error state with red border and error message
+     */
+    private fun showErrorState() {
+        if (!isErrorState) {
+            isErrorState = true
+            binding.llInputContainer.setBackgroundResource(R.drawable.cov_sip_call_input_bg_error)
+            binding.tvErrorHint.visibility = VISIBLE
+            binding.etPhoneNumber.setTextColor( ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_red6))
+        }
+    }
+
+    /**
+     * Clear error state and restore normal appearance
+     */
+    private fun clearErrorState() {
+        if (isErrorState) {
+            isErrorState = false
+            binding.llInputContainer.setBackgroundResource(R.drawable.cov_sip_call_input_bg)
+            binding.tvErrorHint.visibility = INVISIBLE
+            binding.etPhoneNumber.setTextColor( ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_brand_white10))
         }
     }
 

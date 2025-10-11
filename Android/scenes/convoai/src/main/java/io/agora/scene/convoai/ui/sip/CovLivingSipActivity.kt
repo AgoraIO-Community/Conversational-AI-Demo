@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import io.agora.rtc2.video.VideoCanvas
 import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
 import io.agora.scene.common.util.dp
@@ -108,6 +109,10 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
                 showSettingDialog()
             }
 
+            clTop.setOnCCClickListener {
+                viewModel.toggleMessageList()
+            }
+
             clTop.setOnBackClickListener {
                 finish()
             }
@@ -137,11 +142,39 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
         lifecycleScope.launch {   // Observe connection state
             viewModel.callState.collect { state ->
                 mBinding?.outBoundCallView?.setCallState(state)
+                mBinding?.clTop?.updateCallState(state)
             }
         }
         lifecycleScope.launch {   // Observe ball animation state
             viewModel.ballAnimState.collect { animState ->
                 mCovBallAnim?.updateAgentState(animState)
+            }
+        }
+        lifecycleScope.launch {    // Observe message list display state
+            viewModel.isShowMessageList.collect { isShow ->
+                mBinding?.apply {
+                    if (isShow) {
+                        layoutMessage.isVisible = true
+                        messageListViewV2.isVisible = true
+                    } else {
+                        layoutMessage.isVisible = false
+                    }
+                    clTop.updateTitleWithAnimation(isShow)
+                }
+            }
+        }
+        lifecycleScope.launch {  // Observe transcript updates
+            viewModel.transcriptUpdate.collect { transcript ->
+                transcript?.let {
+                    mBinding?.messageListViewV2?.onTranscriptUpdated(it, false)
+                }
+            }
+        }
+        lifecycleScope.launch {  // Observe interrupt event updates
+            viewModel.interruptEvent.collect { interruptEvent ->
+                interruptEvent?.let {
+                    // Interrupt handling is now done in ViewModel
+                }
             }
         }
     }
@@ -150,10 +183,12 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
     private fun onClickStartAgent(phoneNumber: String) {
         // Delegate to ViewModel for processing
         viewModel.startAgentConnection(phoneNumber)
+        mBinding?.clTop?.updatePhoneNumber(phoneNumber)
     }
 
     private fun onClickEndCall() {
         viewModel.stopAgentAndLeaveChannel()
+        mBinding?.clTop?.updatePhoneNumber("")
     }
 
     private fun showSettingDialog() {
@@ -293,7 +328,7 @@ class CovLivingSipActivity : DebugSupportActivity<CovActivityLivingSipBinding>()
     private fun setupSipInputKeyboardListener() {
         mBinding?.apply {
             // Find the input field
-            val inputField = outBoundCallView.findViewById<View>(R.id.et_phone_number)
+            val inputField = outBoundCallView.findViewById<View>(R.id.llInputContainer)
 
             if (inputField != null) {
                 // Move the entire outBoundCallView to keep all elements together

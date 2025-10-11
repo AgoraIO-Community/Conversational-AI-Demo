@@ -244,4 +244,8 @@
     <string name="cov_sip_call_in_progress">Call in progress…</string>
     <string name="cov_sip_call_ended">Call ended, please hang up</string>
     <string name="cov_sip_valid_number">Please enter a valid mobile or landline number</string>
+    <string name="cov_sip_call_out">Call Out</string>
+    <string name="cov_sip_callee_title">Tips</string>
+    <string name="cov_sip_callee_content">To do</string>
+    <string name="cov_sip_callee">Confirm</string>
 </resources>

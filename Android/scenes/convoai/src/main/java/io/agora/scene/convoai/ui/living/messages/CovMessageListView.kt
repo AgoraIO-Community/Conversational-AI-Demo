@@ -257,6 +257,7 @@ class CovMessageListView @JvmOverloads constructor(
 
         private var agentName: String = ""
         private var agentUrl: String = ""
+
         @DrawableRes
         private var agentDefaultImage: Int = R.drawable.common_default_agent
         private val messages = mutableListOf<Message>()
@@ -489,7 +490,7 @@ class CovMessageListView @JvmOverloads constructor(
         /**
          * Update agent name
          */
-        fun updateAgentName(name: String, url: String, @DrawableRes defaultImage:Int) {
+        fun updateAgentName(name: String, url: String, @DrawableRes defaultImage: Int) {
             agentName = name
             agentUrl = url
             agentDefaultImage = defaultImage
@@ -540,9 +541,12 @@ class CovMessageListView @JvmOverloads constructor(
      * Handles both user and agent messages, and triggers scroll logic if needed.
      * @param transcript The incoming transcript data.
      */
-    fun onTranscriptUpdated(transcript: Transcript) {
+    fun onTranscriptUpdated(transcript: Transcript, filterUser: Boolean = true) {
         // transcript for other users
-        if (transcript.type == TranscriptType.USER && transcript.userId != CovAgentManager.uid.toString()) {
+
+        if (transcript.type == TranscriptType.USER && filterUser &&
+            transcript.userId != CovAgentManager.uid.toString()
+        ) {
             return
         }
         handleMessage(transcript)

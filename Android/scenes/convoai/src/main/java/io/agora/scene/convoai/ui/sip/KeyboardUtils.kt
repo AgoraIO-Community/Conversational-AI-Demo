@@ -87,6 +87,9 @@ private fun adjustSipViewForInput(
     isKeyboardVisible: Boolean, 
     keyboardHeight: Int
 ) {
+    // Handle margin animation for input container
+    animateInputContainerMargin(containerView, isKeyboardVisible)
+    
     if (isKeyboardVisible) {
         // Get input field position
         val location = IntArray(2)
@@ -106,7 +109,7 @@ private fun adjustSipViewForInput(
         if (overlap > 0) {
             // Input would be obscured, move container up using translationY
             // Use simple overlap calculation like CovCustomAgentFragment
-            val translationY = -overlap.toFloat() - 24.dp.toInt()
+            val translationY = -overlap.toFloat() - 8.dp.toInt()
             
             CovLogger.d("KeyboardUtils", "Debug: overlap=$overlap, translationY=$translationY")
             
@@ -130,5 +133,39 @@ private fun adjustSipViewForInput(
             .start()
         
         CovLogger.d("KeyboardUtils", "Restoring input container to original position")
+    }
+}
+
+/**
+ * Animate input container margin based on keyboard state
+ * Changes margin from 16dp to 40dp when keyboard is hidden, and 40dp to 16dp when keyboard is visible
+ * Uses same animation timing and interpolator as translationY animation for consistency
+ */
+private fun animateInputContainerMargin(containerView: View, isKeyboardVisible: Boolean) {
+    // Find the input container within the SIP view
+    val inputContainer = containerView.findViewById<View>(io.agora.scene.convoai.R.id.llInputContainer)
+    if (inputContainer == null) {
+        CovLogger.w("KeyboardUtils", "Input container not found")
+        return
+    }
+    
+    val targetMargin = if (isKeyboardVisible) 16.dp else 40.dp
+    val currentMargin = inputContainer.layoutParams as? android.view.ViewGroup.MarginLayoutParams
+    val startMargin = currentMargin?.marginStart ?: ( if (isKeyboardVisible) 40.dp else 16.dp)
+    
+    if (startMargin != targetMargin) {
+        val animator = ValueAnimator.ofInt(startMargin.toInt(), targetMargin.toInt())
+        animator.duration = 250L  // Match translationY animation duration
+        animator.interpolator = DecelerateInterpolator()  // Match translationY animation interpolator
+        animator.addUpdateListener { animation ->
+            val animatedValue = animation.animatedValue as Int
+            val layoutParams = inputContainer.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            layoutParams.marginStart = animatedValue
+            layoutParams.marginEnd = animatedValue
+            inputContainer.layoutParams = layoutParams
+        }
+        animator.start()
+        
+        CovLogger.d("KeyboardUtils", "Animating input container margin from ${startMargin}dp to ${targetMargin}dp")
     }
 }
