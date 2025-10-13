@@ -1,8 +1,7 @@
-package io.agora.scene.convoai.ui.sip
+package io.agora.scene.convoai.ui.sip.widget
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Rect
 import android.graphics.Shader
@@ -22,7 +21,10 @@ import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovSipCallee
 import io.agora.scene.convoai.databinding.CovInternalCallLayoutBinding
-import io.agora.scene.convoai.databinding.CovSipCalleeItemBinding
+import io.agora.scene.convoai.databinding.CovItemSipCalleeBinding
+import io.agora.scene.convoai.ui.sip.RegionConfigManager
+import io.agora.scene.convoai.ui.sip.findByRegionCode
+import androidx.core.graphics.toColorInt
 
 /**
  * SIP Internal Call View for displaying SIP callee phone numbers
@@ -112,24 +114,28 @@ class CovSipInternalCallView @JvmOverloads constructor(
             collapsedCallees
         }
         calleeAdapter.updateCallees(displayedCallees)
-        
+
         post {
             val itemHeight = 32.dp
             val itemSpacing = 8.dp
             val padding = 20.dp
             val maxVisibleItems = if (isExpanded) 6 else 3
-            
+
             val totalItems = displayedCallees.size.coerceAtMost(maxVisibleItems)
             val calculatedHeight = if (totalItems > 0) {
                 itemHeight * totalItems +
-                itemSpacing * (totalItems - 1) +
-                padding
+                        itemSpacing * (totalItems - 1) +
+                        padding
             } else {
                 0
             }
-            
-            binding.rvSipCallees.layoutParams = binding.rvSipCallees.layoutParams.apply {
-                height = calculatedHeight.toInt()
+
+            binding.rvSipCallees.apply {
+                layoutParams = layoutParams.apply {
+                    height = calculatedHeight.toInt()
+                }
+                // Only show scrollbars when expanded
+                isVerticalScrollBarEnabled = isExpanded
             }
         }
     }
@@ -145,7 +151,7 @@ class CovSipInternalCallView @JvmOverloads constructor(
                 // Single item: show single phone layout
                 binding.cardSipCallees.visibility = GONE
                 binding.layoutSinglePhone.visibility = VISIBLE
-                
+
                 // Update single phone data
                 allCallees.firstOrNull()?.let { callee ->
                     val regionConfig = RegionConfigManager.findByRegionCode(callee.region_name)
@@ -157,15 +163,15 @@ class CovSipInternalCallView @JvmOverloads constructor(
                     val textShader = LinearGradient(
                         0f, 0f, width, 0f,  // Horizontal gradient from left to right
                         intArrayOf(
-                            Color.parseColor("#2924FC"),  // Start color: blue
-                            Color.parseColor("#24F3FF"),  // Middle color: light blue
-                            Color.parseColor("#2924FC")   // End color: blue
+                            "#2924FC".toColorInt(),  // Start color: blue
+                            "#24F3FF".toColorInt(),  // Middle color: light blue
+                            "#2924FC".toColorInt()   // End color: blue
                         ),
                         floatArrayOf(0f, 0.5083f, 1f),   // Middle color position at 50.83%
                         Shader.TileMode.CLAMP
                     )
                     paint.shader = textShader
-                    
+
                     // Setup click listener for the inner layout that contains the phone number
                     binding.layoutSinglePhoneContent.setOnClickListener {
                         showCallPhoneDialog(callee.phone_number)
@@ -216,7 +222,7 @@ class CovSipInternalCallView @JvmOverloads constructor(
                 .setTitle(context.getString(io.agora.scene.convoai.R.string.cov_sip_callee_title))
                 .setContent(context.getString(io.agora.scene.convoai.R.string.cov_sip_callee_content))
                 .setPositiveButton(context.getString(io.agora.scene.convoai.R.string.cov_sip_callee)) {
-                    makePhoneCall(phoneNumber)
+                    showDialer(phoneNumber)
                 }
                 .setNegativeButton(context.getString(R.string.common_cancel)) {}
                 .hideTopImage()
@@ -229,20 +235,6 @@ class CovSipInternalCallView @JvmOverloads constructor(
     /**
      * Make a phone call to the specified number
      */
-    private fun makePhoneCall(phoneNumber: String) {
-        try {
-            val intent = Intent(Intent.ACTION_CALL).apply {
-                data = "tel:$phoneNumber".toUri()
-            }
-            context.startActivity(intent)
-        } catch (e: SecurityException) {
-            // If no CALL_PHONE permission, fallback to dialer
-            showDialer(phoneNumber)
-        } catch (e: Exception) {
-            Toast.makeText(context, "Unable to make call", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun showDialer(cleanNumber: String) {
         try {
             val intent = Intent(Intent.ACTION_DIAL).apply {
@@ -253,65 +245,67 @@ class CovSipInternalCallView @JvmOverloads constructor(
             Toast.makeText(context, "Unable to open dialer", Toast.LENGTH_SHORT).show()
         }
     }
-}
 
-class CovSipCalleeAdapter(
-    private var callees: List<CovSipCallee> = emptyList(),
-    private var onPhoneNumberClick: ((String) -> Unit)? = null
-) : RecyclerView.Adapter<CovSipCalleeAdapter.CalleeViewHolder>() {
+    inner class CovSipCalleeAdapter(
+        private var callees: List<CovSipCallee> = emptyList(),
+        private var onPhoneNumberClick: ((String) -> Unit)? = null
+    ) : RecyclerView.Adapter<CalleeViewHolder>() {
 
-    /**
-     * Update the list of callees
-     */
-    fun updateCallees(newCallees: List<CovSipCallee>) {
-        callees = newCallees
-        notifyDataSetChanged()
+        /**
+         * Update the list of callees
+         */
+        fun updateCallees(newCallees: List<CovSipCallee>) {
+            callees = newCallees
+            notifyDataSetChanged()
+        }
+
+        /**
+         * Set click listener for phone number
+         */
+        fun setOnPhoneNumberClickListener(listener: (String) -> Unit) {
+            onPhoneNumberClick = listener
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalleeViewHolder {
+            val binding = CovItemSipCalleeBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+            return CalleeViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: CalleeViewHolder, position: Int) {
+            val callee = callees[position]
+            holder.bind(callee)
+            holder.itemView.setOnClickListener {
+                if (position in 0 until callees.size) {
+                    onPhoneNumberClick?.invoke(callee.phone_number)
+                }
+            }
+        }
+
+        override fun getItemCount(): Int = callees.size
+
     }
-
-    /**
-     * Set click listener for phone number
-     */
-    fun setOnPhoneNumberClickListener(listener: (String) -> Unit) {
-        onPhoneNumberClick = listener
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalleeViewHolder {
-        val binding = CovSipCalleeItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return CalleeViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: CalleeViewHolder, position: Int) {
-        holder.bind(callees[position])
-    }
-
-    override fun getItemCount(): Int = callees.size
 
     inner class CalleeViewHolder(
-        private val binding: CovSipCalleeItemBinding
+        private val binding: CovItemSipCalleeBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-         fun bind(callee: CovSipCallee) {
-             // Find the region config for this callee
-             val regionConfig = RegionConfigManager.findByRegionCode(callee.region_name)
- 
-             if (regionConfig != null) {
-                 // Set flag emoji and region code
-                 binding.tvFlagEmoji.text = regionConfig.flagEmoji
-                 binding.tvPhoneNumber.text = callee.phone_number
-             } else {
-                 // Fallback if region config not found
-                 binding.tvFlagEmoji.text = "🌍"
-                 binding.tvPhoneNumber.text = callee.phone_number
-             }
-             
-             // Set click listener on the whole item
-             binding.root.setOnClickListener {
-                 onPhoneNumberClick?.invoke(callee.phone_number)
-             }
+        fun bind(callee: CovSipCallee) {
+            // Find the region config for this callee
+            val regionConfig = RegionConfigManager.findByRegionCode(callee.region_name)
+
+            if (regionConfig != null) {
+                // Set flag emoji and region code
+                binding.tvFlagEmoji.text = regionConfig.flagEmoji
+                binding.tvPhoneNumber.text = callee.phone_number
+            } else {
+                // Fallback if region config not found
+                binding.tvFlagEmoji.text = "🌍"
+                binding.tvPhoneNumber.text = callee.phone_number
+            }
         }
     }
 }

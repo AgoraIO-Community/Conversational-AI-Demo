@@ -1,4 +1,4 @@
-package io.agora.scene.convoai.ui.sip
+package io.agora.scene.convoai.ui.sip.widget
 
 import android.content.Context
 import android.text.Editable
@@ -9,12 +9,19 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.databinding.CovOutboundCallLayoutBinding
+import io.agora.scene.convoai.ui.sip.CallState
+import io.agora.scene.convoai.ui.sip.CovSipRegionSelectionDialog
+import io.agora.scene.convoai.ui.sip.RegionConfig
+import io.agora.scene.convoai.ui.sip.RegionConfigManager
+import io.agora.scene.convoai.ui.sip.findByRegionCode
+import io.agora.scene.convoai.ui.sip.fromSipCallees
 
 /**
  * SIP Outbound Call View with three states: IDLE, CALLING, CALLED
@@ -33,10 +40,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     // Region data
     private var availableRegions = mutableListOf<RegionConfig>()
     private var selectedRegion: RegionConfig? = null
-
-    // Region selector popup and adapter
-    private var regionPopup: PopupWindow? = null
-    private var regionAdapter: RegionSelectionAdapter? = null
 
     // Error state management
     private var isErrorState = false
@@ -141,6 +144,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 binding.layoutJoined.visibility = GONE
                 binding.btnJoinCall.isEnabled = binding.etPhoneNumber.text.toString().trim().isNotEmpty()
                 binding.tvCalling.visibility = INVISIBLE
+                binding.tvCallingNumber.stopShimmer()
             }
 
             CallState.CALLING -> {
@@ -151,6 +155,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 binding.tvCallingNumber.text = phoneNumber
                 binding.tvCalling.visibility = VISIBLE
                 binding.tvCalling.setText(R.string.cov_sip_outbound_calling)
+                binding.tvCallingNumber.startShimmer()
             }
 
             CallState.CALLED -> {
@@ -161,6 +166,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 binding.tvCallingNumber.text = phoneNumber
                 binding.tvCalling.visibility = VISIBLE
                 binding.tvCalling.setText(R.string.cov_sip_call_in_progress)
+                binding.tvCallingNumber.stopShimmer()
             }
         }
     }
@@ -171,15 +177,15 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     private fun setupClickListeners() {
         binding.btnJoinCall.setOnClickListener {
             val phoneNumber = getPhoneNumber()
-            if (phoneNumber.length < 4) {
+            if (phoneNumber.length >= 4 && phoneNumber.length <= 14) {
+                clearErrorState()
+                val fullNumber = getFullPhoneNumber()
+                if (fullNumber.isNotEmpty()) {
+                    setCallState(CallState.CALLING, fullNumber)
+                    onCallActionListener?.invoke(CallAction.JOIN_CALL, fullNumber)
+                }
+            } else {
                 showErrorState()
-                return@setOnClickListener
-            }
-            clearErrorState()
-            val fullNumber = getFullPhoneNumber()
-            if (fullNumber.isNotEmpty()) {
-                setCallState(CallState.CALLING, fullNumber)
-                onCallActionListener?.invoke(CallAction.JOIN_CALL, fullNumber)
             }
         }
 
@@ -194,7 +200,24 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
         }
 
         binding.llRegionCode.setOnClickListener {
-            showRegionSelector()
+            showRegionDialog()
+        }
+    }
+
+    private fun showRegionDialog() {
+        val context = this.context
+        if (context is FragmentActivity) {
+            val dialog = CovSipRegionSelectionDialog.newInstance(
+                data = availableRegions,
+                onDismiss = {
+
+                },
+                onRegionSelected = { region ->
+                    selectedRegion = RegionConfigManager.findByRegionCode(region.name)
+                    updateRegionUI()
+                }
+            )
+            dialog.show(context.supportFragmentManager, "region_selection_dialog")
         }
     }
 
@@ -212,10 +235,10 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 val hasText = !s.isNullOrEmpty()
                 binding.btnJoinCall.isEnabled = hasText && currentState == CallState.IDLE
                 binding.ivClearInput.visibility = if (hasText) VISIBLE else GONE
-                
+
                 // Change text size based on content
                 binding.etPhoneNumber.textSize = if (hasText) 18f else 14f
-                
+
                 // Clear error state when user starts typing
                 if (isErrorState && hasText) {
                     clearErrorState()
@@ -235,67 +258,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     }
 
     /**
-     * Show region selector popup
-     */
-    private fun showRegionSelector() {
-        // Only show popup if there are available regions
-        if (availableRegions.isEmpty()) {
-            return
-        }
-
-        if (regionPopup?.isShowing == true) {
-            regionPopup?.dismiss()
-            return
-        }
-
-        createRegionPopup()
-        regionPopup?.showAsDropDown(binding.llRegionCode, 0, 8)
-    }
-
-    /**
-     * Create region selector popup window
-     */
-    private fun createRegionPopup() {
-        val popupView = LayoutInflater.from(context).inflate(R.layout.cov_region_selector_popup, null)
-
-        regionPopup = PopupWindow(
-            popupView,
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT,
-            true
-        ).apply {
-            isFocusable = true
-            isOutsideTouchable = true
-            elevation = 8f
-        }
-
-        setupRecyclerView(popupView)
-    }
-
-    /**
-     * Setup RecyclerView with region adapter
-     */
-    private fun setupRecyclerView(popupView: View) {
-        val recyclerView = popupView.findViewById<RecyclerView>(R.id.rv_countries)
-
-        regionAdapter = RegionSelectionAdapter(availableRegions) { selectedRegionConfig ->
-            selectedRegion = selectedRegionConfig
-            updateRegionUI()
-            regionPopup?.dismiss()
-        }
-
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = regionAdapter
-        }
-
-        // Update adapter selection to current region
-        selectedRegion?.let { region ->
-            regionAdapter?.updateSelection(region.dialCode)
-        }
-    }
-
-    /**
      * Update available regions list and recreate adapter
      */
     private fun updateAvailableRegions(newRegions: List<RegionConfig>) {
@@ -306,13 +268,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
         if (selectedRegion == null || selectedRegion !in availableRegions) {
             selectedRegion = availableRegions.firstOrNull()
             updateRegionUI()
-        }
-
-        // Recreate adapter with new regions
-        regionAdapter = RegionSelectionAdapter(availableRegions) { selectedRegionConfig ->
-            selectedRegion = selectedRegionConfig
-            updateRegionUI()
-            regionPopup?.dismiss()
         }
     }
 
@@ -339,7 +294,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
             isErrorState = true
             binding.llInputContainer.setBackgroundResource(R.drawable.cov_sip_call_input_bg_error)
             binding.tvErrorHint.visibility = VISIBLE
-            binding.etPhoneNumber.setTextColor( ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_red6))
+            binding.etPhoneNumber.setTextColor(ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_red6))
         }
     }
 
@@ -351,7 +306,12 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
             isErrorState = false
             binding.llInputContainer.setBackgroundResource(R.drawable.cov_sip_call_input_bg)
             binding.tvErrorHint.visibility = INVISIBLE
-            binding.etPhoneNumber.setTextColor( ContextCompat.getColor(context, io.agora.scene.common.R.color.ai_brand_white10))
+            binding.etPhoneNumber.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    io.agora.scene.common.R.color.ai_brand_white10
+                )
+            )
         }
     }
 
@@ -360,7 +320,5 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        regionPopup?.dismiss()
-        regionPopup = null
     }
 }

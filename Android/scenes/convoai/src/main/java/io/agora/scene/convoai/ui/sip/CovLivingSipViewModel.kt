@@ -231,6 +231,7 @@ class CovLivingSipViewModel : ViewModel() {
     fun stopAgentAndLeaveChannel() {
         cancelJobs()
         conversationalAIAPI?.unsubscribeMessage(CovAgentManager.channelName) {}
+        CovAgentManager.channelName = ""
         _callState.value = CallState.IDLE
         _ballAnimState.value = BallAnimState.STATIC
         _isShowMessageList.value = false
@@ -276,7 +277,7 @@ class CovLivingSipViewModel : ViewModel() {
 
                 else -> ToastUtil.show(R.string.cov_detail_join_call_failed, Toast.LENGTH_LONG)
             }
-            _callState.value = CallState.CALLING
+            _callState.value = CallState.IDLE
             _ballAnimState.value = BallAnimState.STATIC
         }
     }
