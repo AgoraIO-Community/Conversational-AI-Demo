@@ -321,3 +321,11 @@
 "agent.sip.on.call.tips" = "Call in progress…";
 "agent.sip.end.call.tips" = "Call ended, please hang up";
 "agent.sip.phone.invalid" = "Please enter a valid mobile or landline number";
+"agent.sip.callout" = "Call Out";
+"agent.sip.call.alert.title" = "Call Confirmation";
+"agent.sip.call.alert.message" = "Your phone will now call this number. Confirm?";
+"agent.sip.call.alert.cancel" = "Cancel";
+"agent.sip.call.alert.confirm" = "Call Now";
+"agent.sip.area.code.search.placeholder" = "Search country or area code";
+"agent.sip.area.code.search.button" = "Search";
+"agent.sip.area.code.no.results" = "No Results";
