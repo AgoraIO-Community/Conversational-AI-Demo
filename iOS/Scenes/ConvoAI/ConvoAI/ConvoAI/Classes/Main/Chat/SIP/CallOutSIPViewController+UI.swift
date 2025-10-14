@@ -93,7 +93,7 @@ extension CallOutSipViewController {
             sipInputView.showErrorWith(str: ResourceManager.L10n.Sip.sipPhoneInvalid)
             return
         }
-        SVProgressHUD.show()
+        showCallingView()
         channelName = "agent_\(UUID().uuidString.prefix(8))"
         agentUid = AppContext.agentUid
         Task {
@@ -112,13 +112,12 @@ extension CallOutSipViewController {
                 await MainActor.run {
                     AppContext.stateManager().updateRoomId(channelName)
                     AppContext.stateManager().updateUserId(uid)
-                    SVProgressHUD.dismiss()
-                    showCallingView()
                     startTimer()
                     navivationBar.netStateView.isHidden = true
                 }
             } catch {
-                addLog("Failed to login rtm: \(error)")
+                addLog("Failed to start call: \(error)")
+//                showPrepareCallView()
                 SVProgressHUD.showError(withStatus: error.localizedDescription)
             }
         }
@@ -128,7 +127,7 @@ extension CallOutSipViewController {
     @objc func closeConnect() {
         showPrepareCallView()
         logoutRTM()
-        resetPreference()
+        AppContext.stateManager().resetToDefaults()
     }
     
     @objc func onClickSettingButton() {
@@ -141,14 +140,11 @@ extension CallOutSipViewController {
         present(navigationController, animated: false)
     }
     
-    func resetPreference() {
-        AppContext.stateManager().resetToDefaults()
-    }
-    
     func showCallingView() {
         callingContentView.isHidden = false
         prepareCallContentView.isHidden = true
-        callingPhoneNumberButton.setTitle(phoneNumber, for: .normal)
+        callingContentView.phoneNumberLabel.text = phoneNumber
+        callingContentView.startShimmer()
     }
     
     func showPrepareCallView() {
@@ -172,7 +168,6 @@ extension CallOutSipViewController: SIPInputViewDelegate {
         // Show area code selection view controller
         SIPAreaCodeViewController.show(from: self) { [weak self] region in
             self?.sipInputView.setSelectedRegionConfig(region)
-            print("Selected country: \(region.regionName) (\(region.regionCode))")
         }
     }
 }

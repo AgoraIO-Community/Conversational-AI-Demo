@@ -82,61 +82,9 @@ class CallOutSipViewController: SIPViewController {
         return view
     }()
 
-    lazy var callingPhoneNumberButton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage.ag_named("ic_sip_phone_icon")
-        config.imagePadding = 8
-        config.baseForegroundColor = .white
-        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-            var outgoing = incoming
-            outgoing.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-            return outgoing
-        }
-        button.configuration = config
-        
-        return button
-    }()
-    
-    lazy var callingTipsLabel: UILabel = {
-        let label = UILabel()
-        label.text = ResourceManager.L10n.Sip.sipCallingTips
-        label.textColor = UIColor.themColor(named: "ai_icontext1")
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        return label
-    }()
-    
-    lazy var closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage.ag_named("ic_agent_close"), for: .normal)
-        button.addTarget(self, action: #selector(closeConnect), for: .touchUpInside)
-        button.backgroundColor = UIColor.themColor(named: "ai_block1")
-        button.layer.cornerRadius = 76 / 2.0
-        return button
-    }()
-    
-    internal lazy var callingContentView: UIView = {
-        let view = UIView()
-        [callingPhoneNumberButton, callingTipsLabel, closeButton].forEach { view.addSubview($0) }
-        closeButton.snp.makeConstraints { make in
-            make.bottom.equalTo(self.view.safeAreaInsets).offset(-67)
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(76)
-        }
-        
-        callingTipsLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(closeButton.snp.top).offset(-31)
-            make.left.equalTo(18)
-            make.right.equalTo(-18)
-        }
-        
-        callingPhoneNumberButton.snp.makeConstraints { make in
-            make.right.left.equalTo(callingTipsLabel)
-            make.height.equalTo(32)
-            make.bottom.equalTo(callingTipsLabel.snp.top).offset(-48)
-        }
+    internal lazy var callingContentView: SIPCallingView = {
+        let view = SIPCallingView()
+        view.closeButton.addTarget(self, action: #selector(closeConnect), for: .touchUpInside)
         return view
     }()
 
