@@ -313,7 +313,6 @@
 "mine.nickname.adjectives" = "Ezra,Pledge,Bonnie,Seeds,Shannon,Red-Haired,Montague,Primavera,Tess";
 "mine.nickname.nouns" = "";
 
-"agent.sip.tips" = "Please use your mobile phone to dial this number to experience communicating with an AI intelligent customer service via phone call.";
 "agent.sip.in.call.tips" = "Dial this number from your phone to start a conversation with our AI Agent.";
 "agent.sip.out.call.tips" = "Enter your number below, and our AI Agent will call you.";
 "agent.sip.calling.tips" = "Calling now… please answer on your phone.";
