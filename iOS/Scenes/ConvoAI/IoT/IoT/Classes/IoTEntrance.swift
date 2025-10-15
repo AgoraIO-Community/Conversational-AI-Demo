@@ -15,6 +15,7 @@ public class IoTEntrance: NSObject {
     
     public static func iotScene(viewController: UIViewController) {
         let vc = IOTListViewController()
+        vc.hidesBottomBarWhenPushed = true
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -67,7 +68,7 @@ extension AppContext {
         _iotDeviceManager = IOTDeviceManager()
         
         return _iotDeviceManager
-    }   
+    }
         
     static func iotPresetsManager() -> IOTPresetsManager? {
         if let manager = _iotPresetsManager {

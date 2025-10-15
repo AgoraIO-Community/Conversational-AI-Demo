@@ -260,22 +260,43 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func onClickRegister() {
-        if !termsCheckbox.isSelected {
-            warningButton.isHidden = false
-            shakeWarningLabel()
-            return
+        if termsCheckbox.isSelected {
+            self.signUpAction()
+        } else {
+            LoginTermsAlert.show(
+                in: self.view,
+                onAccept: { [weak self] in
+                    self?.termsCheckbox.isSelected = true
+                    self?.warningButton.isHidden = true
+                    
+                    self?.signUpAction()
+                },
+                onDecline: { [weak self] in
+                    self?.termsCheckbox.isSelected = false
+                    self?.warningButton.isHidden = false
+                }
+            )
         }
-        
-        signUpAction()
     }
     
     @objc private func onClickLogin() {
-        if !termsCheckbox.isSelected {
-            warningButton.isHidden = false
-            shakeWarningLabel()
-            return
+        if termsCheckbox.isSelected {
+            self.loginAction()
+        } else {
+            LoginTermsAlert.show(
+                in: self.view,
+                onAccept: { [weak self] in
+                    self?.termsCheckbox.isSelected = true
+                    self?.warningButton.isHidden = true
+                    
+                    self?.loginAction()
+                },
+                onDecline: { [weak self] in
+                    self?.termsCheckbox.isSelected = false
+                    self?.warningButton.isHidden = false
+                }
+            )
         }
-        loginAction()
     }
     
     @objc private func termsCheckboxTapped() {
@@ -321,7 +342,7 @@ class LoginViewController: UIViewController {
     
     @objc private func termsButtonTapped() {
         let vc = TermsServiceWebViewController()
-        vc.url = AppContext.shared.globalTermsOfServiceUrl
+        vc.url = AppContext.shared.termsOfServiceUrl
         let termsServiceVC = UINavigationController(rootViewController: vc)
         termsServiceVC.modalPresentationStyle = .fullScreen
         self.present(termsServiceVC, animated: true)
@@ -329,7 +350,7 @@ class LoginViewController: UIViewController {
     
     @objc private func privacyPolicyTapped() {
         let vc = TermsServiceWebViewController()
-        vc.url = AppContext.shared.globalPrivacyUrl
+        vc.url = AppContext.shared.privacyUrl
         let termsServiceVC = UINavigationController(rootViewController: vc)
         termsServiceVC.modalPresentationStyle = .fullScreen
         self.present(termsServiceVC, animated: true)

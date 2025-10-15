@@ -1,5 +1,5 @@
 <resources>
-    <string name="common_app_name">Convo AI</string>
+    <string name="common_app_title">Agora Convo AI</string>
     <string name="common_detail_message_list_you">You</string>
     <string name="common_debug_base_config">Base Settings</string>
     <string name="common_debug_cov_config">ConvoAI Settings</string>
@@ -10,6 +10,7 @@
     <string name="common_debug_mode_enable">Debug Mode is On</string>
     <string name="common_debug_mode_disable">Debug Mode is Off</string>
     <string name="common_debug_setting">Debugging Settings</string>
+    <string name="common_debug_app_version">App Version</string>
     <string name="common_debug_rtc_version">Rtc Version</string>
     <string name="common_debug_rtm_version">Rtm Version</string>
     <string name="common_debug_switch_server">Switch Server</string>
@@ -51,9 +52,8 @@
     <string name="common_upload_time_success">We\'ve received your report. Thanks for helping us improve!</string>
     <string name="common_upload_time_failed">Opps! Something went wrong. Please try reporting again.</string>
     <string name="common_login_expired">Your session has expired. Please log in again.</string>
-    <string name="common_login_typing_text1">Greetings, Human</string>
-    <string name="common_login_typing_text2">Hey, I\'m Conversational AI Engine.</string>
-    <string name="common_login_typing_text3">Have you ever questioned the nature of your reality?</string>
+    <string name="common_login_typing_text1">Hey, I\'m Conversational AI Engine.</string>
+    <string name="common_login_typing_text2">Have you ever questioned the nature of your reality?</string>
     <string name="common_app_version">v%1s</string>
     <string name="common_app_build_no">Build %1s</string>
     <string name="common_app_no_more_reminder">Don\'t show again</string>

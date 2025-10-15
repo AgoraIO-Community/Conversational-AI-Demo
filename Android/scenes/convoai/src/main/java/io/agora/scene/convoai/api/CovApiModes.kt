@@ -17,6 +17,8 @@ data class CovAgentPreset(
     val is_support_vision: Boolean,
     val avatar_url: String?,
     val description: String,
+    val advanced_features_enable_sal: Boolean,
+    val is_support_sal: Boolean?
 ) {
     val isIndependent: Boolean
         get() {
@@ -52,6 +54,7 @@ data class CovAgentLanguage(
 @Parcelize
 data class CovAvatar(
     val vendor: String,
+    val display_vendor: String,
     val avatar_id: String,
     val avatar_name: String,
     val thumb_img_url: String,

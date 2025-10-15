@@ -20,7 +20,6 @@ class TabSelectorView: UIView {
     
     struct TabItem {
         let title: String
-        let iconName: String
     }
     
     private var tabItems: [TabItem] = []
@@ -69,11 +68,6 @@ class TabSelectorView: UIView {
         button.tag = tag
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
         button.addTarget(self, action: #selector(onTabButtonTapped(_:)), for: .touchUpInside)
-        
-        button.setImage(UIImage.ag_named(item.iconName), for: .normal)
-        button.tintColor = UIColor.themColor(named: "ai_icontext3")
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
-        
         return button
     }
     

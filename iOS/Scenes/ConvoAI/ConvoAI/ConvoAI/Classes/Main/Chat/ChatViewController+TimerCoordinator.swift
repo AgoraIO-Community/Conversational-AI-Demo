@@ -33,13 +33,13 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
         stopLoading()
         stopAgent()
         let title = ResourceManager.L10n.ChannelInfo.timeLimitdAlertTitle
-        if let manager = AppContext.preferenceManager(), let preset = manager.preference.preset, let callTimeLimitSecond = preset.callTimeLimitSecond {
+        if let preset = AppContext.settingManager().preset, let callTimeLimitSecond = preset.callTimeLimitSecond {
             var min = callTimeLimitSecond / 60
             
-            if let _ = manager.preference.avatar {
+            if let _ = AppContext.settingManager().avatar {
                 min = preset.callTimeLimitAvatarSecond ?? 600 / 60
             }
-            
+
             TimeoutAlertView.show(in: view, image:UIImage.ag_named("ic_alert_timeout_icon"), title: title, description: String(format: ResourceManager.L10n.ChannelInfo.timeLimitdAlertDescription, min))
         }
     }
@@ -51,11 +51,6 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
     
     func agentNotJoinedWithinTheScheduledTime() {
         addLog("[Call] agentNotJoinedWithinTheScheduledTime")
-        guard let manager = AppContext.preferenceManager() else {
-            addLog("view controller or manager is release, will stop join channel scheduled timer")
-            timerCoordinator.stopJoinChannelTimer()
-            return
-        }
         let avatarState = isEnableAvatar()
         var remoteIsJoined = self.agentIsJoined
         if avatarState {
@@ -67,7 +62,7 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
             return
         }
         
-        if manager.information.agentState != .connected {
+        if AppContext.stateManager().agentState != .connected {
             addLog("agent is not joined in 10 seconds")
             SVProgressHUD.showInfo(withStatus: ResourceManager.L10n.Join.joinTimeoutTips)
             self.stopLoading()

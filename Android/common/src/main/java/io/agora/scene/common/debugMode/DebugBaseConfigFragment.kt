@@ -67,6 +67,7 @@ class DebugBaseConfigFragment : BaseFragment<CommonDebugBaseConfigFragmentBindin
             divider.setDrawable(resources.getDrawable(R.drawable.shape_divider_line, null))
             rcOptions.addItemDecoration(divider)
 
+            mtvAppVersion.text = ServerConfig.appVersionName + "-" + ServerConfig.appBuildNo
             mtvRtcVersion.text = RtcEngine.getSdkVersion()
             mtvRtmVersion.text = RtmClient.getVersion()
 

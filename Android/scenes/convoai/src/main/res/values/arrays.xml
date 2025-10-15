@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Random nickname -->
+    <string-array name="cov_nickname">
+        <item>Ezra</item>
+        <item>Pledge</item>
+        <item>Bonnie</item>
+        <item>Seeds</item>
+        <item>Shannon</item>
+        <item>Red-Haired</item>
+        <item>Montague</item>
+        <item>Primavera</item>
+        <item>Tess</item>
+    </string-array>
+</resources>
