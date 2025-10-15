@@ -109,6 +109,7 @@ extension CallOutSipViewController {
                     }
                 }
                 try await startRequest()
+                //TODO: prepare to ping ncs state
                 await MainActor.run {
                     prepareToFetchSIPState()
                     AppContext.stateManager().updateRoomId(channelName)
