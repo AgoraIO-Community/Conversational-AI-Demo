@@ -252,4 +252,5 @@
     <string name="cov_sip_search">Search</string>
     <string name="cov_sip_search_empty">No Results</string>
     <string name="cov_sip_limit_time">Smart customer session limit: %d minutes.</string>
+    <string name="cov_sip_call_limit_error">Daily call limit of 20 times has been exceeded</string>
 </resources>

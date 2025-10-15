@@ -5,23 +5,18 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.R
 import io.agora.scene.convoai.api.CovAgentPreset
+import io.agora.scene.convoai.api.CovSipCallee
 import io.agora.scene.convoai.databinding.CovOutboundCallLayoutBinding
 import io.agora.scene.convoai.ui.sip.CallState
 import io.agora.scene.convoai.ui.sip.CovSipRegionSelectionDialog
-import io.agora.scene.convoai.ui.sip.RegionConfig
-import io.agora.scene.convoai.ui.sip.RegionConfigManager
-import io.agora.scene.convoai.ui.sip.findByRegionCode
-import io.agora.scene.convoai.ui.sip.fromSipCallees
 
 /**
  * SIP Outbound Call View with three states: IDLE, CALLING, CALLED
@@ -38,8 +33,8 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     private var phoneNumber: String = ""
 
     // Region data
-    private var availableRegions = mutableListOf<RegionConfig>()
-    private var selectedRegion: RegionConfig? = null
+    private var availableRegions = mutableListOf<CovSipCallee>()
+    private var selectedRegion: CovSipCallee? = null
 
     // Error state management
     private var isErrorState = false
@@ -69,7 +64,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     fun setPhoneNumbersFromPreset(preset: CovAgentPreset) {
         if (!preset.sip_vendor_callee_numbers.isNullOrEmpty()) {
             // Convert sip callees to region configs
-            val availableRegionsFromPreset = RegionConfigManager.fromSipCallees(preset.sip_vendor_callee_numbers)
+            val availableRegionsFromPreset = preset.sip_vendor_callee_numbers
 
             if (availableRegionsFromPreset.isNotEmpty()) {
                 // Update available regions list and recreate adapter
@@ -96,7 +91,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     fun getFullPhoneNumber(): String {
         val number = getPhoneNumber()
-        return if (number.isNotEmpty() && selectedRegion != null) "${selectedRegion!!.dialCode}$number" else ""
+        return if (number.isNotEmpty() && selectedRegion != null) "${selectedRegion!!.region_code}$number" else ""
     }
 
     /**
@@ -104,34 +99,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     private fun getPhoneNumber(): String {
         return binding.etPhoneNumber.text.toString().trim()
-    }
-
-    /**
-     * Get current selected region
-     */
-    fun getSelectedRegion(): RegionConfig? {
-        return selectedRegion
-    }
-
-    /**
-     * Get available regions count
-     */
-    fun getAvailableRegionsCount(): Int {
-        return availableRegions.size
-    }
-
-    /**
-     * Check if regions are available
-     */
-    fun hasAvailableRegions(): Boolean {
-        return availableRegions.isNotEmpty()
-    }
-
-    /**
-     * Check if a region is selected
-     */
-    fun hasSelectedRegion(): Boolean {
-        return selectedRegion != null
     }
 
     /**
@@ -176,22 +143,11 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     private fun setupClickListeners() {
         binding.btnJoinCall.setOnClickListener {
-            val phoneNumber = getPhoneNumber()
-            if (phoneNumber.length >= 4 && phoneNumber.length <= 14) {
-                clearErrorState()
-                val fullNumber = getFullPhoneNumber()
-                if (fullNumber.isNotEmpty()) {
-                    setCallState(CallState.CALLING, fullNumber)
-                    onCallActionListener?.invoke(CallAction.JOIN_CALL, fullNumber)
-                }
-            } else {
-                showErrorState()
-            }
+            sendCall()
         }
 
         binding.btnEndCall.setOnClickListener {
             setCallState(CallState.IDLE)
-            ToastUtil.show(R.string.cov_sip_call_ended)
             onCallActionListener?.invoke(CallAction.END_CALL, "")
         }
 
@@ -204,6 +160,20 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
         }
     }
 
+    private fun sendCall(){
+        val phoneNumber = getPhoneNumber()
+        if (phoneNumber.length >= 4 && phoneNumber.length <= 14) {
+            clearErrorState()
+            val fullNumber = getFullPhoneNumber()
+            if (fullNumber.isNotEmpty()) {
+                setCallState(CallState.CALLING, fullNumber)
+                onCallActionListener?.invoke(CallAction.JOIN_CALL, fullNumber)
+            }
+        } else {
+            showErrorState()
+        }
+    }
+
     private fun showRegionDialog() {
         val context = this.context
         if (context is FragmentActivity) {
@@ -213,7 +183,9 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
 
                 },
                 onRegionSelected = { region ->
-                    selectedRegion = RegionConfigManager.findByRegionCode(region.name)
+                    selectedRegion = availableRegions.firstOrNull {
+                        it.region_name == region.name
+                    }
                     updateRegionUI()
                 }
             )
@@ -225,14 +197,10 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      * Setup text watcher for phone number input
      */
     private fun setupTextWatcher() {
-        // Set initial text size to hint size
-        binding.etPhoneNumber.textSize = 14f
-
-        binding.etPhoneNumber.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val hasText = !s.isNullOrEmpty()
+        binding.etPhoneNumber.apply {
+            textSize = 14f
+            doAfterTextChanged { text: Editable? ->
+                val hasText = !text.isNullOrEmpty()
                 binding.btnJoinCall.isEnabled = hasText && currentState == CallState.IDLE
                 binding.ivClearInput.visibility = if (hasText) VISIBLE else GONE
 
@@ -244,9 +212,17 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                     clearErrorState()
                 }
             }
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
+                    hideKeyboard()
+                    sendCall()
+                    true
+                } else {
+                    false
+                }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            }
+        }
     }
 
     /**
@@ -260,7 +236,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     /**
      * Update available regions list and recreate adapter
      */
-    private fun updateAvailableRegions(newRegions: List<RegionConfig>) {
+    private fun updateAvailableRegions(newRegions: List<CovSipCallee>) {
         availableRegions.clear()
         availableRegions.addAll(newRegions)
 
@@ -276,8 +252,8 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      */
     private fun updateRegionUI() {
         selectedRegion?.let { region ->
-            binding.tvRegionFlag.text = region.flagEmoji
-            binding.tvRegionCode.text = region.dialCode
+            binding.tvRegionFlag.text = region.flag_emoji
+            binding.tvRegionCode.text = region.region_code
         } ?: run {
             // Show default/empty state when no region is selected
             binding.tvRegionFlag.text = "🌍"
@@ -313,6 +289,15 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 )
             )
         }
+    }
+
+    /**
+     * Hide soft keyboard
+     */
+    private fun hideKeyboard() {
+        binding.etPhoneNumber.clearFocus()
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding.etPhoneNumber.windowToken, 0)
     }
 
     /**

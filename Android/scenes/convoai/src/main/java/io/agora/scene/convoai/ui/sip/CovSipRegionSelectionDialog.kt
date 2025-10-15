@@ -1,7 +1,6 @@
 package io.agora.scene.convoai.ui.sip
 
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -10,11 +9,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.annotations.Until
 import io.agora.scene.common.R
 import io.agora.scene.common.ui.BaseSheetDialog
-import io.agora.scene.common.util.dp
+import io.agora.scene.convoai.api.CovSipCallee
 import io.agora.scene.convoai.databinding.CovDialogRegionSelectionBinding
 import io.agora.scene.convoai.databinding.CovItemRegionSelectionBinding
 import kotlinx.coroutines.Job
@@ -29,12 +28,12 @@ class CovSipRegionSelectionDialog : BaseSheetDialog<CovDialogRegionSelectionBind
         private const val SEARCH_DELAY = 300L // Delay for search debouncing
 
         fun newInstance(
-            data: List<RegionConfig>? = null,
+            data: List<CovSipCallee>? = null,
             onDismiss: (() -> Unit)? = null,
             onRegionSelected: ((RegionInfo) -> Unit)? = null
         ): CovSipRegionSelectionDialog {
             return CovSipRegionSelectionDialog().apply {
-                this.regions = data?.toList() ?: RegionConfigManager.allRegions
+                this.regions = data?.toList() ?: emptyList()
                 this.onDismissCallback = onDismiss
                 this.onRegionSelectedCallback = onRegionSelected
             }
@@ -83,16 +82,16 @@ class CovSipRegionSelectionDialog : BaseSheetDialog<CovDialogRegionSelectionBind
     }
 
 
-    private var regions: List<RegionConfig> = emptyList()
+    private var regions: List<CovSipCallee> = emptyList()
 
     private fun initData() {
         // Initialize adapter with data
         val list = regions.map { config ->
             RegionInfo(
-                flag = config.flagEmoji,
-                name = config.regionCode,
-                displayName = config.displayName,
-                code = config.dialCode
+                flag = config.flag_emoji,
+                name = config.region_name,
+                displayName = config.region_full_name,
+                code = config.region_code
             )
         }
         regionAdapter.setData(list)
@@ -114,7 +113,7 @@ class CovSipRegionSelectionDialog : BaseSheetDialog<CovDialogRegionSelectionBind
 
             // Setup search input listener
             etSearch.apply {
-                addTextChangedListener { text: Editable? ->
+                doAfterTextChanged { text: Editable? ->
                     handleSearchTextChange(text)
                 }
                 setOnEditorActionListener { _, actionId, _ ->

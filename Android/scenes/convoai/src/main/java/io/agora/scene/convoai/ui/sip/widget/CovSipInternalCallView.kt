@@ -22,8 +22,6 @@ import io.agora.scene.convoai.api.CovAgentPreset
 import io.agora.scene.convoai.api.CovSipCallee
 import io.agora.scene.convoai.databinding.CovInternalCallLayoutBinding
 import io.agora.scene.convoai.databinding.CovItemSipCalleeBinding
-import io.agora.scene.convoai.ui.sip.RegionConfigManager
-import io.agora.scene.convoai.ui.sip.findByRegionCode
 import androidx.core.graphics.toColorInt
 
 /**
@@ -154,8 +152,7 @@ class CovSipInternalCallView @JvmOverloads constructor(
 
                 // Update single phone data
                 allCallees.firstOrNull()?.let { callee ->
-                    val regionConfig = RegionConfigManager.findByRegionCode(callee.region_name)
-                    binding.tvFlagEmoji.text = regionConfig?.flagEmoji ?: "🌍"
+                    binding.tvFlagEmoji.text = callee.flag_emoji ?: "🌍"
                     binding.tvPhoneNumber.text = callee.phone_number
                     // Apply gradient text color
                     val paint = binding.tvPhoneNumber.paint
@@ -295,17 +292,8 @@ class CovSipInternalCallView @JvmOverloads constructor(
 
         fun bind(callee: CovSipCallee) {
             // Find the region config for this callee
-            val regionConfig = RegionConfigManager.findByRegionCode(callee.region_name)
-
-            if (regionConfig != null) {
-                // Set flag emoji and region code
-                binding.tvFlagEmoji.text = regionConfig.flagEmoji
-                binding.tvPhoneNumber.text = callee.phone_number
-            } else {
-                // Fallback if region config not found
-                binding.tvFlagEmoji.text = "🌍"
-                binding.tvPhoneNumber.text = callee.phone_number
-            }
+            binding.tvFlagEmoji.text = callee.flag_emoji
+            binding.tvPhoneNumber.text = callee.phone_number
         }
     }
 }
