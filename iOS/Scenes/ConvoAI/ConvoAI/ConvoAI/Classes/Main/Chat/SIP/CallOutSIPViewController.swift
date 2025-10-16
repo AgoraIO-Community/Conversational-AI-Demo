@@ -19,7 +19,7 @@ class CallOutSipViewController: SIPViewController {
     internal var channelName = ""
     internal var agentUid = 0
     internal var remoteAgentId = ""
-    internal var agentState: AgentState = .idle
+//    internal var agentState: AgentState = .idle
     internal var convoAIAPI: ConversationalAIAPI!
     internal var timer: Timer?
     internal var traceId: String {
@@ -88,6 +88,45 @@ class CallOutSipViewController: SIPViewController {
         view.closeButton.addTarget(self, action: #selector(closeConnect), for: .touchUpInside)
         return view
     }()
+    
+    internal lazy var messageView: ChatView = {
+        let view = ChatView()
+        return view
+    }()
+    
+    internal lazy var transcriptView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        
+        let maskView = UIView()
+        maskView.backgroundColor = UIColor.themColor(named: "ai_mask1")
+                
+        let button = UIButton()
+        button.setImage(UIImage.ag_named("ic_agent_close"), for: .normal)
+        button.backgroundColor = UIColor.themColor(named: "ai_block1")
+        button.layer.cornerRadius = 70 / 2.0
+        button.addTarget(self, action: #selector(closeConnect), for: .touchUpInside)
+
+        view.addSubview(maskView)
+        view.addSubview(messageView)
+        view.addSubview(button)
+        maskView.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalTo(0)
+        }
+        
+        messageView.snp.makeConstraints { make in
+            make.top.right.left.equalTo(0)
+            make.bottom.equalTo(button.snp.top).offset(-12)
+        }
+        
+        button.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(-40)
+            make.width.height.equalTo(70)
+        }
+        
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -152,7 +191,7 @@ class CallOutSipViewController: SIPViewController {
         var timeout = self.timeout
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] timer in
             guard let self = self else { return }
-            if timeout <= 0, self.callingContentView.tipsLabel.text == ResourceManager.L10n.Sip.sipOnCallTips {
+            if timeout <= 0, self.callingContentView.tipsLabel.text == ResourceManager.L10n.Sip.sipCallingTips {
                 sipTimeout()
                 self.stopTimer()
                 return

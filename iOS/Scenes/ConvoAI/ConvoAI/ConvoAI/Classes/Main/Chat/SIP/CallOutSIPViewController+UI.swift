@@ -16,8 +16,7 @@ extension CallOutSipViewController {
         navivationBar.settingButton.addTarget(self, action: #selector(onClickSettingButton), for: .touchUpInside)
 
         sipInputView.delegate = self
-        
-        [prepareCallContentView, callingContentView].forEach { view.addSubview($0) }
+        [prepareCallContentView, callingContentView, transcriptView].forEach { view.insertSubview($0, belowSubview: navivationBar) }
     }
     
     func setupSIPConstraints() {
@@ -29,6 +28,11 @@ extension CallOutSipViewController {
         callingContentView.snp.makeConstraints { make in
             make.left.right.bottom.equalTo(0)
             make.top.equalTo(self.navivationBar.snp.bottom)
+        }
+        
+        transcriptView.snp.makeConstraints { make in
+            make.top.equalTo(navivationBar.snp.bottom).offset(22)
+            make.left.right.bottom.equalTo(0)
         }
     }
     
@@ -156,6 +160,17 @@ extension CallOutSipViewController {
     func showPrepareCallView() {
         callingContentView.isHidden = true
         prepareCallContentView.isHidden = false
+        transcriptView.isHidden = true
+    }
+    
+    @objc func onClickTranscriptionButton(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        showTranscription(state: sender.isSelected)
+    }
+    
+    func showTranscription(state: Bool) {
+        transcriptView.isHidden = !state
+        callingContentView.isHidden = state
     }
 }
 
