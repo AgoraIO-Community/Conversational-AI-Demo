@@ -14,6 +14,7 @@ extension CallOutSipViewController {
     func setupSIPViews() {
         navivationBar.settingButton.isHidden = false
         navivationBar.settingButton.addTarget(self, action: #selector(onClickSettingButton), for: .touchUpInside)
+        navivationBar.transcriptionButton.addTarget(self, action: #selector(onClickTranscriptionButton(_:)), for: .touchUpInside)
 
         sipInputView.delegate = self
         [prepareCallContentView, callingContentView, transcriptView].forEach { view.insertSubview($0, belowSubview: navivationBar) }
@@ -113,7 +114,6 @@ extension CallOutSipViewController {
                     }
                 }
                 try await startRequest()
-                //TODO: prepare to ping ncs state
                 await MainActor.run {
                     prepareToFetchSIPState()
                     AppContext.stateManager().updateRoomId(channelName)
@@ -170,8 +170,34 @@ extension CallOutSipViewController {
     }
     
     func showTranscription(state: Bool) {
-        transcriptView.isHidden = !state
-        callingContentView.isHidden = state
+        if state {
+            // Show transcript view
+            transcriptView.isHidden = false
+            navivationBar.characterInfo.showSubtitleLabel(animated: true)
+            
+            // Animate calling view out
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn]) {
+                self.callingContentView.alpha = 0
+                self.callingContentView.transform = CGAffineTransform(translationX: 0, y: 50)
+            } completion: { _ in
+                self.callingContentView.isHidden = true
+                self.callingContentView.transform = .identity
+            }
+        } else {
+            // Hide transcript view
+            transcriptView.isHidden = true
+            navivationBar.characterInfo.showNameLabel(animated: true)
+            
+            // Show calling view with animation
+            callingContentView.isHidden = false
+            callingContentView.alpha = 0
+            callingContentView.transform = CGAffineTransform(translationX: 0, y: 50)
+            
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut]) {
+                self.callingContentView.alpha = 1
+                self.callingContentView.transform = .identity
+            }
+        }
     }
 }
 
@@ -193,3 +219,4 @@ extension CallOutSipViewController: SIPInputViewDelegate {
         }
     }
 }
+

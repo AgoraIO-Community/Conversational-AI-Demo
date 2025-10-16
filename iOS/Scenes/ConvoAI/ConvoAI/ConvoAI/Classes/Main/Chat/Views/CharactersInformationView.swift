@@ -15,13 +15,6 @@ class CharactersInformationView: UIView {
         return view
     }()
     
-    private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .center
-        return stack
-    }()
     
     public lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -42,7 +35,7 @@ class CharactersInformationView: UIView {
         return label
     }()
     
-    public lazy var phoneLabel: UILabel = {
+    public lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.themColor(named: "ai_brand_white10")
         label.font = .systemFont(ofSize: 10, weight: .medium)
@@ -61,29 +54,35 @@ class CharactersInformationView: UIView {
     
     private func setupViews() {
         addSubview(containerView)
-        containerView.addSubview(stackView)
-        
-        [avatarImageView, nameLabel, phoneLabel].forEach { stackView.addArrangedSubview($0) }
+        containerView.addSubview(avatarImageView)
+        containerView.addSubview(nameLabel)
+        containerView.addSubview(subtitleLabel)
         
         containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.height.equalTo(32)
         }
         
-        stackView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(0)
+        avatarImageView.snp.makeConstraints { make in
             make.left.equalTo(6)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(CGSize(width: 20, height: 20))
+        }
+        nameLabel.snp.makeConstraints { make in
+            make.left.equalTo(avatarImageView.snp.right).offset(8)
             make.right.equalTo(-6)
+            make.centerY.equalToSuperview()
         }
         
-        avatarImageView.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 20, height: 20))
+        subtitleLabel.snp.makeConstraints { make in
+            make.center.equalTo(nameLabel)
         }
     }
     
-    func configure(icon: String, defaultIcon: String, name: String) {
+    func configure(icon: String, defaultIcon: String, name: String, subtitle: String) {
         avatarImageView.kf.setImage(with: URL(string: icon), placeholder: UIImage.ag_named(defaultIcon))
         nameLabel.text = name
+        subtitleLabel.text = subtitle
     }
     
     // MARK: - Public Methods
@@ -91,52 +90,84 @@ class CharactersInformationView: UIView {
     func showNameLabel(animated: Bool = true) {
         guard animated else {
             nameLabel.isHidden = false
-            phoneLabel.isHidden = true
+            subtitleLabel.isHidden = true
+            setupNameLabelConstraints()
             return
         }
         
-        guard !phoneLabel.isHidden else { return }
+        guard !subtitleLabel.isHidden else { return }
         
         nameLabel.isHidden = false
         nameLabel.transform = CGAffineTransform(translationX: 0, y: -20)
         nameLabel.alpha = 0
         
+        // Set constraints for nameLabel
+        setupNameLabelConstraints()
+        
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-            self.phoneLabel.transform = CGAffineTransform(translationX: 0, y: 20)
-            self.phoneLabel.alpha = 0
+            self.subtitleLabel.transform = CGAffineTransform(translationX: 0, y: 20)
+            self.subtitleLabel.alpha = 0
             
             self.nameLabel.transform = .identity
             self.nameLabel.alpha = 1
         }) { _ in
-            self.phoneLabel.isHidden = true
-            self.phoneLabel.transform = .identity
-            self.phoneLabel.alpha = 1
+            self.subtitleLabel.isHidden = true
+            self.subtitleLabel.transform = .identity
+            self.subtitleLabel.alpha = 1
         }
     }
     
-    func showPhoneLabel(animated: Bool = true) {
+    func showSubtitleLabel(animated: Bool = true) {
         guard animated else {
             nameLabel.isHidden = true
-            phoneLabel.isHidden = false
+            subtitleLabel.isHidden = false
+            setupSubtitleLabelConstraints()
             return
         }
         
         guard !nameLabel.isHidden else { return }
         
-        phoneLabel.isHidden = false
-        phoneLabel.transform = CGAffineTransform(translationX: 0, y: 20)
-        phoneLabel.alpha = 0
+        subtitleLabel.isHidden = false
+        subtitleLabel.transform = CGAffineTransform(translationX: 0, y: 20)
+        subtitleLabel.alpha = 0
+        
+        // Set constraints for subtitleLabel
+        setupSubtitleLabelConstraints()
         
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
             self.nameLabel.transform = CGAffineTransform(translationX: 0, y: -20)
             self.nameLabel.alpha = 0
             
-            self.phoneLabel.transform = .identity
-            self.phoneLabel.alpha = 1
+            self.subtitleLabel.transform = .identity
+            self.subtitleLabel.alpha = 1
         }) { _ in
             self.nameLabel.isHidden = true
             self.nameLabel.transform = .identity
             self.nameLabel.alpha = 1
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupNameLabelConstraints() {
+        subtitleLabel.snp.remakeConstraints { make in
+            make.center.equalTo(nameLabel)
+        }
+        nameLabel.snp.remakeConstraints { make in
+            make.left.equalTo(avatarImageView.snp.right).offset(8)
+            make.right.equalTo(-6)
+            make.centerY.equalToSuperview()
+        }
+    }
+    
+    private func setupSubtitleLabelConstraints() {
+        subtitleLabel.snp.remakeConstraints { make in
+            make.left.equalTo(avatarImageView.snp.right).offset(8)
+            make.right.equalTo(-6)
+            make.centerY.equalToSuperview()
+        }
+        nameLabel.snp.remakeConstraints { make in
+            make.center.equalTo(subtitleLabel)
         }
     }
 }
