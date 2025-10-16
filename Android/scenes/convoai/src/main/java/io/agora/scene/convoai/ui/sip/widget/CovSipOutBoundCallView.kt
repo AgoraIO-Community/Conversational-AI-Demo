@@ -87,6 +87,40 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
     }
 
     /**
+     * Toggle call information visibility for transcript display
+     * When showing transcript: calling info (number + status) moves down and fades out over 0.5s
+     * When hiding transcript: calling info moves back up and fades in over 0.5s
+     * 
+     * @param showTranscript true to hide call info and show transcript, false to restore call info
+     */
+    fun toggleTranscriptUpdate(showTranscript: Boolean) {
+        if (currentState != CallState.CALLED && currentState != CallState.CALLING) {
+            // Only allow toggle during active call states
+            return
+        }
+
+        if (showTranscript) {
+            // Animate call info container out (includes phone number and calling status)
+            binding.layoutCallingNumber.animate()
+                .translationY(50f)
+                .alpha(0f)
+                .setDuration(500)
+                .withEndAction {
+                    binding.layoutCallingNumber.visibility = GONE
+                }
+                .start()
+        } else {
+            // Animate call info container back in
+            binding.layoutCallingNumber.visibility = VISIBLE
+            binding.layoutCallingNumber.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(500)
+                .start()
+        }
+    }
+
+    /**
      * Get current phone number with region code
      */
     fun getFullPhoneNumber(): String {
@@ -110,7 +144,8 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 binding.layoutNotJoin.visibility = VISIBLE
                 binding.layoutJoined.visibility = GONE
                 binding.btnJoinCall.isEnabled = binding.etPhoneNumber.text.toString().trim().isNotEmpty()
-                binding.tvCalling.visibility = INVISIBLE
+                binding.layoutCallingNumber.visibility = VISIBLE
+                binding.layoutCallingNumber.alpha = 1f
                 binding.tvCallingNumber.stopShimmer()
             }
 
@@ -120,7 +155,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
 
                 // Update calling number display
                 binding.tvCallingNumber.text = phoneNumber
-                binding.tvCalling.visibility = VISIBLE
                 binding.tvCalling.setText(R.string.cov_sip_outbound_calling)
                 binding.tvCallingNumber.startShimmer()
             }
@@ -131,7 +165,6 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
 
                 // Update connected number display
                 binding.tvCallingNumber.text = phoneNumber
-                binding.tvCalling.visibility = VISIBLE
                 binding.tvCalling.setText(R.string.cov_sip_call_in_progress)
                 binding.tvCallingNumber.stopShimmer()
             }
