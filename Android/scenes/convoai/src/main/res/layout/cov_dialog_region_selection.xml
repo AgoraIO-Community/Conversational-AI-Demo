@@ -34,7 +34,7 @@
         android:id="@+id/search_container"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="56dp"
         app:cardBackgroundColor="@color/ai_fill5"
         app:cardCornerRadius="12dp"
@@ -63,7 +63,7 @@
                 android:textColor="@color/ai_icontext1"
                 android:textColorHint="@color/ai_icontext3"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@+id/btn_search"
+                app:layout_constraintEnd_toStartOf="@+id/iv_clear_input"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
@@ -74,28 +74,9 @@
                 android:src="@drawable/common_ic_clear"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_search"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_search"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginEnd="3dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="12dp"
-                android:text="@string/cov_sip_search"
-                android:textAllCaps="false"
-                android:textColor="@color/ai_brand_white10"
-                android:textSize="12sp"
-                app:backgroundTint="@color/ai_brand_main6"
-                app:cornerRadius="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="#1AFFFFFF" />
+                tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 

@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -117,60 +115,26 @@ class CovLivingTopSipView @JvmOverloads constructor(
         binding.llLimitTips.isVisible = callState == CallState.CALLED
     }
 
+    /**
+     * Update title with animation using ViewFlipper
+     * Switches between preset name and phone number with built-in fade animation
+     * 
+     * @param isTranscriptEnable true to show phone number, false to show preset name
+     */
     fun updateTitleWithAnimation(isTranscriptEnable: Boolean) {
-        val cvPresetName = binding.cvPresetName
-        val cvPhone = binding.cvPhone
-        cvPresetName.clearAnimation()
-        cvPhone.clearAnimation()
+        val viewFlipper = binding.viewFlipper
+        val targetIndex = if (isTranscriptEnable) 1 else 0 // 0: preset name, 1: phone
+        
+        // Skip if already showing the target view
+        if (viewFlipper.displayedChild == targetIndex) {
+            return
+        }
+        
+        // Use ViewFlipper's built-in animation methods
         if (isTranscriptEnable) {
-            if (cvPresetName.isVisible) {
-                cvPhone.isVisible = true
-
-                val outAnim = AnimationUtils.loadAnimation(context, R.anim.slide_up_out)
-                outAnim.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation?) {}
-                    override fun onAnimationRepeat(animation: Animation?) {}
-                    override fun onAnimationEnd(animation: Animation?) {
-                        if (isTranscriptEnable) {
-                            cvPresetName.isVisible = false
-                        }
-                    }
-                })
-
-                val inAnim = AnimationUtils.loadAnimation(context, R.anim.slide_up_in)
-
-                cvPresetName.startAnimation(outAnim)
-                cvPhone.startAnimation(inAnim)
-            } else {
-                cvPresetName.isVisible = false
-                cvPhone.isVisible = true
-            }
+            viewFlipper.showNext()
         } else {
-            if (cvPhone.isVisible) {
-                cvPresetName.isVisible = true
-
-                val outAnim = AnimationUtils.loadAnimation(context, R.anim.slide_down_out)
-                outAnim.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation?) {}
-                    override fun onAnimationRepeat(animation: Animation?) {}
-                    override fun onAnimationEnd(animation: Animation?) {
-                        if (!isTranscriptEnable) {
-                            cvPhone.isVisible = false
-                        }
-                    }
-                })
-
-                val inAnim = AnimationUtils.loadAnimation(
-                    context,
-                    R.anim.slide_down_in
-                )
-
-                cvPhone.startAnimation(outAnim)
-                cvPresetName.startAnimation(inAnim)
-            } else {
-                cvPhone.isVisible = false
-                cvPresetName.isVisible = true
-            }
+            viewFlipper.showPrevious()
         }
     }
 

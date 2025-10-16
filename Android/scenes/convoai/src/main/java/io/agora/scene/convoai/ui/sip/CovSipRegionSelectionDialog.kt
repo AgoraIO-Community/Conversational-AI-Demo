@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.R
@@ -70,7 +69,7 @@ class CovSipRegionSelectionDialog : BaseSheetDialog<CovDialogRegionSelectionBind
 
             val displayMetrics = resources.displayMetrics
             val screenHeight = displayMetrics.heightPixels
-            val peekHeight = (screenHeight * 2 / 3)
+            val peekHeight = (screenHeight * 0.9).toInt()
 
             // Set the height to allow content scrolling
             bottomSheet.layoutParams.height = peekHeight
@@ -108,7 +107,6 @@ class CovSipRegionSelectionDialog : BaseSheetDialog<CovDialogRegionSelectionBind
                 onDismissCallback?.invoke()
                 dismiss()
             }
-            btnSearch.setOnClickListener { performSearch() }
             ivClearInput.setOnClickListener { clearSearch() }
 
             // Setup search input listener
