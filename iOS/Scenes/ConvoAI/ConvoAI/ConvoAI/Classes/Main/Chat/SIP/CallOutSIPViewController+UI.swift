@@ -17,7 +17,7 @@ extension CallOutSipViewController {
         navivationBar.transcriptionButton.addTarget(self, action: #selector(onClickTranscriptionButton(_:)), for: .touchUpInside)
 
         sipInputView.delegate = self
-        [prepareCallContentView, callingContentView, transcriptView].forEach { view.insertSubview($0, belowSubview: navivationBar) }
+        [prepareCallContentView, callingContentView, transcriptView, closeButton].forEach { view.insertSubview($0, belowSubview: navivationBar) }
     }
     
     func setupSIPConstraints() {
@@ -34,6 +34,12 @@ extension CallOutSipViewController {
         transcriptView.snp.makeConstraints { make in
             make.top.equalTo(navivationBar.snp.bottom).offset(22)
             make.left.right.bottom.equalTo(0)
+        }
+        
+        closeButton.snp.makeConstraints { make in
+            make.bottom.equalTo(-40)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(70)
         }
     }
     
@@ -158,6 +164,7 @@ extension CallOutSipViewController {
         callingContentView.isHidden = false
         prepareCallContentView.isHidden = true
         transcriptView.isHidden = true
+        closeButton.isHidden = false
         callingContentView.phoneNumberLabel.text = phoneNumber
         callingContentView.startShimmer()
     }
@@ -166,6 +173,7 @@ extension CallOutSipViewController {
         callingContentView.isHidden = true
         prepareCallContentView.isHidden = false
         transcriptView.isHidden = true
+        closeButton.isHidden = true
     }
     
     @objc func onClickTranscriptionButton(_ sender: UIButton) {
@@ -175,32 +183,15 @@ extension CallOutSipViewController {
     
     func showTranscription(state: Bool) {
         if state {
-            // Show transcript view
             transcriptView.isHidden = false
             navivationBar.characterInfo.showSubtitleLabel(animated: true)
-            
-            // Animate calling view out
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn]) {
-                self.callingContentView.alpha = 0
-                self.callingContentView.transform = CGAffineTransform(translationX: 0, y: 50)
-            } completion: { _ in
-                self.callingContentView.isHidden = true
-                self.callingContentView.transform = .identity
-            }
+            callingContentView.animateOut()
+            // Keep closeButton visible during transcription
         } else {
-            // Hide transcript view
             transcriptView.isHidden = true
             navivationBar.characterInfo.showNameLabel(animated: true)
-            
-            // Show calling view with animation
-            callingContentView.isHidden = false
-            callingContentView.alpha = 0
-            callingContentView.transform = CGAffineTransform(translationX: 0, y: 50)
-            
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut]) {
-                self.callingContentView.alpha = 1
-                self.callingContentView.transform = .identity
-            }
+            callingContentView.animateIn()
+            // Keep closeButton visible when returning to calling view
         }
     }
 }

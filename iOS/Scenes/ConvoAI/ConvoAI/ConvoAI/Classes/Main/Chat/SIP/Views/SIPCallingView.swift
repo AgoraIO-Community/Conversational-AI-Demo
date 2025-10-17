@@ -34,13 +34,6 @@ class SIPCallingView: UIView {
         return label
     }()
     
-    lazy var closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage.ag_named("ic_agent_close"), for: .normal)
-        button.backgroundColor = UIColor.themColor(named: "ai_block1")
-        button.layer.cornerRadius = 70 / 2.0
-        return button
-    }()
     
     // MARK: - Initialization
     
@@ -58,16 +51,9 @@ class SIPCallingView: UIView {
     private func setupUI() {
         addSubview(phoneNumberLabel)
         addSubview(tipsLabel)
-        addSubview(closeButton)
-        
-        closeButton.snp.makeConstraints { make in
-            make.bottom.equalTo(safeAreaLayoutGuide).offset(-40)
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(70)
-        }
         
         tipsLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(closeButton.snp.top).offset(-31)
+            make.bottom.equalTo(safeAreaLayoutGuide).offset(-170)
             make.left.equalTo(18)
             make.right.equalTo(-18)
         }
@@ -146,6 +132,41 @@ class SIPCallingView: UIView {
     /// Stop shimmer animation
     func stopShimmer() {
         gradientLayer?.removeAnimation(forKey: "shimmer")
+    }
+    
+    /// Animate view out (for transcription view)
+    func animateOut(completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn]) {
+            self.phoneNumberLabel.alpha = 0
+            self.phoneNumberLabel.transform = CGAffineTransform(translationX: 0, y: 50)
+            self.tipsLabel.alpha = 0
+            self.tipsLabel.transform = CGAffineTransform(translationX: 0, y: 50)
+        } completion: { _ in
+            self.phoneNumberLabel.isHidden = true
+            self.tipsLabel.isHidden = true
+            self.phoneNumberLabel.transform = .identity
+            self.tipsLabel.transform = .identity
+            completion?()
+        }
+    }
+    
+    /// Animate view in (from transcription view)
+    func animateIn(completion: (() -> Void)? = nil) {
+        phoneNumberLabel.isHidden = false
+        tipsLabel.isHidden = false
+        phoneNumberLabel.alpha = 0
+        tipsLabel.alpha = 0
+        phoneNumberLabel.transform = CGAffineTransform(translationX: 0, y: 50)
+        tipsLabel.transform = CGAffineTransform(translationX: 0, y: 50)
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut]) {
+            self.phoneNumberLabel.alpha = 1
+            self.phoneNumberLabel.transform = .identity
+            self.tipsLabel.alpha = 1
+            self.tipsLabel.transform = .identity
+        } completion: { _ in
+            completion?()
+        }
     }
 }
 
