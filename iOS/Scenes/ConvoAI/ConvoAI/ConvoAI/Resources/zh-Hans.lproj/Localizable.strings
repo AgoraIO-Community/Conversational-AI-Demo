@@ -318,3 +318,4 @@
 "agent.sip.area.code.search.placeholder" = "搜索国家/地区号...";
 "agent.sip.area.code.search.button" = "搜索";
 "agent.sip.area.code.no.results" = "无结果";
+"agent.sip.call.limit.exceeded" = "已超过每日20次通话限制";

@@ -352,8 +352,9 @@ extension ResourceManager {
             // Nickname Generation
             public static let nicknameAdjectives = ResourceManager.localizedString("mine.nickname.adjectives")
             public static let nicknameNouns = ResourceManager.localizedString("mine.nickname.nouns")
+            public static let icpSubtitle = ResourceManager.localizedString("mine.icp.subtitle")
         }
-
+        
         public enum Sip {
             public static let sipCallInTips = ResourceManager.localizedString("agent.sip.in.call.tips")
             public static let sipCallOutTips = ResourceManager.localizedString("agent.sip.out.call.tips")
@@ -370,8 +371,7 @@ extension ResourceManager {
             public static let areaCodeSearchPlaceholder = ResourceManager.localizedString("agent.sip.area.code.search.placeholder")
             public static let areaCodeSearchButton = ResourceManager.localizedString("agent.sip.area.code.search.button")
             public static let areaCodeNoResults = ResourceManager.localizedString("agent.sip.area.code.no.results")
+            public static let callLimitExceeded = ResourceManager.localizedString("agent.sip.call.limit.exceeded")
         }
     }
 }
-
-
