@@ -94,7 +94,7 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
      * @param showTranscript true to hide call info and show transcript, false to restore call info
      */
     fun toggleTranscriptUpdate(showTranscript: Boolean) {
-        if (currentState != CallState.CALLED) {
+        if (currentState != CallState.CALLED && currentState != CallState.HANGUP) {
             // Only allow toggle during active call states
             return
         }
@@ -166,6 +166,16 @@ class CovSipOutBoundCallView @JvmOverloads constructor(
                 // Update connected number display
                 binding.tvCallingNumber.text = phoneNumber
                 binding.tvCalling.setText(R.string.cov_sip_call_in_progress)
+                binding.tvCallingNumber.stopShimmer()
+            }
+
+            CallState.HANGUP -> {
+                binding.layoutNotJoin.visibility = GONE
+                binding.layoutJoined.visibility = VISIBLE
+
+                // Update connected number display
+                binding.tvCallingNumber.text = phoneNumber
+                binding.tvCalling.setText(R.string.cov_sip_call_ended)
                 binding.tvCallingNumber.stopShimmer()
             }
         }
