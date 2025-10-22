@@ -488,8 +488,7 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
             fun bind(preset: CovAgentPreset) {
                 binding.apply {
                     tvTitle.text = preset.display_name
-                    tvDescription.isVisible = preset.description.isNotEmpty()
-                    tvDescription.text = preset.description
+                    tvDescription.text = "[${preset.name}]  " + preset.description
                     if (preset.avatar_url.isNullOrEmpty()) {
                         ivAvatar.setImageResource(io.agora.scene.common.R.drawable.common_custom_agent)
                     } else {
@@ -507,14 +506,6 @@ class CovCustomAgentFragment : BaseFragment<CovFragmentCustomAgentBinding>() {
                             onItemClick.invoke(presets[position])
                         }
                     }
-
-//                    rootView.setOnLongClickListener {
-//                        val position = adapterPosition
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            onItemLongClick.invoke(presets[position])
-//                        }
-//                        true // Return true to indicate the long click was handled
-//                    }
                 }
             }
         }
