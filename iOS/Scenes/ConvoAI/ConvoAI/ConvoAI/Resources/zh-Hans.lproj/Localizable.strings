@@ -245,6 +245,10 @@
 "main.digitalHuman" = "数字人";
 "main.mine" = "我的";
 
+// Page Titles
+"agentlist.title" = "声网对话式 AI 引擎";
+"mine.page.title" = "我的";
+
 // Bio Setting
 "mine.bio.setting.title" = "自我介绍";
 "mine.bio.placeholder.display" = "设定自我介绍，让 AI agent 更了解您";
