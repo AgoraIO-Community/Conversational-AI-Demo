@@ -139,7 +139,7 @@ class CovAgentInfoFragment : BaseFragment<CovAgentInfoFragmentBinding>() {
                         agentInfoViewModel.updateConnectionState(AgentConnectionState.IDLE)
                     }
                 }
-                updateUploadingStatus(disable = state != CallState.IDLE)
+                updateUploadingStatus(disable = (state == CallState.IDLE || state == CallState.CALLING))
             }
         }
 
