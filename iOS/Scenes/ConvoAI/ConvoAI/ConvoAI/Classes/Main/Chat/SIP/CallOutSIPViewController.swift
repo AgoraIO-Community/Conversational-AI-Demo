@@ -163,7 +163,7 @@ class CallOutSipViewController: SIPViewController {
     }
     
     func setupUIData() {
-        guard let preset = AppContext.settingManager().preset, 
+        guard let preset = AppContext.settingManager().preset,
               let vendorCalleeNumbers = preset.sipVendorCalleeNumbers,
               let firstVendor = vendorCalleeNumbers.first else {
             return
@@ -232,6 +232,36 @@ class CallOutSipViewController: SIPViewController {
                 defaultIcon: preset.defaultAvatar ?? "",
                 name: preset.displayName.stringValue(),
                 subtitle: phoneNumber
+            )
+        }
+        updateChatUserProfiles()
+    }
+    
+    func updateChatUserProfiles() {
+        let localNickname = UserCenter.user?.nickname
+        let gender = UserCenter.user?.gender ?? ""
+        let localAvatar: UIImage?
+        if gender == "female" {
+            localAvatar = UIImage.ag_named("img_mine_avatar_female")
+        } else if gender == "male" {
+            localAvatar = UIImage.ag_named("img_mine_avatar_male")
+        } else {
+            localAvatar = UIImage.ag_named("img_mine_avatar_holder")
+        }
+        
+        messageView.setLocalUserProfile(
+            nickname: localNickname,
+            avatarImage: localAvatar
+        )
+        
+        if let preset = AppContext.settingManager().preset {
+            let remoteNickname = preset.displayName.stringValue()
+            let remoteAvatarURL = preset.avatarUrl.stringValue()
+            let placeholder = UIImage.ag_named(preset.defaultAvatar ?? "")
+            messageView.setRemoteUserProfile(
+                nickname: remoteNickname,
+                avatarURLString: remoteAvatarURL,
+                placeholderImage: placeholder
             )
         }
     }
