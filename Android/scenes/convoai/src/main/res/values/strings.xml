@@ -237,7 +237,8 @@
     <string name="cov_mine_about_me_official4">Product Manager who basically lives in Figma and Jira. I love sweating the details to get the user experience just right. My brain runs on cold brew and the latest tech news. Looking for other product folks to geek out on strategy with!</string>>
 
     <!-- SIP -->
-    <string name="cov_sip_internal_call_tips">Dial this number from your phone to start a conversation with our AI Agent.</string>
+    <string name="cov_sip_internal_call_tips">Dial this number on your phone to try our AI customer service.</string>
+    <string name="cov_sip_internal_call_tips1">Dial any of these numbers on your phone to try our AI customer service.</string>
     <string name="cov_sip_outbound_call_tips">Enter your number below, and our AI Agent will call you.</string>
     <string name="cov_sip_outbound_calling">Calling now… please answer on your phone.</string>
     <string name="cov_sip_outbound_call_hint">Enter your mobile or landline number</string>
@@ -245,12 +246,12 @@
     <string name="cov_sip_call_ended">Call ended, please hang up</string>
     <string name="cov_sip_valid_number">Please enter a valid mobile or landline number</string>
     <string name="cov_sip_call_out">Call out</string>
-    <string name="cov_sip_callee_title">Call prompt</string>
-    <string name="cov_sip_callee_content">About to call this number using your current phone, confirm?</string>
+    <string name="cov_sip_callee_title">Call reminder</string>
+    <string name="cov_sip_callee_content">You’re about to call this number from your phone. Continue?</string>
     <string name="cov_sip_callee">Call now</string>
-    <string name="cov_sip_search_region">Search country/region code…</string>
+    <string name="cov_sip_search_region">Search country/region code</string>
     <string name="cov_sip_search">Search</string>
     <string name="cov_sip_search_empty">No Results</string>
     <string name="cov_sip_limit_time">Smart customer session limit: %d minutes.</string>
-    <string name="cov_sip_call_limit_error">Daily call limit of 20 times has been exceeded</string>
+    <string name="cov_sip_call_limit_error">You’ve reached today’s call limit (20)</string>
 </resources>

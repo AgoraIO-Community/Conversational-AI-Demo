@@ -15,7 +15,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.agora.scene.common.R
+import io.agora.scene.convoai.R
 import io.agora.scene.common.ui.CommonDialog
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.api.CovAgentPreset
@@ -96,6 +96,11 @@ class CovSipInternalCallView @JvmOverloads constructor(
      * Prepare collapsed and expanded data sources
      */
     private fun prepareDataSources() {
+        if (allCallees.size > 1) {
+            binding.tvCallTips.setText(R.string.cov_sip_internal_call_tips1)
+        } else {
+            binding.tvCallTips.setText(R.string.cov_sip_internal_call_tips)
+        }
         // Collapsed state: show up to 3 items
         collapsedCallees = allCallees.take(3)
         // Expanded state: show all items (RecyclerView will handle scrolling for more than 6)
@@ -221,7 +226,7 @@ class CovSipInternalCallView @JvmOverloads constructor(
                 .setPositiveButton(context.getString(io.agora.scene.convoai.R.string.cov_sip_callee)) {
                     showDialer(phoneNumber)
                 }
-                .setNegativeButton(context.getString(R.string.common_cancel)) {}
+                .setNegativeButton(context.getString(io.agora.scene.common.R.string.common_cancel)) {}
                 .hideTopImage()
                 .setCancelable(false)
                 .build()
