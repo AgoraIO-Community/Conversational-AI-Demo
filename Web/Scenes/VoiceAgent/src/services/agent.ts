@@ -26,7 +26,8 @@ import {
   remoteAgentPingReqSchema,
   remoteAgentStartRespDataDevSchema,
   remoteAgentStartRespDataSchema,
-  remoteAgentStopSettingsSchema
+  remoteAgentStopSettingsSchema,
+  type SIP_ERROR_CODE
 } from '@/constants'
 import { generateDevModeQuery } from '@/lib/dev'
 import { useCancelableSWR } from '@/lib/request'
@@ -41,9 +42,9 @@ import type { TDevModeQuery } from '@/type/dev'
 const DEFAULT_FETCH_TIMEOUT = 10000
 
 export class ResourceLimitError extends Error {
-  public readonly code: ERROR_CODE
+  public readonly code: ERROR_CODE | SIP_ERROR_CODE
 
-  constructor(code: ERROR_CODE, message?: string) {
+  constructor(code: ERROR_CODE | SIP_ERROR_CODE, message?: string) {
     super(message)
     this.name = 'ResourceLimitError'
     this.code = code
