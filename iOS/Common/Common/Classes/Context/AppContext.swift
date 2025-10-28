@@ -17,7 +17,7 @@ import FirebaseCore
     public let sharedInfoUrl: String = "https://fullapp.oss-cn-beijing.aliyuncs.com/convoai/libraries.html"
     public let logoffUrl: String = "https://console.shengwang.cn/settings/security"
     
-    
+    public let isGlobal = true
     private var _isOpenSource: Bool = false
     private var _appId: String = ""
     private var _certificate: String = ""

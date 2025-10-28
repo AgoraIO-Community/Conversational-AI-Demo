@@ -2,6 +2,7 @@ package io.agora.scene.convoai.rtm
 
 import io.agora.rtm.ErrorInfo
 import io.agora.rtm.LinkStateEvent
+import io.agora.rtm.PresenceEvent
 import io.agora.rtm.ResultCallback
 import io.agora.rtm.RtmClient
 import io.agora.rtm.RtmConfig
@@ -26,6 +27,8 @@ interface IRtmManagerListener {
      * token will expire，need renew token
      */
     fun onTokenPrivilegeWillExpire(channelName: String)
+
+    fun onPresenceEvent(event: PresenceEvent){}
 }
 
 object CovRtmManager : RtmEventListener {

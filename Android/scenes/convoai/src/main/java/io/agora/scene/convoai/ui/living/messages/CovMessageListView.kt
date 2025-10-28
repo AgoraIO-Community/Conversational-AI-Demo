@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.common.R
+import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
 import io.agora.scene.convoai.constant.CovAgentManager
@@ -257,6 +258,7 @@ class CovMessageListView @JvmOverloads constructor(
 
         private var agentName: String = ""
         private var agentUrl: String = ""
+
         @DrawableRes
         private var agentDefaultImage: Int = R.drawable.common_default_agent
         private val messages = mutableListOf<Message>()
@@ -269,6 +271,7 @@ class CovMessageListView @JvmOverloads constructor(
         inner class UserMessageViewHolder(private val binding: CovMessageMineItemBinding) :
             MessageViewHolder(binding.root) {
             override fun bind(message: Message) {
+                binding.ivMessageIcon.setImageResource(SSOUserManager.userAvatar)
                 if (message.type == MessageType.TEXT) {
                     binding.tvMessageContent.isVisible = true
                     binding.layoutImageMessage.isVisible = false
@@ -489,7 +492,7 @@ class CovMessageListView @JvmOverloads constructor(
         /**
          * Update agent name
          */
-        fun updateAgentName(name: String, url: String, @DrawableRes defaultImage:Int) {
+        fun updateAgentName(name: String, url: String, @DrawableRes defaultImage: Int) {
             agentName = name
             agentUrl = url
             agentDefaultImage = defaultImage
@@ -540,9 +543,12 @@ class CovMessageListView @JvmOverloads constructor(
      * Handles both user and agent messages, and triggers scroll logic if needed.
      * @param transcript The incoming transcript data.
      */
-    fun onTranscriptUpdated(transcript: Transcript) {
+    fun onTranscriptUpdated(transcript: Transcript, filterUser: Boolean = true) {
         // transcript for other users
-        if (transcript.type == TranscriptType.USER && transcript.userId != CovAgentManager.uid.toString()) {
+
+        if (transcript.type == TranscriptType.USER && filterUser &&
+            transcript.userId != CovAgentManager.uid.toString()
+        ) {
             return
         }
         handleMessage(transcript)

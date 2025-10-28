@@ -69,7 +69,7 @@ class MineViewController: UIViewController {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        view.backgroundColor = UIColor.themColor(named: "ai_fill4")
+        view.backgroundColor = UIColor.themColor(named: "ai_fill7")
 
         view.addSubview(appNameLabel)
         view.addSubview(imageView1)

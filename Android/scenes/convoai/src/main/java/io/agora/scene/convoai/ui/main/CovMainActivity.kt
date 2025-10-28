@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.debugMode.DebugSupportActivity
 import io.agora.scene.common.debugMode.DebugTabDialog
 import io.agora.scene.common.util.TimeUtils
@@ -64,8 +65,7 @@ class CovMainActivity : DebugSupportActivity<CovActivityMainBinding>() {
 
                     is LoginState.LoggedOut -> {
                         CovRtmManager.logout()
-                        startActivity(Intent(this@CovMainActivity, CovLoginActivity::class.java))
-                        finish()
+                        navigateToLogin()
                     }
 
                     LoginState.Loading -> {
@@ -174,7 +174,14 @@ class CovMainActivity : DebugSupportActivity<CovActivityMainBinding>() {
     }
 
     override fun handleEnvironmentChange() {
-        startActivity(Intent(this@CovMainActivity, CovLoginActivity::class.java))
+        navigateToLogin()
+    }
+
+    private fun navigateToLogin() {
+        SSOUserManager.logout()
+        val intent = Intent(this, CovLoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
         finish()
     }
 }

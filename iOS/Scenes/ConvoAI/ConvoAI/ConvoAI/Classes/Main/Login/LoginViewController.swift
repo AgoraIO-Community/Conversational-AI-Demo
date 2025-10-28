@@ -41,12 +41,10 @@ class LoginViewController: UIViewController {
     }()
     
     private lazy var phoneLoginButton: UIButton = {
-        let button = UIButton(type: .custom)
+        let button = LoginGradientButton()
         button.setTitle(ResourceManager.L10n.Login.buttonTitle, for: .normal)
         button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18)
         button.addTarget(self, action: #selector(onClickLogin), for: .touchUpInside)
-        button.setBackgroundImage(UIImage.ag_named("btn_gradient_borderd"), for: .normal)
         return button
     }()
     
@@ -169,16 +167,6 @@ class LoginViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        if let registerGradient = registerButton.layer.sublayers?.first as? CAGradientLayer {
-            registerGradient.frame = registerButton.bounds
-        }
-        CATransaction.commit()
-    }
-    
     private func loginAction() {
         let ssoWebVC = SSOWebViewController()
         let baseUrl = AppContext.shared.baseServerUrl
@@ -227,19 +215,14 @@ class LoginViewController: UIViewController {
             make.left.equalTo(termsCheckbox.snp.left).offset(-5)
             make.bottom.equalTo(termsCheckbox.snp.top).offset(-3)
         }
-        registerButton.snp.makeConstraints { make in
-            make.bottom.equalTo(termsCheckbox.snp.top).offset(-50)
+        phoneLoginButton.snp.makeConstraints { make in
+            make.bottom.equalTo(termsCheckbox.snp.top).offset(-125)
             make.left.equalToSuperview().offset(30)
             make.right.equalToSuperview().offset(-30)
             make.height.equalTo(58)
         }
-        phoneLoginButton.snp.makeConstraints { make in
-            make.bottom.equalTo(registerButton.snp.top).offset(-15)
-            make.left.right.equalTo(registerButton)
-            make.height.equalTo(58)
-        }
         welcomeMessageView.snp.makeConstraints { make in
-            make.bottom.equalTo(phoneLoginButton.snp.top).offset(-40)
+            make.bottom.equalTo(phoneLoginButton.snp.top).offset(-53)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
         }
@@ -341,22 +324,84 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func termsButtonTapped() {
-        let vc = TermsServiceWebViewController()
+        let vc = BaseWebViewController()
         vc.url = AppContext.shared.termsOfServiceUrl
-        let termsServiceVC = UINavigationController(rootViewController: vc)
-        termsServiceVC.modalPresentationStyle = .fullScreen
-        self.present(termsServiceVC, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func privacyPolicyTapped() {
-        let vc = TermsServiceWebViewController()
+        let vc = BaseWebViewController()
         vc.url = AppContext.shared.privacyUrl
-        let termsServiceVC = UINavigationController(rootViewController: vc)
-        termsServiceVC.modalPresentationStyle = .fullScreen
-        self.present(termsServiceVC, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func onClickDevTouch() {
         DeveloperConfig.shared.countTouch()
+    }
+}
+
+// MARK: - AgentCallGradientButton
+fileprivate class LoginGradientButton: UIButton {
+    
+    private var gradientLayer: CAGradientLayer?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupButton()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupButton()
+    }
+    
+    private func setupButton() {
+        layer.cornerRadius = 29
+        layer.masksToBounds = true
+        
+        // Set image and text spacing to 10pt
+        var configuration = UIButton.Configuration.plain()
+        configuration.imagePadding = 10
+        configuration.imagePlacement = .leading
+        configuration.baseForegroundColor = .white
+        
+        // Set bold font through titleTextAttributesTransformer
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.boldSystemFont(ofSize: 18)
+            return outgoing
+        }
+        
+        self.configuration = configuration
+        
+        if let iv = imageView {
+            bringSubviewToFront(iv)
+        }
+        
+        setupGradientLayer()
+    }
+    
+    private func setupGradientLayer() {
+        gradientLayer?.removeFromSuperlayer()
+        
+        let gradient = CAGradientLayer()
+        gradient.colors = [
+            UIColor(hex: "#17C5FF")?.cgColor ?? UIColor.blue.cgColor,
+            UIColor(hex: "#315DFF")?.cgColor ?? UIColor.blue.cgColor,
+            UIColor(hex: "#446CFF")?.cgColor ?? UIColor.blue.cgColor
+        ]
+        gradient.cornerRadius = layer.cornerRadius
+        
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        gradient.locations = [0, 0.5, 1.0]
+        
+        layer.insertSublayer(gradient, at: 0)
+        gradientLayer = gradient
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer?.frame = bounds
     }
 }

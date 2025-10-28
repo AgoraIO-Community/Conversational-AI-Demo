@@ -4,7 +4,7 @@ import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
 import io.agora.rtm.RtmClient
 
-const val ConversationalAIAPI_VERSION = "1.8.5"
+const val ConversationalAIAPI_VERSION = "2.0.0"
 
 /*
  * This file defines the core interfaces, data structures, and error system for the Conversational AI API.
@@ -183,6 +183,7 @@ data class MessageReceipt(
  * @property UNKNOWN Unknown state
  */
 enum class AgentState(val value: String) {
+    IDLE("idle"),
     /** Agent is silent */
     SILENT("silent"),
 
