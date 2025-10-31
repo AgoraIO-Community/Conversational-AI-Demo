@@ -61,7 +61,7 @@ Please follow these steps to quickly integrate and use the ConversationalAI API:
 
    ```typescript
    conversationalAIAPI.on(
-     EConversationalAIAPIEvents.TRANSCRIPTION_UPDATED,
+     EConversationalAIAPIEvents.TRANSCRIPT_UPDATED,
      onTextChanged
    );
 
@@ -121,7 +121,7 @@ const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
   const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
   ```
 
-- **All TRANSCRIPTION_UPDATED event callbacks return the complete chat conversation list.**
+- **All TRANSCRIPT_UPDATED event callbacks return the complete chat conversation list.**
   Each time may update the recent few conversation subtitles, please render the UI based on the complete list.
 
 ---
