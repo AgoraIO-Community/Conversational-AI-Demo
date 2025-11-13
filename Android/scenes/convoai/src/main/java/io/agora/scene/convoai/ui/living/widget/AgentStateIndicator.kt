@@ -70,6 +70,7 @@ class AgentStateIndicator @JvmOverloads constructor(
         listeningAnimator = null
 
         when (currentState) {
+            AgentState.IDLE,
             AgentState.SILENT -> {
                 // Static state, no animation needed
                 animationProgress = 0f
@@ -114,6 +115,7 @@ class AgentStateIndicator @JvmOverloads constructor(
         val centerY = height / 2f
 
         when (currentState) {
+            AgentState.IDLE -> {}
             AgentState.SILENT -> {
                 drawStaticBars(canvas, centerX, centerY)
             }
