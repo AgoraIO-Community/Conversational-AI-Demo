@@ -212,7 +212,8 @@ extension ChatViewController {
         videoCanvas.uid = UInt(avatarUid)
         // the view to be binded
         videoCanvas.view = renderView
-        videoCanvas.renderMode = .hidden
+        videoCanvas.renderMode = .fit
+        videoCanvas.backgroundColor = 0x000000ff
         rtcEngine.setupRemoteVideo(videoCanvas)
     }
     
