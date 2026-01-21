@@ -115,11 +115,6 @@ extension ChatViewController {
             make.height.equalTo(44)
         }
         
-        aiGeneratedLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-8)
-            make.centerX.equalToSuperview()
-        }
-        
         upperBackgroundView.snp.makeConstraints { make in
             make.top.left.right.equalToSuperview()
             make.bottom.equalTo(view.snp.centerY)
