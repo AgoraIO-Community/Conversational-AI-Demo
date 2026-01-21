@@ -255,4 +255,10 @@
     <string name="cov_sip_limit_time">Smart customer session limit: %d minutes.</string>
     <string name="cov_sip_call_limit_error">You’ve reached today’s call limit (20)</string>
     <string name="cov_sip_pipeline_not_found">Pipeline Id not found</string>
+
+    <!-- ai test    -->
+    <string name="cov_version_update_detected">ConvoAI Version Update Detected!</string>
+    <string name="cov_version_update_info">Current version: %1s \nLatest version: %2s</string>
+    <string name="cov_version_update_now">Update Now</string>
+    <string name="cov_version_update_later">Later</string>
 </resources>

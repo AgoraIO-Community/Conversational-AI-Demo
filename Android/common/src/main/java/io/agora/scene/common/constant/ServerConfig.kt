@@ -39,7 +39,7 @@ object ServerConfig {
         private set
 
     @JvmStatic
-    var appBuildNo: String = ""
+    var appVersionCode: Int = 0
         private set
 
     @JvmStatic
@@ -70,10 +70,15 @@ object ServerConfig {
     val isBuildEnv: Boolean get() = buildEnvConfig.toolboxServerHost == toolBoxUrl
 
     fun initBuildConfig(
-        appBuildNo: String, envName: String, toolboxHost: String, rtcAppId: String, rtcAppCert: String,appVersionName:String
+        envName: String,
+        toolboxHost: String,
+        rtcAppId: String,
+        rtcAppCert: String,
+        appVersionName: String,
+        appVersionCode: Int
     ) {
-        this.appBuildNo = appBuildNo
         this.appVersionName = appVersionName
+        this.appVersionCode = appVersionCode
         buildEnvConfig.apply {
             this.envName = envName
             this.toolboxServerHost = toolboxHost
