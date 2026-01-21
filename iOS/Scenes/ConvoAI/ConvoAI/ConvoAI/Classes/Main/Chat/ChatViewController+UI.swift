@@ -15,7 +15,9 @@ class ChatWindowState {
     
     func reset() {
         showTranscription = false
-        if AppContext.shared.avatarEnable || AppContext.settingManager().avatar != nil {
+        let preset = AppContext.settingManager().preset
+        let isPresetSupportAvatar = preset?.isSupportAvatar == true
+        if AppContext.shared.avatarEnable || AppContext.settingManager().avatar != nil || isPresetSupportAvatar {
             showAvatar = true
         } else {
             showAvatar = false
@@ -111,6 +113,11 @@ extension ChatViewController {
             make.bottom.equalTo(callControlBar.snp.top).offset(-94)
             make.left.right.equalTo(0)
             make.height.equalTo(44)
+        }
+        
+        aiGeneratedLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-8)
+            make.centerX.equalToSuperview()
         }
         
         upperBackgroundView.snp.makeConstraints { make in
