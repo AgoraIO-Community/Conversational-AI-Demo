@@ -81,6 +81,7 @@ echo short_version: $short_version
 echo sdk_url: $sdk_url
 echo toolbox_url: $toolbox_url
 echo dev_env_config_url: $dev_env_config_url
+echo package_name: $package_name
 echo pwd: `pwd`
 
 # enter android project direction
@@ -187,6 +188,15 @@ if [[ ! -z ${package_name} && "${package_name}" != 'none' && "${package_name}" !
     echo "Modifying package name from ${current_package} to: ${package_name}"
     sed -ie "s#applicationId \"[^\"]*\"#applicationId \"${package_name}\"#g" app/build.gradle
     echo "Package name modified successfully"
+    
+    # Update google-services.json to match the new package name
+    if [[ -f "app/google-services.json" ]]; then
+      echo "Updating google-services.json package name to: ${package_name}"
+      sed -ie "s#\"package_name\": \"[^\"]*\"#\"package_name\": \"${package_name}\"#g" app/google-services.json
+      echo "google-services.json updated successfully"
+    else
+      echo "Warning: app/google-services.json not found, skipping update"
+    fi
   else
     echo "Package name is already ${package_name}, skipping modification"
   fi
