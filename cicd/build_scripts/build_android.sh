@@ -179,6 +179,27 @@ fi
 sed -ie "s#$(sed -n '/AG_APP_ID/p' gradle.properties)#AG_APP_ID=${APP_ID_VAR}#g" gradle.properties
 sed -ie "s#$(sed -n '/TOOLBOX_SERVER_HOST/p' gradle.properties)#TOOLBOX_SERVER_HOST=${toolbox_url}#g" gradle.properties
 sed -ie "s#$(sed -n '/IS_OPEN_SOURCE/p' gradle.properties)#IS_OPEN_SOURCE=false#g" gradle.properties
+
+# modify package name if package_name is provided
+if [[ ! -z ${package_name} && "${package_name}" != 'none' && "${package_name}" != '' ]]; then
+  current_package=$(grep -o 'applicationId "[^"]*"' app/build.gradle | head -1 | sed 's/applicationId "\(.*\)"/\1/')
+  if [[ "${current_package}" != "${package_name}" ]]; then
+    echo "Modifying package name from ${current_package} to: ${package_name}"
+    sed -ie "s#applicationId \"[^\"]*\"#applicationId \"${package_name}\"#g" app/build.gradle
+    echo "Package name modified successfully"
+  else
+    echo "Package name is already ${package_name}, skipping modification"
+  fi
+fi
+
+# modify app_name if package name contains "test"
+final_package=$(grep -o 'applicationId "[^"]*"' app/build.gradle | head -1 | sed 's/applicationId "\(.*\)"/\1/')
+if [[ "${final_package}" == *"test"* ]]; then
+  echo "Package name contains 'test', modifying app_name to 'Convo AI Test'"
+  sed -ie 's#resValue "string", "app_name", "Convo AI"#resValue "string", "app_name", "Convo AI Test"#g' app/build.gradle
+  echo "App name modified successfully"
+fi
+
 cat gradle.properties
 
 # Compile apk
