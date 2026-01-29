@@ -279,7 +279,7 @@ class CovLivingViewModel : ViewModel() {
 
     val agentName: String
         get() = if (CovAgentManager.isEnableAvatar) {
-            CovAgentManager.avatar?.avatar_name ?: ""
+            CovAgentManager.avatar?.avatar_name ?: CovAgentManager.getPreset()?.display_name ?: ""
         } else {
             CovAgentManager.getPreset()?.display_name ?: ""
         }
