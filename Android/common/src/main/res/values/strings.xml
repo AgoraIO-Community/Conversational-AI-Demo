@@ -20,6 +20,7 @@
     <string name="common_debug_audio_dump">Audio Dump</string>
     <string name="common_debug_session_limit">Session Limit</string>
     <string name="common_debug_metrics">Metrics</string>
+    <string name="common_debug_render_mode_fallback">Render Mode Fallback</string>
     <string name="common_debug_graph_id">Graph id</string>
     <string name="common_debug_sdk_parameters">SDK audio parameter config</string>
     <string name="common_debug_sc_config">Convo AI service preset config</string>

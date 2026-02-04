@@ -4,7 +4,7 @@ import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
 import io.agora.rtm.RtmClient
 
-const val ConversationalAIAPI_VERSION = "2.1.0"
+const val ConversationalAIAPI_VERSION = "2.0.2"
 
 /*
  * This file defines the core interfaces, data structures, and error system for the Conversational AI API.
@@ -523,7 +523,19 @@ data class ConversationalAIAPIConfig(
     /** transcript rendering mode, default is word-level */
     val renderMode: TranscriptRenderMode = TranscriptRenderMode.Word,
     /** Whether to enable logging, default is true. When true, logs will be written to the RTC SDK log file. */
-    val enableLog: Boolean = true
+    val enableLog: Boolean = true,
+
+    /**
+     * Whether to enable render mode fallback when Word mode is configured but server
+     * doesn't provide word-level data.
+     *
+     * - When true (default): Automatically falls back to Text mode if server doesn't return word-level timestamps.
+     * - When false: Stays in Word mode regardless. WARNING: This may result in no subtitles being displayed
+     *   if the server doesn't support word-level transcription.
+     *
+     * Default is true.
+     */
+    val enableRenderModeFallback: Boolean = true
 )
 
 /**
