@@ -35,7 +35,8 @@ Follow these steps to quickly integrate and use the ConversationalAI API:
        rtcEngine = rtcEngineInstance,
        rtmClient = rtmClientInstance,
        renderMode = TranscriptRenderMode.Word, // or TranscriptRenderMode.Text
-       enableLog = true
+       enableLog = true,
+       enableRenderModeFallback = true
    )
    ```
 
