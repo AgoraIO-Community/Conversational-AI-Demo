@@ -89,7 +89,10 @@ class OfficialAgentViewController: UIViewController {
     
     private func requestAgentPresets() {
         SVProgressHUD.show()
-        agentManager.fetchAgentPresets(appId: AppContext.shared.appId) {[weak self] error, result in
+        agentManager.fetchAgentPresets(
+            appId: AppContext.shared.appId,
+            isDebug: DeveloperConfig.shared.isDeveloperMode)
+        {[weak self] error, result in
             SVProgressHUD.dismiss()
             self?.refreshControl.endRefreshing()
             if let error = error {
@@ -214,7 +217,6 @@ extension OfficialAgentViewController: UITableViewDelegate, UITableViewDataSourc
         AppContext.settingManager().updatePreset(preset)
         let reportEvent = ReportEvent(appId: AppContext.shared.appId, sceneId: "\(ConvoAIEntrance.kSceneName)_iOS", action: preset.displayName, appVersion: ConversationalAIAPIImpl.version, appPlatform: "iOS", deviceModel: UIDevice.current.machineModel, deviceBrand: "Apple", osVersion: "")
         toolBoxApi.reportEvent(event: reportEvent, success: nil, failure: nil)
-
         let presetType = preset.presetType.stringValue()
         if presetType == "sip_call_in" {
             let chatViewController = CallInSIPViewController()
