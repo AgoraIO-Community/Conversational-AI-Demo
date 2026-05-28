@@ -23,6 +23,11 @@
     <string name="common_debug_graph_id">Graph id</string>
     <string name="common_debug_sdk_parameters">SDK audio parameter config</string>
     <string name="common_debug_sc_config">Convo AI service preset config</string>
+    <string name="common_debug_convoai_request_base_url">ConvoAI request domain</string>
+    <string name="common_debug_convoai_request_base_url_desc">(Only overrides the domain portion before the fixed ConvoAI and token API paths)</string>
+    <string name="common_debug_convoai_request_header">X-Service-Namespace</string>
+    <string name="common_debug_convoai_request_header_desc">(Automatically merges with existing remote request headers when provided)</string>
+    <string name="common_debug_convoai_request_header_hint">Enter service namespace</string>
     <string name="common_debug_close">Close Debug Mode</string>
     <string name="common_debug_copy_user_question">Copy current user’s conversation question</string>
     <string name="common_call_time_is_up">Time\'s Up!</string>
