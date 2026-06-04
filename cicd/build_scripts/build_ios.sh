@@ -159,29 +159,28 @@ if [ -z "$release_version" ]; then
 fi
 echo "Version number read from project configuration: ${release_version}"
 
-# Artifact name
-export ARTIFACT_NAME="Agora_AI_Scenarios_Demo_for_iOS_v${release_version}_${BUILD_VERSION}"
-
 KEYCENTER_PATH=${PROJECT_PATH}"/"${PROJECT_NAME}"/KeyCenter.swift"
 
 # Build environment
 CONFIGURATION='Release'
 
 # Signing configuration
-if [[ "$bundle_id" != *"test"* ]]; then
-    # App Store release configuration
+if [[ "$bundle_id" == *"test"* ]]; then
+    # Test package configuration
     PROVISIONING_PROFILE="agora_convoai_test"
-    CODE_SIGN_IDENTITY="iPhone Distribution"
+    CODE_SIGN_IDENTITY="Apple Distribution"
     DEVELOPMENT_TEAM="48TB6ZZL5S"
     PLIST_PATH="${CURRENT_PATH}/cicd/build_scripts/ios_export_store_test.plist"
 else
-    # Development environment configuration
+    # App Store release configuration
     PROVISIONING_PROFILE="agora_convoai_appstore"
-    CODE_SIGN_IDENTITY="iPhone Distribution"
+    CODE_SIGN_IDENTITY="Apple Distribution"
     DEVELOPMENT_TEAM="48TB6ZZL5S"
     PLIST_PATH="${CURRENT_PATH}/cicd/build_scripts/ios_export_store_prod.plist"
 fi
 
+# Artifact name
+export ARTIFACT_NAME="Agora_AI_Scenarios_Demo_for_iOS_${PROVISIONING_PROFILE}_v${release_version}_${BUILD_VERSION}"
 # Project file path
 APP_PATH="${PROJECT_PATH}/${PROJECT_NAME}.xcworkspace"
 
@@ -362,4 +361,3 @@ rm -rf ${PACKAGE_DIR}
 rm -rf ${EXPORT_PATH}
 
 echo 'Build completed'
-
