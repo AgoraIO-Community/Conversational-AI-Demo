@@ -116,6 +116,20 @@ object DebugConfigSettings {
         this.isSessionLimitMode = isSessionLimitMode
     }
 
+    var audioScenario: Int? = null
+        private set
+
+    fun setAudioScenario(scenario: Int?) {
+        this.audioScenario = scenario
+    }
+
+    var serverAudioScenario: String? = null
+        private set
+
+    fun setServerAudioScenario(scenario: String?) {
+        this.serverAudioScenario = scenario
+    }
+
     var isMetricsEnabled: Boolean = false
         private set
 
@@ -155,6 +169,8 @@ object DebugConfigSettings {
         isDebug = false
         isAudioDumpEnabled = false
         isMetricsEnabled = false
+        audioScenario = null
+        serverAudioScenario = null
         _sdkAudioParameters.clear()
         convoAIParameter = ""
         convoAiRequestBaseUrl = ""
