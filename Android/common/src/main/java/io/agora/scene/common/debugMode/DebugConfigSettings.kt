@@ -49,6 +49,20 @@ object DebugConfigSettings {
         this.convoAIParameter = apiParameter
     }
 
+    var convoAiRequestBaseUrl: String = ""
+        private set
+
+    fun setConvoAiRequestBaseUrl(baseUrl: String) {
+        this.convoAiRequestBaseUrl = baseUrl
+    }
+
+    var convoAiRequestHeaderNamespace: String = ""
+        private set
+
+    fun setConvoAiRequestHeaderNamespace(namespace: String) {
+        this.convoAiRequestHeaderNamespace = namespace
+    }
+
     @Volatile
     private var _isDebug: Boolean = false
     
@@ -102,6 +116,20 @@ object DebugConfigSettings {
         this.isSessionLimitMode = isSessionLimitMode
     }
 
+    var audioScenario: Int? = null
+        private set
+
+    fun setAudioScenario(scenario: Int?) {
+        this.audioScenario = scenario
+    }
+
+    var serverAudioScenario: String? = null
+        private set
+
+    fun setServerAudioScenario(scenario: String?) {
+        this.serverAudioScenario = scenario
+    }
+
     var isMetricsEnabled: Boolean = false
         private set
 
@@ -141,8 +169,12 @@ object DebugConfigSettings {
         isDebug = false
         isAudioDumpEnabled = false
         isMetricsEnabled = false
+        audioScenario = null
+        serverAudioScenario = null
         _sdkAudioParameters.clear()
         convoAIParameter = ""
+        convoAiRequestBaseUrl = ""
+        convoAiRequestHeaderNamespace = ""
     }
 
     // Counter for debug mode activation

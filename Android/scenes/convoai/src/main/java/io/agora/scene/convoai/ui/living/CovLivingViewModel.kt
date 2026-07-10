@@ -14,6 +14,7 @@ import io.agora.scene.common.net.ApiManager
 import io.agora.scene.common.net.TokenGenerator
 import io.agora.scene.common.net.TokenGeneratorType
 import io.agora.scene.common.net.UploadImage
+import io.agora.scene.common.debugMode.DebugConfigSettings
 import io.agora.scene.common.util.TimeUtils
 import io.agora.scene.common.util.toast.ToastUtil
 import io.agora.scene.convoai.CovLogger
@@ -76,6 +77,28 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * view model
  */
+internal fun resolveAudioScenario(
+    defaultScenario: Int,
+    isDebug: Boolean,
+    debugAudioScenario: Int?
+): Int {
+    return if (isDebug) {
+        debugAudioScenario ?: defaultScenario
+    } else {
+        defaultScenario
+    }
+}
+
+internal fun resolveDebugServerAudioScenario(
+    isDebug: Boolean,
+    serverAudioScenario: String?
+): String? {
+    if (!isDebug) {
+        return null
+    }
+    return serverAudioScenario
+}
+
 class CovLivingViewModel : ViewModel() {
 
     private val TAG = "CovLivingViewModel"
@@ -368,7 +391,7 @@ class CovLivingViewModel : ViewModel() {
 
                 // Configure audio settings
                 val isIndependent = CovAgentManager.getPreset()?.isIndependent == true
-                val scenario = if (CovAgentManager.isEnableAvatar) {
+                val defaultScenario = if (CovAgentManager.isEnableAvatar) {
                     // If digital avatar is enabled, use AUDIO_SCENARIO_DEFAULT for better audio mixing
                     Constants.AUDIO_SCENARIO_DEFAULT
                 } else {
@@ -378,6 +401,11 @@ class CovLivingViewModel : ViewModel() {
                         Constants.AUDIO_SCENARIO_AI_CLIENT
                     }
                 }
+                val scenario = resolveAudioScenario(
+                    defaultScenario = defaultScenario,
+                    isDebug = DebugConfigSettings.isDebug,
+                    debugAudioScenario = DebugConfigSettings.audioScenario
+                )
                 conversationalAIAPI?.loadAudioSettings(scenario)
 
                 // Join RTC channel
@@ -1048,6 +1076,10 @@ class CovLivingViewModel : ViewModel() {
                     "data_channel" to "rtm",
                     "enable_metrics" to CovAgentManager.isMetricsEnabled,
                     "enable_error_message" to true,
+                    "audio_scenario" to resolveDebugServerAudioScenario(
+                        isDebug = DebugConfigSettings.isDebug,
+                        serverAudioScenario = DebugConfigSettings.serverAudioScenario
+                    ),
                     "transcript" to mapOf(
                         "enable" to true,
                         "enable_words" to CovAgentManager.isWordRenderMode,
@@ -1216,6 +1248,10 @@ class CovLivingViewModel : ViewModel() {
                 "data_channel" to "rtm",
                 "enable_metrics" to true,
                 "enable_error_message" to true,
+                "audio_scenario" to resolveDebugServerAudioScenario(
+                    isDebug = DebugConfigSettings.isDebug,
+                    serverAudioScenario = DebugConfigSettings.serverAudioScenario
+                ),
                 "transcript" to mutableMapOf<String, Any?>(
                     "enable" to true,
                     "enable_words" to CovAgentManager.isWordRenderMode,
