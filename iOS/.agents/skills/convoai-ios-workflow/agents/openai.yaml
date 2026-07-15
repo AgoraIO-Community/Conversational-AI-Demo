@@ -1,0 +1,6 @@
+interface:
+  display_name: "ConvoAI iOS Workflow"
+  short_description: "Deliver iOS changes with focused tests and runtime UI acceptance"
+  default_prompt: "Use $convoai-ios-workflow to deliver this iOS change. Choose Direct, Standard, or Full from the actual risk, run focused logic tests, and require runtime evidence for UI work when the environment is available."
+policy:
+  allow_implicit_invocation: false
