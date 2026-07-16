@@ -7,6 +7,7 @@
 
 import Foundation
 import Common
+import AgoraAgentClientToolkit
 
 enum ImageState {
     case sending, success, failed
@@ -153,5 +154,4 @@ extension ChatMessageViewModel: AgentSettingDelegate {
         displayMode = mode
     }
 }
-
 

@@ -1,5 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
+# Fallback for published pods that have not reached the mirror yet.
+source 'https://cdn.cocoapods.org/'
 
 platform :ios, '15.0'
 
@@ -14,6 +16,8 @@ target 'Agent-global' do
   pod 'ZSwiftBaseLib', '0.1.6.2'
 #  pod 'AgoraRtcEngine_iOS', :path => 'sdk.podspec'
   pod 'AgoraRtcEngine_iOS', '4.5.1'
+  pod 'AgoraRtm', '2.2.3', :subspecs => ['RtmKit']
+  pod 'agent-client-toolkit-swift', '2.9.0'
   #pod 'LookinServer', :subspecs => ['Swift'], :configurations => ['Debug']
 
   pod 'Common', :path => 'Common'
@@ -26,8 +30,6 @@ target 'Agent-global' do
   pod 'Kingfisher'
 
   pod 'Firebase/Crashlytics'
-  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
-
 end
 
 post_install do |installer|

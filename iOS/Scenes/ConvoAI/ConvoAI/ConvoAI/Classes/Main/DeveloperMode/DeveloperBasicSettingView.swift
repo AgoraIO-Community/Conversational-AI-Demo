@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Common
+import AgoraAgentClientToolkit
 
 public class DeveloperBasicSettingView: UIView  {
     private let appVersionLabel = UILabel()
