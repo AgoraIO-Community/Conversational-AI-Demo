@@ -22,6 +22,7 @@ flowchart LR
   app["app\nEntry, flavor, manifest, WelcomeActivity"] --> common["common\nShared UI, network, Agora, storage, configuration"]
   app --> convo["scenes:convoai\nAuthentication, catalog, Living, SIP, transcripts, settings"]
   convo --> common
+  convo --> toolkit["Agora Agent Client Toolkit\nMaven component for messaging and transcripts"]
   convo --> iot["scenes:convoai:iot\nPreparation, scan, pairing, Wi-Fi, device state"]
   iot --> common
   iot --> ble["scenes:convoai:bleManager\nBLE primitives"]
@@ -32,6 +33,7 @@ flowchart LR
 | `app` | Application entry, startup routing, flavor, manifest, signing, APK naming, app-level `BuildConfig` | Entry activity: `WelcomeActivity` |
 | `common` | Shared UI base classes, debug support, network, Agora dependencies, storage, utilities, configuration | Broadest consumer impact |
 | `scenes:convoai` | Authentication, Agent catalog, Living and SIP sessions, transcripts, avatar, settings | Main product module |
+| `io.agora.agents:agora-agent-client-toolkit` | Conversational AI RTC/RTM events, messaging, and transcript processing | External Maven component consumed by `scenes:convoai` |
 | `scenes:convoai:iot` | Device preparation, permissions, Bluetooth/Wi-Fi provisioning, device list and connection | Depends on `bleManager` |
 | `scenes:convoai:bleManager` | BLE primitives | Consumed by the IoT module |
 
@@ -43,8 +45,11 @@ Key packages:
 - `scenes/convoai/src/main/java/io/agora/scene/convoai/api`
 - `scenes/convoai/src/main/java/io/agora/scene/convoai/rtc`
 - `scenes/convoai/src/main/java/io/agora/scene/convoai/rtm`
-- `scenes/convoai/src/main/java/io/agora/scene/convoai/convoaiApi`
+- `scenes/convoai/src/main/java/io/agora/scene/convoai/ui/living/legacy`
+- `io.agora.conversational.api` from the Agent Client Toolkit dependency
 - `scenes/convoai/iot/src/main/java/io/agora/scene/convoai/iot`
+
+The current conversational client API and transcript implementation are consumed from the published Maven component `io.agora.agents:agora-agent-client-toolkit`. The component requires API 26, which is also the Android application's minimum SDK. Only the legacy v1 RTC stream renderer remains in the Demo source tree.
 
 ## 3. Runtime Flows
 
@@ -95,10 +100,10 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   participant UI as "Living Activity / ViewModel"
-  participant API as "ConversationalAIAPIImpl"
+  participant API as "Agent Client Toolkit"
   participant RTC as "Agora RTC"
   participant RTM as "Agora RTM"
-  participant Transcript as "TranscriptController / subRender"
+  participant Transcript as "Toolkit transcript pipeline"
 
   UI->>API: initialize with RTC engine and RTM client
   API->>RTC: bind media callbacks
@@ -108,9 +113,10 @@ sequenceDiagram
   API-->>UI: IConversationalAIAPIEventHandler callbacks
 ```
 
-- `CovLivingViewModel` and `CovLivingSipViewModel` create `ConversationalAIAPIImpl`.
+- `CovLivingViewModel` and `CovLivingSipViewModel` create the toolkit's `ConversationalAIAPIImpl`.
 - Messages, interruption, metrics, images, and transcript updates return through `IConversationalAIAPIEventHandler`.
-- `convoaiApi/subRender` is compatibility-sensitive; package structure and event semantics must remain stable unless a coordinated migration is required.
+- `io.agora.agents:agora-agent-client-toolkit` owns the public API, RTM event handling, and current transcript renderer.
+- `ui/living/legacy` owns the Demo-only v1 RTC stream renderer because that compatibility path is not part of the published toolkit.
 
 ### 3.4 IoT and BLE
 
@@ -154,8 +160,9 @@ Never commit real values for App IDs, certificates, bearer tokens, API keys, bas
 | Agent REST payload and response DTOs | `api/CovAgentApiManager.kt`, `api/CovApiModes.kt` | Backend compatibility, defaults, omitted fields, preset behavior |
 | Selected preset and session settings | `constant/CovAgentConfig.kt` | Cross-screen state, RTC identity, feature enablement |
 | Server and temporary RTC configuration | `common/.../ServerConfig` | Endpoint and session identity behavior |
-| RTC/RTM event contract | `convoaiApi`, Living ViewModels | Media, messaging, interruption, metrics |
-| Transcript rendering | `convoaiApi/subRender` | Parsing, ordering, compatibility, UI callbacks |
+| RTC/RTM event contract | Published Agent Client Toolkit, Living ViewModels | Media, messaging, interruption, metrics |
+| Current transcript rendering | Published Agent Client Toolkit | Parsing, ordering, compatibility, UI callbacks |
+| Legacy v1 transcript rendering | `ui/living/legacy` | RTC stream parsing and legacy UI callbacks |
 
 When an external contract is unavailable, use an explicitly approved mock and keep the missing server evidence visible. Do not infer production behavior from a local fixture.
 
@@ -175,7 +182,7 @@ Important Android capabilities include `INTERNET`, `CAMERA`, `RECORD_AUDIO`, `FO
 
 1. Agent REST and preset contracts: small payload or default changes can alter server behavior across standard, custom, SIP, and debug flows.
 2. `common`: shared network, UI, Agora, storage, and configuration changes have broad consumer impact.
-3. `convoaiApi` and `subRender`: RTC, RTM, parsing, transcript rendering, and UI callbacks meet here.
+3. Published Agent Client Toolkit and `ui/living/legacy`: RTC, RTM, parsing, transcript rendering, and UI callbacks meet here.
 4. IoT and BLE: behavior depends on permissions, radios, system services, firmware, and physical-device state.
 5. Build and configuration: `settings.gradle`, module build files, `gradle/libs.versions.toml`, `gradle.properties`, and manifests affect variants, dependencies, signing, and runtime injection.
 6. Mixed language levels: `app`, `common`, and `scenes:convoai` use Java 17, while `iot` and `bleManager` use Java 11.
@@ -186,7 +193,8 @@ Important Android capabilities include `INTERNET`, `CAMERA`, `RECORD_AUDIO`, `FO
 - `common`: affected consumers, network behavior, shared Agora behavior, and `BuildConfig` injection.
 - `scenes:convoai` REST or preset changes: focused payload/DTO tests, callers, error paths, and affected compile tasks.
 - Living or SIP changes: Agent start/stop, RTC/RTM, messages, transcript updates, interruption, and lifecycle recovery.
-- `convoaiApi/subRender`: event parsing, ordering, callback dispatch, rendering, and package compatibility.
+- Published Agent Client Toolkit: dependency resolution, API compatibility, event parsing, ordering, callback dispatch, and current rendering.
+- `ui/living/legacy`: RTC stream parsing and legacy message-list rendering.
 - `iot/bleManager`: permission denial/recovery, Bluetooth and location services, scan, connection, and Wi-Fi selection on suitable hardware.
 - Build or configuration changes: affected variants and consumers plus a secret/privacy scan.
 
@@ -195,6 +203,6 @@ Important Android capabilities include `INTERNET`, `CAMERA`, `RECORD_AUDIO`, `FO
 1. `AGENTS.md` for collaboration, permissions, profiles, and acceptance.
 2. `ARCHITECTURE.md` for the repository model and risk boundaries.
 3. `scenes/convoai/README.md` for setup and running the demo.
-4. `scenes/convoai/src/main/java/io/agora/scene/convoai/convoaiApi/README.md` for component integration details.
+4. `scenes/convoai/README.md` for the toolkit dependency and component integration entrypoint.
 
 Keep task execution rules out of this document. Keep setup instructions and component-specific API details in their owning README files.
