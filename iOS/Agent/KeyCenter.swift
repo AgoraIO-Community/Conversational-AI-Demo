@@ -31,7 +31,7 @@ struct KeyCenter {
      Demo Server
      demo server is only for testing, not for production environment, please use your own server for production
     */
-    static var TOOLBOX_SERVER_HOST: String = "https://service.agora.io/toolbox-global"
+    static var TOOLBOX_SERVER_HOST: String = "https://service.agora.io/toolbox-global/"
     
     /**
      Agora Key
