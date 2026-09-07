@@ -5,6 +5,9 @@
 *.framework
 *.xcworkspacedata
 xcshareddata
+!Agent.xcodeproj/xcshareddata/
+!Agent.xcodeproj/xcshareddata/xcschemes/
+!Agent.xcodeproj/xcshareddata/xcschemes/Agent-globalTests.xcscheme
 **/dev_env_config.json
 agora_sdk
 *.xcarchive

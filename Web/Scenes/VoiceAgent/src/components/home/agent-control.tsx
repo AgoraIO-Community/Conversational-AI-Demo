@@ -198,7 +198,7 @@ export default function AgentControl(props: { className?: string }) {
       logger.info('startCall try and subscribe events')
       // init rtc helper
       const rtcHelper = RTCHelper.getInstance()
-      rtcHelper.configureAudioScenario(
+      await rtcHelper.configureAudioScenario(
         resolveAudioScenarioMode({
           isDevMode,
           debugMode: audioScenarioMode
@@ -261,7 +261,7 @@ export default function AgentControl(props: { className?: string }) {
       )?.preset_type
       const messageServiceMode =
         presetType?.startsWith('standard') ||
-          settings.preset_type === 'custom_private'
+        settings.preset_type === 'custom_private'
           ? 'default'
           : 'legacy'
 
@@ -387,13 +387,13 @@ export default function AgentControl(props: { className?: string }) {
         // avatar releated
         avatar: settings.avatar
           ? {
-            enable: true,
-            vendor: settings.avatar.vendor,
-            params: {
-              agora_uid: `${avatar_rtc_uid}`,
-              avatar_id: settings.avatar.avatar_id
+              enable: true,
+              vendor: settings.avatar.vendor,
+              params: {
+                agora_uid: `${avatar_rtc_uid}`,
+                avatar_id: settings.avatar.avatar_id
+              }
             }
-          }
           : undefined,
         channel: channel_name,
         agent_rtc_uid: `${agent_rtc_uid}`,
@@ -653,7 +653,7 @@ export default function AgentControl(props: { className?: string }) {
     updateRoomStatus(EConnectionStatus.CONNECTING)
     // init rtc helper
     const rtcHelper = RTCHelper.getInstance()
-    rtcHelper.configureAudioScenario(DEFAULT_AUDIO_SCENARIO_MODE)
+    await rtcHelper.configureAudioScenario(DEFAULT_AUDIO_SCENARIO_MODE)
     await rtcHelper.retrieveToken(`${remote_rtc_uid}`, channel_name, false, {
       devMode: isDevMode
     })
@@ -798,7 +798,7 @@ export default function AgentControl(props: { className?: string }) {
     if (data.curState === 'RECONNECTING' && data.revState === 'CONNECTED') {
       logger.info(
         'agent is listening -> user is offline(due to network issue) temporarily' +
-        '[onConnectionStateChange]'
+          '[onConnectionStateChange]'
       )
       toast.warning(tAgent('tmpDisconnected'))
       updateAgentStatus(EConnectionStatus.RECONNECTING)
@@ -810,7 +810,7 @@ export default function AgentControl(props: { className?: string }) {
     if (data.curState === 'CONNECTED' && data.revState === 'RECONNECTING') {
       logger.info(
         'agent is listening -> user is online again(in short time)' +
-        '[onConnectionStateChange]'
+          '[onConnectionStateChange]'
       )
       toast.success(tAgent('agentReconnected'))
       updateAgentStatus(EConnectionStatus.CONNECTED)

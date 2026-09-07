@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C0B100012E10000100B10001 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B100022E10000100B10001 /* XCTest.framework */; };
+		C0B100032E10000100B10001 /* OnDeviceAins.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100042E10000100B10001 /* OnDeviceAins.swift */; };
+		C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */; };
 		526B3B487B7E38FEC90FF09C /* Pods_Agent_global.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CFE16F51B0C319CA5D163F5 /* Pods_Agent_global.framework */; };
 		AB297B742CA93805007FB93B /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB297B722CA93805007FB93B /* KeyCenter.swift */; };
 		AB7A7D582D360F37000B3034 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7A7D4F2D360F37000B3034 /* AppDelegate.swift */; };
@@ -23,6 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C0B100022E10000100B10001 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		C0B100042E10000100B10001 /* OnDeviceAins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnDeviceAins.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Manager/OnDeviceAins.swift; sourceTree = SOURCE_ROOT; };
+		C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceAinsTests.swift; sourceTree = "<group>"; };
+		C0B100072E10000100B10001 /* Agent-globalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Agent-globalTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07B78001A80B50822C790D23 /* Pods-Agent-global.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-global.debug.xcconfig"; path = "Target Support Files/Pods-Agent-global/Pods-Agent-global.debug.xcconfig"; sourceTree = "<group>"; };
 		14285B5FCE1DF2A0D45D7A72 /* Pods-Agent-CN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-CN.release.xcconfig"; path = "Target Support Files/Pods-Agent-CN/Pods-Agent-CN.release.xcconfig"; sourceTree = "<group>"; };
 		1EB5085410A4166EDC4A73F5 /* Pods-Agent-global.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-global.release.xcconfig"; path = "Target Support Files/Pods-Agent-global/Pods-Agent-global.release.xcconfig"; sourceTree = "<group>"; };
@@ -53,6 +60,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C0B100082E10000100B10001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0B100012E10000100B10001 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB297B582CA935A4007FB93B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -67,6 +82,7 @@
 		30EF62E0E578B02E6760430C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C0B100022E10000100B10001 /* XCTest.framework */,
 				9195CC5D65D195315A29E3B0 /* Pods_Agent_cn.framework */,
 				8CFE16F51B0C319CA5D163F5 /* Pods_Agent_global.framework */,
 			);
@@ -95,6 +111,7 @@
 			children = (
 				F7CE00262D81A78B0029BD3B /* Agent-global.entitlements */,
 				AB297B5D2CA935A4007FB93B /* Agent */,
+				C0B100092E10000100B10001 /* AgentTests */,
 				AB297B5C2CA935A4007FB93B /* Products */,
 				46900E12D89305866F380C71 /* Pods */,
 				30EF62E0E578B02E6760430C /* Frameworks */,
@@ -105,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				AB297B5B2CA935A4007FB93B /* Agent-global.app */,
+				C0B100072E10000100B10001 /* Agent-globalTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,9 +162,35 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		C0B100092E10000100B10001 /* AgentTests */ = {
+			isa = PBXGroup;
+			children = (
+				C0B100042E10000100B10001 /* OnDeviceAins.swift */,
+				C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */,
+			);
+			path = AgentTests;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C0B1000A2E10000100B10001 /* Agent-globalTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */;
+			buildPhases = (
+				C0B1000C2E10000100B10001 /* Sources */,
+				C0B100082E10000100B10001 /* Frameworks */,
+				C0B1000D2E10000100B10001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Agent-globalTests";
+			productName = "Agent-globalTests";
+			productReference = C0B100072E10000100B10001 /* Agent-globalTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		AB297B5A2CA935A4007FB93B /* Agent-global */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB297B6F2CA935A6007FB93B /* Build configuration list for PBXNativeTarget "Agent-global" */;
@@ -178,6 +222,9 @@
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
+					C0B1000A2E10000100B10001 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					AB297B5A2CA935A4007FB93B = {
 						CreatedOnToolsVersion = 15.4;
 					};
@@ -197,11 +244,19 @@
 			projectRoot = "";
 			targets = (
 				AB297B5A2CA935A4007FB93B /* Agent-global */,
+				C0B1000A2E10000100B10001 /* Agent-globalTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C0B1000D2E10000100B10001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB297B592CA935A4007FB93B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -310,6 +365,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C0B1000C2E10000100B10001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0B100032E10000100B10001 /* OnDeviceAins.swift in Sources */,
+				C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB297B572CA935A4007FB93B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -335,6 +399,52 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		C0B1000E2E10000100B10001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C0B1000F2E10000100B10001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		AB297B6D2CA935A6007FB93B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -564,6 +674,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0B1000E2E10000100B10001 /* Debug */,
+				C0B1000F2E10000100B10001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AB297B562CA935A4007FB93B /* Build configuration list for PBXProject "Agent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

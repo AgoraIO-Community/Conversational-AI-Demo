@@ -408,12 +408,12 @@ class CovLivingViewModel : ViewModel() {
                     isDebug = DebugConfigSettings.isDebug,
                     debugAudioScenario = DebugConfigSettings.audioScenario
                 )
-                conversationalAIAPI?.loadAudioSettings(scenario)
-                CovRtcManager.setAinsEnabled(
-                    OnDeviceAins.resolve(
+                CovRtcManager.loadAudioSettings(
+                    enabled = OnDeviceAins.resolve(
                         isDebugMode = DebugConfigSettings.isDebug,
                         debugEnabled = DebugConfigSettings.isAinsEnabled
-                    )
+                    ),
+                    loadAudioSettings = { conversationalAIAPI?.loadAudioSettings(scenario) }
                 )
 
                 // Join RTC channel

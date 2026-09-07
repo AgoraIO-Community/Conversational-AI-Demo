@@ -9,16 +9,6 @@ import Foundation
 import AgoraRtcKit
 import Common
 
-enum OnDeviceAins {
-    static func resolve(isDeveloperMode: Bool, debugEnabled: Bool) -> Bool {
-        isDeveloperMode && debugEnabled
-    }
-
-    static func rtcParameter(enabled: Bool) -> String {
-        "{\"che.audio.sf.enabled\":\(enabled)}"
-    }
-}
-
 protocol RTCManagerProtocol {
     
     /// Creates and initializes an RTC engine instance
@@ -54,6 +44,9 @@ protocol RTCManagerProtocol {
     /// Enables or disables on-device AINS
     func setAinsEnabled(_ enabled: Bool)
 
+    /// Loads SDK audio settings and restores the Demo AINS override last
+    func loadAudioSettings(ainsEnabled: Bool, _ loadAudioSettings: () -> Void)
+
     /// Restores the current on-device AINS state
     func reapplyAins()
     
@@ -64,7 +57,9 @@ protocol RTCManagerProtocol {
 class RTCManager: NSObject {
     private var rtcEngine: AgoraRtcEngineKit!
     private var audioDumpEnabled: Bool = false
-    private var isAinsEnabled: Bool = false
+    private lazy var onDeviceAins = OnDeviceAinsController { [weak self] parameter in
+        self?.rtcEngine?.setParameters(parameter)
+    }
 }
 
 extension RTCManager: RTCManagerProtocol {
@@ -123,12 +118,15 @@ extension RTCManager: RTCManagerProtocol {
     }
 
     func setAinsEnabled(_ enabled: Bool) {
-        isAinsEnabled = enabled
-        reapplyAins()
+        onDeviceAins.setEnabled(enabled)
+    }
+
+    func loadAudioSettings(ainsEnabled: Bool, _ loadAudioSettings: () -> Void) {
+        onDeviceAins.loadAudioSettings(enabled: ainsEnabled, loadAudioSettings)
     }
 
     func reapplyAins() {
-        rtcEngine?.setParameters(OnDeviceAins.rtcParameter(enabled: isAinsEnabled))
+        onDeviceAins.reapply()
     }
     
     func getAudioDump() -> Bool {
@@ -149,7 +147,7 @@ extension RTCManager: RTCManagerProtocol {
     
     func destroy() {
         audioDumpEnabled = false
-        isAinsEnabled = false
+        onDeviceAins.reset()
         rtcEngine = nil
         AgoraRtcEngineKit.destroy()
     }
