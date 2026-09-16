@@ -119,3 +119,8 @@ If you have any problems or suggestions regarding the sample projects, we welcom
 ## 📜 5. License
 
 The sample projects are under the MIT license.
+
+
+### AI workflow and validation
+
+See [iOS workflow](../../AGENTS.md) and [validation guide](../../docs/VALIDATION.md). From the repository root, run `python3 scripts/validate.py ios --suite ains` for standalone AINS tests; `--list` shows the available suites and their scope is defined in `scripts/workflow.json`.

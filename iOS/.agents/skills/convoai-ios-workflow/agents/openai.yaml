@@ -1,0 +1,6 @@
+interface:
+  display_name: "ConvoAI iOS Workflow"
+  short_description: "Work on iOS with project context and relevant checks"
+  default_prompt: "Use $convoai-ios-workflow with iOS/AGENTS.md and AI_WORKFLOW.md. Choose an approach that fits the task."
+policy:
+  allow_implicit_invocation: true

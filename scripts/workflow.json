@@ -1,0 +1,37 @@
+{
+  "brand": "Agora",
+  "android": {
+    "flavor": "global",
+    "test_tasks": [
+      ":app:testGlobalDebugUnitTest",
+      ":scenes:convoai:testDebugUnitTest",
+      ":scenes:convoai:iot:testDebugUnitTest",
+      ":scenes:convoai:bleManager:testDebugUnitTest"
+    ],
+    "lint_tasks": [
+      ":app:lintGlobalDebug"
+    ],
+    "test_reports": [
+      "app/build/test-results/testGlobalDebugUnitTest",
+      "scenes/convoai/build/test-results/testDebugUnitTest",
+      "scenes/convoai/iot/build/test-results/testDebugUnitTest",
+      "scenes/convoai/bleManager/build/test-results/testDebugUnitTest"
+    ]
+  },
+  "ios": {
+    "app_target": "Agent-global",
+    "suites": {
+      "ains": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "OnDeviceAinsTests",
+            "source": "AgentTests/OnDeviceAinsTests.swift"
+          }
+        ]
+      }
+    }
+  }
+}
