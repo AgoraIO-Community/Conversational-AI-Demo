@@ -13,8 +13,11 @@ From the repository root:
 ```bash
 python3 scripts/validate.py ios --list
 python3 scripts/validate.py ios --suite ains
+python3 scripts/validate.py ios --suite environment
 ```
 
-`ains` uses `Agent.xcodeproj` / `Agent-globalTests` and tests the app's OnDeviceAins.swift without Pods or an app host. The configured suite currently covers AINS only. For other behavior, use or add relevant tests and update the target, shared scheme and suite mapping as needed.
+`ains` uses `Agent.xcodeproj` / `Agent-globalTests` and tests the app's OnDeviceAins.swift without Pods or an app host. The standalone suites cover AINS and environment matching. For other behavior, use or add relevant tests and update the target, shared scheme and suite mapping as needed.
+
+The `environment` suite checks host + RTC App ID matching and remembered dynamic selections without an app host.
 
 Choose checks covering the changed behavior. See [validation options](docs/VALIDATION.md) for focused selection, simulator setup and result files. The scripts are local helpers; `cicd/` remains the Jenkins entrypoint.

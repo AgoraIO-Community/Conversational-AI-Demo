@@ -31,6 +31,17 @@
             "source": "AgentTests/OnDeviceAinsTests.swift"
           }
         ]
+      },
+      "environment": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "DeveloperEnvironmentTests",
+            "source": "AgentTests/DeveloperEnvironmentTests.swift"
+          }
+        ]
       }
     }
   }
