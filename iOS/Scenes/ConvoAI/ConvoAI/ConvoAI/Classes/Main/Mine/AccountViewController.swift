@@ -7,7 +7,6 @@
 
 import UIKit
 import Common
-import AgoraAgentClientToolkit
 import SnapKit
 import SVProgressHUD
 
@@ -39,7 +38,7 @@ class AccountViewController: BaseViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = UIColor.themColor(named: "ai_icontext4")
-        let version = ConversationalAIAPIImpl.version
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         label.text = "Version: V\(version)"
         label.textAlignment = .center
         return label
