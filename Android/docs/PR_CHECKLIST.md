@@ -20,7 +20,7 @@
 - [ ] 影响的公共组件、基础模块、共享 skill 或模板
 - [ ] 影响的数据层、缓存、Room Schema、DataStore、权限
 - [ ] 影响的构建配置、variant、签名、混淆、CI、Agent workflow
-- [ ] 若涉及 `convoaiApi` / `subRender`，已评估字幕组件、包名结构、RTM/RTC 与转录链路风险
+- [ ] 若涉及 Toolkit / `ui/living/legacy`，已评估字幕组件、包名结构、RTM/RTC 与转录链路风险
 
 ---
 

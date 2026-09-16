@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ETranscriptHelperMode } from 'agora-agent-client-toolkit'
 import { ChevronRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import NextImage from 'next/image'
@@ -9,7 +10,6 @@ import { useTranslations } from 'next-intl'
 import * as React from 'react'
 import { type UseFormSetValue, useForm } from 'react-hook-form'
 import type z from 'zod'
-
 import packageJson from '@/../package.json'
 import { InnerCard } from '@/components/home/agent-setting/base'
 import { FilledTooltipIcon } from '@/components/icon/agent'
@@ -19,7 +19,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,7 +28,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
@@ -36,16 +36,15 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
 import {
   CONSOLE_IMG_HEIGHT,
   CONSOLE_IMG_URL,
   CONSOLE_IMG_WIDTH,
   CONSOLE_URL,
-  publicAgentSettingSchema,
+  publicAgentSettingSchema
 } from '@/constants'
-import { ETranscriptHelperMode } from '@/conversational-ai-api/type'
 import { useIsDemoCalling } from '@/hooks/use-is-agent-calling'
 import { cn, isCN } from '@/lib/utils'
 import { useAgentSettingsStore, useGlobalStore, useReportStore } from '@/store'
@@ -64,7 +63,7 @@ export function CustomPrivateSettingsForm(props: {
     updateSettings,
     transcriptionRenderMode,
     updateTranscriptionRenderMode,
-    updateFormSetValue,
+    updateFormSetValue
   } = useAgentSettingsStore()
 
   const { isDevMode, setShowSALSettingSidebar } = useGlobalStore()
@@ -76,7 +75,7 @@ export function CustomPrivateSettingsForm(props: {
 
   const settingsForm = useForm({
     resolver: zodResolver(publicAgentSettingSchema),
-    defaultValues: settings,
+    defaultValues: settings
   })
 
   const disableFormMemo = useIsDemoCalling()
@@ -115,13 +114,13 @@ export function CustomPrivateSettingsForm(props: {
         <InnerCard>
           <FormField
             control={settingsForm.control}
-            name="asr.language"
+            name='asr.language'
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between gap-3">
-                  <Label className="w-1/3">{t('asr.language')}</Label>
+                <div className='flex items-center justify-between gap-3'>
+                  <Label className='w-1/3'>{t('asr.language')}</Label>
                   <Select value={field.value} disabled>
-                    <SelectTrigger className="w-2/3" disabled={disableFormMemo}>
+                    <SelectTrigger className='w-2/3' disabled={disableFormMemo}>
                       <SelectValue placeholder={t('asr.language')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -137,28 +136,28 @@ export function CustomPrivateSettingsForm(props: {
           />
         </InnerCard>
         <InnerCard>
-          <h3 className="">{t('advanced_features.title')}</h3>
+          <h3 className=''>{t('advanced_features.title')}</h3>
           <Separator />
           <FormField
             control={settingsForm.control}
-            name="advanced_features.enable_aivad"
+            name='advanced_features.enable_aivad'
             render={({ field }) => (
               <TooltipProvider>
                 <FormItem>
-                  <div className="flex items-center justify-between gap-2">
+                  <div className='flex items-center justify-between gap-2'>
                     <FormLabel
                       className={cn('flex items-center gap-1 py-2 font-normal')}
                     >
                       {t.rich('advanced_features.enable_aivad.title', {
                         label: (chunks) => (
-                          <span className="text-icontext">{chunks}</span>
-                        ),
+                          <span className='text-icontext'>{chunks}</span>
+                        )
                       })}
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <FilledTooltipIcon className="inline size-4" />
+                          <FilledTooltipIcon className='inline size-4' />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
+                        <TooltipContent className='max-w-xs'>
                           <p>
                             {t('advanced_features.enable_aivad.description')}
                           </p>
@@ -178,8 +177,8 @@ export function CustomPrivateSettingsForm(props: {
               </TooltipProvider>
             )}
           />
-          <div className="flex items-center justify-between gap-2 py-2">
-            <Label className="font-normal">
+          <div className='flex items-center justify-between gap-2 py-2'>
+            <Label className='font-normal'>
               {t('advanced_features.enable_sal.title')}
             </Label>
             <motion.div
@@ -199,11 +198,11 @@ export function CustomPrivateSettingsForm(props: {
               {t(
                 `advanced_features.enable_sal.${settings.advanced_features.enable_sal ? (settings.sal?.sample_urls?.[remote_rtc_uid] ? 'manual' : 'autoLearning') : 'off'}`
               )}
-              <ChevronRight className="size-5" />
+              <ChevronRight className='size-5' />
             </motion.div>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <Label className="font-normal">
+          <div className='flex items-center justify-between gap-2'>
+            <Label className='font-normal'>
               {t('transcription.render-mode')}
             </Label>
             <Select
@@ -211,7 +210,7 @@ export function CustomPrivateSettingsForm(props: {
               onValueChange={updateTranscriptionRenderMode}
               disabled={disableFormMemo}
             >
-              <SelectTrigger className="w-fit min-w-[150px]">
+              <SelectTrigger className='w-fit min-w-[150px]'>
                 <SelectValue>
                   {t(`transcription.${transcriptionRenderMode}.title`)}
                 </SelectValue>
@@ -219,15 +218,15 @@ export function CustomPrivateSettingsForm(props: {
               <SelectContent>
                 {(isCN
                   ? [
-                    ETranscriptHelperMode.WORD,
-                    ETranscriptHelperMode.CHUNK,
-                    ETranscriptHelperMode.TEXT,
-                  ]
+                      ETranscriptHelperMode.WORD,
+                      ETranscriptHelperMode.CHUNK,
+                      ETranscriptHelperMode.TEXT
+                    ]
                   : [ETranscriptHelperMode.WORD, ETranscriptHelperMode.TEXT]
                 ).map((item) => (
                   <SelectItem key={`render-mode-${item}`} value={item}>
                     <div>{t(`transcription.${item}.title`)}</div>
-                    <div className="text-icontext-disabled">
+                    <div className='text-icontext-disabled'>
                       {t(`transcription.${item}.description`)}
                     </div>
                   </SelectItem>
@@ -237,38 +236,38 @@ export function CustomPrivateSettingsForm(props: {
           </div>
         </InnerCard>
 
-        <NextLink href={CONSOLE_URL} target="_blank">
+        <NextLink href={CONSOLE_URL} target='_blank'>
           <NextImage
             src={CONSOLE_IMG_URL}
-            alt="console-img"
+            alt='console-img'
             width={CONSOLE_IMG_WIDTH}
             height={CONSOLE_IMG_HEIGHT}
-            className="mt-6 h-fit w-full rounded-lg"
+            className='mt-6 h-fit w-full rounded-lg'
           />
         </NextLink>
 
         {isDevMode && (
-          <InnerCard className="mt-6">
-            <h3 className="">DEV MODE</h3>
+          <InnerCard className='mt-6'>
+            <h3 className=''>DEV MODE</h3>
             <Separator />
             <FormField
               control={settingsForm.control}
-              name="graph_id"
+              name='graph_id'
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between gap-2">
-                    <FormLabel className="text-icontext">Graph ID</FormLabel>
+                  <div className='flex items-center justify-between gap-2'>
+                    <FormLabel className='text-icontext'>Graph ID</FormLabel>
                     <FormControl>
                       <Input
                         disabled={disableFormMemo}
-                        placeholder="1.3.0-12-ga443e7e"
+                        placeholder='1.3.0-12-ga443e7e'
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => {
                           const value = e.target.value
                           field.onChange(value || undefined)
                         }}
-                        className="w-[200px]"
+                        className='w-[200px]'
                       />
                     </FormControl>
                   </div>
@@ -278,22 +277,22 @@ export function CustomPrivateSettingsForm(props: {
             />
             <FormField
               control={settingsForm.control}
-              name="preset"
+              name='preset'
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center justify-between gap-2">
-                    <FormLabel className="text-icontext">Preset</FormLabel>
+                  <div className='flex items-center justify-between gap-2'>
+                    <FormLabel className='text-icontext'>Preset</FormLabel>
                     <FormControl>
                       <Input
                         disabled={disableFormMemo}
-                        placeholder="sess_ctrl_dev"
+                        placeholder='sess_ctrl_dev'
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => {
                           const value = e.target.value
                           field.onChange(value || undefined)
                         }}
-                        className="w-[200px]"
+                        className='w-[200px]'
                       />
                     </FormControl>
                   </div>
@@ -324,10 +323,10 @@ export function CustomPrivateSettingsForm(props: {
           </div>
         )}
 
-        <div className="mt-4 flex flex-col items-center justify-center">
+        <div className='mt-4 flex flex-col items-center justify-center'>
           <div>V{packageJson.version}</div>
           {process.env.NEXT_PUBLIC_COMMIT_SHA ? (
-            <p className="text-muted-foreground text-xs">
+            <p className='text-muted-foreground text-xs'>
               {`Build ${process.env.NEXT_PUBLIC_COMMIT_SHA}`}
             </p>
           ) : null}

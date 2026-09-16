@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "1.9.24"
+kotlin = "2.0.21"
 firebaseBom = "32.0.0"
 googleServices = "4.3.15"
 crashlytics = "2.9.9"
@@ -25,6 +25,7 @@ swiperefreshlayout = "1.1.0"
 commons-codec = "1.17.0"
 agora-rtc-full = "4.5.1"
 agora-rtm = "2.2.3"
+agora-agent-client-toolkit = "2.10.1"
 
 okhttp = "5.0.0-alpha.14"
 retrofit = "2.11.0"
@@ -37,6 +38,8 @@ multidex="2.0.0"
 glide = "4.16.0"
 
 [libraries]
+agora-agent-client-toolkit = { module = "io.agora.agents:agora-agent-client-toolkit", version.ref = "agora-agent-client-toolkit" }
+
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -88,4 +91,3 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch" }
-

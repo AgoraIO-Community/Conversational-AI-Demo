@@ -28,6 +28,16 @@ The Conversational AI Engine redefines the human-AI interaction interface, break
 |   📱 iOS   |   [iOS Demo](iOS/Scenes/ConvoAI)   |
 |   🌐 Web   |   [Web Demo](Web/Scenes/VoiceAgent)   |
 
+### Toolkit dependencies
+
+Each platform uses a published Toolkit package. Clone this Demo repository and install dependencies using the platform guide; no separate Toolkit checkout or local package reference is needed.
+
+| Platform | Published package | Pinned version | Setup guide |
+| --- | --- | --- | --- |
+| Android | Maven `io.agora.agents:agora-agent-client-toolkit` | `2.10.1` | [Android](Android/scenes/convoai/README.md) |
+| iOS | CocoaPods `agent-client-toolkit-swift` | `2.10.1` | [iOS](iOS/Scenes/ConvoAI/README.md) |
+| Web | npm `agora-agent-client-toolkit` | `2.10.0` | [Web](Web/Scenes/VoiceAgent/README.md) |
+
 ---
 
 ## ❓ How to Contact Agora for Assistance

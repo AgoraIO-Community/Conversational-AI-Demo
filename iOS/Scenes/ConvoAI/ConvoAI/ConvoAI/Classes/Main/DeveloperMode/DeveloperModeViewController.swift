@@ -3,6 +3,7 @@ import SnapKit
 import Common
 import AgoraRtcKit
 import AgoraRtmKit
+import AgoraAgentClientToolkit
 import SVProgressHUD
 import ObjectiveC
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ETranscriptHelperMode } from 'agora-agent-client-toolkit'
 import { ChevronRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import NextImage from 'next/image'
@@ -50,7 +51,6 @@ import {
   CONSOLE_URL,
   publicAgentSettingSchema
 } from '@/constants'
-import { ETranscriptHelperMode } from '@/conversational-ai-api/type'
 import { useIsDemoCalling } from '@/hooks/use-is-agent-calling'
 import { cn, isCN } from '@/lib/utils'
 import { useAgentSettingsStore, useGlobalStore, useReportStore } from '@/store'
@@ -299,11 +299,11 @@ export function AgentSettingsForm(props: {
                           field.onChange(value)
                         }
                       }}
-                    //   disabled={
-                    //     disableFormMemo ||
-                    //     settingsForm.watch('preset_name') !==
-                    //       EAgentPresetMode.CUSTOM
-                    //   }
+                      //   disabled={
+                      //     disableFormMemo ||
+                      //     settingsForm.watch('preset_name') !==
+                      //       EAgentPresetMode.CUSTOM
+                      //   }
                     >
                       <SelectTrigger
                         className='w-2/3'
@@ -440,10 +440,10 @@ export function AgentSettingsForm(props: {
               <SelectContent>
                 {(isCN
                   ? [
-                    ETranscriptHelperMode.WORD,
-                    ETranscriptHelperMode.CHUNK,
-                    ETranscriptHelperMode.TEXT
-                  ]
+                      ETranscriptHelperMode.WORD,
+                      ETranscriptHelperMode.CHUNK,
+                      ETranscriptHelperMode.TEXT
+                    ]
                   : [ETranscriptHelperMode.WORD, ETranscriptHelperMode.TEXT]
                 ).map((item) => (
                   <SelectItem key={`render-mode-${item}`} value={item}>

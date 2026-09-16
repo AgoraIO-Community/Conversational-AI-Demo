@@ -15,7 +15,7 @@
 - 模块骨架：`app` 是入口壳层，`common` 是共享基座，`scenes:convoai` 是主业务，`scenes:convoai:iot` / `scenes:convoai:bleManager` 是外设链路
 - 配置与构建：主要配置来自 `gradle.properties`；`app` 当前只有 `china` flavor；`app/common/scenes:convoai` 使用 Java 17，`iot/bleManager` 使用 Java 11
 - UI 现状：当前仓库以 `Activity` / `Fragment` / `ViewBinding` 为主；无明确需求时，不要把方案默认成 Compose-first
-- 高风险区域：构建脚本、`gradle.properties`、Manifest，以及 `scenes/convoai/.../convoaiApi/subRender` 字幕链路
+- 高风险区域：构建脚本、`gradle.properties`、Manifest，以及 `scenes/convoai/.../ui/living/legacy` 字幕链路
 - AI 工程化资产：`AGENTS.md`、`ARCHITECTURE.md`、`.agents/skills/`、`.agents/state/INDEX.md`、`.agents/state/tasks/`、`docs/*.md`
 
 ## 对话模式
@@ -151,7 +151,7 @@ analysis 模式禁止：
 - 修复 `scenes:convoai` 内单页面或单流程问题，未涉及共享字幕/构建/权限链路：复杂度 `1` + 影响面 `1` + 不确定性 `0` + 变更风险 `1` + 验证成本 `1` = `4`，走 `single + reviewer`
 - 修改 `common` 公共能力或跨 `common` / `scenes:convoai` 的共享逻辑：复杂度 `2` + 影响面 `2` + 不确定性 `1` + 变更风险 `1` + 验证成本 `1` = `7`，走 `planner -> executor -> reviewer`
 - 修改 `gradle.properties`、`build.gradle(.kts)`、`settings.gradle`、`AndroidManifest.xml` 等高风险配置：复杂度 `1` + 影响面 `2` + 不确定性 `1` + 变更风险 `2` + 验证成本 `1` = `7`，走 `planner -> executor -> reviewer`
-- 修改 `convoaiApi` / `subRender` 字幕链路、RTM/RTC 消息解析或相关回调派发：复杂度 `2` + 影响面 `2` + 不确定性 `1` + 变更风险 `2` + 验证成本 `2` = `9`，走 `planner -> executor -> reviewer`
+- 修改 Toolkit / `ui/living/legacy` 字幕链路、RTM/RTC 消息解析或相关回调派发：复杂度 `2` + 影响面 `2` + 不确定性 `1` + 变更风险 `2` + 验证成本 `2` = `9`，走 `planner -> executor -> reviewer`
 - 修改 IoT / BLE / 配网流程、设备权限或真机强依赖链路：复杂度 `2` + 影响面 `2` + 不确定性 `1` + 变更风险 `2` + 验证成本 `2` = `9`，走 `planner -> executor -> reviewer`
 
 **路由语义（补充定义）**：
@@ -347,7 +347,7 @@ analysis 模式禁止：
 - `common` 是高影响公共底座，改动默认要说明对 Agora、网络、存储、BuildConfig 注入和所有上层模块的影响
 - `scenes:convoai` 负责主业务；`scenes:convoai:iot -> scenes:convoai:bleManager` 是外设链路，相关改动需要说明依赖传播
 - 涉及 `settings.gradle`、任一 `build.gradle(.kts)`、`gradle/libs.versions.toml` 时，视为高风险
-- 涉及 `scenes/convoai/src/main/java/io/agora/scene/convoai/convoaiApi/` 或 `subRender/` 字幕组件时，按高风险处理，并明确说明对包名结构、字幕回调和 RTC/RTM 消息链路的影响
+- 涉及 `io.agora.conversational.api`（Toolkit Maven 组件） 或 `ui/living/legacy/` 字幕组件时，按高风险处理，并明确说明对包名结构、字幕回调和 RTC/RTM 消息链路的影响
 
 ### 配置与构建
 
@@ -414,7 +414,7 @@ rg -n "TASK_ID|TASK_TITLE|TASK_TYPE|PLAN_FROZEN|CURRENT_ROLE|WORKFLOW_STATUS|Rev
 - 检查模块名、路径、命令示例是否与仓库一致
 - 检查 `AGENTS.md`、`.agents/skills`、`docs/*.md` 的 workflow 术语是否一致
 - 检查文档示例是否区分“代码任务校验”与“docs-only 校验”
-- 若涉及 `gradle.properties`、Manifest、`convoaiApi`、IoT 或 BLE，还要补充链路与权限层面的影响说明
+- 若涉及 `gradle.properties`、Manifest、Toolkit、IoT 或 BLE，还要补充链路与权限层面的影响说明
 
 ## 文档导航
 
@@ -426,7 +426,7 @@ rg -n "TASK_ID|TASK_TITLE|TASK_TYPE|PLAN_FROZEN|CURRENT_ROLE|WORKFLOW_STATUS|Rev
 - `docs/PR_CHECKLIST.md`：PR Review 标准
 - `docs/DEBUG_WORKFLOW.md`：debugging / 联调任务的定位、证据与收尾规则
 - `scenes/convoai/README.md`：Convo AI 场景总览与运行说明
-- `scenes/convoai/src/main/java/io/agora/scene/convoai/convoaiApi/README.md`：字幕 / 消息 / API 组件说明
+- [Toolkit 组件文档](https://github.com/AgoraIO-Conversational-AI/agent-client-toolkit-kotlin/blob/main/conversational-ai/README.md)：字幕 / 消息 / API 组件说明
 - `.agents/skills/ac-workflow/SKILL.md`：workflow 入口编排
 - `.agents/skills/ac-memory/SKILL.md`：任务索引与状态文件校验 / 修复
 - `.agents/skills/ac-plan/SKILL.md`：冻结 Contract
