@@ -532,8 +532,9 @@ export default function AgentControl(props: { className?: string }) {
       ConversationalAIAPI.getInstance().destroy()
     }
     const rtcHelper = RTCHelper.getInstance()
+    setAudioTrack(undefined)
     rtcHelper.removeAllEventListeners()
-    rtcHelper.exitAndCleanup()
+    void rtcHelper.exitAndCleanup()
     const rtmHelper = RTMHelper.getInstance()
     rtmHelper.exitAndCleanup()
     const legacyMessageHelper = LegacyMessageHelper.getInstance()
@@ -734,9 +735,7 @@ export default function AgentControl(props: { className?: string }) {
   const onLocalTracksChanged = (tracks: IUserTracks) => {
     const { audioTrack } = tracks
     logger.info({ hasAudioTrack: !!audioTrack }, 'onLocalTracksChanged')
-    if (audioTrack) {
-      setAudioTrack(audioTrack)
-    }
+    setAudioTrack(audioTrack)
   }
 
   const onRemoteUserJoined = (user: IRtcUser) => {
