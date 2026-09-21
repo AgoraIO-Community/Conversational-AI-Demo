@@ -55,6 +55,10 @@ if (ConversationalAIAPI.getState()) {
 // Disconnect and release your RTC/RTM clients after Toolkit is destroyed.
 ```
 
+The Demo waits for both RTC and RTM cleanup to settle before restoring the call controls, even if one cleanup fails. While exiting, it blocks repeated hangup, redial, interrupt, microphone selection, and image upload. Agent startup failures use the same cleanup path.
+
+The Agent API route retries once with `asr.keywords: null` only when the backend explicitly rejects `properties.asr.keywords`. Other failures are returned without retry.
+
 To collect debug logs, enable `enableLog` and forward the `DEBUG_LOG` event to your application's logger.
 
 ## Responsibilities retained by the Demo
@@ -72,3 +76,9 @@ The helpers are coupled to Demo business logic. Use Toolkit's public API and man
 `bun run test` exercises the actual npm Toolkit package for state, RTC/RTM transcripts, metrics, and destroy/reinitialize behavior with simulated transports. Also run `bun run typecheck` and `bun run build`. Validate audio behavior with real calls.
 
 [Toolkit documentation](https://github.com/AgoraIO-Conversational-AI/agent-client-toolkit-ts#readme)
+
+## Developer request overrides
+
+Open `?dev=true` and select the developer badge to configure a custom App ID, a ConvoAI base URL, or `X-Service-Namespace`. The App ID only takes effect after its override switch is enabled; toggling the switch refreshes the page, and an active badge identifies the override. Settings persist locally. Exiting developer mode clears active overrides and keeps the App ID text for later use.
+
+The same dev options accompany preset loading, token retrieval, Agent start/stop/ping, SIP start/status, and metrics reports. The server accepts query overrides only in developer mode. ConvoAI base URL and namespace settings are merged into `request_config.convoai`, preserving existing headers. Token generation continues through the configured environment's token endpoint with the effective App ID. RTC token caching follows the selected App ID and rejects stale prefetch results after a switch.
