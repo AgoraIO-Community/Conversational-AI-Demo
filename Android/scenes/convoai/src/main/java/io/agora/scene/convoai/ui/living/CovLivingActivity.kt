@@ -35,10 +35,8 @@ import io.agora.scene.convoai.animation.CovBallAnimCallback
 import io.agora.scene.convoai.api.CovAgentApiManager
 import io.agora.scene.convoai.constant.AgentConnectionState
 import io.agora.scene.convoai.constant.CovAgentManager
-import io.agora.scene.convoai.convoaiApi.AgentState
-import io.agora.scene.convoai.convoaiApi.VoiceprintStatus
-import io.agora.scene.convoai.convoaiApi.subRender.v1.SelfRenderConfig
-import io.agora.scene.convoai.convoaiApi.subRender.v1.SelfSubRenderController
+import io.agora.conversational.api.AgentState
+import io.agora.conversational.api.VoiceprintStatus
 import io.agora.scene.convoai.databinding.CovActivityLivingBinding
 import io.agora.scene.convoai.rtc.CovRtcManager
 import io.agora.scene.convoai.rtm.CovRtmManager
@@ -47,6 +45,8 @@ import io.agora.scene.convoai.ui.ActivateStatus
 import io.agora.scene.convoai.ui.PictureError
 import io.agora.scene.convoai.ui.PictureInfo
 import io.agora.scene.convoai.ui.auth.CovLoginActivity
+import io.agora.scene.convoai.ui.living.legacy.SelfRenderConfig
+import io.agora.scene.convoai.ui.living.legacy.SelfSubRenderController
 import io.agora.scene.convoai.ui.living.settings.CovAgentTabDialog
 import io.agora.scene.convoai.ui.photo.CovImagePreviewDialog
 import io.agora.scene.convoai.ui.photo.PhotoNavigationActivity
@@ -90,7 +90,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         // Initialize ViewModel
         viewModel.initializeAPIs(rtcEngine, rtmClient)
 
-        // v1 Subtitle Rendering Controller
+        // Legacy v1 subtitle rendering controller
         selfRenderController = SelfSubRenderController(SelfRenderConfig(rtcEngine, mBinding?.messageListViewV1))
 
         // Observe ViewModel states
@@ -619,7 +619,6 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
     private fun onClickStartAgent() {
         hasShownTitleAnim = false
-        // Set render mode
         isSelfSubRender = CovAgentManager.getPreset()?.isIndependent == true
         resetSceneState()
 
@@ -999,19 +998,40 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
 
             override fun onAudioDumpEnable(enable: Boolean) {
                 CovRtcManager.onAudioDump(enable)
-                ToastUtil.show("onAudioDumpEnable: $enable")
+                ToastUtil.show(getString(
+                    if (enable) io.agora.scene.common.R.string.common_debug_field_enabled
+                    else io.agora.scene.common.R.string.common_debug_field_disabled,
+                    getString(io.agora.scene.common.R.string.common_debug_audio_dump)
+                ))
+            }
+
+            override fun onAinsEnable(enable: Boolean) {
+                CovRtcManager.setAinsEnabled(enable)
+                ToastUtil.show(getString(
+                    if (enable) io.agora.scene.common.R.string.common_debug_field_enabled
+                    else io.agora.scene.common.R.string.common_debug_field_disabled,
+                    getString(io.agora.scene.common.R.string.common_debug_ains)
+                ))
             }
 
             override fun onSeamlessPlayMode(enable: Boolean) {
                 // Handle seamless play mode toggle
                 CovLogger.d(TAG, "Seamless play mode: $enable")
 
-                ToastUtil.show("onSeamlessPlayMode: $enable")
+                ToastUtil.show(getString(
+                    if (enable) io.agora.scene.common.R.string.common_debug_field_enabled
+                    else io.agora.scene.common.R.string.common_debug_field_disabled,
+                    getString(io.agora.scene.common.R.string.common_debug_session_limit)
+                ))
             }
 
             override fun onMetricsEnable(enable: Boolean) {
                 CovLogger.d(TAG, "Metrics enabled: $enable")
-                ToastUtil.show("onMetricsEnable: $enable")
+                ToastUtil.show(getString(
+                    if (enable) io.agora.scene.common.R.string.common_debug_field_enabled
+                    else io.agora.scene.common.R.string.common_debug_field_disabled,
+                    getString(io.agora.scene.common.R.string.common_debug_metrics)
+                ))
             }
 
             override fun onClickCopy() {
@@ -1022,7 +1042,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
                         messageListViewV2.getAllMessages().filter { it.isMe }.joinToString("\n") { it.content }
                     }
                     this@CovLivingActivity.copyToClipboard(messageContents)
-                    ToastUtil.show(getString(io.agora.scene.convoai.R.string.cov_copy_succeed))
+                    ToastUtil.show(getString(io.agora.scene.common.R.string.common_debug_copied))
                 }
             }
 

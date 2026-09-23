@@ -1,5 +1,20 @@
 'use client'
 
+import {
+  ConversationalAIAPI,
+  EAgentState,
+  EConversationalAIAPIEvents,
+  EMessageSalStatus,
+  ERTCCustomEvents,
+  ERTCEvents,
+  ETranscriptHelperMode,
+  type IAgentTranscription,
+  type IMessageSalStatus,
+  type ITranscriptHelperItem,
+  type IUserTranscription,
+  type TAgentTurnFinished,
+  type TStateChangeEvent
+} from 'agora-agent-client-toolkit'
 import AgoraRTC, {
   type ConnectionDisconnectedReason,
   type ConnectionState,
@@ -48,34 +63,23 @@ import {
   SIP_ERROR_CODE,
   sipCallPayloadSchema
 } from '@/constants'
-import { ConversationalAIAPI } from '@/conversational-ai-api'
 import { RTCHelper } from '@/conversational-ai-api/helper/rtc'
 import { RTMHelper } from '@/conversational-ai-api/helper/rtm'
 import { LegacyMessageHelper } from '@/conversational-ai-api/helper/transcript'
 import {
-  EAgentState,
-  EConversationalAIAPIEvents,
-  EMessageSalStatus,
-  ERTCCustomEvents,
-  ERTCEvents,
-  ETranscriptHelperMode,
-  type IAgentTranscription,
-  type IMessageSalStatus,
-  type ITranscriptHelperItem,
-  type IUserTranscription,
-  type TAgentTurnFinished,
-  type TStateChangeEvent
-} from '@/conversational-ai-api/type'
-import {
   useIsAgentCalling,
   useIsAgentSipCalling
 } from '@/hooks/use-is-agent-calling'
-import { logger } from '@/lib/logger'
-import { cn } from '@/lib/utils'
+import {
+  DEFAULT_AUDIO_SCENARIO_MODE,
+  resolveAudioScenarioMode
+} from '@/lib/audio-scenario'
 import {
   buildLatencyReportPayload,
   type TranscriptLikeItem
 } from '@/lib/latency-metrics'
+import { logger } from '@/lib/logger'
+import { cn } from '@/lib/utils'
 import {
   pingAgent,
   ResourceLimitError,
@@ -145,6 +149,8 @@ export default function AgentControl(props: { className?: string }) {
   const {
     showSubtitle,
     isDevMode,
+    isAinsEnabled,
+    audioScenarioMode,
     isRTCCompatible,
     onClickSubtitle,
     setShowSubtitle,
@@ -192,8 +198,15 @@ export default function AgentControl(props: { className?: string }) {
       logger.info('startCall try and subscribe events')
       // init rtc helper
       const rtcHelper = RTCHelper.getInstance()
+      await rtcHelper.configureAudioScenario(
+        resolveAudioScenarioMode({
+          isDevMode,
+          debugMode: audioScenarioMode
+        })
+      )
       await rtcHelper.retrieveToken(`${remote_rtc_uid}`, channel_name, false, {
-        devMode: isDevMode
+        devMode: isDevMode,
+        audioScenarioMode
       })
       // init rtm helper
       const rtmHelper = RTMHelper.getInstance()
@@ -203,7 +216,7 @@ export default function AgentControl(props: { className?: string }) {
       })
       const rtmEngine = await rtmHelper.login(rtcHelper.token)
       // init conversational AI API
-      const conversationalAIAPI = ConversationalAIAPI.init({
+      const conversationalAIAPI = await ConversationalAIAPI.init({
         rtcEngine: rtcHelper.client,
         rtmEngine,
         enableLog: isDevMode || process.env.NODE_ENV === 'development',
@@ -211,6 +224,12 @@ export default function AgentControl(props: { className?: string }) {
         renderMode: transcriptionRenderMode,
         enableRenderModeFallback
       })
+      conversationalAIAPI.on(
+        EConversationalAIAPIEvents.DEBUG_LOG,
+        (message) => {
+          logger.debug(message)
+        }
+      )
 
       rtcHelper.on(ERTCCustomEvents.LOCAL_TRACKS_CHANGED, onLocalTracksChanged)
       rtcHelper.on(ERTCCustomEvents.REMOTE_USER_JOINED, onRemoteUserJoined)
@@ -238,7 +257,9 @@ export default function AgentControl(props: { className?: string }) {
 
       conversationalAIAPI.subscribeMessage(channel_name)
 
-      await rtcHelper.initDenoiserProcessor()
+      if (isDevMode && isAinsEnabled) {
+        await rtcHelper.initDenoiserProcessor()
+      }
       await rtcHelper.createTracks()
       // !TODO: will be removed after preset_type is removed
       const presetType = presets.find(
@@ -246,7 +267,7 @@ export default function AgentControl(props: { className?: string }) {
       )?.preset_type
       const messageServiceMode =
         presetType?.startsWith('standard') ||
-          settings.preset_type === 'custom_private'
+        settings.preset_type === 'custom_private'
           ? 'default'
           : 'legacy'
 
@@ -295,7 +316,8 @@ export default function AgentControl(props: { className?: string }) {
         channel: channel_name,
         userId: remote_rtc_uid,
         options: {
-          devMode: isDevMode
+          devMode: isDevMode,
+          audioScenarioMode
         }
       })
       await rtcHelper.publishTracks()
@@ -371,13 +393,13 @@ export default function AgentControl(props: { className?: string }) {
         // avatar releated
         avatar: settings.avatar
           ? {
-            enable: true,
-            vendor: settings.avatar.vendor,
-            params: {
-              agora_uid: `${avatar_rtc_uid}`,
-              avatar_id: settings.avatar.avatar_id
+              enable: true,
+              vendor: settings.avatar.vendor,
+              params: {
+                agora_uid: `${avatar_rtc_uid}`,
+                avatar_id: settings.avatar.avatar_id
+              }
             }
-          }
           : undefined,
         channel: channel_name,
         agent_rtc_uid: `${agent_rtc_uid}`,
@@ -386,7 +408,11 @@ export default function AgentControl(props: { className?: string }) {
       logger.info({ payload }, 'startAgentService payload')
       const abortController = new AbortController()
       startAgentAbortControllerRef.current = abortController
-      const res = await startAgent(payload, abortController)
+      const res = await startAgent(
+        payload,
+        { devMode: isDevMode, audioScenarioMode },
+        abortController
+      )
       updateAgentId(res.agent_id)
       startSession({
         agentId: res.agent_id,
@@ -500,14 +526,17 @@ export default function AgentControl(props: { className?: string }) {
     // clear event listeners
     // const rtcService = getRtcService()
     // rtcService.removeAllEventListeners()
+    // Detach Toolkit listeners before its RTC/RTM engines disconnect.
+    // Initialization can fail before a Toolkit instance is available.
+    if (ConversationalAIAPI.getState()) {
+      ConversationalAIAPI.getInstance().destroy()
+    }
     const rtcHelper = RTCHelper.getInstance()
+    setAudioTrack(undefined)
     rtcHelper.removeAllEventListeners()
-    rtcHelper.exitAndCleanup()
+    void rtcHelper.exitAndCleanup()
     const rtmHelper = RTMHelper.getInstance()
     rtmHelper.exitAndCleanup()
-    const conversationalAIAPI = ConversationalAIAPI.getInstance()
-    conversationalAIAPI.removeAllEventListeners()
-    conversationalAIAPI.unsubscribe()
     const legacyMessageHelper = LegacyMessageHelper.getInstance()
     legacyMessageHelper.removeAllEventListeners()
     legacyMessageHelper.messageService.cleanup()
@@ -633,6 +662,7 @@ export default function AgentControl(props: { className?: string }) {
     updateRoomStatus(EConnectionStatus.CONNECTING)
     // init rtc helper
     const rtcHelper = RTCHelper.getInstance()
+    await rtcHelper.configureAudioScenario(DEFAULT_AUDIO_SCENARIO_MODE)
     await rtcHelper.retrieveToken(`${remote_rtc_uid}`, channel_name, false, {
       devMode: isDevMode
     })
@@ -644,13 +674,16 @@ export default function AgentControl(props: { className?: string }) {
     })
     const rtmEngine = await rtmHelper.login(rtcHelper.token)
     // init conversational AI API
-    const conversationalAIAPI = ConversationalAIAPI.init({
+    const conversationalAIAPI = await ConversationalAIAPI.init({
       rtcEngine: rtcHelper.client,
       rtmEngine,
       enableLog: isDevMode || process.env.NODE_ENV === 'development',
       // custom private preset mode is unknown as default and set value by ConversationalAIAPI logic
       renderMode: transcriptionRenderMode,
       enableRenderModeFallback
+    })
+    conversationalAIAPI.on(EConversationalAIAPIEvents.DEBUG_LOG, (message) => {
+      logger.debug(message)
     })
 
     // conversationalAIAPI.on(
@@ -702,9 +735,7 @@ export default function AgentControl(props: { className?: string }) {
   const onLocalTracksChanged = (tracks: IUserTracks) => {
     const { audioTrack } = tracks
     logger.info({ hasAudioTrack: !!audioTrack }, 'onLocalTracksChanged')
-    if (audioTrack) {
-      setAudioTrack(audioTrack)
-    }
+    setAudioTrack(audioTrack)
   }
 
   const onRemoteUserJoined = (user: IRtcUser) => {
@@ -777,7 +808,7 @@ export default function AgentControl(props: { className?: string }) {
     if (data.curState === 'RECONNECTING' && data.revState === 'CONNECTED') {
       logger.info(
         'agent is listening -> user is offline(due to network issue) temporarily' +
-        '[onConnectionStateChange]'
+          '[onConnectionStateChange]'
       )
       toast.warning(tAgent('tmpDisconnected'))
       updateAgentStatus(EConnectionStatus.RECONNECTING)
@@ -789,7 +820,7 @@ export default function AgentControl(props: { className?: string }) {
     if (data.curState === 'CONNECTED' && data.revState === 'RECONNECTING') {
       logger.info(
         'agent is listening -> user is online again(in short time)' +
-        '[onConnectionStateChange]'
+          '[onConnectionStateChange]'
       )
       toast.success(tAgent('agentReconnected'))
       updateAgentStatus(EConnectionStatus.CONNECTED)

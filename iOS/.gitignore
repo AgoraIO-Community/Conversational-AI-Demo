@@ -5,6 +5,9 @@
 *.framework
 *.xcworkspacedata
 xcshareddata
+!Agent.xcodeproj/xcshareddata/
+!Agent.xcodeproj/xcshareddata/xcschemes/
+!Agent.xcodeproj/xcshareddata/xcschemes/Agent-globalTests.xcscheme
 **/dev_env_config.json
 agora_sdk
 *.xcarchive
@@ -105,3 +108,6 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Local workflow state.
+.agents/state/

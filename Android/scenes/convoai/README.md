@@ -15,9 +15,9 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### 📱 1.1 Environment Preparation
 
-- Minimum compatibility with Android 7.0 (SDK API Level 24)
+- Minimum compatibility with Android 8.0 (SDK API Level 26)
 - Android Studio 3.5 or above
-- Android devices running Android 7.0 or above
+- Android devices running Android 8.0 or above
 
 ### ⚙️ 1.2 Running the Sample
 
@@ -62,7 +62,7 @@ AVATAR_PARAMS=<AVATAR Parameters>
 | [api/](src/main/java/io/agora/scene/convoai/api)                                       | Conversational AI API implementation and models. |
 | [animation/](src/main/java/io/agora/scene/convoai/animation)                           | Animation effects for agent interaction.         |
 | [constant/](src/main/java/io/agora/scene/convoai/constant)                             | Constants and enums definition.                  |
-| [convoaiApi/](src/main/java/io/agora/scene/convoai/convoaiApi/)                        | ConversationalAI componet                        |
+| [ui/living/legacy/](src/main/java/io/agora/scene/convoai/ui/living/legacy)             | Demo-owned legacy v1 subtitle compatibility.     |
 | [rtc/](src/main/java/io/agora/scene/convoai/rtc)                                       | RTC related implementations.                     |
 | [rtm/](src/main/java/io/agora/scene/convoai/rtm)                                       | RTM related implementations.                     |
 | [ui/](src/main/java/io/agora/scene/convoai/ui)                                         | UI components and activities.                    |
@@ -75,8 +75,26 @@ AVATAR_PARAMS=<AVATAR Parameters>
 
 ### 2.2 Real-time Subtitles
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- To implement this feature, please refer to [README.md in the convoaiApi directory](src/main/java/io/agora/scene/convoai/convoaiApi/README.md) for integration.
-- ⚠️ The Open Source subtitle processing module is developed in Kotlin. If your project is a pure Java project, you can refer to Google's official documentation [Add Kotlin to an existing app](https://developer.android.com/kotlin/add-kotlin) to integrate the corresponding files into your project
+- Use the published Maven Central dependency `io.agora.agents:agora-agent-client-toolkit:2.10.1`. Its version is pinned in `Android/gradle/libs.versions.toml`; the scene module uses `implementation libs.agora.agent.client.toolkit`.
+- Gradle downloads the release artifact for both local and Jenkins builds. No Toolkit source checkout or local path configuration is required.
+- The demo passes its developer-mode AINS selection into `loadAudioSettings(scenario, enableAins)`. AINS defaults to disabled; Toolkit and the business RTC layer retain the same selection.
+- Validate from the Android directory with `./gradlew lint test :app:assembleGlobalDebug`.
+- Living and SIP ViewModels create `io.agora.conversational.api.ConversationalAIAPIImpl` and render subtitles from `IConversationalAIAPIEventHandler.onTranscriptUpdated`.
+- `ui/living/legacy` retains the legacy v1 RTC stream renderer because that compatibility path is not provided by the toolkit.
+- The toolkit is implemented in Kotlin. Pure Java projects should follow Google's [Add Kotlin to an existing app](https://developer.android.com/kotlin/add-kotlin) guidance before integrating it.
+
+### 2.3 Installing the published Toolkit
+
+The Demo already configures the version catalog. `Android/scenes/convoai/build.gradle` uses:
+
+```groovy
+implementation libs.agora.agent.client.toolkit
+// Resolves to io.agora.agents:agora-agent-client-toolkit:2.10.1
+```
+
+Sync Gradle in Android Studio to download the AAR from Maven Central using the repositories in `settings.gradle`. If Gradle has cached a missing-artifact result after a new release becomes available, run `./gradlew :scenes:convoai:assembleDebug --refresh-dependencies` from `Android`.
+
+To upgrade, update `gradle/libs.versions.toml` and rerun validation. A local Gradle subproject, `includeBuild`, or a manually copied AAR is not required.
 
 
 ## 📚 3. Related Resources

@@ -32,6 +32,10 @@ class DebugTabDialog : BaseDialogFragment<CommonDebugTabDialogBinding>() {
 
         fun onAudioDumpEnable(enable: Boolean) = Unit
 
+        fun onAinsEnable(enable: Boolean) = Unit
+
+        fun isAinsVisible(): Boolean = true
+
         fun onSeamlessPlayMode(enable: Boolean) = Unit  // Default implementation
 
         fun onMetricsEnable(enable: Boolean) = Unit  // Default implementation
@@ -108,6 +112,7 @@ class DebugTabDialog : BaseDialogFragment<CommonDebugTabDialogBinding>() {
             ServerConfig.reset()
         }
         onDebugCallback?.onAudioDumpEnable(false)
+        onDebugCallback?.onAinsEnable(false)
         DebugButton.getInstance().hide()
         DebugConfigSettings.reset()
         onDebugCallback = null
@@ -271,4 +276,4 @@ class DebugTabDialog : BaseDialogFragment<CommonDebugTabDialogBinding>() {
 
         fun getFragmentAt(position: Int): Fragment? = fragments[position]
     }
-} 
+}

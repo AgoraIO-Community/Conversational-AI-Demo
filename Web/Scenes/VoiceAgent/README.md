@@ -16,7 +16,7 @@ This section mainly introduces how to quickly run the Agora Conversational AI En
 
 ### 💻 Environment Setup
 
- install node 22+ and git
+Install Node.js 22+, Git, and Bun 1.4.0.
 ```bash
 For Linux/MacOS, you can execute directly in the terminal
 # For Windows, it is recommended to use Windows WSL
@@ -50,17 +50,15 @@ sudo dnf install git-all
 - Install dependencies
 
 ```bash
-# Install dependencies with your preferred package manager (npm/pnpm/bun)
-# yarn is not recommended
-# Using npm to install
-npm i
-# Using pnpm to install
-# npm install -g pnpm
-pnpm i
-# Using bun to install
-# npm install -g bun
-bun i
+# Run from the repository root
+cd Web/Scenes/VoiceAgent
+npm install -g bun@1.4.0
+bun install --frozen-lockfile
 ```
+
+The app consumes the public npm package `agora-agent-client-toolkit`, pinned to `2.10.0`. The complete dependency graph is locked in `bun.lock`; installation and builds only require this repository. npm/pnpm can also install from `package.json`; project validation and reproducible installs use Bun.
+
+Dependency installation also downloads Toolkit; no local `file:`/`link:` dependency or separate Toolkit build is needed. `src/conversational-ai-api/` contains only Demo helpers and legacy subtitle support. Import public APIs from `agora-agent-client-toolkit`.
 
 - Set environment variables
 
@@ -91,8 +89,23 @@ NEXT_PUBLIC_CUSTOM_TTS_PARAMS="<your-TTS-params>"
 - Run the development server
 
 ```bash
-bun dev
+bun run dev
 ```
+
+### Toolkit integration and validation
+
+- Toolkit provides public APIs, state events, transcripts, and metrics parsing. See the [Toolkit integration guide](src/conversational-ai-api/README.md).
+- The Demo owns RTC/RTM initialization, audio capture, legacy subtitles, and report rendering/upload. On-device AINS is disabled by default and is enabled only when both developer mode and the AINS toggle are on.
+- Normal and SIP calls await Toolkit initialization. Call cleanup destroys Toolkit before disconnecting RTC/RTM.
+
+```bash
+bun run test
+bun run typecheck
+bun run build
+bun run start
+```
+
+When upgrading Toolkit, update its exact version and `bun.lock` together, then rerun these checks. Automated builds use `bun install --frozen-lockfile` to download the public release package.
 
 
 ## 🗂️ Project Structure Overview

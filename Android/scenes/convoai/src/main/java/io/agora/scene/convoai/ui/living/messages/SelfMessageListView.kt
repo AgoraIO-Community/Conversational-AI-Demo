@@ -14,10 +14,10 @@ import io.agora.scene.common.R
 import io.agora.scene.common.constant.SSOUserManager
 import io.agora.scene.common.util.GlideImageLoader
 import io.agora.scene.common.util.dp
-import io.agora.scene.convoai.convoaiApi.subRender.v1.ISelfMessageListView
 import io.agora.scene.convoai.databinding.CovMessageAgentItemBinding
 import io.agora.scene.convoai.databinding.CovMessageListViewBinding
 import io.agora.scene.convoai.databinding.CovMessageMineItemBinding
+import io.agora.scene.convoai.ui.living.legacy.ISelfMessageListView
 
 class SelfMessageListView @JvmOverloads constructor(
     context: Context,
@@ -98,7 +98,7 @@ class SelfMessageListView @JvmOverloads constructor(
 
     private fun handleAgentMessage(turnId: Long, text: String, isFinal: Boolean) {
         // The message's turnId is 0
-        val exitMessage = if (turnId==0L) currentAgentMessage else messageAdapter.getMessageByTurnId(turnId, false)
+        val exitMessage = if (turnId == 0L) currentAgentMessage else messageAdapter.getMessageByTurnId(turnId, false)
         if (exitMessage == null) {
             val message = Message(false, turnId, text, isFinal)
             currentAgentMessage = message
