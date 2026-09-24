@@ -23,8 +23,8 @@ camerax = "1.5.0"
 swiperefreshlayout = "1.1.0"
 
 commons-codec = "1.17.0"
-agora-rtc-full = "4.5.1"
-agora-rtm = "2.2.3"
+agora-rtc-full = "4.6.4"
+agora-rtm = "2.3.0"
 agora-agent-client-toolkit = "2.10.1"
 
 okhttp = "5.0.0-alpha.14"
@@ -81,7 +81,7 @@ camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax"
 
 # rtc
 agora-rtc = { module = "io.agora.rtc:full-sdk", version.ref = "agora-rtc-full" }
-agora-rtm = { module = "io.agora:agora-rtm", version.ref = "agora-rtm" }
+agora-rtm = { module = "io.agora.rtm:rtm-sdk", version.ref = "agora-rtm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

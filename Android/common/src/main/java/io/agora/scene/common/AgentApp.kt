@@ -8,8 +8,6 @@ import io.agora.scene.common.util.CommonLogger
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -67,11 +65,6 @@ class AgentApp : Application() {
         DebugManager.initialize(this)
 
         try {
-            extractResourceToCache(AgentConstant.RTC_COMMON_RESOURCE)
-        } catch (e: Exception) {
-            CommonLogger.e(TAG, "Failed to init files:${e.message}")
-        }
-        try {
             initFile(AgentConstant.VIDEO_START_NAME)
         } catch (e: Exception) {
             CommonLogger.e(TAG, "Failed to init files:${e.message}")
@@ -111,51 +104,6 @@ class AgentApp : Application() {
     private fun initMMKV() {
         val rootDir = MMKV.initialize(this)
         CommonLogger.d(TAG, "mmkv root: $rootDir")
-    }
-
-    @Throws(IOException::class)
-    private fun extractResourceToCache(zipFileName: String) {
-        val dirName = zipFileName.substringBeforeLast(".zip")
-        val resourceDir = File(cacheDir, dirName)
-
-        if (resourceDir.exists()) {
-            CommonLogger.d(TAG, "Resources already exist at: ${resourceDir.absolutePath}")
-            return
-        }
-
-        val zipFile = File(cacheDir, zipFileName)
-        assets.open(zipFileName).use { input ->
-            FileOutputStream(zipFile).use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        ZipInputStream(zipFile.inputStream()).use { zipIn ->
-            var entry: ZipEntry? = null
-            val buffer = ByteArray(4096)
-
-            while (zipIn.nextEntry?.also { entry = it } != null) {
-                val newFile = File(cacheDir, entry!!.name)
-
-                if (entry!!.isDirectory) {
-                    newFile.mkdirs()
-                    continue
-                }
-
-                newFile.parentFile?.mkdirs()
-
-                FileOutputStream(newFile).use { fos ->
-                    var len: Int
-                    while (zipIn.read(buffer).also { len = it } > 0) {
-                        fos.write(buffer, 0, len)
-                    }
-                }
-                val lastModified = entry!!.time
-                newFile.setLastModified(lastModified)
-            }
-        }
-        zipFile.delete()
-        CommonLogger.d(TAG, "Extracted resources to: ${resourceDir.absolutePath}")
     }
 
     @Throws(IOException::class)

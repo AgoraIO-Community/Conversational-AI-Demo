@@ -7,31 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C0B100012E10000100B10001 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B100022E10000100B10001 /* XCTest.framework */; };
-		C0B100032E10000100B10001 /* OnDeviceAins.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100042E10000100B10001 /* OnDeviceAins.swift */; };
-		C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */; };
 		526B3B487B7E38FEC90FF09C /* Pods_Agent_global.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CFE16F51B0C319CA5D163F5 /* Pods_Agent_global.framework */; };
 		AB297B742CA93805007FB93B /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB297B722CA93805007FB93B /* KeyCenter.swift */; };
 		AB7A7D582D360F37000B3034 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7A7D4F2D360F37000B3034 /* AppDelegate.swift */; };
 		AB7A7D602D360F37000B3034 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7A7D532D360F37000B3034 /* SceneDelegate.swift */; };
 		AB7A7DA82D43B145000B3034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB7A7DA22D43B145000B3034 /* Assets.xcassets */; };
 		AB7A7DA92D43B145000B3034 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB7A7DA42D43B145000B3034 /* Localizable.strings */; };
+		C0B100012E10000100B10001 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B100022E10000100B10001 /* XCTest.framework */; };
+		C0B100032E10000100B10001 /* OnDeviceAins.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100042E10000100B10001 /* OnDeviceAins.swift */; };
+		C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */; };
+		D0E100012E10000100D10001 /* DeveloperEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100022E10000100D10001 /* DeveloperEnvironment.swift */; };
+		D0E100032E10000100D10001 /* DeveloperEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */; };
 		F742FFCD2DA3B42D00D3508A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F742FFCC2DA3B42D00D3508A /* GoogleService-Info.plist */; };
 		F75CC8A72D3941B800F9D4B7 /* Info-global.plist in Resources */ = {isa = PBXBuildFile; fileRef = F75CC8A62D3941B800F9D4B7 /* Info-global.plist */; };
 		F7CEFFCC2D77F6B40029BD3B /* ball_video_rotating.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */; };
 		F7CEFFCD2D77F6B40029BD3B /* ball_video_start.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFCA2D77F6B40029BD3B /* ball_video_start.mp4 */; };
-		F7CEFFCE2D77F6B40029BD3B /* common_resource.zip in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFCB2D77F6B40029BD3B /* common_resource.zip */; };
 		F7D294B92D6C5D9900583343 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7D294B82D6C5D9900583343 /* Launch Screen.storyboard */; };
 		F7D294BF2D6C6F9C00583343 /* Agora_AiLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = F7D294BE2D6C6F9C00583343 /* Agora_AiLogo.png */; };
-		D0E100012E10000100D10001 /* DeveloperEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100022E10000100D10001 /* DeveloperEnvironment.swift */; };
-		D0E100032E10000100D10001 /* DeveloperEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C0B100022E10000100B10001 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
-		C0B100042E10000100B10001 /* OnDeviceAins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnDeviceAins.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Manager/OnDeviceAins.swift; sourceTree = SOURCE_ROOT; };
-		C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceAinsTests.swift; sourceTree = "<group>"; };
-		C0B100072E10000100B10001 /* Agent-globalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Agent-globalTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07B78001A80B50822C790D23 /* Pods-Agent-global.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-global.debug.xcconfig"; path = "Target Support Files/Pods-Agent-global/Pods-Agent-global.debug.xcconfig"; sourceTree = "<group>"; };
 		14285B5FCE1DF2A0D45D7A72 /* Pods-Agent-CN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-CN.release.xcconfig"; path = "Target Support Files/Pods-Agent-CN/Pods-Agent-CN.release.xcconfig"; sourceTree = "<group>"; };
 		1EB5085410A4166EDC4A73F5 /* Pods-Agent-global.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-global.release.xcconfig"; path = "Target Support Files/Pods-Agent-global/Pods-Agent-global.release.xcconfig"; sourceTree = "<group>"; };
@@ -48,6 +43,12 @@
 		AB7A7DA22D43B145000B3034 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB7A7DA32D43B145000B3034 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		AB7A7DAD2D43B219000B3034 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C0B100022E10000100B10001 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		C0B100042E10000100B10001 /* OnDeviceAins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnDeviceAins.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Manager/OnDeviceAins.swift; sourceTree = SOURCE_ROOT; };
+		C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceAinsTests.swift; sourceTree = "<group>"; };
+		C0B100072E10000100B10001 /* Agent-globalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Agent-globalTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0E100022E10000100D10001 /* DeveloperEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeveloperEnvironment.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Main/DeveloperMode/DeveloperEnvironment.swift; sourceTree = SOURCE_ROOT; };
+		D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperEnvironmentTests.swift; sourceTree = "<group>"; };
 		D91E55880AF6C3438FDDFFF6 /* Pods-Agent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent.release.xcconfig"; path = "Target Support Files/Pods-Agent/Pods-Agent.release.xcconfig"; sourceTree = "<group>"; };
 		DB5CA60023278675289ED5E8 /* Pods-Agent-cn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-cn.debug.xcconfig"; path = "Target Support Files/Pods-Agent-cn/Pods-Agent-cn.debug.xcconfig"; sourceTree = "<group>"; };
 		F742FFCC2DA3B42D00D3508A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -55,28 +56,25 @@
 		F7CE00262D81A78B0029BD3B /* Agent-global.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Agent-global.entitlements"; sourceTree = "<group>"; };
 		F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball_video_rotating.mp4; sourceTree = "<group>"; };
 		F7CEFFCA2D77F6B40029BD3B /* ball_video_start.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball_video_start.mp4; sourceTree = "<group>"; };
-		F7CEFFCB2D77F6B40029BD3B /* common_resource.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = common_resource.zip; sourceTree = "<group>"; };
 		F7D294B82D6C5D9900583343 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		F7D294BE2D6C6F9C00583343 /* Agora_AiLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Agora_AiLogo.png; sourceTree = "<group>"; };
 		FFC83CF1A80017C399C30BA7 /* Pods-Agent-oversea.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-oversea.release.xcconfig"; path = "Target Support Files/Pods-Agent-oversea/Pods-Agent-oversea.release.xcconfig"; sourceTree = "<group>"; };
-		D0E100022E10000100D10001 /* DeveloperEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeveloperEnvironment.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Main/DeveloperMode/DeveloperEnvironment.swift; sourceTree = SOURCE_ROOT; };
-		D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperEnvironmentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C0B100082E10000100B10001 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C0B100012E10000100B10001 /* XCTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AB297B582CA935A4007FB93B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				526B3B487B7E38FEC90FF09C /* Pods_Agent_global.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0B100082E10000100B10001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0B100012E10000100B10001 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +156,6 @@
 			children = (
 				F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */,
 				F7CEFFCA2D77F6B40029BD3B /* ball_video_start.mp4 */,
-				F7CEFFCB2D77F6B40029BD3B /* common_resource.zip */,
 				F7D294BE2D6C6F9C00583343 /* Agora_AiLogo.png */,
 				AB7A7DA22D43B145000B3034 /* Assets.xcassets */,
 				AB7A7DA42D43B145000B3034 /* Localizable.strings */,
@@ -180,23 +177,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C0B1000A2E10000100B10001 /* Agent-globalTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */;
-			buildPhases = (
-				C0B1000C2E10000100B10001 /* Sources */,
-				C0B100082E10000100B10001 /* Frameworks */,
-				C0B1000D2E10000100B10001 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Agent-globalTests";
-			productName = "Agent-globalTests";
-			productReference = C0B100072E10000100B10001 /* Agent-globalTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		AB297B5A2CA935A4007FB93B /* Agent-global */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB297B6F2CA935A6007FB93B /* Build configuration list for PBXNativeTarget "Agent-global" */;
@@ -218,6 +198,23 @@
 			productReference = AB297B5B2CA935A4007FB93B /* Agent-global.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C0B1000A2E10000100B10001 /* Agent-globalTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */;
+			buildPhases = (
+				C0B1000C2E10000100B10001 /* Sources */,
+				C0B100082E10000100B10001 /* Frameworks */,
+				C0B1000D2E10000100B10001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Agent-globalTests";
+			productName = "Agent-globalTests";
+			productReference = C0B100072E10000100B10001 /* Agent-globalTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -228,11 +225,11 @@
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
-					C0B1000A2E10000100B10001 = {
-						CreatedOnToolsVersion = 16.4;
-					};
 					AB297B5A2CA935A4007FB93B = {
 						CreatedOnToolsVersion = 15.4;
+					};
+					C0B1000A2E10000100B10001 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -256,13 +253,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C0B1000D2E10000100B10001 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AB297B592CA935A4007FB93B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -272,10 +262,16 @@
 				F742FFCD2DA3B42D00D3508A /* GoogleService-Info.plist in Resources */,
 				AB7A7DA92D43B145000B3034 /* Localizable.strings in Resources */,
 				F7D294B92D6C5D9900583343 /* Launch Screen.storyboard in Resources */,
-				F7CEFFCE2D77F6B40029BD3B /* common_resource.zip in Resources */,
 				AB7A7DA82D43B145000B3034 /* Assets.xcassets in Resources */,
 				F7CEFFCC2D77F6B40029BD3B /* ball_video_rotating.mp4 in Resources */,
 				F75CC8A72D3941B800F9D4B7 /* Info-global.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0B1000D2E10000100B10001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,13 +286,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Agent-global/Pods-Agent-global-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Agent-global/Pods-Agent-global-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -311,13 +303,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Agent-global/Pods-Agent-global-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Agent-global/Pods-Agent-global-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -371,6 +359,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AB297B572CA935A4007FB93B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB7A7D582D360F37000B3034 /* AppDelegate.swift in Sources */,
+				AB7A7D602D360F37000B3034 /* SceneDelegate.swift in Sources */,
+				AB297B742CA93805007FB93B /* KeyCenter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0B1000C2E10000100B10001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -379,16 +377,6 @@
 				C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */,
 				D0E100012E10000100D10001 /* DeveloperEnvironment.swift in Sources */,
 				D0E100032E10000100D10001 /* DeveloperEnvironmentTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AB297B572CA935A4007FB93B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AB7A7D582D360F37000B3034 /* AppDelegate.swift in Sources */,
-				AB7A7D602D360F37000B3034 /* SceneDelegate.swift in Sources */,
-				AB297B742CA93805007FB93B /* KeyCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,52 +395,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		C0B1000E2E10000100B10001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		C0B1000F2E10000100B10001 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 		AB297B6D2CA935A6007FB93B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -616,7 +558,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -667,7 +609,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -679,18 +621,55 @@
 			};
 			name = Release;
 		};
+		C0B1000E2E10000100B10001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C0B1000F2E10000100B10001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = agora.convoai.ains.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C0B1000E2E10000100B10001 /* Debug */,
-				C0B1000F2E10000100B10001 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		AB297B562CA935A4007FB93B /* Build configuration list for PBXProject "Agent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -705,6 +684,15 @@
 			buildConfigurations = (
 				AB297B702CA935A6007FB93B /* Debug */,
 				AB297B712CA935A6007FB93B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0B1000B2E10000100B10001 /* Build configuration list for PBXNativeTarget "Agent-globalTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0B1000E2E10000100B10001 /* Debug */,
+				C0B1000F2E10000100B10001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

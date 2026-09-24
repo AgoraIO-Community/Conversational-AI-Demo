@@ -89,7 +89,7 @@ pod 'agent-client-toolkit-swift', '2.10.1'
 
 ```ruby
 pod 'agent-client-toolkit-swift', '2.10.1'
-pod 'AgoraRtm', '2.2.3', :subspecs => ['RtmKit']
+pod 'Agora-Rtm', '2.3.0', :subspecs => ['RtmKit']
 ```
 
 When switching from source integration or refreshing an older local spec index, run from the demo repository root:
