@@ -77,7 +77,7 @@ AGENT_BASIC_AUTH_SECRET=<Agora RESTful API SECRET>
 
 #----------- LLM -----------
 NEXT_PUBLIC_CUSTOM_LLM_URL="<your-LLM-url>"
-NEXT_PUBLIC_CUSTOM_LLM_KEY="<your-LLM-key>"
+NEXT_PUBLIC_CUSTOM_LLM_KEY="<restricted-demo-LLM-key>"
 NEXT_PUBLIC_CUSTOM_LLM_SYSTEM_MESSAGES="<your-LLM-system-messages>"
 NEXT_PUBLIC_CUSTOM_LLM_PARAMS="<your-LLM-params>"
 
@@ -85,6 +85,8 @@ NEXT_PUBLIC_CUSTOM_LLM_PARAMS="<your-LLM-params>"
 NEXT_PUBLIC_CUSTOM_TTS_VENDOR="<your-TTS-vendor>"
 NEXT_PUBLIC_CUSTOM_TTS_PARAMS="<your-TTS-params>"
 ```
+
+`NEXT_PUBLIC_*` values are included in browser code. Users may see the Demo's LLM key and TTS parameters, so use only restricted, revocable demo credentials. Keep production secrets on a server and call the service through a server endpoint. An ignored `.env.local` file does not hide `NEXT_PUBLIC_*` values.
 
 - Run the development server
 
@@ -115,7 +117,7 @@ When upgrading Toolkit, update its exact version and `bun.lock` together, then r
 | [api/](./src/app/api/)                       | Implementation of Conversational AI Engine API interfaces and data models |
 | [app/page](./src/app/page.tsx)               | Main content of the page                       |
 | [components/](./src/components/)             | Page components                          |
-| [logger/](./src/lib/logger)                  | Logging                           |
+| [logger.ts](./src/lib/logger.ts)             | Logging                           |
 | [type/rtc](./src/type/rtc.ts)                | Types and enumerations of Rtc     |
 
 
