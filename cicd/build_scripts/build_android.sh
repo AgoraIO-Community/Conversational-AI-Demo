@@ -196,12 +196,15 @@ fi
 
 # Google Services selects the registered client matching the final applicationId.
 
-# modify app_name if package name contains "test"
+# Set the app name for the final package name.
 final_package=$(grep -o 'applicationId "[^"]*"' app/build.gradle | head -1 | sed 's/applicationId "\(.*\)"/\1/')
 if [[ "${final_package}" == *"test"* ]]; then
   echo "Package name contains 'test', modifying app_name to 'Convo AI Test'"
   sed -ie 's#resValue "string", "app_name", "Convo AI"#resValue "string", "app_name", "Convo AI Test"#g' app/build.gradle
   echo "App name modified successfully"
+else
+  echo "Using production app name 'Convo AI'"
+  sed -ie 's#resValue "string", "app_name", "Convo AI Test"#resValue "string", "app_name", "Convo AI"#g' app/build.gradle
 fi
 
 cat gradle.properties
