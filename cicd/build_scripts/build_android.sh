@@ -189,18 +189,12 @@ if [[ ! -z ${package_name} && "${package_name}" != 'none' && "${package_name}" !
     sed -ie "s#applicationId \"[^\"]*\"#applicationId \"${package_name}\"#g" app/build.gradle
     echo "Package name modified successfully"
     
-    # Update google-services.json to match the new package name
-    if [[ -f "app/google-services.json" ]]; then
-      echo "Updating google-services.json package name to: ${package_name}"
-      sed -ie "s#\"package_name\": \"[^\"]*\"#\"package_name\": \"${package_name}\"#g" app/google-services.json
-      echo "google-services.json updated successfully"
-    else
-      echo "Warning: app/google-services.json not found, skipping update"
-    fi
   else
     echo "Package name is already ${package_name}, skipping modification"
   fi
 fi
+
+# Google Services selects the registered client matching the final applicationId.
 
 # modify app_name if package name contains "test"
 final_package=$(grep -o 'applicationId "[^"]*"' app/build.gradle | head -1 | sed 's/applicationId "\(.*\)"/\1/')

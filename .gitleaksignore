@@ -1,0 +1,2 @@
+# The test Firebase client repeats the public API key already tracked for production.
+Android/app/google-services.json:gcp-api-key:37
