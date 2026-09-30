@@ -24,6 +24,10 @@ class AgentSettingsView: UIView {
     
     private var basicSettingItems: [UIView] = []
     private var advancedSettingItems: [UIView] = []
+    private var showsAvatarPicker: Bool {
+        !AppContext.shared.isOpenSource &&
+            AppContext.settingManager().preset?.hasConfiguredCustomAvatar != true
+    }
     
     // MARK: - UI Components
     private lazy var basicSettingView: UIView = {
@@ -196,7 +200,9 @@ class AgentSettingsView: UIView {
     }
     
     func loadData() {
-        updateAvatar(AppContext.settingManager().avatar)
+        if !AppContext.shared.isOpenSource {
+            updateAvatar(AppContext.settingManager().avatar)
+        }
         let voiceprintMode = AppContext.settingManager().voiceprintMode
         voiceprintModeItem.detailLabel.text = voiceprintMode.title
     }
@@ -213,14 +219,17 @@ class AgentSettingsView: UIView {
         advancedSettingItems = [aiVadItem, smartPauseItem, transcriptRenderItem, voiceprintModeItem]
 
         addSubview(basicSettingView)
-        addSubview(digitalHumanView)
+        if !AppContext.shared.isOpenSource {
+            addSubview(digitalHumanView)
+            digitalHumanView.addSubview(digitalHumanItem)
+            digitalHumanView.isHidden = !showsAvatarPicker
+        }
         addSubview(advancedSettingTitle)
         addSubview(advancedSettingView)
         
         basicSettingItems.forEach { basicSettingView.addSubview($0) }
         advancedSettingItems.forEach { advancedSettingView.addSubview($0) }
         
-        digitalHumanView.addSubview(digitalHumanItem)
     }
     
     private func setupConstraints() {
@@ -247,19 +256,22 @@ class AgentSettingsView: UIView {
             }
         }
         
-        digitalHumanView.snp.makeConstraints { make in
-            make.top.equalTo(basicSettingView.snp.bottom).offset(20)
-            make.left.equalTo(20)
-            make.right.equalTo(-20)
-        }
-        
-        digitalHumanItem.snp.makeConstraints { make in
-            make.left.right.top.bottom.equalToSuperview()
-            make.height.equalTo(62)
+        if !AppContext.shared.isOpenSource {
+            digitalHumanView.snp.makeConstraints { make in
+                make.top.equalTo(basicSettingView.snp.bottom).offset(20)
+                make.left.equalTo(20)
+                make.right.equalTo(-20)
+            }
+
+            digitalHumanItem.snp.makeConstraints { make in
+                make.left.right.top.bottom.equalToSuperview()
+                make.height.equalTo(62)
+            }
         }
         
         advancedSettingTitle.snp.makeConstraints { make in
-            make.top.equalTo(digitalHumanView.snp.bottom).offset(32)
+            let precedingView = showsAvatarPicker ? digitalHumanView : basicSettingView
+            make.top.equalTo(precedingView.snp.bottom).offset(32)
             make.left.equalTo(34)
         }
         
@@ -290,6 +302,12 @@ class AgentSettingsView: UIView {
     
     // MARK: - Public Methods
     func updatePreset(_ preset: AgentPreset) {
+        digitalHumanView.isHidden = !showsAvatarPicker
+        advancedSettingTitle.snp.remakeConstraints { make in
+            let precedingView = showsAvatarPicker ? digitalHumanView : basicSettingView
+            make.top.equalTo(precedingView.snp.bottom).offset(32)
+            make.left.equalTo(34)
+        }
         syncInterruptFeatureAvailability()
     }
     

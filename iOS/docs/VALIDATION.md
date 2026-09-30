@@ -6,10 +6,11 @@ Use Python 3.9+ and Xcode 16+ command-line tools. Run from the repository root:
 python3 scripts/validate.py ios --list
 python3 scripts/validate.py ios --suite ains --preflight
 python3 scripts/validate.py ios --suite ains
+python3 scripts/validate.py ios --suite audio_scenario
 python3 scripts/validate.py ios --suite environment
 ```
 
-Standalone AINS uses `Agent.xcodeproj` / `Agent-globalTests` and does not require Pods. The standalone suites cover AINS and environment matching. For other behavior, use or add relevant tests and update the target, shared scheme and suite mapping as needed.
+The standalone suites use `Agent.xcodeproj` / `Agent-globalTests` and do not require Pods. They cover AINS, client audio scenario defaults and environment matching. For other behavior, use or add relevant tests and update the target, shared scheme and suite mapping as needed.
 
 The `environment` suite checks host + RTC App ID matching and remembered dynamic selections without an app host.
 

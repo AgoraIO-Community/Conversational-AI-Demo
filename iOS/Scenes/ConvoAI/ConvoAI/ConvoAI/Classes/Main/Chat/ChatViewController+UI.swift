@@ -15,13 +15,12 @@ class ChatWindowState {
     
     func reset() {
         showTranscription = false
-        let preset = AppContext.settingManager().preset
-        let isPresetSupportAvatar = preset?.isSupportAvatar == true
-        if AppContext.shared.avatarEnable || AppContext.settingManager().avatar != nil || isPresetSupportAvatar {
-            showAvatar = true
-        } else {
-            showAvatar = false
-        }
+        let settings = AppContext.settingManager()
+        showAvatar = AvatarSessionState.isEnabled(
+            preset: settings.preset,
+            selectedAvatar: settings.avatar,
+            isOpenSource: AppContext.shared.isOpenSource
+        )
         showVideo = false
     }
 }

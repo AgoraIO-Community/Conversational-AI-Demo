@@ -29,29 +29,27 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 ```Swift
     static var IS_OPEN_SOURCE: Bool = true
 
-    #----------- AppId --------------
-    static let APP_ID: String = <Agora App ID>
-    static let CERTIFICATE: String? = <Agora App Certificate>
+    //----------- AppId --------------
+    static let AG_APP_ID: String = <Agora App ID>
+    static let AG_APP_CERTIFICATE: String = <Agora App Certificate>
   
-    #----------- Basic Auth ---------------
+    //----------- Basic Auth ---------------
     static let BASIC_AUTH_KEY: String = <Agora RESTful API KEY>
     static let BASIC_AUTH_SECRET: String = <Agora RESTful API SECRET>
   
-    #----------- LLM -----------
+    //----------- LLM -----------
     static let LLM_URL: String = <LLM Vendor API BASE URL>
-    static let LLM_API_KEY: String? = <LLM Vendor API KEY>(optional)
-    static let LLM_SYSTEM_MESSAGES: String? = <LLM Prompt>(optional)
-    static let LLM_MODEL: String? = <LLM Model>(optional)
+    static let LLM_API_KEY: String = <LLM Vendor API KEY>
+    static let LLM_SYSTEM_MESSAGES: [[String: Any]] = <LLM Prompt>
+    static let LLM_PARAMS: [String: Any] = <LLM Vendor Parameters>
   
-    #----------- TTS -----------
+    //----------- TTS -----------
     static let TTS_VENDOR: String = <TTS Vendor>
     static let TTS_PARAMS: [String : Any] = <TTS Parameters>
 
-    #----------- AVATAR -----------
-    static let AVATAR_ENABLE: Bool = <Enable AVATAR feature>
-    static let AVATAR_VENDOR: String = <AVATAR vendor>
-    static let AVATAR_PARAMS: [String: Any] = <AVATAR parameters>
 ```
+
+Open-source mode does not support digital humans, so `KeyCenter.swift` has no digital-human setup fields and the demo sends `avatar.enable=false`. Ordinary voice defaults to the `aiclient` audio scenario; `independent` mode defaults to `chorus`. Developer mode can explicitly override the client audio scenario. Outside open-source mode, business-server presets can still enable digital humans.
 
 ## 🗂️ 2. Source Code Sitemap
 

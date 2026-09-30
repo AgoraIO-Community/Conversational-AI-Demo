@@ -105,4 +105,56 @@ struct AgentPreset: Codable {
     var isCustom: Bool {
         presetType?.hasPrefix("custom") == true
     }
+
+    var hasConfiguredCustomAvatar: Bool {
+        isCustom && isSupportAvatar == true
+    }
+}
+
+enum AvatarSessionState {
+    static func isEnabled(
+        preset: AgentPreset?,
+        selectedAvatar: Avatar?,
+        isOpenSource: Bool
+    ) -> Bool {
+        if isOpenSource {
+            return false
+        }
+        return selectedAvatar != nil || preset?.hasConfiguredCustomAvatar == true
+    }
+
+    static func vendor(preset: AgentPreset?, selectedAvatar: Avatar?) -> String? {
+        if preset?.hasConfiguredCustomAvatar == true {
+            return preset?.avatarVendor
+        }
+        return selectedAvatar?.vendor
+    }
+}
+
+enum ClientAudioScenarioDefault: Equatable {
+    case rtcDefault
+    case chorus
+    case aiClient
+
+    static func resolve(isAvatarEnabled: Bool, isIndependent: Bool) -> Self {
+        if isAvatarEnabled {
+            return .rtcDefault
+        }
+        return isIndependent ? .chorus : .aiClient
+    }
+}
+
+enum AgentStartRequestParameters {
+    static func make(enableMetrics: Bool, enableWords: Bool) -> [String: Any] {
+        [
+            "data_channel": "rtm",
+            "enable_metrics": enableMetrics,
+            "enable_error_message": true,
+            "transcript": [
+                "enable": true,
+                "enable_words": enableWords,
+                "protocol_version": "v2"
+            ]
+        ]
+    }
 }

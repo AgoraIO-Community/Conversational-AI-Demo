@@ -156,7 +156,6 @@ extension ChatViewController {
                 }
                 
                 try await fetchTokenIfNeeded()
-                try await fetchOpenSourceAvatarTokenIfNeeded()
                 await MainActor.run {
                     if callControlBar.style == .startButton { return }
                     startAgentRequest()

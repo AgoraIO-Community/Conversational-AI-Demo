@@ -36,7 +36,7 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
         if let preset = AppContext.settingManager().preset, let callTimeLimitSecond = preset.callTimeLimitSecond {
             var min = callTimeLimitSecond / 60
             
-            if let _ = AppContext.settingManager().avatar {
+            if isEnableAvatar() {
                 min = preset.callTimeLimitAvatarSecond ?? 600 / 60
             }
 
@@ -72,4 +72,3 @@ extension ChatViewController: AgentTimerCoordinatorDelegate {
         timerCoordinator.stopJoinChannelTimer()
     }
 }
-

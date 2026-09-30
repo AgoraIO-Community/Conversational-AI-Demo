@@ -233,7 +233,7 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
                 // If ignored, update language directly
                 AppContext.settingManager().updateLanguage(selected)
             } else {
-                if let _ = AppContext.settingManager().avatar {
+                if !AppContext.shared.isOpenSource, AppContext.settingManager().avatar != nil {
                     // Show confirmation alert
                     CommonAlertView.show(
                         in: self.view,
@@ -266,6 +266,8 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
     }
     
     func agentSettingsViewDidTapDigitalHuman(_ view: AgentSettingsView, sender: UIButton) {
+        guard !AppContext.shared.isOpenSource,
+              AppContext.settingManager().preset?.hasConfiguredCustomAvatar != true else { return }
         let vc = DigitalHumanViewController()
         self.navigationController?.pushViewController(vc)
     }

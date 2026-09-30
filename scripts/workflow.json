@@ -32,6 +32,17 @@
           }
         ]
       },
+      "audio_scenario": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "ClientAudioScenarioDefaultTests",
+            "source": "AgentTests/ClientAudioScenarioDefaultTests.swift"
+          }
+        ]
+      },
       "environment": {
         "container": "Agent.xcodeproj",
         "scheme": "Agent-globalTests",

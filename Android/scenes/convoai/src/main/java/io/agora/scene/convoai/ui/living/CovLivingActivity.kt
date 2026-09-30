@@ -395,7 +395,7 @@ class CovLivingActivity : DebugSupportActivity<CovActivityLivingBinding>() {
         lifecycleScope.launch {
             viewModel.isAvatarJoinedRtc.collect { joined ->
                 mBinding?.apply {
-                    if (joined) {
+                    if (joined && CovAgentManager.isEnableAvatar) {
                         CovRtcManager.setupRemoteVideo(
                             VideoCanvas(remoteAvatarView, Constants.RENDER_MODE_HIDDEN, CovAgentManager.avatarUID)
                         )

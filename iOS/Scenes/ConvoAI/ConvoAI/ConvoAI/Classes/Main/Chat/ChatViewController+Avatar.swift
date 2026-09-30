@@ -32,8 +32,11 @@ extension ChatViewController {
     }
     
     internal func isEnableAvatar() -> Bool {
-        let preset = AppContext.settingManager().preset
-        let isPresetSupportAvatar = preset?.isSupportAvatar == true
-        return AppContext.shared.avatarEnable || AppContext.settingManager().avatar != nil || isPresetSupportAvatar
+        let settings = AppContext.settingManager()
+        return AvatarSessionState.isEnabled(
+            preset: settings.preset,
+            selectedAvatar: settings.avatar,
+            isOpenSource: AppContext.shared.isOpenSource
+        )
     }
 }

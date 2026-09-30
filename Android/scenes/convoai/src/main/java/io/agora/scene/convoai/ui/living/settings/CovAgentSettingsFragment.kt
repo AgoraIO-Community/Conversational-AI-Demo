@@ -113,11 +113,13 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             btnAiPause.setOnClickListener {
                 ToastUtil.show(io.agora.scene.convoai.R.string.cov_setting_ai_pause_desc, Toast.LENGTH_LONG)
             }
-            clAvatar.setOnClickListener(object : OnFastClickListener() {
-                override fun onClickJacking(view: View) {
-                    onClickAvatar()
-                }
-            })
+            if (!CovAgentManager.isOpenSource) {
+                clAvatar.setOnClickListener(object : OnFastClickListener() {
+                    override fun onClickJacking(view: View) {
+                        onClickAvatar()
+                    }
+                })
+            }
             clRenderMode.setOnClickListener(object : OnFastClickListener() {
                 override fun onClickJacking(view: View) {
                     onClickRenderMode()
@@ -271,7 +273,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     return@updateOptions
                 }
 
-                if (CovAgentManager.avatar != null) {
+                if (CovAgentManager.isEnableAvatar && CovAgentManager.avatar != null) {
                     // Check if user selected "Don't show again"
                     if (CovAgentManager.shouldShowPresetChangeReminder()) {
                         // Show reminder dialog
@@ -378,6 +380,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
     }
 
     private fun onClickAvatar() {
+        if (CovAgentManager.isOpenSource || CovAgentManager.isCustomEnableAvatar) return
         val activity = activity ?: return
 
         val avatarSelectorDialog = CovAvatarSelectorDialog.newInstance(
@@ -409,6 +412,11 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
      */
     private fun setAvatarSettings() {
         mBinding?.apply {
+            llAvatar.visibility = if (CovAgentManager.isOpenSource || CovAgentManager.isCustomEnableAvatar) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
             val selectedAvatar = CovAgentManager.avatar
             if (selectedAvatar != null) {
                 // Show selected avatar name

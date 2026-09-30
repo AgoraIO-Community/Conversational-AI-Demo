@@ -107,33 +107,19 @@ extension ChatViewController {
                     "sal": getSalParams(),
                     "avatar": [
                         "enable": isEnableAvatar(),
-                        "vendor": AppContext.settingManager().avatar?.vendor ?? "",
+                        "vendor": AvatarSessionState.vendor(
+                            preset: AppContext.settingManager().preset,
+                            selectedAvatar: AppContext.settingManager().avatar
+                        ) ?? "",
                         "params": [
                             "agora_uid": "\(avatarUid)",
                             "avatar_id": AppContext.settingManager().avatar?.avatarId
                         ]
                     ],
-                    "parameters": [
-                        "data_channel": "rtm",
-                        "enable_flexible": nil,
-                        "enable_metrics": true,
-                        "enable_error_message": true,
-                        "aivad_force_threshold": nil,
-                        "output_audio_codec": nil,
-                        "audio_scenario": nil,
-                        "transcript": [
-                            "enable": true,
-                            "enable_words": enableWords(),
-                            "protocol_version": "v2",
-    //                        "redundant": nil,
-                        ],
-                        "sc": [
-                            "sessCtrlStartSniffWordGapInMs": nil,
-                            "sessCtrlTimeOutInMs": nil,
-                            "sessCtrlWordGapLenVolumeThr": nil,
-                            "sessCtrlWordGapLenInMs": nil
-                        ]
-                    ]
+                    "parameters": AgentStartRequestParameters.make(
+                        enableMetrics: true,
+                        enableWords: enableWords()
+                    )
                 ]
             ]
         ]
@@ -141,8 +127,6 @@ extension ChatViewController {
     }
     
     private func getStartAgentParametersForOpenSouce() -> [String: Any] {
-        AppContext.shared.avatarParams["agora_uid"] = "\(avatarUid)"
-        AppContext.shared.avatarParams["agora_token"] = openSourceAvatarToken
         let parameters: [String: Any?] = [
             "app_id": AppContext.shared.appId,
             "preset_name": nil,
@@ -191,32 +175,11 @@ extension ChatViewController {
                         "adjust_volume": nil,
                     ],
                     "sal": getSalParams(),
-                    "avatar": [
-                        "enable": AppContext.shared.avatarEnable,
-                        "vendor": AppContext.shared.avatarVendor,
-                        "params": AppContext.shared.avatarParams
-                    ],
-                    "parameters": [
-                        "data_channel": "rtm",
-                        "enable_flexible": nil,
-                        "enable_metrics": false,
-                        "enable_error_message": true,
-                        "aivad_force_threshold": nil,
-                        "output_audio_codec": nil,
-                        "audio_scenario": nil,
-                        "transcript": [
-                            "enable": true,
-                            "enable_words": enableWords(),
-                            "protocol_version": "v2",
-    //                        "redundant": nil,
-                        ],
-                        "sc": [
-                            "sessCtrlStartSniffWordGapInMs": nil,
-                            "sessCtrlTimeOutInMs": nil,
-                            "sessCtrlWordGapLenVolumeThr": nil,
-                            "sessCtrlWordGapLenInMs": nil
-                        ]
-                    ]
+                    "avatar": ["enable": false],
+                    "parameters": AgentStartRequestParameters.make(
+                        enableMetrics: false,
+                        enableWords: enableWords()
+                    )
                 ]
             ]
         ]
@@ -279,43 +242,6 @@ extension ChatViewController {
                 } else {
                     continuation.resume(throwing: NSError(domain: "", code: -1,
                         userInfo: [NSLocalizedDescriptionKey: "generate token error"]))
-                }
-            }
-        }
-    }
-    
-    internal func fetchOpenSourceAvatarTokenIfNeeded() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            if !AppContext.shared.isOpenSource {
-                continuation.resume()
-                return
-            }
-            
-            if !AppContext.shared.avatarEnable {
-                continuation.resume()
-                return
-            }
-            
-            if AppContext.shared.certificate.isEmpty {
-                self.openSourceAvatarToken = AppContext.shared.appId
-                continuation.resume()
-                return
-            }
-            
-            NetworkManager.shared.generateToken(
-                channelName: "",
-                uid: "\(avatarUid)",
-                types: [.rtc, .rtm]
-            ) { [weak self] token in
-                guard let self = self else { return }
-                
-                if let token = token {
-                    print("avatar rtc token is : \(token)")
-                    self.openSourceAvatarToken = token
-                    continuation.resume()
-                } else {
-                    continuation.resume(throwing: NSError(domain: "", code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "generate avatar token error"]))
                 }
             }
         }

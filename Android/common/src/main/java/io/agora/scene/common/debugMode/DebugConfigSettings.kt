@@ -130,13 +130,6 @@ object DebugConfigSettings {
         this.audioScenario = scenario
     }
 
-    var serverAudioScenario: String? = null
-        private set
-
-    fun setServerAudioScenario(scenario: String?) {
-        this.serverAudioScenario = scenario
-    }
-
     var isMetricsEnabled: Boolean = false
         private set
 
@@ -178,7 +171,6 @@ object DebugConfigSettings {
         isAinsEnabled = false
         isMetricsEnabled = false
         audioScenario = null
-        serverAudioScenario = null
         _sdkAudioParameters.clear()
         convoAIParameter = ""
         convoAiRequestBaseUrl = ""

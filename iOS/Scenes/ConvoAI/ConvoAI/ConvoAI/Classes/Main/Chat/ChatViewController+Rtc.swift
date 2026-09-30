@@ -250,19 +250,23 @@ extension ChatViewController {
             return
         }
         let independent = (AppContext.settingManager().preset?.presetType?.hasPrefix("independent") == true)
-        let secnario: AgoraAudioScenario = {
-            if isEnableAvatar() {
-                return .default
-            }
-            return independent ? .chorus : .aiClient
-        }()
+        let defaultScenario = ClientAudioScenarioDefault.resolve(
+            isAvatarEnabled: isEnableAvatar(),
+            isIndependent: independent
+        )
+        let scenario: AgoraAudioScenario
+        switch defaultScenario {
+        case .rtcDefault: scenario = .default
+        case .chorus: scenario = .chorus
+        case .aiClient: scenario = .aiClient
+        }
         let ainsEnabled = OnDeviceAins.resolve(
             isDeveloperMode: DeveloperConfig.shared.isDeveloperMode,
             debugEnabled: DeveloperConfig.shared.ainsEnabled
         )
         rtcManager.loadAudioSettings(ainsEnabled: ainsEnabled) {
             convoAIAPI.loadAudioSettings(
-                scenario: DeveloperConfig.shared.resolvedClientAudioScenario(fallback: secnario),
+                scenario: DeveloperConfig.shared.resolvedClientAudioScenario(fallback: scenario),
                 enableAins: ainsEnabled
             )
         }

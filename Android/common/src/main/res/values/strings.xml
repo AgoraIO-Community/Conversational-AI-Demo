@@ -21,7 +21,6 @@
     <string name="common_debug_ains">On-device AINS</string>
     <string name="common_debug_audio_dump">Audio Dump</string>
     <string name="common_debug_audio_scenario">Client Audio Scenario</string>
-    <string name="common_debug_server_audio_scenario">Server Audio Scenario</string>
     <string name="common_debug_audio_scenario_not_selected">No Override</string>
     <string name="common_debug_session_limit">Session Duration Limit</string>
     <string name="common_debug_metrics">Metrics</string>

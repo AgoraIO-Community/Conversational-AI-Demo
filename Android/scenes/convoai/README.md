@@ -49,10 +49,9 @@ LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
 TTS_VENDOR=<TTS Vendor>
 TTS_PARAMS=<TTS Parameters>
 
-#----------- AVATAR -----------
-AVATAR_VENDOR=<AVATAR Vendor>
-AVATAR_PARAMS=<AVATAR Parameters>
 ```
+
+Open-source mode does not support digital humans, so `gradle.properties` has no digital-human setup fields and the demo sends `avatar.enable=false`. Ordinary voice defaults to the `aiclient` audio scenario; `independent` mode defaults to `chorus`. Developer mode can explicitly override the client audio scenario. Outside open-source mode, business-server presets can still enable digital humans.
 
 ## 🗂️ 2. Source Code Sitemap
 

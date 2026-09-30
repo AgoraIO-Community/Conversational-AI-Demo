@@ -18,6 +18,8 @@
 		C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */; };
 		D0E100012E10000100D10001 /* DeveloperEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100022E10000100D10001 /* DeveloperEnvironment.swift */; };
 		D0E100032E10000100D10001 /* DeveloperEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */; };
+		E0A100012E10000100A10001 /* AgentPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A100022E10000100A10001 /* AgentPreset.swift */; };
+		E0A100052E10000100A10001 /* ClientAudioScenarioDefaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A100062E10000100A10001 /* ClientAudioScenarioDefaultTests.swift */; };
 		F75CC8A72D3941B800F9D4B7 /* Info-global.plist in Resources */ = {isa = PBXBuildFile; fileRef = F75CC8A62D3941B800F9D4B7 /* Info-global.plist */; };
 		F7CEFFCC2D77F6B40029BD3B /* ball_video_rotating.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFC92D77F6B40029BD3B /* ball_video_rotating.mp4 */; };
 		F7CEFFCD2D77F6B40029BD3B /* ball_video_start.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F7CEFFCA2D77F6B40029BD3B /* ball_video_start.mp4 */; };
@@ -48,6 +50,8 @@
 		C0B100072E10000100B10001 /* Agent-globalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Agent-globalTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0E100022E10000100D10001 /* DeveloperEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeveloperEnvironment.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Main/DeveloperMode/DeveloperEnvironment.swift; sourceTree = SOURCE_ROOT; };
 		D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperEnvironmentTests.swift; sourceTree = "<group>"; };
+		E0A100022E10000100A10001 /* AgentPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AgentPreset.swift; path = Scenes/ConvoAI/ConvoAI/ConvoAI/Classes/Model/AgentPreset.swift; sourceTree = SOURCE_ROOT; };
+		E0A100062E10000100A10001 /* ClientAudioScenarioDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAudioScenarioDefaultTests.swift; sourceTree = "<group>"; };
 		D91E55880AF6C3438FDDFFF6 /* Pods-Agent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent.release.xcconfig"; path = "Target Support Files/Pods-Agent/Pods-Agent.release.xcconfig"; sourceTree = "<group>"; };
 		DB5CA60023278675289ED5E8 /* Pods-Agent-cn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agent-cn.debug.xcconfig"; path = "Target Support Files/Pods-Agent-cn/Pods-Agent-cn.debug.xcconfig"; sourceTree = "<group>"; };
 		F75CC8A62D3941B800F9D4B7 /* Info-global.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-global.plist"; sourceTree = "<group>"; };
@@ -167,6 +171,8 @@
 				C0B100062E10000100B10001 /* OnDeviceAinsTests.swift */,
 				D0E100022E10000100D10001 /* DeveloperEnvironment.swift */,
 				D0E100042E10000100D10001 /* DeveloperEnvironmentTests.swift */,
+				E0A100022E10000100A10001 /* AgentPreset.swift */,
+				E0A100062E10000100A10001 /* ClientAudioScenarioDefaultTests.swift */,
 			);
 			path = AgentTests;
 			sourceTree = SOURCE_ROOT;
@@ -397,6 +403,8 @@
 				C0B100052E10000100B10001 /* OnDeviceAinsTests.swift in Sources */,
 				D0E100012E10000100D10001 /* DeveloperEnvironment.swift in Sources */,
 				D0E100032E10000100D10001 /* DeveloperEnvironmentTests.swift in Sources */,
+				E0A100012E10000100A10001 /* AgentPreset.swift in Sources */,
+				E0A100052E10000100A10001 /* ClientAudioScenarioDefaultTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

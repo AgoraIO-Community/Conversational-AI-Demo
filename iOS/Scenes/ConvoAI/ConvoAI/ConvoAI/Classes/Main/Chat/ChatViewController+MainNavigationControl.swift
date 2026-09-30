@@ -49,7 +49,7 @@ extension ChatViewController {
     }
     
     internal func updateCharacterInformation() {
-        if let avatar = AppContext.settingManager().avatar {
+        if isEnableAvatar(), let avatar = AppContext.settingManager().avatar {
             navivationBar.updateCharacterInformation(
                 icon: avatar.thumbImageUrl.stringValue(),
                 defaultIcon: "",

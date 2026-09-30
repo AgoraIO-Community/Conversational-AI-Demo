@@ -29,6 +29,12 @@ enum class VoiceprintMode {
     PERSONALIZED
 }
 
+internal fun isAvatarEnabledForSession(
+    isOpenSource: Boolean,
+    hasSelectedAvatar: Boolean,
+    hasConfiguredCustomAvatar: Boolean
+): Boolean = !isOpenSource && (hasSelectedAvatar || hasConfiguredCustomAvatar)
+
 object CovAgentManager {
 
     private val TAG = "CovAgentManager"
@@ -133,23 +139,16 @@ object CovAgentManager {
 
     fun getAvatars(): List<CovAvatar> {
         if (isOpenSource) {
-            return listOf(
-                CovAvatar(
-                    avatar_name = "Avatar",
-                    vendor = "",
-                    display_vendor = "",
-                    avatar_id = "",
-                    thumb_img_url = "",
-                    bg_img_url = "",
-                )
-            )
+            return emptyList()
         }
         return preset?.getAvatarsForLang(language?.language_code) ?: emptyList()
     }
 
-    val isEnableAvatar: Boolean get() = avatar != null || isCustomEnableAvatar
+    val isEnableAvatar: Boolean
+        get() = isAvatarEnabledForSession(isOpenSource, avatar != null, isCustomEnableAvatar)
 
-    val isCustomEnableAvatar: Boolean get() = (preset?.isCustom == true) && (preset?.is_support_avatar == true)
+    val isCustomEnableAvatar: Boolean
+        get() = !isOpenSource && (preset?.isCustom == true) && (preset?.is_support_avatar == true)
 
     val customAvatarVendor: String? get() = preset?.avatar_vendor?.takeIf { isCustomEnableAvatar }
 
