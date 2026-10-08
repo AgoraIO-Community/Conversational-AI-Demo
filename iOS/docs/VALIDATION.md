@@ -14,6 +14,8 @@ The standalone suites use `Agent.xcodeproj` / `Agent-globalTests` and do not req
 
 The `environment` suite checks host + RTC App ID matching and remembered dynamic selections without an app host.
 
+The `audio_scenario` suite also decodes selected avatar metadata with optional `scene_bg_img_url` beside `bg_img_url`, confirming the new scene field preserves the avatar's existing scenario behavior. This brand uses remote avatar video and has no local Spatius canvas; the field is retained as metadata and is not forwarded in Agent start parameters.
+
 ## Options and results
 
 - `--only-testing <target/class[/method]>` selects tests from the suite's configured scope.

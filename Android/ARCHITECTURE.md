@@ -35,4 +35,6 @@ App/common/convoai use Java 17; IoT/BLEManager use Java 11. Build files, the ver
 
 For changes in shared code, consider all consuming scenes. For session or transcript changes, check callback delivery, ordering, threads and release. For device changes, include relevant permission denial, Bluetooth/location availability and reconnect behavior. Use [the review checklist](docs/PR_CHECKLIST.md) when helpful.
 
+Avatar records preserve optional `scene_bg_img_url` alongside `thumb_img_url` and `bg_img_url`. This brand uses remote avatar video and has no local Spatius canvas; its loading poster remains `bg_img_url`. Scene image metadata is not forwarded in Agent start parameters. Run `:scenes:convoai:testDebugUnitTest --tests 'io.agora.scene.convoai.api.CovAvatarMetadataTest'` for decoding compatibility.
+
 Toolkit details: [component documentation](https://github.com/AgoraIO-Conversational-AI/agent-client-toolkit-kotlin/blob/main/conversational-ai/README.md).

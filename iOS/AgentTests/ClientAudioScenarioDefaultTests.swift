@@ -82,14 +82,10 @@ final class ClientAudioScenarioDefaultTests: XCTestCase {
 
     func testSelectedAvatarEnablesRtcDefaultOutsideOpenSource() throws {
         let preset = try decodePreset(type: "standard_avatar", supportsAvatar: false)
-        let selectedAvatar = Avatar(
-            vendor: "spatius",
-            displayVendor: nil,
-            avatarId: "selected-avatar",
-            avatarName: nil,
-            thumbImageUrl: nil,
-            bgImageUrl: nil
-        )
+        let json = #"{"vendor":"spatius","avatar_id":"selected-avatar","bg_img_url":"poster.png","scene_bg_img_url":"scene.png"}"#
+        let selectedAvatar = try JSONDecoder().decode(Avatar.self, from: Data(json.utf8))
+        XCTAssertEqual(selectedAvatar.bgImageUrl, "poster.png")
+        XCTAssertEqual(selectedAvatar.sceneBgImageUrl, "scene.png")
 
         let avatarEnabled = AvatarSessionState.isEnabled(
             preset: preset,
