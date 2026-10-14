@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import AVFoundation
 import Common
 import AgoraAgentClientToolkit
+import SVProgressHUD
 
 class ChatViewController: BaseViewController {
     internal var agentIsJoined = false
@@ -24,6 +26,10 @@ class ChatViewController: BaseViewController {
     internal var isSelfSubRender = false
     internal var isDenoise = true
     internal var windowState = ChatWindowState()
+    internal var isManualCall = false
+    internal var isUserMuted = false
+    internal var callPreparationTask: Task<Void, Never>?
+    internal var callPreparationId = UUID()
     
     internal lazy var enableMetric: Bool = {
         let res = DeveloperConfig.shared.metrics
@@ -135,6 +141,59 @@ class ChatViewController: BaseViewController {
         view.delegate = self
         return view
     }()
+
+    internal lazy var pushToTalk: PushToTalkController = {
+        PushToTalkController(
+            publish: { [weak self] eos, _, completion in
+                guard let self, let api = self.convoAIAPI else {
+                    completion(nil, "ConversationalAIAPI is not ready")
+                    return
+                }
+                let callback: (String, ConversationalAIAPIError?) -> Void = { requestId, error in
+                    completion(requestId, error?.message)
+                }
+                if eos {
+                    guard let manualEOS = api.manualEOS else { completion(nil, "manualEOS is not supported"); return }
+                    manualEOS("\(self.agentUid)", callback)
+                } else {
+                    guard let manualSOS = api.manualSOS else { completion(nil, "manualSOS is not supported"); return }
+                    manualSOS("\(self.agentUid)", callback)
+                }
+            },
+            onPhaseChanged: { [weak self] phase in
+                self?.addLog("[PTT] phase=\(phase)")
+                self?.applyRecordingVolume()
+                self?.updatePushToTalkButton()
+            },
+            onHint: { hint in
+                let message: String
+                switch hint {
+                case .unmuteFirst: message = ResourceManager.localizedString("conversation.ptt.unmute")
+                case .sosFailed: message = ResourceManager.localizedString("conversation.ptt.sos_failed")
+                case .tooShort: message = ResourceManager.localizedString("conversation.ptt.too_short")
+                case .limitReached: message = ResourceManager.localizedString("conversation.ptt.limit")
+                }
+                SVProgressHUD.showInfo(withStatus: message)
+            },
+            onLog: { [weak self] message in self?.addLog("[PTT] \(message)") }
+        )
+    }()
+
+    internal lazy var pushToTalkButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.layer.cornerRadius = 28
+        button.clipsToBounds = true
+        button.setTitle(ResourceManager.localizedString("conversation.ptt.hold"), for: .normal)
+        button.setTitleColor(UIColor.themColor(named: "ai_brand_white10"), for: .normal)
+        button.setBackgroundColor(color: UIColor.themColor(named: "ai_brand"), forState: .normal)
+        button.addTarget(self, action: #selector(pushToTalkDown), for: .touchDown)
+        button.addTarget(self, action: #selector(pushToTalkUp), for: [.touchUpInside, .touchUpOutside, .touchDragExit])
+        button.addTarget(self, action: #selector(pushToTalkCancel), for: .touchCancel)
+        // A second finger elsewhere must not start other actions while holding to talk.
+        button.isExclusiveTouch = true
+        button.isHidden = true
+        return button
+    }()
     
     internal lazy var animateContentView: UIView = {
         let view = UIView()
@@ -220,6 +279,7 @@ class ChatViewController: BaseViewController {
     
     deinit {
         print("living view controller deinit")
+        NotificationCenter.default.removeObserver(self)
         deregisterDelegate()
     }
     
@@ -237,6 +297,18 @@ class ChatViewController: BaseViewController {
         setupViews()
         setupConstraints()
         setupSomeNecessaryConfig()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handlePushToTalkAppWillResignActive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handlePushToTalkAudioInterruption(_:)),
+            name: AVAudioSession.interruptionNotification,
+            object: nil
+        )
     }
     
     // MARK: - BaseViewController Override Methods
@@ -245,7 +317,15 @@ class ChatViewController: BaseViewController {
         return navivationBar.style == .idle
     }
     
+    /// Any presented overlay (image preview, alerts, pickers) force-releases a held turn first.
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        pushToTalk.forcedRelease("overlay")
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+
     override func viewWillDisappearAndPop() {
+        stopAgent(pttCause: "pageClosed")
+        pushToTalk.endSession("pageClosed")
         AppContext.settingManager().resetToDefaults()
         rtcManager.destroy()
         rtmManager.destroy()

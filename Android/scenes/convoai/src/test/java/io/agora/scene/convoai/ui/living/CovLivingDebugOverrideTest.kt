@@ -96,13 +96,16 @@ class CovLivingDebugOverrideTest {
     }
 
     @Test
-    fun resolveAudioScenario_customAvatarPresetUsesDefaultWithoutSeparateAvatarSelection() {
+    fun resolveAudioScenario_customAvatarPresetFollowsOpenSourceMode() {
         CovAgentManager.setPreset(customPreset(isSupportAvatar = true))
 
         assertNull(CovAgentManager.avatar)
-        assertTrue(CovAgentManager.isEnableAvatar)
+        // Open-source builds never support avatars. Business builds enable the
+        // custom preset's avatar without a separate avatar selection.
+        val expectAvatar = !CovAgentManager.isOpenSource
+        assertEquals(expectAvatar, CovAgentManager.isEnableAvatar)
         assertEquals(
-            Constants.AUDIO_SCENARIO_DEFAULT,
+            if (expectAvatar) Constants.AUDIO_SCENARIO_DEFAULT else Constants.AUDIO_SCENARIO_AI_CLIENT,
             resolveAudioScenario(
                 isAvatarEnabled = CovAgentManager.isEnableAvatar,
                 isIndependent = CovAgentManager.getPreset()?.isIndependent == true,

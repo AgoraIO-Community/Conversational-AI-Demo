@@ -53,6 +53,17 @@
             "source": "AgentTests/DeveloperEnvironmentTests.swift"
           }
         ]
+      },
+      "manual_eos": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "PushToTalkControllerTests",
+            "source": "AgentTests/PushToTalkControllerTests.swift"
+          }
+        ]
       }
     }
   }

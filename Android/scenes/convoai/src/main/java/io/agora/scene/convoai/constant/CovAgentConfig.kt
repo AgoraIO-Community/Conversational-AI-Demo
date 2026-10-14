@@ -48,7 +48,7 @@ object CovAgentManager {
             enableAiVad = if (preset?.isCustom == true) {
                 true
             } else {
-                language?.aivad_enabled_by_default ?: true
+                language?.aivad_enabled_by_default ?: false
             }
             enableAiPause = if (enableAiVad) {
                 value?.pause_state_enabled_by_default ?: false
@@ -58,6 +58,9 @@ object CovAgentManager {
         }
 
     var avatar: CovAvatar? = null
+
+    /** Walkie-Talkie Mode switch. It masks AI VAD and Intelligent Pause but never rewrites their stored values. */
+    var enableManualEos: Boolean = false
 
     var voiceprintMode: VoiceprintMode = VoiceprintMode.OFF
     var renderMode: Int = CovRenderMode.WORD
@@ -104,6 +107,10 @@ object CovAgentManager {
         }
 
     fun setPreset(p: CovAgentPreset?) {
+        // Reset Walkie-Talkie Mode before the new language defaults are applied.
+        if (p == null || p.name != preset?.name || p.isIndependent) {
+            enableManualEos = false
+        }
         preset = p
         language = if (p?.default_language_code?.isNotEmpty() == true) {
             p.support_languages.firstOrNull { it.language_code == p.default_language_code }
@@ -136,6 +143,11 @@ object CovAgentManager {
 
     val isAiPauseAdjustable: Boolean get() = isAiVadSupported && enableAiVad
 
+    val isManualEosAdjustable: Boolean
+        get() = !isOpenSource && preset != null && preset?.isIndependent != true
+
+    /** Whether the next call is a manual call. Walkie-Talkie Mode then masks AI VAD and Intelligent Pause. */
+    val isManualEosActive: Boolean get() = isManualEosAdjustable && enableManualEos
 
     fun getAvatars(): List<CovAvatar> {
         if (isOpenSource) {
@@ -167,6 +179,7 @@ object CovAgentManager {
         }
 
     fun resetData() {
+        enableManualEos = false
         enableAiVad = false
         enableAiPause = false
         preset = null

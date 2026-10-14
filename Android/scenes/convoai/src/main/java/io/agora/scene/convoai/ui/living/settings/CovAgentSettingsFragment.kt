@@ -90,7 +90,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     mBinding?.vOptionsMask?.visibility = View.INVISIBLE
                 }
             })
-            cbAiVad.isChecked = CovAgentManager.enableAiVad
+            cbAiVad.isChecked = CovAgentManager.enableAiVad && !CovAgentManager.isManualEosActive
             cbAiVad.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
                 override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
                     if (buttonView.isPressed) {
@@ -102,7 +102,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             btnAiVad.setOnClickListener {
                 ToastUtil.show(io.agora.scene.convoai.R.string.cov_setting_ai_vad_high_desc, Toast.LENGTH_LONG)
             }
-            cbAiPause.isChecked = CovAgentManager.enableAiPause
+            cbAiPause.isChecked = CovAgentManager.enableAiPause && !CovAgentManager.isManualEosActive
             cbAiPause.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
                 override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
                     if (buttonView.isPressed) {
@@ -110,6 +110,18 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                     }
                 }
             })
+            cbManualEos.isChecked = CovAgentManager.enableManualEos
+            cbManualEos.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+                override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
+                    if (buttonView.isEnabled && livingViewModel.connectionState.value == AgentConnectionState.IDLE && CovAgentManager.isManualEosAdjustable) {
+                        CovAgentManager.enableManualEos = isChecked
+                        updatePageEnable()
+                    }
+                }
+            })
+            btnManualEos.setOnClickListener {
+                ToastUtil.show(io.agora.scene.convoai.R.string.cov_setting_manual_eos_desc, Toast.LENGTH_LONG)
+            }
             btnAiPause.setOnClickListener {
                 ToastUtil.show(io.agora.scene.convoai.R.string.cov_setting_ai_pause_desc, Toast.LENGTH_LONG)
             }
@@ -163,15 +175,11 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         mBinding?.apply {
             tvLanguageDetail.text = CovAgentManager.language?.language_name
             // AI-VAD - Only update UI state, preserve user settings
-            if (CovAgentManager.isAiVadSupported) {
-                cbAiVad.isEnabled = livingViewModel.connectionState.value == AgentConnectionState.IDLE
-                cbAiVad.isChecked = CovAgentManager.enableAiVad
-            } else {
+            if (!CovAgentManager.isAiVadSupported) {
                 // Language doesn't support AI-VAD, force disable
                 CovAgentManager.enableAiVad = false
-                cbAiVad.isChecked = false
-                cbAiVad.isEnabled = false
             }
+            // Displayed values and editability follow the Walkie-Talkie Mode mask.
             syncAiPauseState()
         }
     }
@@ -185,12 +193,7 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
             // Avatar section
             setViewState(clAvatar, tvAvatarDetail, ivAvatarArrow, isIdle)
 
-            // AI VAD section
-            cbAiVad.isEnabled = if (isIdle) {
-                CovAgentManager.isAiVadSupported
-            } else {
-                false
-            }
+            // AI VAD section: see syncAiPauseState()
 
             // Render mode section
             setViewState(clRenderMode, tvRenderDetail, ivRenderArrow,  isIdle)
@@ -202,8 +205,6 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
                 false
             }
             setViewState(clVoiceprintMode, tvVoiceprintDetail, ivVoiceprintArrow, isVoiceprintEnabled)
-
-            clLanguage.isEnabled = true
         }
         syncAiPauseState()
     }
@@ -214,9 +215,22 @@ class CovAgentSettingsFragment : BaseFragment<CovAgentSettingsFragmentBinding>()
         if (!isAiPauseAdjustable) {
             CovAgentManager.enableAiPause = false
         }
+        if (!CovAgentManager.isManualEosAdjustable) {
+            CovAgentManager.enableManualEos = false
+        }
+        // Walkie-Talkie Mode masks both features in the UI without changing their stored values.
+        val isManualEosActive = CovAgentManager.isManualEosActive
         mBinding?.apply {
-            cbAiPause.isChecked = CovAgentManager.enableAiPause
-            cbAiPause.isEnabled = isIdle && isAiPauseAdjustable
+            cbAiVad.isChecked = CovAgentManager.enableAiVad && !isManualEosActive
+            cbAiVad.isEnabled = isIdle && CovAgentManager.isAiVadSupported && !isManualEosActive
+            cbAiPause.isChecked = CovAgentManager.enableAiPause && !isManualEosActive
+            cbAiPause.isEnabled = isIdle && isAiPauseAdjustable && !isManualEosActive
+            val manualSupported = !CovAgentManager.isOpenSource
+            clManualEos.visibility = if (manualSupported) View.VISIBLE else View.GONE
+            dividerManualEos.visibility = if (manualSupported) View.VISIBLE else View.GONE
+            cbManualEos.isChecked = CovAgentManager.enableManualEos
+            cbManualEos.isEnabled = isIdle && CovAgentManager.isManualEosAdjustable
+            tvManualEosHint.visibility = if (manualSupported && isManualEosActive) View.VISIBLE else View.GONE
         }
     }
 

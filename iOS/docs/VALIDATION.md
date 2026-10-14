@@ -27,3 +27,9 @@ The `audio_scenario` suite also decodes selected avatar metadata with optional `
 `scripts/workflow.json` maps suites to shared schemes, targets and test classes. Update it with test wiring changes. `python3 scripts/check_workflow.py` checks that mapping. The scripts cover the listed suites; select or add other checks when the task needs them.
 
 Legacy helpers under `iOS/scripts/` forward to the root runner. `ios_test_without_building.sh` now runs current-source incremental tests; `ios_feature_validation.sh --list` lists available suites. These local helpers do not change Jenkins `cicd/`.
+
+## Manual turn controller tests
+
+`python3 scripts/test_manual_eos_ios.py` runs `PushToTalkControllerTests` on the native Swift host, without Pods, an app host or a simulator. It copies the current sources into a temporary Swift package and deletes it afterwards; `--keep` keeps it for debugging. A zero-test result fails the runner.
+
+The tests use a controlled clock and publisher and cover hold, release and the 200 ms tail, the short-hold hint, SOS failure, SOS/EOS ordering, `AGENT_MANUAL_EOS` turn ownership, local resets and forced release. The same source is registered as the `manual_eos` suite in the standalone Xcode target. Settings, call-page wiring, audio and server behavior need device QA.
