@@ -103,24 +103,6 @@ Use `import AgoraAgentClientToolkit` in Swift. Toolkit requires neither a `:path
 
 The demo passes its AINS selection into `loadAudioSettings(scenario:enableAins:)`, defaulting to disabled and retaining the selection across audio route changes.
 
-### 2.4 Walkie-Talkie Mode (hold to talk)
-
-For business standard or custom presets, **Walkie-Talkie Mode** appears below **Intelligent Pause** in the agent settings; its tips button explains the mode. It is off by default and resets when the preset changes. Independent presets and open-source mode do not offer it. Agent settings are locked from the start of a call (including token and RTM preparation) until it ends.
-
-While the switch is on, **Intelligent Interruption Handling** and **Intelligent Pause** are shown off and locked. Their stored values are kept and shown again when the switch is turned off. A manual call sends `app_feature.manual_speech_control_mode=manual_sos_and_eos` with `enable_aivad=false` and `pause_state_enabled=false`; other calls send the same `app_feature` as before.
-
-In a connected manual call, hold **Hold to talk** to speak: press publishes `manualSOS`, and release keeps 200 ms of tail audio, then publishes `manualEOS`. The mute control stays the master switch. App inactivity, audio interruption, presented overlays, touch cancellation and RTC reconnect release the button. When the agent ends a turn (`AGENT_MANUAL_EOS`), only the current turn ends.
-
-A failed start leaves the channel if it was joined and shows a hint; hanging up during preparation cancels the start. The call ends with a hint when the agent leaves, the RTM connection fails or a renewed token cannot be fetched, and it ends when the call page is popped or dismissed. If RTM rejects a renewed token, only a hint is shown and the call continues.
-
-To test the controller without a simulator, from the repository root:
-
-```bash
-python3 scripts/test_manual_eos_ios.py
-```
-
-Then, on a device, turn the switch on, start a call, hold the button to speak and release it to send. Audio, tail timing and server behavior are verified only on devices.
-
 ## 📚 3. Related Resources
 
 - Check our [Conversational AI Engine Document](https://docs.agora.io/en/conversational-ai/overview/product-overview) to learn more about Conversational AI Engine

@@ -1,7 +1,8 @@
 # Uncomment the next line to define a global platform for your project
 source 'https://cdn.cocoapods.org/'
 
-platform :ios, '15.0'
+minimum_ios_version = '15.0'
+platform :ios, minimum_ios_version
 
 target 'Agent-global' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -50,7 +51,12 @@ post_install do |installer|
   
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      # Additional post-install configuration can be added here.
+      # Xcode 27 rejects legacy Pod deployment targets below iOS 15. Keep every
+      # dependency compatible with the app's minimum, preserving higher requirements.
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+      if deployment_target.nil? || Gem::Version.new(deployment_target) < Gem::Version.new(minimum_ios_version)
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimum_ios_version
+      end
     end
   end
 end

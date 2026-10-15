@@ -15,9 +15,9 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### 📱 1.1 Environment Preparation
 
-- Minimum compatibility with Android 8.0 (SDK API Level 26)
+- Minimum compatibility with Android 9 (SDK API Level 28)
 - Android Studio 3.5 or above
-- Android devices running Android 8.0 or above
+- Android devices running Android 9 or above
 
 ### ⚙️ 1.2 Running the Sample
 
@@ -94,25 +94,6 @@ implementation libs.agora.agent.client.toolkit
 Sync Gradle in Android Studio to download the AAR from Maven Central using the repositories in `settings.gradle`. If Gradle has cached a missing-artifact result after a new release becomes available, run `./gradlew :scenes:convoai:assembleDebug --refresh-dependencies` from `Android`.
 
 To upgrade, update `gradle/libs.versions.toml` and rerun validation. A local Gradle subproject, `includeBuild`, or a manually copied AAR is not required.
-
-
-### 2.4 Walkie-Talkie Mode (hold to talk)
-
-For business standard or custom presets, **Walkie-Talkie Mode** appears below **Intelligent Pause** in the agent settings. It is off by default and resets when the preset changes. Independent presets and open-source mode do not offer it. Agent settings are locked from the start of a call (including token and RTM preparation) until it ends.
-
-While the switch is on, **Intelligent Interruption Handling** and **Intelligent Pause** are shown off and locked. Their stored values are kept and shown again when the switch is turned off. A manual call sends `app_feature.manual_speech_control_mode=manual_sos_and_eos` with `enable_aivad=false` and `pause_state_enabled=false`; other calls send the same `app_feature` as before.
-
-In a connected manual call, hold **Hold to talk** to speak: press publishes Toolkit `manualSOS`, and release keeps 200 ms of tail audio, then publishes `manualEOS`. The mute control stays the master switch. Pausing the activity, losing focus, overlays, touch cancellation and RTC reconnect release the button. When the agent ends a turn (`AGENT_MANUAL_EOS`), only the current turn ends.
-
-A failed start leaves the channel if it was joined and shows a hint; hanging up during preparation cancels the start. The call ends with a hint when the agent leaves, the RTM connection fails or a renewed token cannot be fetched, and it ends when the call page closes. If RTM rejects a renewed token, only a hint is shown and the call continues. A configuration change such as a dark-mode switch keeps the call.
-
-To test, from `Android`:
-
-```bash
-./gradlew :scenes:convoai:testDebugUnitTest --tests 'io.agora.scene.convoai.ui.living.ptt.*' --tests 'io.agora.scene.convoai.constant.CovAgentManagerManualEosTest'
-```
-
-Then, on a device, turn the switch on, start a call, hold the button to speak and release it to send. Audio, tail timing and server behavior are verified only on devices.
 
 ## 📚 3. Related Resources
 

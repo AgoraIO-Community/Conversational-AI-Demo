@@ -365,6 +365,7 @@ extension ChatViewController {
         addLog("[Call] stopAgent() cause=\(pttCause)")
         pushToTalk.endSession(pttCause)
         isManualCall = false
+        pushToTalkOverlay.setVolume(0)
         agentStateView.setSilentText(nil)
         pushToTalkButton.isHidden = true
         uploadLatestLatencyReportIfNeeded()
