@@ -86,8 +86,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.util.UUID
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * view model
@@ -477,10 +477,12 @@ class CovLivingViewModel : ViewModel() {
         pttController.setUserMuted(_isLocalAudioMuted.value)
         applyRecordingVolume()
         prepareLatencyMetricsSession()
-        // Generate channel name
-        CovAgentManager.channelName =
+        // Bind this start to its own channel. A stop clears the global name and cancels the start job, so the
+        // join, subscribe and /start below always use this call's channel, never one set by a later call.
+        val channel =
             CovAgentManager.channelPrefix + UUID.randomUUID().toString().replace("-", "")
                 .substring(0, 8)
+        CovAgentManager.channelName = channel
 
         startConnectionJob = viewModelScope.launch {
             try {
@@ -523,7 +525,7 @@ class CovLivingViewModel : ViewModel() {
                 // Join RTC channel
                 CovRtcManager.joinChannel(
                     integratedToken ?: "",
-                    CovAgentManager.channelName,
+                    channel,
                     CovAgentManager.uid
                 )
                 // Login RTM
@@ -535,18 +537,18 @@ class CovLivingViewModel : ViewModel() {
                     return@launch
                 }
                 // Subscribe message
-                val subscribedChannel = CovAgentManager.channelName
-                conversationalAIAPI?.subscribeMessage(subscribedChannel) { errorInfo ->
+                conversationalAIAPI?.subscribeMessage(channel) { errorInfo ->
                     if (errorInfo == null) return@subscribeMessage
+                    // Runs outside the start job, so match the channel to skip a call that has already ended.
                     viewModelScope.launch(Dispatchers.Main) {
-                        CovLogger.e(TAG, "subscribe $subscribedChannel error")
-                        if (CovAgentManager.channelName != subscribedChannel) return@launch
+                        CovLogger.e(TAG, "subscribe $channel error")
+                        if (CovAgentManager.channelName != channel) return@launch
                         stopAgentAndLeaveChannel(PttResetCause.RTM_FAILED)
                         ToastUtil.show(R.string.cov_detail_join_call_failed, Toast.LENGTH_LONG)
                     }
                 }
                 // Start Agent
-                val startResult = startAgentAsync()
+                val startResult = startAgentAsync(channel)
                 currentCoroutineContext().ensureActive()
                 handleAgentStartResult(startResult)
             } catch (e: CancellationException) {
@@ -999,7 +1001,7 @@ class CovLivingViewModel : ViewModel() {
         }
     }
 
-    private suspend fun updateTokenAsync(): Boolean = suspendCoroutine { cont ->
+    private suspend fun updateTokenAsync(): Boolean = suspendCancellableCoroutine { cont ->
         TokenGenerator.generateTokens(
             channelName = "",
             uid = CovAgentManager.uid.toString(),
@@ -1015,10 +1017,9 @@ class CovLivingViewModel : ViewModel() {
         )
     }
 
-    private suspend fun startAgentAsync(): Pair<String, Int> = suspendCoroutine { cont ->
-        val channel = CovAgentManager.channelName
+    private suspend fun startAgentAsync(channel: String): Pair<String, Int> = suspendCancellableCoroutine { cont ->
         CovAgentApiManager.startAgentWithMap(
-            channelName = CovAgentManager.channelName,
+            channelName = channel,
             convoaiBody = if (CovAgentManager.isOpenSource) {
                 getConvoaiOpenSourceBodyMap(channel)
             } else {
@@ -1030,7 +1031,7 @@ class CovLivingViewModel : ViewModel() {
         )
     }
 
-    private suspend fun loginRtmClientAsync(): Boolean = suspendCoroutine { cont ->
+    private suspend fun loginRtmClientAsync(): Boolean = suspendCancellableCoroutine { cont ->
         CovRtmManager.login(integratedToken ?: "", completion = { error ->
             if (error != null) {
                 integratedToken = null
@@ -1087,6 +1088,8 @@ class CovLivingViewModel : ViewModel() {
                     stopAgentAndLeaveChannel(PttResetCause.TOKEN_FAILED)
                     ToastUtil.show(R.string.cov_detail_update_token_error)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 CovLogger.e(TAG, "Exception during token renewal process: ${e.message}")
                 stopAgentAndLeaveChannel(PttResetCause.TOKEN_FAILED)

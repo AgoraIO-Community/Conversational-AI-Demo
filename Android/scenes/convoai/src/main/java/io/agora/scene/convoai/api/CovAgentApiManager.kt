@@ -90,12 +90,8 @@ object CovAgentApiManager {
         val uploadedAtMs: Long
     )
 
-    internal fun buildStartRequestConfig(
-        baseUrl: String,
-        namespace: String
-    ): Map<String, Any>? = createStartRequestConfig(baseUrl, namespace)
-
     fun startAgentWithMap(channelName:String,convoaiBody: Map<String,Any?>, completion: (error: ApiException?, channelName: String) -> Unit) {
+        CovLogger.i(TAG, "request start api - app version: ${ServerConfig.appVersionName} (${ServerConfig.appVersionCode})")
         val requestURL = "${ServerConfig.toolBoxUrl}/convoai/$SERVICE_VERSION/start"
         val postBody = JSONObject()
         try {
