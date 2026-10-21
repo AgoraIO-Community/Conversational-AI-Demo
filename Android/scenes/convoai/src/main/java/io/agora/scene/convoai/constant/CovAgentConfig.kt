@@ -29,6 +29,12 @@ enum class VoiceprintMode {
     PERSONALIZED
 }
 
+internal fun isAvatarEnabledForSession(
+    isOpenSource: Boolean,
+    hasSelectedAvatar: Boolean,
+    hasConfiguredCustomAvatar: Boolean
+): Boolean = !isOpenSource && (hasSelectedAvatar || hasConfiguredCustomAvatar)
+
 object CovAgentManager {
 
     private val TAG = "CovAgentManager"
@@ -42,7 +48,7 @@ object CovAgentManager {
             enableAiVad = if (preset?.isCustom == true) {
                 true
             } else {
-                language?.aivad_enabled_by_default ?: true
+                language?.aivad_enabled_by_default ?: false
             }
             enableAiPause = if (enableAiVad) {
                 value?.pause_state_enabled_by_default ?: false
@@ -52,6 +58,9 @@ object CovAgentManager {
         }
 
     var avatar: CovAvatar? = null
+
+    /** Walkie-Talkie Mode switch. It masks AI VAD and Intelligent Pause but never rewrites their stored values. */
+    var enableManualEos: Boolean = false
 
     var voiceprintMode: VoiceprintMode = VoiceprintMode.OFF
     var renderMode: Int = CovRenderMode.WORD
@@ -98,6 +107,10 @@ object CovAgentManager {
         }
 
     fun setPreset(p: CovAgentPreset?) {
+        // Reset Walkie-Talkie Mode before the new language defaults are applied.
+        if (p == null || p.name != preset?.name || p.isIndependent) {
+            enableManualEos = false
+        }
         preset = p
         language = if (p?.default_language_code?.isNotEmpty() == true) {
             p.support_languages.firstOrNull { it.language_code == p.default_language_code }
@@ -130,26 +143,24 @@ object CovAgentManager {
 
     val isAiPauseAdjustable: Boolean get() = isAiVadSupported && enableAiVad
 
+    val isManualEosAdjustable: Boolean
+        get() = !isOpenSource && preset != null && preset?.isIndependent != true
+
+    /** Whether the next call is a manual call. Walkie-Talkie Mode then masks AI VAD and Intelligent Pause. */
+    val isManualEosActive: Boolean get() = isManualEosAdjustable && enableManualEos
 
     fun getAvatars(): List<CovAvatar> {
         if (isOpenSource) {
-            return listOf(
-                CovAvatar(
-                    avatar_name = "Avatar",
-                    vendor = "",
-                    display_vendor = "",
-                    avatar_id = "",
-                    thumb_img_url = "",
-                    bg_img_url = "",
-                )
-            )
+            return emptyList()
         }
         return preset?.getAvatarsForLang(language?.language_code) ?: emptyList()
     }
 
-    val isEnableAvatar: Boolean get() = avatar != null || isCustomEnableAvatar
+    val isEnableAvatar: Boolean
+        get() = isAvatarEnabledForSession(isOpenSource, avatar != null, isCustomEnableAvatar)
 
-    val isCustomEnableAvatar: Boolean get() = (preset?.isCustom == true) && (preset?.is_support_avatar == true)
+    val isCustomEnableAvatar: Boolean
+        get() = !isOpenSource && (preset?.isCustom == true) && (preset?.is_support_avatar == true)
 
     val customAvatarVendor: String? get() = preset?.avatar_vendor?.takeIf { isCustomEnableAvatar }
 
@@ -168,6 +179,7 @@ object CovAgentManager {
         }
 
     fun resetData() {
+        enableManualEos = false
         enableAiVad = false
         enableAiPause = false
         preset = null

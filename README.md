@@ -38,6 +38,10 @@ Each platform uses a published Toolkit package. Clone this Demo repository and i
 | iOS | CocoaPods `agent-client-toolkit-swift` | `2.10.1` | [iOS](iOS/Scenes/ConvoAI/README.md) |
 | Web | npm `agora-agent-client-toolkit` | `2.10.0` | [Web](Web/Scenes/VoiceAgent/README.md) |
 
+### Developer reference
+
+This public Demo repository is provided as a reference and does not accept external pull requests at this time. Maintainers can use the [AI engineering guide](AI_ENGINEERING.md); AI tools can start with [AGENTS.md](AGENTS.md).
+
 ---
 
 ## ❓ How to Contact Agora for Assistance

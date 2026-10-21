@@ -211,7 +211,8 @@ object CovRtmManager : RtmEventListener {
         isRtmLogin = false
         isLoggingIn = false
 
-        rtmClient?.let { client ->
+        val clientToRelease = rtmClient
+        clientToRelease?.let { client ->
             try {
                 client.removeEventListener(this)
                 client.logout(object : ResultCallback<Void> {
@@ -231,7 +232,7 @@ object CovRtmManager : RtmEventListener {
         rtmClient = null
 
         try {
-            RtmClient.release()
+            clientToRelease?.release()
         } catch (e: Exception) {
             callMessagePrint("Error releasing RTM client: ${e.message}")
         }

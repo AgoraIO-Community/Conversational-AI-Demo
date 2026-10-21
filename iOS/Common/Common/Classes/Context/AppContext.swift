@@ -44,9 +44,6 @@ import FirebaseCore
     private var _llmParams: [String: Any] = [:]
     private var _ttsVendor: String = ""
     private var _ttsParams: [String: Any] = [:]
-    private var _avatarEnable: Bool = false
-    private var _avatarVendor: String = ""
-    private var _avatarParams: [String: Any] = [:]
     private var firebaseIsStarted: Bool = false
     
     public var isAgreeLicense: Bool = false {
@@ -170,23 +167,9 @@ import FirebaseCore
         set { _ttsParams = newValue }
     }
     
-    @objc public var avatarEnable: Bool {
-        get { return _avatarEnable }
-        set { _avatarEnable = newValue }
-    }
-    
     @objc public var isOpenSource: Bool {
         get { return _isOpenSource }
         set { _isOpenSource = newValue }
     }
     
-    @objc public var avatarVendor: String {
-        get { return _avatarVendor }
-        set { _avatarVendor = newValue }
-    }
-    
-    @objc public var avatarParams: [String: Any] {
-        get { return _avatarParams }
-        set { _avatarParams = newValue }
-    }
 }

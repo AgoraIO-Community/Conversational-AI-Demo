@@ -68,6 +68,16 @@
     <string name="cov_setting_ai_vad_high_desc">Intelligent Interruption Handling is Agora’s proprietary algorithm that detects user speech context and applies the right interruption strategy.</string>
     <string name="cov_setting_ai_pause">Intelligent Pause</string>
     <string name="cov_setting_ai_pause_desc">Intelligent Pause is Agora’s proprietary agent conversation algorithm that lets the agent pause reasoning for another task, then resume from where it left off.</string>
+    <string name="cov_setting_manual_eos">Walkie-Talkie Mode</string>
+    <string name="cov_setting_manual_eos_desc">Hold the talk button to speak and release to send each turn. Normal mode detects the end of each turn automatically and supports Intelligent Interruption Handling.</string>
+    <string name="cov_setting_manual_eos_active_hint">Intelligent Interruption Handling and Intelligent Pause are unavailable in Walkie-Talkie Mode.</string>
+    <string name="cov_manual_eos_idle_hint">Hold the button below to talk</string>
+    <string name="cov_manual_eos_hold">Hold to talk</string>
+    <string name="cov_manual_eos_release">Release to send</string>
+    <string name="cov_manual_eos_unmute_first">Turn on the microphone first.</string>
+    <string name="cov_manual_eos_sos_failed">Could not start speaking. Please try again.</string>
+    <string name="cov_manual_eos_too_short">The speaking time is too short.</string>
+    <string name="cov_manual_eos_limit_reached">The speaking time limit was reached.</string>
     <string name="cov_setting_network_error">Network Error!</string>
     <string name="cov_agent_connecting">Connecting…</string>
     <string name="cov_copy_succeed">Copied</string>

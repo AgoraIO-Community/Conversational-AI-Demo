@@ -13,6 +13,7 @@ class AgentStateView: UIView {
     private var isAnimating = false
     private var state: AgentState = .idle
     private var isMute = false
+    private var silentText: String?
     
     private let stateLabel: UILabel = {
         let label = UILabel()
@@ -87,6 +88,14 @@ class AgentStateView: UIView {
         updateMute()
     }
 
+    /// Replaces the idle prompt (for example in a manual call); nil restores the default text.
+    public func setSilentText(_ text: String?) {
+        silentText = text
+        if state == .silent {
+            stateLabel.text = text ?? ResourceManager.localizedString("conversation.agent.state.silent")
+        }
+    }
+
     public func setState(_ state: AgentState) {
         if self.state == state {
             return
@@ -111,7 +120,7 @@ class AgentStateView: UIView {
             stopButton.isHidden = true
             startVolumeAnimation()
         case .silent:
-            stateLabel.text = ResourceManager.localizedString("conversation.agent.state.silent")
+            stateLabel.text = silentText ?? ResourceManager.localizedString("conversation.agent.state.silent")
             stateLabel.textColor = UIColor.themColor(named: "ai_icontext1")
             volumeContainerView.isHidden = true
             stopButton.isHidden = true

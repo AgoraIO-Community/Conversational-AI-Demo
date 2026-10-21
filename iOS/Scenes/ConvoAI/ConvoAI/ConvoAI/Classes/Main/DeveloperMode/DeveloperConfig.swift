@@ -76,7 +76,6 @@ public class DeveloperConfig {
 
     // Session overrides are kept in memory and cleared when developer mode closes.
     var clientAudioScenario: Int?
-    var serverAudioScenario: String?
     var requestBaseURL = ""
     var requestNamespace = ""
 
@@ -90,16 +89,6 @@ public class DeveloperConfig {
     func applyingStartOverrides(to parameters: [String: Any]) -> [String: Any] {
         guard isDeveloperMode else { return parameters }
         var result = parameters
-        if let scenario = serverAudioScenario {
-            var body = result["convoai_body"] as? [String: Any] ?? [:]
-            var properties = body["properties"] as? [String: Any] ?? [:]
-            var audioParameters = properties["parameters"] as? [String: Any] ?? [:]
-            audioParameters["audio_scenario"] = scenario
-            properties["parameters"] = audioParameters
-            body["properties"] = properties
-            result["convoai_body"] = body
-        }
-
         let baseURL = requestBaseURL.trimmingCharacters(in: .whitespacesAndNewlines)
         let namespace = requestNamespace.trimmingCharacters(in: .whitespacesAndNewlines)
         if !baseURL.isEmpty || !namespace.isEmpty {
@@ -276,7 +265,6 @@ public class DeveloperConfig {
         selectedEnvironment = nil
         selectedVID = nil
         clientAudioScenario = nil
-        serverAudioScenario = nil
         requestBaseURL = ""
         requestNamespace = ""
         self.graphId = nil
