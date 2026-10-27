@@ -189,25 +189,22 @@ if [[ ! -z ${package_name} && "${package_name}" != 'none' && "${package_name}" !
     sed -ie "s#applicationId \"[^\"]*\"#applicationId \"${package_name}\"#g" app/build.gradle
     echo "Package name modified successfully"
     
-    # Update google-services.json to match the new package name
-    if [[ -f "app/google-services.json" ]]; then
-      echo "Updating google-services.json package name to: ${package_name}"
-      sed -ie "s#\"package_name\": \"[^\"]*\"#\"package_name\": \"${package_name}\"#g" app/google-services.json
-      echo "google-services.json updated successfully"
-    else
-      echo "Warning: app/google-services.json not found, skipping update"
-    fi
   else
     echo "Package name is already ${package_name}, skipping modification"
   fi
 fi
 
-# modify app_name if package name contains "test"
+# Google Services selects the registered client matching the final applicationId.
+
+# Set the app name for the final package name.
 final_package=$(grep -o 'applicationId "[^"]*"' app/build.gradle | head -1 | sed 's/applicationId "\(.*\)"/\1/')
 if [[ "${final_package}" == *"test"* ]]; then
   echo "Package name contains 'test', modifying app_name to 'Convo AI Test'"
   sed -ie 's#resValue "string", "app_name", "Convo AI"#resValue "string", "app_name", "Convo AI Test"#g' app/build.gradle
   echo "App name modified successfully"
+else
+  echo "Using production app name 'Convo AI'"
+  sed -ie 's#resValue "string", "app_name", "Convo AI Test"#resValue "string", "app_name", "Convo AI"#g' app/build.gradle
 fi
 
 cat gradle.properties

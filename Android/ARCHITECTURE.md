@@ -29,10 +29,12 @@ Useful source roots:
 
 ## Configuration and compatibility
 
-Android `gradle.properties` supplies toolbox, Agora and vendor settings. `app/build.gradle` emits app configuration; `common/build.gradle` emits shared `BuildConfig` values for networking and LLM/TTS/Avatar requests. Trace runtime overrides in the consuming code when changing configuration. Keep local credentials private.
+Android `gradle.properties` supplies toolbox, Agora and open-source LLM/TTS settings. `app/build.gradle` emits app configuration; `common/build.gradle` emits shared `BuildConfig` values for networking and LLM/TTS requests. Open-source mode does not configure digital humans; outside that mode, avatar availability comes from business presets. Trace runtime overrides in the consuming code when changing configuration. Keep local credentials private.
 
 App/common/convoai use Java 17; IoT/BLEManager use Java 11. Build files, the version catalog and Manifests affect dependency compatibility, flavor selection, configuration and permissions. Runtime paths depend on the toolbox/agent service, Agora SDKs and configured providers.
 
 For changes in shared code, consider all consuming scenes. For session or transcript changes, check callback delivery, ordering, threads and release. For device changes, include relevant permission denial, Bluetooth/location availability and reconnect behavior. Use [the review checklist](docs/PR_CHECKLIST.md) when helpful.
+
+Avatar records preserve optional `scene_bg_img_url` alongside `thumb_img_url` and `bg_img_url`. This brand uses remote avatar video and has no local Spatius canvas; its loading poster remains `bg_img_url`. Scene image metadata is not forwarded in Agent start parameters. Run `:scenes:convoai:testDebugUnitTest --tests 'io.agora.scene.convoai.api.CovAvatarMetadataTest'` for decoding compatibility.
 
 Toolkit details: [component documentation](https://github.com/AgoraIO-Conversational-AI/agent-client-toolkit-kotlin/blob/main/conversational-ai/README.md).

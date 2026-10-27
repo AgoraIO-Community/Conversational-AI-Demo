@@ -32,6 +32,17 @@
           }
         ]
       },
+      "audio_scenario": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "ClientAudioScenarioDefaultTests",
+            "source": "AgentTests/ClientAudioScenarioDefaultTests.swift"
+          }
+        ]
+      },
       "environment": {
         "container": "Agent.xcodeproj",
         "scheme": "Agent-globalTests",
@@ -40,6 +51,17 @@
           {
             "class": "DeveloperEnvironmentTests",
             "source": "AgentTests/DeveloperEnvironmentTests.swift"
+          }
+        ]
+      },
+      "manual_eos": {
+        "container": "Agent.xcodeproj",
+        "scheme": "Agent-globalTests",
+        "target": "Agent-globalTests",
+        "tests": [
+          {
+            "class": "PushToTalkControllerTests",
+            "source": "AgentTests/PushToTalkControllerTests.swift"
           }
         ]
       }

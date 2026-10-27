@@ -154,6 +154,7 @@
 "error.join.error.resource.limit" = "当前预设资源超限，请稍后再试";
 "error.network.disconnect" = "网络异常，请检查网络设置";
 "error.join.error.avatar.limit" = "所有数字人正忙，请稍后重试";
+"error.token.renew.failed" = "获取 Token 失败";
 "error.agent.is.not.exist" = "智能体不存在";
 "error.agent.is.offline" = "智能体已离线，请联系声网工作人员";
 "error.agent.list.fetch.failed" = "获取智能体列表失败";
@@ -201,7 +202,6 @@
 "devmode.request.namespace.hint" = "输入服务命名空间";
 "devmode.request.namespace.desc" = "留空不覆盖；填写后设置 X-Service-Namespace，保留其他请求头。";
 "devmode.client.audio.scenario" = "客户端 Audio Scenario";
-"devmode.server.audio.scenario" = "服务端 Audio Scenario";
 "devmode.switched.environment" = "已切换到 %@";
 "devmode.field.saved" = "%@已保存";
 "devmode.field.cleared" = "%@已清空";
@@ -374,3 +374,15 @@
 
 "devmode.field.enabled" = "%@已开启";
 "devmode.field.disabled" = "%@已关闭";
+
+// Walkie-Talkie Mode (manual turns)
+"settings.manual_eos" = "对讲机模式";
+"settings.manual_eos.tips" = "开启后，按住说话按钮发言，松开后发送本轮语音；普通模式会自动识别说话结束并支持优雅打断。";
+"settings.manual_eos.active_hint" = "对讲机模式下，优雅打断和智能暂停不可用。";
+"conversation.ptt.idle_hint" = "按住下方按钮说话";
+"conversation.ptt.hold" = "按住说话";
+"conversation.ptt.release" = "松开发送";
+"conversation.ptt.unmute" = "请先打开麦克风。";
+"conversation.ptt.sos_failed" = "开始说话失败，请重试。";
+"conversation.ptt.too_short" = "说话时间太短。";
+"conversation.ptt.limit" = "已达到本轮说话时长上限。";

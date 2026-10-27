@@ -233,7 +233,7 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
                 // If ignored, update language directly
                 AppContext.settingManager().updateLanguage(selected)
             } else {
-                if let _ = AppContext.settingManager().avatar {
+                if !AppContext.shared.isOpenSource, AppContext.settingManager().avatar != nil {
                     // Show confirmation alert
                     CommonAlertView.show(
                         in: self.view,
@@ -266,6 +266,8 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
     }
     
     func agentSettingsViewDidTapDigitalHuman(_ view: AgentSettingsView, sender: UIButton) {
+        guard !AppContext.shared.isOpenSource,
+              AppContext.settingManager().preset?.hasConfiguredCustomAvatar != true else { return }
         let vc = DigitalHumanViewController()
         self.navigationController?.pushViewController(vc)
     }
@@ -280,6 +282,10 @@ extension AgentSettingViewController: AgentSettingsViewDelegate {
             return
         }
         AppContext.settingManager().updateSmartPauseState(isOn)
+    }
+
+    func agentSettingsViewDidToggleManualEos(_ view: AgentSettingsView, isOn: Bool) {
+        AppContext.settingManager().manualEos = isOn
     }
     
     func agentSettingsViewDidTapTranscriptRender(_ view: AgentSettingsView, sender: UIButton) {
@@ -425,6 +431,11 @@ extension AgentSettingViewController: AgentSettingDelegate {
 
     func settingManager(_ manager: AgentSettingManager, smartPauseStateDidUpdated state: Bool) {
         agentSettingsView.updateSmartPauseState(state)
+    }
+
+    func settingManager(_ manager: AgentSettingManager, manualEosStateDidUpdated state: Bool) {
+        agentSettingsView.updateManualEosState(state)
+        channelInfoView.updateAiVadState()
     }
     
     func settingManager(_ manager: AgentSettingManager, transcriptModeDidUpdated mode: TranscriptDisplayMode) {

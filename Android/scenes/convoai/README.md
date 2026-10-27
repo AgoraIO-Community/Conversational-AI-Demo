@@ -15,9 +15,9 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 
 ### 📱 1.1 Environment Preparation
 
-- Minimum compatibility with Android 8.0 (SDK API Level 26)
+- Minimum compatibility with Android 9 (SDK API Level 28)
 - Android Studio 3.5 or above
-- Android devices running Android 8.0 or above
+- Android devices running Android 9 or above
 
 ### ⚙️ 1.2 Running the Sample
 
@@ -49,10 +49,9 @@ LLM_SYSTEM_MESSAGES=<LLM Prompt>(optional)
 TTS_VENDOR=<TTS Vendor>
 TTS_PARAMS=<TTS Parameters>
 
-#----------- AVATAR -----------
-AVATAR_VENDOR=<AVATAR Vendor>
-AVATAR_PARAMS=<AVATAR Parameters>
 ```
+
+Open-source mode does not support digital humans, so `gradle.properties` has no digital-human setup fields and the demo sends `avatar.enable=false`. Ordinary voice defaults to the `aiclient` audio scenario; `independent` mode defaults to `chorus`. Developer mode can explicitly override the client audio scenario. Outside open-source mode, business-server presets can still enable digital humans.
 
 ## 🗂️ 2. Source Code Sitemap
 
@@ -95,7 +94,6 @@ implementation libs.agora.agent.client.toolkit
 Sync Gradle in Android Studio to download the AAR from Maven Central using the repositories in `settings.gradle`. If Gradle has cached a missing-artifact result after a new release becomes available, run `./gradlew :scenes:convoai:assembleDebug --refresh-dependencies` from `Android`.
 
 To upgrade, update `gradle/libs.versions.toml` and rerun validation. A local Gradle subproject, `includeBuild`, or a manually copied AAR is not required.
-
 
 ## 📚 3. Related Resources
 
