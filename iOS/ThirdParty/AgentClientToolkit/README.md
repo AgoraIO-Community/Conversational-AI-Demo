@@ -1,4 +1,4 @@
-# Toolkit 2.10.1 with Agora RTM 2.3.0
+# Toolkit 2.10.2 with Agora RTM 2.3.0
 
 The published Toolkit binary is unchanged. Its published podspec still names
 `AgoraRtm/RtmKit >= 2.2.3`; RTM 2.3.0 is published as `Agora-Rtm/RtmKit`.
