@@ -67,17 +67,17 @@ This section mainly describes how to quickly run the Conversational AI Demo.
 | [AgentInformationViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentInformationViewController.swift)  | Information dialog showing agent status         |
 | [AgentSettingViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentSettingViewController.swift)          | Settings dialog for agent configuration         |
 | [Utils/](ConvoAI/ConvoAI/Classes/Utils)                                                                               | Utility classes and helper functions            |
-| `agent-client-toolkit-swift` (published version 2.10.1)                                                                                   | Current Conversational AI API, state, and real-time transcript component |
+| `agent-client-toolkit-swift` (published version 2.10.2)                                                                                   | Current Conversational AI API, state, and real-time transcript component |
 | [TranscriptionV1/](ConvoAI/ConvoAI/Classes/Utils/TranscriptionV1)                                                    | Demo-owned legacy v1 subtitle renderer          |
 | [TranscriptionV2/](ConvoAI/ConvoAI/Classes/Utils/TranscriptionV2)                                                    | Demo-owned legacy v2 subtitle renderer          |
 
 ### 2.2 Real-time Subtitles
 
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- The current API and transcript implementation come from the CocoaPods component `agent-client-toolkit-swift` (published version 2.10.1), whose Swift module is `AgoraAgentClientToolkit`:
+- The current API and transcript implementation come from the CocoaPods component `agent-client-toolkit-swift` (published version 2.10.2), whose Swift module is `AgoraAgentClientToolkit`:
 
 ```ruby
-pod 'agent-client-toolkit-swift', '2.10.1'
+pod 'agent-client-toolkit-swift', '2.10.2'
 ```
 
 - The Demo retains the v1 and v2 subtitle renderers for legacy compatibility; the current default flow uses the Toolkit implementation.
@@ -88,7 +88,7 @@ pod 'agent-client-toolkit-swift', '2.10.1'
 `iOS/Podfile` configures these published dependencies and resolves their specs through the Tsinghua CocoaPods Specs mirror:
 
 ```ruby
-pod 'agent-client-toolkit-swift', '2.10.1'
+pod 'agent-client-toolkit-swift', '2.10.2'
 pod 'AgoraRtm', '2.2.3', :subspecs => ['RtmKit']
 ```
 
