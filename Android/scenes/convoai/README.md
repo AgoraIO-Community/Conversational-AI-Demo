@@ -74,7 +74,7 @@ Open-source mode does not support digital humans, so `gradle.properties` has no 
 
 ### 2.2 Real-time Subtitles
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- Use the published Maven Central dependency `io.agora.agents:agora-agent-client-toolkit:2.10.1`. Its version is pinned in `Android/gradle/libs.versions.toml`; the scene module uses `implementation libs.agora.agent.client.toolkit`.
+- Use the published dependency `io.agora.agents:agora-agent-client-toolkit:2.11.0` from `https://download.agora.io/maven/`. Its version is pinned in `Android/gradle/libs.versions.toml`; the scene module uses `implementation libs.agora.agent.client.toolkit`.
 - Gradle downloads the release artifact for both local and Jenkins builds. No Toolkit source checkout or local path configuration is required.
 - The demo passes its developer-mode AINS selection into `loadAudioSettings(scenario, enableAins)`. AINS defaults to disabled; Toolkit and the business RTC layer retain the same selection.
 - Validate from the Android directory with `./gradlew lint test :app:assembleGlobalDebug`.
@@ -88,10 +88,10 @@ The Demo already configures the version catalog. `Android/scenes/convoai/build.g
 
 ```groovy
 implementation libs.agora.agent.client.toolkit
-// Resolves to io.agora.agents:agora-agent-client-toolkit:2.10.1
+// Resolves to io.agora.agents:agora-agent-client-toolkit:2.11.0
 ```
 
-Sync Gradle in Android Studio to download the AAR from Maven Central using the repositories in `settings.gradle`. If Gradle has cached a missing-artifact result after a new release becomes available, run `./gradlew :scenes:convoai:assembleDebug --refresh-dependencies` from `Android`.
+Sync Gradle in Android Studio to download the AAR from Agora's Maven repository configured in `settings.gradle`. If Gradle has cached a missing-artifact result after a new release becomes available, run `./gradlew :scenes:convoai:assembleDebug --refresh-dependencies` from `Android`.
 
 To upgrade, update `gradle/libs.versions.toml` and rerun validation. A local Gradle subproject, `includeBuild`, or a manually copied AAR is not required.
 

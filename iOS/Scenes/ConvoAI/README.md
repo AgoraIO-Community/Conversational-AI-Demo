@@ -65,17 +65,17 @@ Open-source mode does not support digital humans, so `KeyCenter.swift` has no di
 | [AgentInformationViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentInformationViewController.swift)  | Information dialog showing agent status         |
 | [AgentSettingViewController.swift](ConvoAI/ConvoAI/Classes/Main/Setting/VC/AgentSettingViewController.swift)          | Settings dialog for agent configuration         |
 | [Utils/](ConvoAI/ConvoAI/Classes/Utils)                                                                               | Utility classes and helper functions            |
-| `agent-client-toolkit-swift` (published version 2.10.2)                                                                                   | Current Conversational AI API, state, and real-time transcript component |
+| `agent-client-toolkit-swift` (published version 2.11.0)                                                                                   | Current Conversational AI API, state, and real-time transcript component |
 | [TranscriptionV1/](ConvoAI/ConvoAI/Classes/Utils/TranscriptionV1)                                                    | Demo-owned legacy v1 subtitle renderer          |
 | [TranscriptionV2/](ConvoAI/ConvoAI/Classes/Utils/TranscriptionV2)                                                    | Demo-owned legacy v2 subtitle renderer          |
 
 ### 2.2 Real-time Subtitles
 
 When interacting with conversational agents, you may need real-time subtitles to display your conversations with the agent.
-- The current API and transcript implementation come from the CocoaPods component `agent-client-toolkit-swift` (published version 2.10.2), whose Swift module is `AgoraAgentClientToolkit`:
+- The current API and transcript implementation come from the CocoaPods component `agent-client-toolkit-swift` (published version 2.11.0), whose Swift module is `AgoraAgentClientToolkit`:
 
 ```ruby
-pod 'agent-client-toolkit-swift', '2.10.2'
+pod 'agent-client-toolkit-swift', :podspec => 'ThirdParty/AgentClientToolkit/agent-client-toolkit-swift.podspec.json'
 ```
 
 - The Demo retains the v1 and v2 subtitle renderers for legacy compatibility; the current default flow uses the Toolkit implementation.
@@ -83,23 +83,23 @@ pod 'agent-client-toolkit-swift', '2.10.2'
 
 ### 2.3 Published Toolkit integration
 
-`iOS/Podfile` configures these published dependencies and resolves their specs through the Tsinghua CocoaPods Specs mirror:
+`iOS/Podfile` downloads the official Toolkit 2.11.0 binary using a local spec that selects the RTM 2.3.0 Pod name. Other dependencies resolve through the CocoaPods CDN:
 
 ```ruby
-pod 'agent-client-toolkit-swift', '2.10.2'
+pod 'agent-client-toolkit-swift', :podspec => 'ThirdParty/AgentClientToolkit/agent-client-toolkit-swift.podspec.json'
 pod 'Agora-Rtm', '2.3.0', :subspecs => ['RtmKit']
 ```
 
-When switching from source integration or refreshing an older local spec index, run from the demo repository root:
+For the first installation, run `pod install` from `iOS`. To update an existing Toolkit installation, run from the demo repository root:
 
 ```bash
 cd iOS
-pod _1.16.2_ install --repo-update
+pod update agent-client-toolkit-swift ConvoAI --no-repo-update
 ```
 
 Open `Agent.xcworkspace` to build and run. Local and Jenkins builds download the published XCFramework through CocoaPods; no Toolkit source checkout is required.
 
-Use `import AgoraAgentClientToolkit` in Swift. Toolkit requires neither a `:path` override nor a manually added XCFramework. The existing `:path` entries for Demo modules such as `ConvoAI` and `Common` load business code from this repository. When upgrading Toolkit, update the version in both `iOS/Podfile` and `iOS/Scenes/ConvoAI/ConvoAI/ConvoAI.podspec`.
+Use `import AgoraAgentClientToolkit` in Swift. The local Toolkit spec changes only the RTM dependency name and pins RTM 2.3.0; see [the compatibility note](../../ThirdParty/AgentClientToolkit/README.md). The existing `:path` entries for Demo modules such as `ConvoAI` and `Common` load business code from this repository. When upgrading Toolkit, update the version, download URL and checksum in the local spec, the constraint in `iOS/Scenes/ConvoAI/ConvoAI/ConvoAI.podspec`, and regenerate `Podfile.lock`.
 
 The demo passes its AINS selection into `loadAudioSettings(scenario:enableAins:)`, defaulting to disabled and retaining the selection across audio route changes.
 
